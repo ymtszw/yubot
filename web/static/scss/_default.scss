@@ -1,0 +1,140 @@
+@import "compass";
+
+$lightgray          :#f3f3f3;
+$gray               :#e6e6e6;
+$dimgray            :#696969;
+$search_gray        :#eee;
+$black              :#000;
+$white              :#fff;
+$silvergray         :#ccc;
+$footer_color       :#999;
+$app_list_hover     :#f9f9f9;
+$color_primary      :#c9ba4c;
+$primary_hover      :#b2a337;
+$primary_active     :#9c8e2c;
+$color_info         :#a89829;
+$info_hover         :#fdfcf4;
+$info_hover_border  :#c3b443;
+$info_active        :#f6f4e6;
+$favorite_app_hover :#2a2822;
+$favorite_app_active:#343228;
+$side_black         :#1d1c17;
+$newbtn_shadow      :rgba(204,204,204,0.5);
+
+$side_width          :220px;
+$head_height        :60px;
+$search_width       :150px;
+$respon_L           :940px;
+$respon_M           :600px;
+$respon_S           :400px;
+$imgDir             :'../img/';
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-style:normal;
+  font-weight: normal;
+  vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  -webkit-text-size-adjust: 100%;
+}
+
+.clearfix {
+    @include pie-clearfix();
+}
+
+.btn-primary {
+    background-color: $color_primary;
+    border-color: $color_primary;
+    color: $white;
+}
+.btn-primary.focus, .btn-primary:focus {
+    background-color: $primary_hover;
+    border-color: $primary_hover;
+    color: $white;
+}
+.btn-primary:hover {
+    background-color: $primary_hover;
+    border-color: $primary_hover;
+    color: $white;
+}
+.btn-primary.active, .btn-primary:active, .open > .dropdown-toggle.btn-primary {
+    background-color: $primary_hover;
+    border-color: $primary_hover;
+    color: $white;
+}
+.btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary.focus:active, .btn-primary:active:focus, .btn-primary:active:hover, .open > .dropdown-toggle.btn-primary.focus, .open > .dropdown-toggle.btn-primary:focus, .open > .dropdown-toggle.btn-primary:hover {
+    background-color: $primary_active;
+    border-color: $primary_active;
+    color: $white;
+}
+.btn-primary.active, .btn-primary:active, .open > .dropdown-toggle.btn-primary {
+    background-image: none;
+}
+.btn-primary.disabled, .btn-primary.disabled.active, .btn-primary.disabled.focus, .btn-primary.disabled:active, .btn-primary.disabled:focus, .btn-primary.disabled:hover, .btn-primary[disabled], .btn-primary.active[disabled], .btn-primary.focus[disabled], .btn-primary[disabled]:active, .btn-primary[disabled]:focus, .btn-primary[disabled]:hover, fieldset[disabled] .btn-primary, fieldset[disabled] .btn-primary.active, fieldset[disabled] .btn-primary.focus, fieldset[disabled] .btn-primary:active, fieldset[disabled] .btn-primary:focus, fieldset[disabled] .btn-primary:hover {
+    background-color: $color_primary;
+    border-color: $color_primary;
+}
+.btn-primary .badge {
+    background-color: $white;
+    color: $color_primary;
+}
+
+
+
+.btn-info {
+    background-color: $white;
+    border-color: $color_primary;
+    color: $color_info;
+}
+.btn-info.focus, .btn-info:focus {
+    background-color: $info_hover;
+    border-color: $info_hover_border;
+    color: $color_info;
+}
+.btn-info:hover {
+    background-color: $info_hover;
+    border-color: $info_hover_border;
+    color: $color_info;
+}
+.btn-info.active, .btn-info:active, .open > .dropdown-toggle.btn-info {
+    background-color: $info_hover;
+    border-color: $info_hover_border;
+    color: $color_info;
+}
+.btn-info.active.focus, .btn-info.active:focus, .btn-info.active:hover, .btn-info.focus:active, .btn-info:active:focus, .btn-info:active:hover, .open > .dropdown-toggle.btn-info.focus, .open > .dropdown-toggle.btn-info:focus, .open > .dropdown-toggle.btn-info:hover {
+    background-color: $info_active;
+    border-color: $info_hover_border;
+    color: $color_info;
+}
+.btn-info.active, .btn-info:active, .open > .dropdown-toggle.btn-info {
+    background-image: none;
+}
+.btn-info.disabled, .btn-info.disabled.active, .btn-info.disabled.focus, .btn-info.disabled:active, .btn-info.disabled:focus, .btn-info.disabled:hover, .btn-info[disabled], .btn-info.active[disabled], .btn-info.focus[disabled], .btn-info[disabled]:active, .btn-info[disabled]:focus, .btn-info[disabled]:hover, fieldset[disabled] .btn-info, fieldset[disabled] .btn-info.active, fieldset[disabled] .btn-info.focus, fieldset[disabled] .btn-info:active, fieldset[disabled] .btn-info:focus, fieldset[disabled] .btn-info:hover {
+    background-color: $white;
+    border-color: $color_primary;
+}
+.btn-info .badge {
+    background-color: $white;
+    color: $color_info;
+}

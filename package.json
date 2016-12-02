@@ -1,0 +1,14 @@
+{
+  "name": "yubot",
+  "version": "0.0.1",
+  "author": "ACCESS CO., LTD.",
+  "private": true,
+  "devDependencies": {
+    "event-stream": "^3.3.1",
+    "gulp": "^3.9.0",
+    "gulp-compass": "^2.1.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-minify-css": "^1.2.1",
+    "gulp-uglify": "^1.4.0"
+  }
+}
