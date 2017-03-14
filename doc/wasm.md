@@ -9,32 +9,33 @@
 ## Prep
 
 - llvm/clang
-  ```sh
-  $ WORKDIR=$(pwd)
-  $ git clone http://llvm.org/git/llvm.git
-  $ git clone http://llvm.org/git/clang.git llvm/tools/clang
-  $ git clone http://llvm.org/git/compiler-rt llvm/projects/compiler-rt
-  $ mkdir llvm_build
-  $ cd llvm_build/
-  $ cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr/local -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=WebAssembly "$WORKDIR/llvm"
-  $ make -j 8
-  $ sudo make install
-  ```
     - ターゲットアーキにWebAssemblyを含む`clang`と`llc`がインストールされる
     - 30分くらいかかる
 
+```sh
+$ WORKDIR=$(pwd)
+$ git clone http://llvm.org/git/llvm.git
+$ git clone http://llvm.org/git/clang.git llvm/tools/clang
+$ git clone http://llvm.org/git/compiler-rt llvm/projects/compiler-rt
+$ mkdir llvm_build
+$ cd llvm_build/
+$ cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr/local -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=WebAssembly "$WORKDIR/llvm"
+$ make -j 8
+$ sudo make install
+```
+
 ---
 - binaryen
-  ```sh
-  $ git clone https://github.com/WebAssembly/binaryen.git
-  $ cd binaryen
-  $ cmake . && make
-  $ sudo make install
-  ```
-    - `s2wasm`と`wasm-as`がインストールされる
+  - `s2wasm`と`wasm-as`がインストールされる
 - `sexpr-wasm-prototype`を入れないとバイナリをブラウザが読めない、という記事が散見されるが、
-  現時点では`wasm-as`が生成するバイナリで（少なくともChromeなら）動く
+現時点では`wasm-as`が生成するバイナリで（少なくともChromeなら）動く
 
+```sh
+$ git clone https://github.com/WebAssembly/binaryen.git
+$ cd binaryen
+$ cmake . && make
+$ sudo make install
+```
 ---
 ## Build sequence
 
