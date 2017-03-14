@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fib</title>
+  </head>
+  <body>
+    <div>
+      <h1>Fib!</h1>
+      <input type="number" name="fib-max" value="45">
+      <table>
+        <tr name="js-fib">
+          <td>
+            <script type="text/javascript" src="/static/fib.js"></script>
+            <script>
+              const ITER = 50000
+              jsFibTo = () => {
+                max = document.getElementsByName('fib-max')[0].value
+                t1 = performance.now()
+                for (var i = 1; i < ITER; i++) {
+                  fib_to(max)
+                }
+                f = fib_to(max)
+                t2 = performance.now()
+                document.getElementsByName('js-fib-value')[0].innerText = f
+                document.getElementsByName('js-fib-time')[0].innerText = ((t2 - t1) / ITER).toFixed(6) + 'ms'
+              }
+            </script>
+            <button type="button" name="js-fib-button" onclick="jsFibTo()">With JS</button>
+          </td>
+          <td name="js-fib-value" style="font-weight: bold;"></td>
+          <td name="js-fib-time"></td>
+        </tr>
+        <tr class="wasm-fib">
+          <td>
+            <button type="button" name="wasm-fib-button">With WASM</button>
+            <script type="text/javascript">
+              fetch('/static/fib.wasm').then(response =>
+                response.arrayBuffer()
+              ).then(bytes =>
+                WebAssembly.instantiate(bytes, {})
+              ).then(result =>
+                document.getElementsByName('wasm-fib-button')[0].addEventListener('click', (() => {
+                  max = document.getElementsByName('fib-max')[0].value
+                  t1 = performance.now()
+                  for (var i = 1; i < ITER; i++) {
+                    result.instance.exports.fib_to(max)
+                  }
+                  f = result.instance.exports.fib_to(max)
+                  t2 = performance.now()
+                  document.getElementsByName('wasm-fib-value')[0].innerText = f
+                  document.getElementsByName('wasm-fib-time')[0].innerText = ((t2 - t1) / ITER).toFixed(6) + 'ms'
+                }))
+              )
+            </script>
+          </td>
+          <td name="wasm-fib-value" style="font-weight: bold;"></td>
+          <td name="wasm-fib-time"></td>
+        </td>
+      </table>
+    </div>
+  </body>
+</html>
