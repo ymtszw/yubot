@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -12,22 +11,26 @@
       <table>
         <tr name="js-fib">
           <td>
+            <button type="button" name="js-fib-button">With JS</button>
             <script type="text/javascript" src="/static/fib.js"></script>
             <script>
               const ITER = 50000
-              jsFibTo = () => {
-                max = document.getElementsByName('fib-max')[0].value
-                t1 = performance.now()
-                for (var i = 1; i < ITER; i++) {
-                  fib_to(max)
-                }
-                f = fib_to(max)
-                t2 = performance.now()
-                document.getElementsByName('js-fib-value')[0].innerText = f
-                document.getElementsByName('js-fib-time')[0].innerText = ((t2 - t1) / ITER).toFixed(6) + 'ms'
+              registerHandler = (type, fibFun) => {
+                document.getElementsByName(type + '-fib-button')[0].addEventListener('click', (() => {
+                  max = document.getElementsByName('fib-max')[0].value
+                  t1 = performance.now()
+                  for (var i = 1; i < ITER; i++) {
+                    fibFun(max)
+                  }
+                  f = fibFun(max)
+                  t2 = performance.now()
+                  document.getElementsByName(type + '-fib-value')[0].innerText = f
+                  document.getElementsByName(type + '-fib-time')[0].innerText = ((t2 - t1) / ITER).toFixed(6) + 'ms'
+                }))
               }
+
+              registerHandler('js', fib_to)
             </script>
-            <button type="button" name="js-fib-button" onclick="jsFibTo()">With JS</button>
           </td>
           <td name="js-fib-value" style="font-weight: bold;"></td>
           <td name="js-fib-time"></td>
@@ -41,17 +44,7 @@
               ).then(bytes =>
                 WebAssembly.instantiate(bytes, {})
               ).then(result =>
-                document.getElementsByName('wasm-fib-button')[0].addEventListener('click', (() => {
-                  max = document.getElementsByName('fib-max')[0].value
-                  t1 = performance.now()
-                  for (var i = 1; i < ITER; i++) {
-                    result.instance.exports.fib_to(max)
-                  }
-                  f = result.instance.exports.fib_to(max)
-                  t2 = performance.now()
-                  document.getElementsByName('wasm-fib-value')[0].innerText = f
-                  document.getElementsByName('wasm-fib-time')[0].innerText = ((t2 - t1) / ITER).toFixed(6) + 'ms'
-                }))
+                registerHandler('wasm', result.instance.exports.fib_to)
               )
             </script>
           </td>
