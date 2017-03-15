@@ -1,9 +1,22 @@
+## Note
+
+- 限定共有記事
+- [ソース（社内Git）](http://gitbucket.tok.access-company.com:8080/Yu.Matsuzawa/yubot)
+
+---
 ## Ref
 
 - [Can I use webassembly ?](http://caniuse.com/#search=webassembly)
 - [WebAssembly - MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly)
 - [Binaryen](https://github.com/WebAssembly/binaryen)
 - [WebAssemblyを使ってみる(C/C++をWebAssemblyに変換してChromeで実行)](http://qiita.com/Hiroki_M/items/89975a9e8205ced3603f)
+
+---
+## Preface
+
+- Chrome 57でWebAssemblyがデフォルト有効になった
+- とりあえず現状のAPIについてはすぐ使える状態になってる
+- 試してみたし
 
 ---
 ## Prep
@@ -86,6 +99,9 @@ $ s2wasm -s 100000 fib.s > fib.wast
 $ wasm-as fib.wast > ../priv/static/fib.wasm
 ```
 
+- `s2wasm`を単に呼ぶと"memory access out of bounds"例外で止まる。
+  `-s`オプションでメモリ領域を適当に確保できる [参考](https://github.com/WebAssembly/binaryen/issues/340)
+
 ---
 ## Execution
 
@@ -117,6 +133,10 @@ https://yubot.solomondev.access-company.com/static/fib.html
 - 50,000回の平均
 - CベースWASMが大体10倍くらい速い
 - まだwasm32（32bit-integer）であるため、単にやるとF_47でオーバーフローする
+- Javascriptの方もF_79で**誤差が出る**
+    - 正）14472334024676221
+    - 誤）14472334024676220
+    - [Fib100](http://www.suguru.jp/Fibonacci/Fib100.html)
 
 ---
 ## Deploy
@@ -134,13 +154,14 @@ https://yubot.solomondev.access-company.com/static/fib.html
     - `rustup`を使ってwasm32をターゲットアーキとして追加
     - `cargo`にオプションを付けてビルド、もしくは`rustc --emit=llvm-ir`して云々
 - golangは[Tracking Issue](https://github.com/golang/go/issues/18892)だけ立っている
+- elixir-lang-core MLの過去ログ見てたら[トピック](https://groups.google.com/d/topic/elixir-lang-core/kVzaZdfo4_8/discussion)はあった
 
 ---
 ## Impression
 
 - LLVM関連の環境インストールがむしろヘビー
 - ひとたびコンパイル経路が確立すれば意外とすんなり動く
--
+- ひまな人はCで爆速フロントエンドロジックを書いてみては
 
 ---
 ## Appendix
