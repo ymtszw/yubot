@@ -28,6 +28,9 @@ defmodule Yubot.Jq do
     Yubot.TypeGen.limited_byte_string_body(@max_byte)
   end
 
+  @doc """
+  Run jq against `map_or_json` with `filter`.
+  """
   defun run(map_or_json :: map | String.t, filter :: String.t, options :: options \\ []) :: R.t(String.t) do
     (map, filter, options) when is_map(map) ->
       Poison.encode!(map) |> run_impl(filter, options)
@@ -47,6 +50,7 @@ defmodule Yubot.Jq do
   defp run_options_to_jq_options(options) do
     %{
       "--compact-output" => !:proplists.get_bool(:pretty, options),
+      "--join-output"    => !:proplists.get_bool(:pretty, options),
       # More may come?
     }
     |> Enum.filter_map(&(elem(&1, 1) == true), &elem(&1, 0))
@@ -54,7 +58,7 @@ defmodule Yubot.Jq do
   end
 
   defp try_jq(json, filter, jq_opts) do
-    case OS.cmd(~c(echo '#{json}' | jq --join-output #{jq_opts} '#{filter}')) |> List.to_string() do
+    case OS.cmd(~c(echo '#{json}' | jq #{jq_opts} '#{filter}')) |> List.to_string() do
       "parse error:" <> _ = error ->
         {:error, error}
       "jq:" <> _ = error ->
