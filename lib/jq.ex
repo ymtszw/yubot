@@ -50,7 +50,6 @@ defmodule Yubot.Jq do
   defp run_options_to_jq_options(options) do
     %{
       "--compact-output" => !:proplists.get_bool(:pretty, options),
-      "--join-output"    => !:proplists.get_bool(:pretty, options),
       # More may come?
     }
     |> Enum.filter_map(&(elem(&1, 1) == true), &elem(&1, 0))
@@ -58,7 +57,7 @@ defmodule Yubot.Jq do
   end
 
   defp try_jq(json, filter, jq_opts) do
-    case OS.cmd(~c(echo '#{json}' | jq #{jq_opts} '#{filter}')) |> List.to_string() do
+    case OS.cmd(~c(echo '#{json}' | jq #{jq_opts} '#{filter}')) |> List.to_string() |> String.replace_suffix("\n", "") do
       "parse error:" <> _ = error ->
         {:error, error}
       "jq:" <> _ = error ->
