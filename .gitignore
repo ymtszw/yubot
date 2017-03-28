@@ -12,3 +12,4 @@ erl_crash.dump
 *.ll
 *.s
 *.wast
+gear_config
