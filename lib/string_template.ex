@@ -53,7 +53,7 @@ defmodule Yubot.StringTemplate do
   If `dict` does not provide non-empty strings for all variables in `template`,
   it results in failure and return missing variable name.
   """
-  defun render(template :: v[t], dict :: %{Variable.t => String.t} | [{Variable.t, String.t}]) :: R.t(String.t) do
+  defun render(template :: v[t], dict :: %{Variable.t => String.t} | [{Variable.t, String.t}] \\ []) :: R.t(String.t) do
     case template.variables do
       [] -> {:ok, template.body}
       vs -> render_impl(template.body, vs, dict)
@@ -69,6 +69,8 @@ defmodule Yubot.StringTemplate do
   defp fetch_all(variables, dict) do
     Enum.map(variables, fn variable ->
       case fetch_variable(dict, variable) do
+        bool when is_boolean(bool) ->
+          {:ok, {variable, bool}}
         str when is_binary(str) and byte_size(str) > 0 ->
           {:ok, {variable, str}}
         _nil_or_empty_string ->
@@ -79,15 +81,17 @@ defmodule Yubot.StringTemplate do
   end
 
   defp fetch_variable(dict, variable) do
-    Enum.find_value(dict, fn
-      {^variable, value} -> value
-      _otherwise -> false
-    end)
+    case Enum.find(dict, fn {key, _val} -> key == variable end) do
+      nil -> nil
+      {_variable, value} -> value
+    end
   end
 
   defp replace_all(variables, body) do
     Enum.reduce(variables, body, fn {variable, str}, acc_body ->
-      String.replace(acc_body, ~S"#{" <> variable <> "}", str)
+      String.replace(acc_body, ~S"#{" <> variable <> "}", to_string(str))
     end)
   end
+
+  Croma.Result.define_bang_version_of(parse: 1, render: 2)
 end
