@@ -25,7 +25,7 @@ defmodule Yubot.Model.Poll do
     interval: Interval,
     url: SolomonLib.Url,
     auth: Croma.TypeGen.nilable(Authentication.Id),
-    action: Action,
+    action: Action.Id,
     filters: Croma.TypeGen.list_of(Jq.Filter),
   ]
 end
