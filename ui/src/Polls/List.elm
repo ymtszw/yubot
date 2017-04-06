@@ -1,31 +1,23 @@
 module Polls.List exposing (..)
 
-import Html exposing (..)
+import Html exposing (Html, text)
+import Bootstrap.Table as Table exposing (..)
 import Polls exposing (Poll, Msg)
 
 view : List Poll -> Html Msg
 view polls =
-    div []
-        [ list polls
-        ]
-
-list : List Poll -> Html Msg
-list polls =
-    div []
-        [ table []
-            [ thead []
-                [ tr []
-                    [ th [] [ text "ID"]
-                    , th [] [ text "UpdatedAt"]
-                    ]
-                ]
-            , tbody [] (List.map pollRow polls)
+    Table.table
+        { options = [ Table.striped ]
+        , thead = Table.simpleThead
+            [ Table.th [] [ text "ID" ]
+            , Table.th [] [ text "Updated At" ]
             ]
-        ]
+        , tbody = Table.tbody [] (List.map pollRow polls)
+        }
 
-pollRow : Poll -> Html Msg
+pollRow : Poll -> Row Msg
 pollRow poll =
-    tr []
-        [ td [] [ text poll.id ]
-        , td [] [ text poll.updatedAt ]
+    Table.tr []
+        [ Table.td [] [ text poll.id ]
+        , Table.td [] [ text poll.updatedAt ]
         ]

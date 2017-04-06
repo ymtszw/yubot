@@ -1,6 +1,7 @@
 module Poller exposing (..)
 
-import Html exposing (Html, div, text, program)
+import Html exposing (Html, div, program)
+import Bootstrap.Grid as Grid
 import Polls exposing (..)
 import Polls.List exposing (..)
 
@@ -40,8 +41,9 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ page model ]
+    Grid.container []
+        [ page model
+        ]
 
 page : Model -> Html Msg
 page model =
