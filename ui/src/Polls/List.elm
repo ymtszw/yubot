@@ -19,5 +19,5 @@ pollRow : Poll -> Row Msg
 pollRow poll =
     Table.tr []
         [ Table.td [] [ text poll.id ]
-        , Table.td [] [ text poll.updatedAt ]
+        , Table.td [] [ text (toString poll.updatedAt) ]
         ]

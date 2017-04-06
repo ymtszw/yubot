@@ -1,6 +1,7 @@
 module Poller exposing (..)
 
-import Html exposing (Html, div, program)
+import Date exposing (Date)
+import Html exposing (Html, div, h1, text, program)
 import Bootstrap.Grid as Grid
 import Polls exposing (..)
 import Polls.List exposing (..)
@@ -13,8 +14,10 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { polls = [ Poll "dummy_id" "2017-04-07T01:55:00+09:00" ]
+    { polls = [ Poll "dummy_id" (Date.fromTime 1491501715000) ]
     }
+
+
 
 init : ( Model, Cmd Msg )
 init =
@@ -42,7 +45,14 @@ update msg model =
 view : Model -> Html Msg
 view model =
     Grid.container []
-        [ page model
+        [ Grid.simpleRow
+            [ Grid.col []
+                [ h1 [] [ text "Poller the Bear" ]
+                ]
+            ]
+        , Grid.simpleRow
+            [ Grid.col [] [ page model ]
+            ]
         ]
 
 page : Model -> Html Msg
