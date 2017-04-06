@@ -3,7 +3,8 @@ defmodule Yubot.Router do
 
   static_prefix "/static"
 
-  get "/", Root, :index
+  get "/"      , Root, :index
+  get "/poller", Root, :poller
 
   # Poller APIs
 
