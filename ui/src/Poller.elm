@@ -1,35 +1,51 @@
 module Poller exposing (..)
 
 import Html exposing (Html, div, text, program)
+import Polls exposing (..)
+import Polls.List exposing (..)
 
 -- MODEL
 
 type alias Model =
-    String
+    { polls : List Poll
+    }
+
+initialModel : Model
+initialModel =
+    { polls = [ Poll "dummy_id" "2017-04-07T01:55:00+09:00" ]
+    }
 
 init : ( Model, Cmd Msg )
 init =
-    ( "Hello", Cmd.none )
+    ( initialModel, Cmd.none )
 
 -- MESSAGES
 
 type Msg
-    = NoOp
-
--- VIEW
-
-view : Model -> Html Msg
-view model =
-    div []
-        [ text model ]
+    = PollsMsg Polls.Msg
 
 -- UPDATE
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( model, Cmd.none )
+        PollsMsg subMsg ->
+            let
+                ( updatedPolls, cmd ) =
+                    Polls.update subMsg model.polls
+            in
+                ( { model | polls = updatedPolls}, Cmd.map PollsMsg cmd )
+
+-- VIEW
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ page model ]
+
+page : Model -> Html Msg
+page model =
+    Html.map PollsMsg (Polls.List.view model.polls)
 
 -- SUBSCRIPTIONS
 
