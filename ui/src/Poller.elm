@@ -14,14 +14,14 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { polls = [ Poll "dummy_id" (Date.fromTime 1491501715000) ]
+    { polls = []
     }
 
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( initialModel, Cmd.none )
+    ( initialModel, Cmd.map PollsMsg Polls.fetchAll )
 
 -- MESSAGES
 

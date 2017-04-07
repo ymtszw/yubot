@@ -10488,6 +10488,19 @@ var _elm_lang$http$Http$StringPart = F2(
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
+var _aYuMatsuzawa$yubot$Polls$filtersDecoder = _elm_lang$core$Json_Decode$maybe(
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'data',
+			_1: {
+				ctor: '::',
+				_0: 'filters',
+				_1: {ctor: '[]'}
+			}
+		},
+		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
 var _aYuMatsuzawa$yubot$Polls$fallbackTime = _elm_lang$core$Date$fromTime(0.0);
 var _aYuMatsuzawa$yubot$Polls$dateDecoder = A2(
 	_elm_lang$core$Json_Decode$map,
@@ -10507,15 +10520,75 @@ var _aYuMatsuzawa$yubot$Polls$update = F2(
 			return {ctor: '_Tuple2', _0: polls, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
-var _aYuMatsuzawa$yubot$Polls$Poll = F2(
-	function (a, b) {
-		return {id: a, updatedAt: b};
+var _aYuMatsuzawa$yubot$Polls$Poll = F7(
+	function (a, b, c, d, e, f, g) {
+		return {id: a, updatedAt: b, url: c, interval: d, auth: e, action: f, filters: g};
 	});
-var _aYuMatsuzawa$yubot$Polls$fetchDecoder = A3(
-	_elm_lang$core$Json_Decode$map2,
+var _aYuMatsuzawa$yubot$Polls$fetchDecoder = A8(
+	_elm_lang$core$Json_Decode$map7,
 	_aYuMatsuzawa$yubot$Polls$Poll,
 	A2(_elm_lang$core$Json_Decode$field, '_id', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'updated_at', _aYuMatsuzawa$yubot$Polls$dateDecoder));
+	A2(_elm_lang$core$Json_Decode$field, 'updated_at', _aYuMatsuzawa$yubot$Polls$dateDecoder),
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'data',
+			_1: {
+				ctor: '::',
+				_0: 'url',
+				_1: {ctor: '[]'}
+			}
+		},
+		_elm_lang$core$Json_Decode$string),
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'data',
+			_1: {
+				ctor: '::',
+				_0: 'interval',
+				_1: {ctor: '[]'}
+			}
+		},
+		_elm_lang$core$Json_Decode$string),
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'data',
+			_1: {
+				ctor: '::',
+				_0: 'auth',
+				_1: {ctor: '[]'}
+			}
+		},
+		_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$string)),
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'data',
+			_1: {
+				ctor: '::',
+				_0: 'action',
+				_1: {ctor: '[]'}
+			}
+		},
+		_elm_lang$core$Json_Decode$string),
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'data',
+			_1: {
+				ctor: '::',
+				_0: 'action',
+				_1: {ctor: '[]'}
+			}
+		},
+		_aYuMatsuzawa$yubot$Polls$filtersDecoder));
 var _aYuMatsuzawa$yubot$Polls$fetchAllDecoder = _elm_lang$core$Json_Decode$list(_aYuMatsuzawa$yubot$Polls$fetchDecoder);
 var _aYuMatsuzawa$yubot$Polls$OnFetchAll = function (a) {
 	return {ctor: 'OnFetchAll', _0: a};
@@ -11104,6 +11177,17 @@ var _rundis$elm_bootstrap$Bootstrap_Table$tbody = F2(
 			{attributes: attributes, rows: rows});
 	});
 
+var _aYuMatsuzawa$yubot$Polls_List$intervalToText = function (interval) {
+	var _p0 = _elm_lang$core$String$toInt(interval);
+	if (_p0.ctor === 'Ok') {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'every ',
+			A2(_elm_lang$core$Basics_ops['++'], interval, ' min.'));
+	} else {
+		return interval;
+	}
+};
 var _aYuMatsuzawa$yubot$Polls_List$pollRow = function (poll) {
 	return A2(
 		_rundis$elm_bootstrap$Bootstrap_Table$tr,
@@ -11125,11 +11209,34 @@ var _aYuMatsuzawa$yubot$Polls_List$pollRow = function (poll) {
 					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(poll.updatedAt)),
+						_0: _elm_lang$html$Html$text(poll.url),
 						_1: {ctor: '[]'}
 					}),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_rundis$elm_bootstrap$Bootstrap_Table$td,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								_aYuMatsuzawa$yubot$Polls_List$intervalToText(poll.interval)),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_rundis$elm_bootstrap$Bootstrap_Table$td,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									_elm_lang$core$Basics$toString(poll.updatedAt)),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
 			}
 		});
 };
@@ -11159,10 +11266,32 @@ var _aYuMatsuzawa$yubot$Polls_List$view = function (polls) {
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('Updated At'),
+								_0: _elm_lang$html$Html$text('URL'),
 								_1: {ctor: '[]'}
 							}),
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_rundis$elm_bootstrap$Bootstrap_Table$th,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Interval'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_rundis$elm_bootstrap$Bootstrap_Table$th,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Updated At'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}
 					}
 				}),
 			tbody: A2(
@@ -11176,21 +11305,18 @@ var _aYuMatsuzawa$yubot$Poller$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
 var _aYuMatsuzawa$yubot$Poller$initialModel = {
-	polls: {
-		ctor: '::',
-		_0: A2(
-			_aYuMatsuzawa$yubot$Polls$Poll,
-			'dummy_id',
-			_elm_lang$core$Date$fromTime(1491501715000)),
-		_1: {ctor: '[]'}
-	}
+	polls: {ctor: '[]'}
 };
-var _aYuMatsuzawa$yubot$Poller$init = {ctor: '_Tuple2', _0: _aYuMatsuzawa$yubot$Poller$initialModel, _1: _elm_lang$core$Platform_Cmd$none};
 var _aYuMatsuzawa$yubot$Poller$Model = function (a) {
 	return {polls: a};
 };
 var _aYuMatsuzawa$yubot$Poller$PollsMsg = function (a) {
 	return {ctor: 'PollsMsg', _0: a};
+};
+var _aYuMatsuzawa$yubot$Poller$init = {
+	ctor: '_Tuple2',
+	_0: _aYuMatsuzawa$yubot$Poller$initialModel,
+	_1: A2(_elm_lang$core$Platform_Cmd$map, _aYuMatsuzawa$yubot$Poller$PollsMsg, _aYuMatsuzawa$yubot$Polls$fetchAll)
 };
 var _aYuMatsuzawa$yubot$Poller$update = F2(
 	function (msg, model) {

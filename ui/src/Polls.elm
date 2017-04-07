@@ -2,13 +2,18 @@ module Polls exposing (..)
 
 import Http
 import Date exposing (..)
-import Json.Decode as Decode exposing (field)
+import Json.Decode as Decode exposing (field, at)
 
 -- Model
 
 type alias Poll =
     { id: String
     , updatedAt: Date
+    , url: String
+    , interval: String
+    , auth: Maybe String
+    , action: String
+    , filters: Maybe (List String)
     }
 
 -- Messages
@@ -39,9 +44,14 @@ fetchAllDecoder =
 
 fetchDecoder : Decode.Decoder Poll
 fetchDecoder =
-    Decode.map2 Poll
+    Decode.map7 Poll
         (field "_id" Decode.string)
         (field "updated_at" dateDecoder)
+        (at ["data", "url"] Decode.string)
+        (at ["data", "interval"] Decode.string)
+        (at ["data", "auth"] (Decode.maybe Decode.string))
+        (at ["data", "action"] Decode.string)
+        (at ["data", "action"] filtersDecoder)
 
 dateDecoder : Decode.Decoder Date
 dateDecoder =
@@ -50,3 +60,7 @@ dateDecoder =
 fallbackTime : Date
 fallbackTime =
     Date.fromTime 0.0
+
+filtersDecoder : Decode.Decoder (Maybe (List String))
+filtersDecoder =
+    Decode.maybe (at ["data", "filters"] (Decode.list Decode.string))
