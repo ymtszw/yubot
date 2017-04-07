@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-elm-make src/Poller.elm --output=../priv/static/poller.js

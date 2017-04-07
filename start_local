@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-if [[ -f gear_config ]]; then
-  YUBOT_CONFIG_JSON="$(cat ./gear_config)" iex -S mix
-else
-  echo "./gear_config file missing"
-  exit 1
-fi

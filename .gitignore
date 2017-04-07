@@ -1,4 +1,4 @@
-/_build
+**/_build
 /deps
 /cover
 /exdoc
@@ -13,3 +13,4 @@ erl_crash.dump
 *.s
 *.wast
 gear_config
+**/elm-stuff
