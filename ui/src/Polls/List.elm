@@ -1,29 +1,34 @@
 module Polls.List exposing (..)
 
 import Html exposing (Html, text)
-import Bootstrap.Table as Table exposing (..)
+import Bootstrap.Table as Table exposing (table, th, tr, td)
+import Bootstrap.Button as Button exposing (button)
 import Polls exposing (Poll, Msg)
 
 view : List Poll -> Html Msg
 view polls =
-    Table.table
+    table
         { options = [ Table.striped ]
         , thead = Table.simpleThead
-            [ Table.th [] [ text "ID" ]
-            , Table.th [] [ text "URL" ]
-            , Table.th [] [ text "Interval" ]
-            , Table.th [] [ text "Updated At" ]
+            [ th [] [ text "ID" ]
+            , th [] [ text "URL" ]
+            , th [] [ text "Interval" ]
+            , th [] [ text "Updated At" ]
+            , th [] [ text "Actions" ]
             ]
         , tbody = Table.tbody [] (List.map pollRow polls)
         }
 
-pollRow : Poll -> Row Msg
+pollRow : Poll -> Table.Row Msg
 pollRow poll =
-    Table.tr []
-        [ Table.td [] [ text poll.id ]
-        , Table.td [] [ text poll.url ]
-        , Table.td [] [ text (intervalToText poll.interval) ]
-        , Table.td [] [ text (toString poll.updatedAt) ]
+    tr []
+        [ td [] [ text poll.id ]
+        , td [] [ text poll.url ]
+        , td [] [ text (intervalToText poll.interval) ]
+        , td [] [ text (toString poll.updatedAt) ]
+        , td []
+            [ button [ Button.danger ] [ text "Delete" ]
+            ]
         ]
 
 intervalToText : String -> String
