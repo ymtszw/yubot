@@ -38,4 +38,5 @@ poller:
 
 .PHONY: uiwatch
 uiwatch:
+	make ui
 	fswatch -o -l 2 ui/src elm-package.json | xargs -n1 -x -I{} make ui
