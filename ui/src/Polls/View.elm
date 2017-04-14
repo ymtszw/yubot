@@ -56,7 +56,9 @@ deleteModalView deleteModal =
             |> Modal.body [] [ text "Are you sure?" ]
             |> Modal.footer []
                 [ Button.button
-                    [ Button.danger ]
+                    [ Button.danger
+                    , Button.onClick (OnDeleteModal Modal.hiddenState deleteModal.poll)
+                    ]
                     [ text "Yes, delete" ]
                 , Button.button
                     [ Button.outlinePrimary

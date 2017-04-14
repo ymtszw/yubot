@@ -12030,7 +12030,12 @@ var _aYuMatsuzawa$yubot$Polls_View$deleteModalView = function (deleteModal) {
 					{
 						ctor: '::',
 						_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(
+								A2(_aYuMatsuzawa$yubot$Polls_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, deleteModal.poll)),
+							_1: {ctor: '[]'}
+						}
 					},
 					{
 						ctor: '::',
