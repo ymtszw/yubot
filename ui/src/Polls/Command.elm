@@ -5,7 +5,7 @@ import HttpBuilder exposing (withExpect, send)
 import Date exposing (..)
 import Json.Decode as Decode exposing (field, at)
 import Polls exposing (Poll)
-import Polls.Messages exposing (Msg(OnFetchAll))
+import Polls.Messages exposing (Msg(OnFetchAll, OnDelete))
 
 fetchAll : Cmd Msg
 fetchAll =
@@ -39,3 +39,8 @@ fallbackTime =
 filtersDecoder : Decode.Decoder (Maybe (List String))
 filtersDecoder =
     Decode.maybe (at ["data", "filters"] (Decode.list Decode.string))
+
+delete : String -> Cmd Msg
+delete id =
+    HttpBuilder.delete ("/api/poll/" ++ id)
+        |> send OnDelete

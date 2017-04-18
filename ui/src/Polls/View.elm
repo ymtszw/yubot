@@ -5,7 +5,7 @@ import Bootstrap.Table as Table exposing (table, th, tr, td)
 import Bootstrap.Button as Button
 import Bootstrap.Modal as Modal
 import Polls exposing (Poll, DeleteModal)
-import Polls.Messages exposing (Msg(OnDeleteModal))
+import Polls.Messages exposing (Msg(OnDeleteModal, OnDeleteConfirmed))
 
 listView : List Poll -> Html Msg
 listView polls =
@@ -57,7 +57,7 @@ deleteModalView deleteModal =
             |> Modal.footer []
                 [ Button.button
                     [ Button.danger
-                    , Button.onClick (OnDeleteModal Modal.hiddenState deleteModal.poll)
+                    , Button.onClick (OnDeleteConfirmed deleteModal.poll.id)
                     ]
                     [ text "Yes, delete" ]
                 , Button.button

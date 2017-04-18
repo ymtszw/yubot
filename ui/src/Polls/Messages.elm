@@ -7,3 +7,5 @@ import Polls exposing (Poll)
 type Msg
     = OnFetchAll (Result Http.Error (List Poll))
     | OnDeleteModal Bootstrap.Modal.State Poll
+    | OnDeleteConfirmed String
+    | OnDelete (Result Http.Error ())

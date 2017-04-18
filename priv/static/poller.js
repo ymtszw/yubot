@@ -10735,6 +10735,12 @@ var _aYuMatsuzawa$yubot$Polls$DeleteModal = F2(
 		return {modalState: a, poll: b};
 	});
 
+var _aYuMatsuzawa$yubot$Polls_Messages$OnDelete = function (a) {
+	return {ctor: 'OnDelete', _0: a};
+};
+var _aYuMatsuzawa$yubot$Polls_Messages$OnDeleteConfirmed = function (a) {
+	return {ctor: 'OnDeleteConfirmed', _0: a};
+};
 var _aYuMatsuzawa$yubot$Polls_Messages$OnDeleteModal = F2(
 	function (a, b) {
 		return {ctor: 'OnDeleteModal', _0: a, _1: b};
@@ -10743,6 +10749,13 @@ var _aYuMatsuzawa$yubot$Polls_Messages$OnFetchAll = function (a) {
 	return {ctor: 'OnFetchAll', _0: a};
 };
 
+var _aYuMatsuzawa$yubot$Polls_Command$delete = function (id) {
+	return A2(
+		_lukewestby$elm_http_builder$HttpBuilder$send,
+		_aYuMatsuzawa$yubot$Polls_Messages$OnDelete,
+		_lukewestby$elm_http_builder$HttpBuilder$delete(
+			A2(_elm_lang$core$Basics_ops['++'], '/api/poll/', id)));
+};
 var _aYuMatsuzawa$yubot$Polls_Command$filtersDecoder = _elm_lang$core$Json_Decode$maybe(
 	A2(
 		_elm_lang$core$Json_Decode$at,
@@ -10856,28 +10869,45 @@ var _aYuMatsuzawa$yubot$Poller_Messages$PollsMsg = function (a) {
 var _aYuMatsuzawa$yubot$Polls_Update$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
-		if (_p0.ctor === 'OnFetchAll') {
-			if (_p0._0.ctor === 'Ok') {
+		switch (_p0.ctor) {
+			case 'OnFetchAll':
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{polls: _p0._0._0}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
+			case 'OnDeleteModal':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{polls: _p0._0._0}),
+						{
+							pollDeleteModal: A2(_aYuMatsuzawa$yubot$Polls$DeleteModal, _p0._0, _p0._1)
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			} else {
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			}
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						pollDeleteModal: A2(_aYuMatsuzawa$yubot$Polls$DeleteModal, _p0._0, _p0._1)
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
+			case 'OnDeleteConfirmed':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							pollDeleteModal: A2(_aYuMatsuzawa$yubot$Polls$DeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, _aYuMatsuzawa$yubot$Polls$dummyPoll)
+						}),
+					_1: _aYuMatsuzawa$yubot$Polls_Command$delete(_p0._0)
+				};
+			default:
+				if (_p0._0.ctor === 'Ok') {
+					return {ctor: '_Tuple2', _0: model, _1: _aYuMatsuzawa$yubot$Polls_Command$fetchAll};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
 		}
 	});
 
@@ -12236,7 +12266,7 @@ var _aYuMatsuzawa$yubot$Polls_View$deleteModalView = function (deleteModal) {
 						_1: {
 							ctor: '::',
 							_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(
-								A2(_aYuMatsuzawa$yubot$Polls_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, deleteModal.poll)),
+								_aYuMatsuzawa$yubot$Polls_Messages$OnDeleteConfirmed(deleteModal.poll.id)),
 							_1: {ctor: '[]'}
 						}
 					},
