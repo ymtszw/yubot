@@ -8,9 +8,10 @@ defmodule Yubot.Router do
 
   # Poller APIs
 
-  post "/api/poll"    , Poll, :create
-  get  "/api/poll/:id", Poll, :retrieve
-  get  "/api/poll"    , Poll, :retrieve_list
+  post   "/api/poll"    , Poll, :create
+  get    "/api/poll/:id", Poll, :retrieve
+  get    "/api/poll"    , Poll, :retrieve_list
+  delete "/api/poll/:id", Poll, :delete
 
   post "/api/action"    , Action, :create
   get  "/api/action/:id", Action, :retrieve
