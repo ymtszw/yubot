@@ -1,6 +1,7 @@
 module Polls.Command exposing (..)
 
 import Http
+import HttpBuilder exposing (withExpect, send)
 import Date exposing (..)
 import Json.Decode as Decode exposing (field, at)
 import Polls exposing (Poll)
@@ -8,8 +9,9 @@ import Polls.Messages exposing (Msg(OnFetchAll))
 
 fetchAll : Cmd Msg
 fetchAll =
-    Http.get "/api/poll" fetchAllDecoder
-        |> Http.send OnFetchAll
+    HttpBuilder.get "/api/poll"
+        |> withExpect (Http.expectJson fetchAllDecoder)
+        |> send OnFetchAll
 
 fetchAllDecoder : Decode.Decoder (List Poll)
 fetchAllDecoder =

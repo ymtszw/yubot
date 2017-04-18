@@ -8568,6 +8568,206 @@ var _elm_lang$http$Http$StringPart = F2(
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
+var _lukewestby$elm_http_builder$HttpBuilder$replace = F2(
+	function (old, $new) {
+		return function (_p0) {
+			return A2(
+				_elm_lang$core$String$join,
+				$new,
+				A2(_elm_lang$core$String$split, old, _p0));
+		};
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$queryEscape = function (_p1) {
+	return A3(
+		_lukewestby$elm_http_builder$HttpBuilder$replace,
+		'%20',
+		'+',
+		_elm_lang$http$Http$encodeUri(_p1));
+};
+var _lukewestby$elm_http_builder$HttpBuilder$queryPair = function (_p2) {
+	var _p3 = _p2;
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_lukewestby$elm_http_builder$HttpBuilder$queryEscape(_p3._0),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'=',
+			_lukewestby$elm_http_builder$HttpBuilder$queryEscape(_p3._1)));
+};
+var _lukewestby$elm_http_builder$HttpBuilder$joinUrlEncoded = function (args) {
+	return A2(
+		_elm_lang$core$String$join,
+		'&',
+		A2(_elm_lang$core$List$map, _lukewestby$elm_http_builder$HttpBuilder$queryPair, args));
+};
+var _lukewestby$elm_http_builder$HttpBuilder$toRequest = function (builder) {
+	var encodedParams = _lukewestby$elm_http_builder$HttpBuilder$joinUrlEncoded(builder.queryParams);
+	var fullUrl = _elm_lang$core$String$isEmpty(encodedParams) ? builder.url : A2(
+		_elm_lang$core$Basics_ops['++'],
+		builder.url,
+		A2(_elm_lang$core$Basics_ops['++'], '?', encodedParams));
+	return _elm_lang$http$Http$request(
+		{method: builder.method, url: fullUrl, headers: builder.headers, body: builder.body, expect: builder.expect, timeout: builder.timeout, withCredentials: builder.withCredentials});
+};
+var _lukewestby$elm_http_builder$HttpBuilder$toTaskPlain = function (builder) {
+	return _elm_lang$http$Http$toTask(
+		_lukewestby$elm_http_builder$HttpBuilder$toRequest(builder));
+};
+var _lukewestby$elm_http_builder$HttpBuilder$withCacheBuster = F2(
+	function (paramName, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{
+				cacheBuster: _elm_lang$core$Maybe$Just(paramName)
+			});
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$withQueryParams = F2(
+	function (queryParams, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{
+				queryParams: A2(_elm_lang$core$Basics_ops['++'], builder.queryParams, queryParams)
+			});
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$toTaskWithCacheBuster = F2(
+	function (paramName, builder) {
+		var request = function (timestamp) {
+			return _lukewestby$elm_http_builder$HttpBuilder$toTaskPlain(
+				A2(
+					_lukewestby$elm_http_builder$HttpBuilder$withQueryParams,
+					{
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: paramName,
+							_1: _elm_lang$core$Basics$toString(timestamp)
+						},
+						_1: {ctor: '[]'}
+					},
+					builder));
+		};
+		return A2(_elm_lang$core$Task$andThen, request, _elm_lang$core$Time$now);
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$toTask = function (builder) {
+	var _p4 = builder.cacheBuster;
+	if (_p4.ctor === 'Just') {
+		return A2(_lukewestby$elm_http_builder$HttpBuilder$toTaskWithCacheBuster, _p4._0, builder);
+	} else {
+		return _lukewestby$elm_http_builder$HttpBuilder$toTaskPlain(builder);
+	}
+};
+var _lukewestby$elm_http_builder$HttpBuilder$send = F2(
+	function (tagger, builder) {
+		return A2(
+			_elm_lang$core$Task$attempt,
+			tagger,
+			_lukewestby$elm_http_builder$HttpBuilder$toTask(builder));
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$withExpect = F2(
+	function (expect, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{expect: expect});
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$withCredentials = function (builder) {
+	return _elm_lang$core$Native_Utils.update(
+		builder,
+		{withCredentials: true});
+};
+var _lukewestby$elm_http_builder$HttpBuilder$withTimeout = F2(
+	function (timeout, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{
+				timeout: _elm_lang$core$Maybe$Just(timeout)
+			});
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$withBody = F2(
+	function (body, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{body: body});
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$withStringBody = F2(
+	function (contentType, value) {
+		return _lukewestby$elm_http_builder$HttpBuilder$withBody(
+			A2(_elm_lang$http$Http$stringBody, contentType, value));
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$withUrlEncodedBody = function (_p5) {
+	return A2(
+		_lukewestby$elm_http_builder$HttpBuilder$withStringBody,
+		'application/x-www-form-urlencoded',
+		_lukewestby$elm_http_builder$HttpBuilder$joinUrlEncoded(_p5));
+};
+var _lukewestby$elm_http_builder$HttpBuilder$withJsonBody = function (value) {
+	return _lukewestby$elm_http_builder$HttpBuilder$withBody(
+		_elm_lang$http$Http$jsonBody(value));
+};
+var _lukewestby$elm_http_builder$HttpBuilder$withMultipartStringBody = function (partPairs) {
+	return _lukewestby$elm_http_builder$HttpBuilder$withBody(
+		_elm_lang$http$Http$multipartBody(
+			A2(
+				_elm_lang$core$List$map,
+				_elm_lang$core$Basics$uncurry(_elm_lang$http$Http$stringPart),
+				partPairs)));
+};
+var _lukewestby$elm_http_builder$HttpBuilder$withHeaders = F2(
+	function (headerPairs, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{
+				headers: A2(
+					_elm_lang$core$Basics_ops['++'],
+					A2(
+						_elm_lang$core$List$map,
+						_elm_lang$core$Basics$uncurry(_elm_lang$http$Http$header),
+						headerPairs),
+					builder.headers)
+			});
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$withHeader = F3(
+	function (key, value, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{
+				headers: {
+					ctor: '::',
+					_0: A2(_elm_lang$http$Http$header, key, value),
+					_1: builder.headers
+				}
+			});
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl = F2(
+	function (method, url) {
+		return {
+			method: method,
+			url: url,
+			headers: {ctor: '[]'},
+			body: _elm_lang$http$Http$emptyBody,
+			expect: _elm_lang$http$Http$expectStringResponse(
+				function (_p6) {
+					return _elm_lang$core$Result$Ok(
+						{ctor: '_Tuple0'});
+				}),
+			timeout: _elm_lang$core$Maybe$Nothing,
+			withCredentials: false,
+			queryParams: {ctor: '[]'},
+			cacheBuster: _elm_lang$core$Maybe$Nothing
+		};
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$get = _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl('GET');
+var _lukewestby$elm_http_builder$HttpBuilder$post = _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl('POST');
+var _lukewestby$elm_http_builder$HttpBuilder$put = _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl('PUT');
+var _lukewestby$elm_http_builder$HttpBuilder$patch = _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl('PATCH');
+var _lukewestby$elm_http_builder$HttpBuilder$delete = _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl('DELETE');
+var _lukewestby$elm_http_builder$HttpBuilder$options = _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl('OPTIONS');
+var _lukewestby$elm_http_builder$HttpBuilder$trace = _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl('TRACE');
+var _lukewestby$elm_http_builder$HttpBuilder$head = _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl('HEAD');
+var _lukewestby$elm_http_builder$HttpBuilder$RequestBuilder = F9(
+	function (a, b, c, d, e, f, g, h, i) {
+		return {method: a, headers: b, url: c, body: d, expect: e, timeout: f, withCredentials: g, queryParams: h, cacheBuster: i};
+	});
+
 //import Result //
 
 var _elm_lang$core$Native_Date = function() {
@@ -10633,9 +10833,12 @@ var _aYuMatsuzawa$yubot$Polls_Command$fetchDecoder = A8(
 		_aYuMatsuzawa$yubot$Polls_Command$filtersDecoder));
 var _aYuMatsuzawa$yubot$Polls_Command$fetchAllDecoder = _elm_lang$core$Json_Decode$list(_aYuMatsuzawa$yubot$Polls_Command$fetchDecoder);
 var _aYuMatsuzawa$yubot$Polls_Command$fetchAll = A2(
-	_elm_lang$http$Http$send,
+	_lukewestby$elm_http_builder$HttpBuilder$send,
 	_aYuMatsuzawa$yubot$Polls_Messages$OnFetchAll,
-	A2(_elm_lang$http$Http$get, '/api/poll', _aYuMatsuzawa$yubot$Polls_Command$fetchAllDecoder));
+	A2(
+		_lukewestby$elm_http_builder$HttpBuilder$withExpect,
+		_elm_lang$http$Http$expectJson(_aYuMatsuzawa$yubot$Polls_Command$fetchAllDecoder),
+		_lukewestby$elm_http_builder$HttpBuilder$get('/api/poll')));
 
 var _aYuMatsuzawa$yubot$Poller_Model$initialModel = {
 	polls: {ctor: '[]'},
