@@ -12478,10 +12478,84 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = function (polls) {
 		});
 };
 
-var _aYuMatsuzawa$yubot$Poller_View$view = function (model) {
+var _aYuMatsuzawa$yubot$Poller_Styles$display1 = _elm_lang$html$Html_Attributes$class('display-1');
+var _aYuMatsuzawa$yubot$Poller_Styles$rounded = _elm_lang$html$Html_Attributes$class('rounded');
+var _aYuMatsuzawa$yubot$Poller_Styles$introGap = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'padding-top', _1: '30px'},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '30px'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'color', _1: 'rgb(255, 255, 255)'},
+				_1: {ctor: '[]'}
+			}
+		}
+	});
+var _aYuMatsuzawa$yubot$Poller_Styles$greyBack = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'rgb(242, 242, 238)'},
+		_1: {ctor: '[]'}
+	});
+var _aYuMatsuzawa$yubot$Poller_Styles$background = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'background-image', _1: 'url(\'static/img/polar_bear.jpg\')'},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'background-size', _1: 'cover'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'height', _1: '100vh'},
+				_1: {ctor: '[]'}
+			}
+		}
+	});
+
+var _aYuMatsuzawa$yubot$Poller_View$pollListView = function (model) {
 	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Grid$container,
-		{ctor: '[]'},
+		_rundis$elm_bootstrap$Bootstrap_Grid$col,
+		{
+			ctor: '::',
+			_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg3,
+			_1: {
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg8,
+				_1: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetMd1,
+					_1: {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$md10,
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetSm0,
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$sm12,
+								_1: {
+									ctor: '::',
+									_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$attrs(
+										{
+											ctor: '::',
+											_0: _aYuMatsuzawa$yubot$Poller_Styles$greyBack,
+											_1: {
+												ctor: '::',
+												_0: _aYuMatsuzawa$yubot$Poller_Styles$rounded,
+												_1: {ctor: '[]'}
+											}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		{
 			ctor: '::',
 			_0: _rundis$elm_bootstrap$Bootstrap_Grid$simpleRow(
@@ -12501,7 +12575,7 @@ var _aYuMatsuzawa$yubot$Poller_View$view = function (model) {
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Poller the Bear'),
+									_0: _elm_lang$html$Html$text('Polls'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}
@@ -12538,6 +12612,77 @@ var _aYuMatsuzawa$yubot$Poller_View$view = function (model) {
 						_aYuMatsuzawa$yubot$Polls_View$deleteModalView(model.pollDeleteModal)),
 					_1: {ctor: '[]'}
 				}
+			}
+		});
+};
+var _aYuMatsuzawa$yubot$Poller_View$gap = _rundis$elm_bootstrap$Bootstrap_Grid$simpleRow(
+	{
+		ctor: '::',
+		_0: A2(
+			_rundis$elm_bootstrap$Bootstrap_Grid$col,
+			{
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$md12,
+				_1: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$attrs(
+						{
+							ctor: '::',
+							_0: _aYuMatsuzawa$yubot$Poller_Styles$introGap,
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h1,
+					{
+						ctor: '::',
+						_0: _aYuMatsuzawa$yubot$Poller_Styles$display1,
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Poller the Bear'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$p,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('I am the Bear who watches over the globe.'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}),
+		_1: {ctor: '[]'}
+	});
+var _aYuMatsuzawa$yubot$Poller_View$view = function (model) {
+	return A2(
+		_rundis$elm_bootstrap$Bootstrap_Grid$containerFluid,
+		{
+			ctor: '::',
+			_0: _aYuMatsuzawa$yubot$Poller_Styles$background,
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _aYuMatsuzawa$yubot$Poller_View$gap,
+			_1: {
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Grid$simpleRow(
+					{
+						ctor: '::',
+						_0: _aYuMatsuzawa$yubot$Poller_View$pollListView(model),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
 			}
 		});
 };
