@@ -40,3 +40,7 @@ display1 =
 py3 : Attribute msg
 py3 =
     class "py-3"
+
+p3 : Attribute msg
+p3 =
+    class "p-3"

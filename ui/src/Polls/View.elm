@@ -1,7 +1,8 @@
 module Polls.View exposing (..)
 
-import Html exposing (Html, text)
+import Html exposing (Html, text, p)
 import Html.Attributes exposing (colspan)
+import Html.Utils exposing (atext)
 import Bootstrap.Table as Table exposing (table, th, tr, td, cellAttr)
 import Bootstrap.Button as Button
 import Bootstrap.Modal as Modal
@@ -66,8 +67,12 @@ deleteModalView deleteModal =
             OnDeleteModal state deleteModal.poll
     in
         Modal.config stateToMsg
-            |> Modal.h4 [] [ text ("Deleting Poll " ++ deleteModal.poll.id) ]
-            |> Modal.body [] [ text "Are you sure?" ]
+            |> Modal.h4 [] [ text "Deleting Poll" ]
+            |> Modal.body []
+                [ p [] [ text ("ID: " ++ deleteModal.poll.id) ]
+                , p [] (atext ("URL: " ++ deleteModal.poll.url))
+                , p [] [ text "Are you sure?" ]
+                ]
             |> Modal.footer []
                 [ Button.button
                     [ Button.danger
