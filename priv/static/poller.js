@@ -13037,6 +13037,38 @@ var _aYuMatsuzawa$yubot$Polls_View$pollRow = function (poll) {
 			}
 		});
 };
+var _aYuMatsuzawa$yubot$Polls_View$emptyRow = A2(
+	_rundis$elm_bootstrap$Bootstrap_Table$tr,
+	{ctor: '[]'},
+	{
+		ctor: '::',
+		_0: A2(
+			_rundis$elm_bootstrap$Bootstrap_Table$td,
+			{
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Table$cellAttr(
+					_elm_lang$html$Html_Attributes$colspan(5)),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('No Polls yet!'),
+				_1: {ctor: '[]'}
+			}),
+		_1: {ctor: '[]'}
+	});
+var _aYuMatsuzawa$yubot$Polls_View$rows = function (polls) {
+	var _p1 = polls;
+	if (_p1.ctor === '[]') {
+		return {
+			ctor: '::',
+			_0: _aYuMatsuzawa$yubot$Polls_View$emptyRow,
+			_1: {ctor: '[]'}
+		};
+	} else {
+		return A2(_elm_lang$core$List$map, _aYuMatsuzawa$yubot$Polls_View$pollRow, polls);
+	}
+};
 var _aYuMatsuzawa$yubot$Polls_View$listView = function (polls) {
 	return _rundis$elm_bootstrap$Bootstrap_Table$table(
 		{
@@ -13105,7 +13137,7 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = function (polls) {
 			tbody: A2(
 				_rundis$elm_bootstrap$Bootstrap_Table$tbody,
 				{ctor: '[]'},
-				A2(_elm_lang$core$List$map, _aYuMatsuzawa$yubot$Polls_View$pollRow, polls))
+				_aYuMatsuzawa$yubot$Polls_View$rows(polls))
 		});
 };
 

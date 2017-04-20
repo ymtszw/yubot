@@ -1,7 +1,8 @@
 module Polls.View exposing (..)
 
 import Html exposing (Html, text)
-import Bootstrap.Table as Table exposing (table, th, tr, td)
+import Html.Attributes exposing (colspan)
+import Bootstrap.Table as Table exposing (table, th, tr, td, cellAttr)
 import Bootstrap.Button as Button
 import Bootstrap.Modal as Modal
 import Polls exposing (Poll, DeleteModal)
@@ -18,8 +19,21 @@ listView polls =
             , th [] [ text "Updated At" ]
             , th [] [ text "Actions" ]
             ]
-        , tbody = Table.tbody [] (List.map pollRow polls)
+        , tbody = Table.tbody [] <| rows polls
         }
+
+rows : List Poll -> List (Table.Row Msg)
+rows polls =
+    case polls of
+        [] ->
+            [ emptyRow ]
+        nonEmpty ->
+            List.map pollRow polls
+
+emptyRow : Table.Row Msg
+emptyRow =
+    tr []
+        [ td [ cellAttr (colspan 5) ] [ text "No Polls yet!" ] ]
 
 pollRow : Poll -> Table.Row Msg
 pollRow poll =
