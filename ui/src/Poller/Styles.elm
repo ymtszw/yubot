@@ -13,7 +13,7 @@ background =
 
 greyBack : Attribute msg
 greyBack =
-    style [ ( "background-color", "rgb(242, 242, 238)" ) ]
+    style [ ( "background-color", "rgba(242, 242, 238, 0.67)" ) ]
 
 introGap : Attribute msg
 introGap =
@@ -22,6 +22,10 @@ introGap =
         , ( "padding-bottom", "30px" )
         , ( "color", "rgb(255, 255, 255)" )
         ]
+
+whiteBack : Attribute msg
+whiteBack =
+    style [ ("background-color", "rgb(255, 255, 255)" ) ]
 
 -- Bootstrap styled class wrappers
 
@@ -32,3 +36,7 @@ rounded =
 display1 : Attribute msg
 display1 =
     class "display-1"
+
+py3 : Attribute msg
+py3 =
+    class "py-3"

@@ -1,9 +1,10 @@
 module Poller exposing (..)
 
 import Html exposing (program)
+import Bootstrap.Tab
 import Polls.Command
 import Poller.Model exposing (Model, initialModel)
-import Poller.Messages exposing (Msg(PollsMsg))
+import Poller.Messages exposing (Msg(PollsMsg, TabMsg))
 import Poller.Update exposing (update)
 import Poller.View exposing (view)
 
@@ -15,7 +16,7 @@ init =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Bootstrap.Tab.subscriptions model.tabState TabMsg
 
 -- MAIN
 

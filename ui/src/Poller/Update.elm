@@ -12,3 +12,5 @@ update msg model =
                 ( updatedModel, cmd ) = Polls.Update.update subMsg model
             in
                 ( updatedModel, Cmd.map PollsMsg cmd )
+        TabMsg state ->
+            ( { model | tabState = state }, Cmd.none )
