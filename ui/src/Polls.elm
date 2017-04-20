@@ -1,7 +1,7 @@
 module Polls exposing (..)
 
 import Date exposing (Date)
-import Bootstrap.Modal
+import Bootstrap.Modal as Modal
 
 -- Model
 
@@ -17,9 +17,14 @@ type alias Poll =
 
 dummyPoll : Poll
 dummyPoll =
-    Poll "dummyId" (Date.fromTime 0) "https://example.com" "1" Nothing "dummyActionId" Nothing
+    Poll "" (Date.fromTime 0) "https://example.com" "1" Nothing "" Nothing
 
 type alias DeleteModal =
-    { modalState : Bootstrap.Modal.State
+    { modalState : Modal.State
+    , poll : Poll
+    }
+
+type alias EditModal =
+    { modalState : Modal.State
     , poll : Poll
     }

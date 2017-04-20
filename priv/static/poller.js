@@ -14363,10 +14363,7 @@ var _aYuMatsuzawa$yubot$Polls_View$deleteModalView = function (deleteModal) {
 							_elm_lang$html$Html$p,
 							{ctor: '[]'},
 							_aYuMatsuzawa$yubot$Html_Utils$atext(
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									'URL: ',
-									A2(_elm_lang$core$Basics_ops['++'], deleteModal.poll.url, ' Go!')))),
+								A2(_elm_lang$core$Basics_ops['++'], 'URL: ', deleteModal.poll.url))),
 						_1: {
 							ctor: '::',
 							_0: A2(
