@@ -1,13 +1,16 @@
 module Polls.View exposing (..)
 
 import Html exposing (Html, text, p)
-import Html.Attributes exposing (colspan)
-import Html.Utils exposing (atext)
+import Html.Attributes exposing (colspan, for, value, selected, align)
+import Html.Utils exposing (atext, mx2Button)
 import Bootstrap.Table as Table exposing (table, th, tr, td, cellAttr)
-import Bootstrap.Button as Button
+import Bootstrap.Button as Button exposing (Option)
 import Bootstrap.Modal as Modal
-import Polls exposing (Poll, DeleteModal)
-import Polls.Messages exposing (Msg(OnDeleteModal, OnDeleteConfirmed))
+import Bootstrap.Form as Form
+import Bootstrap.Form.Input as Input
+import Bootstrap.Form.Select as Select
+import Polls exposing (Poll, dummyPoll, DeleteModal, EditModal)
+import Polls.Messages exposing (Msg(..))
 
 listView : List Poll -> Html Msg
 listView polls =
@@ -27,14 +30,20 @@ rows : List Poll -> List (Table.Row Msg)
 rows polls =
     case polls of
         [] ->
-            [ emptyRow ]
+            [ createRow ]
         nonEmpty ->
-            List.map pollRow polls
+            polls |> List.map pollRow |> (::) createRow
 
-emptyRow : Table.Row Msg
-emptyRow =
+createRow : Table.Row Msg
+createRow =
     tr []
-        [ td [ cellAttr (colspan 5) ] [ text "No Polls yet!" ] ]
+        [ td ([ colspan 5, align "center" ] |> List.map cellAttr)
+            [ editPollButton dummyPoll Button.primary "Create!" ]
+        ]
+
+editPollButton : Poll -> Option Msg -> String -> Html Msg
+editPollButton poll option string =
+    mx2Button (OnEditModal Modal.visibleState poll) option string
 
 pollRow : Poll -> Table.Row Msg
 pollRow poll =
@@ -44,11 +53,8 @@ pollRow poll =
         , td [] [ text (intervalToText poll.interval) ]
         , td [] [ text (toString poll.updatedAt) ]
         , td []
-            [ Button.button
-                [ Button.danger
-                , Button.onClick (OnDeleteModal Modal.visibleState poll)
-                ]
-                [ text "Delete" ]
+            [ editPollButton poll Button.primary "Update"
+            , mx2Button (OnDeleteModal Modal.visibleState poll) Button.danger "Delete"
             ]
         ]
 
@@ -74,15 +80,65 @@ deleteModalView deleteModal =
                 , p [] [ text "Are you sure?" ]
                 ]
             |> Modal.footer []
-                [ Button.button
-                    [ Button.danger
-                    , Button.onClick (OnDeleteConfirmed deleteModal.poll.id)
-                    ]
-                    [ text "Yes, delete" ]
-                , Button.button
-                    [ Button.outlinePrimary
-                    , Button.onClick (OnDeleteModal Modal.hiddenState deleteModal.poll)
-                    ]
-                    [ text "Cancel" ]
+                [ mx2Button (OnDeleteConfirmed deleteModal.poll.id) Button.danger "Yes, delete"
+                , mx2Button (OnDeleteModal Modal.hiddenState deleteModal.poll) Button.outlineSecondary "Cancel"
                 ]
             |> Modal.view deleteModal.modalState
+
+editModalView : EditModal -> Html Msg
+editModalView editModal =
+    let
+        stateToMsg state =
+            OnEditModal state editModal.poll
+
+        titleText poll =
+            if poll == dummyPoll then
+                text "Creating Poll"
+            else
+                text "Updating Poll"
+    in
+        Modal.config stateToMsg
+            |> Modal.h4 [] [ titleText editModal.poll ]
+            |> Modal.body []
+                [ headerText editModal.poll
+                , editForm editModal.poll
+                ]
+            |> Modal.footer []
+                [ mx2Button (OnEditModal Modal.hiddenState editModal.poll) Button.primary "Submit"
+                , mx2Button (OnEditModal Modal.hiddenState editModal.poll) Button.outlineSecondary "Cancel"
+                ]
+            |> Modal.view editModal.modalState
+
+headerText : Poll -> Html Msg
+headerText poll =
+    case poll.id of
+        "" ->
+            text "New poll!"
+        id ->
+            text ("ID: " ++ id)
+
+editForm : Poll -> Html Msg
+editForm poll =
+    Form.form []
+        [ Form.group []
+            [ Form.label [ for "url" ] [ text "URL" ]
+            , Input.url [ Input.id "url", Input.defaultValue poll.url ]
+            ]
+        , Form.group []
+            [ Form.label [ for "interval" ] [ text "Interval" ]
+            , intervalSelect poll.interval
+            ]
+        ]
+
+intervalSelect : String -> Html Msg
+intervalSelect interval =
+    let
+        item v =
+            if v == interval then
+                Select.item [ value v, selected True ] [ text (intervalToText v) ]
+            else
+                Select.item [ value v ] [ text (intervalToText v) ]
+    in
+        [ "1", "3" , "5", "10", "30", "hourly", "daily" ]
+            |> List.map item
+            |> Select.select [ Select.id "interval" ]

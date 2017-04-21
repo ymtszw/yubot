@@ -9,3 +9,4 @@ type Msg
     | OnDeleteModal Bootstrap.Modal.State Poll
     | OnDeleteConfirmed String
     | OnDelete (Result Http.Error ())
+    | OnEditModal Bootstrap.Modal.State Poll

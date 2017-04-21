@@ -17,7 +17,7 @@ type alias Poll =
 
 dummyPoll : Poll
 dummyPoll =
-    Poll "" (Date.fromTime 0) "https://example.com" "1" Nothing "" Nothing
+    Poll "" (Date.fromTime 0) "https://example.com" "10" Nothing "" Nothing
 
 type alias DeleteModal =
     { modalState : Modal.State

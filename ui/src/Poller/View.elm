@@ -62,6 +62,7 @@ pollList model =
                 ]
             ]
         , Html.map PollsMsg (Polls.View.deleteModalView model.pollDeleteModal)
+        , Html.map PollsMsg (Polls.View.editModalView model.pollEditModal)
         ]
 
 dummyBlock : Html Msg

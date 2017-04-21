@@ -1,7 +1,7 @@
 module Polls.Update exposing (..)
 
 import Bootstrap.Modal exposing (hiddenState)
-import Polls exposing (DeleteModal, dummyPoll)
+import Polls exposing (DeleteModal, EditModal, dummyPoll)
 import Polls.Messages exposing (Msg(..))
 import Polls.Command exposing (fetchAll, delete)
 import Poller.Model exposing (Model)
@@ -21,3 +21,5 @@ update msg model =
             ( model, fetchAll )
         OnDelete (Err error) ->
             ( model, Cmd.none )
+        OnEditModal newState newPoll ->
+            ( { model | pollEditModal = EditModal newState newPoll }, Cmd.none )

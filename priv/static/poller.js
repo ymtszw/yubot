@@ -8282,6 +8282,1568 @@ var _elm_lang$html$Html_Attributes$classList = function (list) {
 };
 var _elm_lang$html$Html_Attributes$style = _elm_lang$virtual_dom$VirtualDom$style;
 
+var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode$field, 'keyCode', _elm_lang$core$Json_Decode$int);
+var _elm_lang$html$Html_Events$targetChecked = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'checked',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$bool);
+var _elm_lang$html$Html_Events$targetValue = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'value',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$string);
+var _elm_lang$html$Html_Events$defaultOptions = _elm_lang$virtual_dom$VirtualDom$defaultOptions;
+var _elm_lang$html$Html_Events$onWithOptions = _elm_lang$virtual_dom$VirtualDom$onWithOptions;
+var _elm_lang$html$Html_Events$on = _elm_lang$virtual_dom$VirtualDom$on;
+var _elm_lang$html$Html_Events$onFocus = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'focus',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onBlur = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'blur',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onSubmitOptions = _elm_lang$core$Native_Utils.update(
+	_elm_lang$html$Html_Events$defaultOptions,
+	{preventDefault: true});
+var _elm_lang$html$Html_Events$onSubmit = function (msg) {
+	return A3(
+		_elm_lang$html$Html_Events$onWithOptions,
+		'submit',
+		_elm_lang$html$Html_Events$onSubmitOptions,
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onCheck = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'change',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetChecked));
+};
+var _elm_lang$html$Html_Events$onInput = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'input',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetValue));
+};
+var _elm_lang$html$Html_Events$onMouseOut = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseout',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseOver = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseover',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseLeave = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseleave',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseEnter = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseenter',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseUp = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseup',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseDown = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mousedown',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onDoubleClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'dblclick',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'click',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$Options = F2(
+	function (a, b) {
+		return {stopPropagation: a, preventDefault: b};
+	});
+
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$horizontalAlignOption = function (align) {
+	var _p0 = align;
+	switch (_p0.ctor) {
+		case 'Left':
+			return 'start';
+		case 'Center':
+			return 'center';
+		case 'Right':
+			return 'end';
+		case 'Around':
+			return 'around';
+		default:
+			return 'between';
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$verticalAlignOption = function (align) {
+	var _p1 = align;
+	switch (_p1.ctor) {
+		case 'Top':
+			return 'start';
+		case 'Middle':
+			return 'center';
+		default:
+			return 'end';
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$moveCountOption = function (size) {
+	var _p2 = size;
+	switch (_p2.ctor) {
+		case 'Move0':
+			return '0';
+		case 'Move1':
+			return '1';
+		case 'Move2':
+			return '2';
+		case 'Move3':
+			return '3';
+		case 'Move4':
+			return '4';
+		case 'Move5':
+			return '5';
+		case 'Move6':
+			return '6';
+		case 'Move7':
+			return '7';
+		case 'Move8':
+			return '8';
+		case 'Move9':
+			return '9';
+		case 'Move10':
+			return '10';
+		case 'Move11':
+			return '11';
+		default:
+			return '12';
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetCountOption = function (size) {
+	var _p3 = size;
+	switch (_p3.ctor) {
+		case 'Offset0':
+			return '0';
+		case 'Offset1':
+			return '1';
+		case 'Offset2':
+			return '2';
+		case 'Offset3':
+			return '3';
+		case 'Offset4':
+			return '4';
+		case 'Offset5':
+			return '5';
+		case 'Offset6':
+			return '6';
+		case 'Offset7':
+			return '7';
+		case 'Offset8':
+			return '8';
+		case 'Offset9':
+			return '9';
+		case 'Offset10':
+			return '10';
+		default:
+			return '11';
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$columnCountOption = function (size) {
+	var _p4 = size;
+	switch (_p4.ctor) {
+		case 'Col':
+			return _elm_lang$core$Maybe$Nothing;
+		case 'Col1':
+			return _elm_lang$core$Maybe$Just('1');
+		case 'Col2':
+			return _elm_lang$core$Maybe$Just('2');
+		case 'Col3':
+			return _elm_lang$core$Maybe$Just('3');
+		case 'Col4':
+			return _elm_lang$core$Maybe$Just('4');
+		case 'Col5':
+			return _elm_lang$core$Maybe$Just('5');
+		case 'Col6':
+			return _elm_lang$core$Maybe$Just('6');
+		case 'Col7':
+			return _elm_lang$core$Maybe$Just('7');
+		case 'Col8':
+			return _elm_lang$core$Maybe$Just('8');
+		case 'Col9':
+			return _elm_lang$core$Maybe$Just('9');
+		case 'Col10':
+			return _elm_lang$core$Maybe$Just('10');
+		case 'Col11':
+			return _elm_lang$core$Maybe$Just('11');
+		case 'Col12':
+			return _elm_lang$core$Maybe$Just('12');
+		default:
+			return _elm_lang$core$Maybe$Just('auto');
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption = function (size) {
+	var _p5 = size;
+	switch (_p5.ctor) {
+		case 'XS':
+			return _elm_lang$core$Maybe$Nothing;
+		case 'SM':
+			return _elm_lang$core$Maybe$Just('sm');
+		case 'MD':
+			return _elm_lang$core$Maybe$Just('md');
+		case 'LG':
+			return _elm_lang$core$Maybe$Just('lg');
+		default:
+			return _elm_lang$core$Maybe$Just('xl');
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString = function (screenSize) {
+	var _p6 = _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(screenSize);
+	if (_p6.ctor === 'Just') {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'-',
+			A2(_elm_lang$core$Basics_ops['++'], _p6._0, '-'));
+	} else {
+		return '-';
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignClass = function (_p7) {
+	var _p8 = _p7;
+	return _elm_lang$html$Html_Attributes$class(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'justify-content-',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(
+					_elm_lang$core$Maybe$withDefault,
+					'',
+					A2(
+						_elm_lang$core$Maybe$map,
+						function (v) {
+							return A2(_elm_lang$core$Basics_ops['++'], v, '-');
+						},
+						_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(_p8.screenSize))),
+				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$horizontalAlignOption(_p8.align))));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignsToAttributes = function (aligns) {
+	var align = function (a) {
+		return A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignClass, a);
+	};
+	return A2(
+		_elm_lang$core$List$filterMap,
+		_elm_lang$core$Basics$identity,
+		A2(_elm_lang$core$List$map, align, aligns));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignClass = F2(
+	function (prefix, _p9) {
+		var _p10 = _p9;
+		return _elm_lang$html$Html_Attributes$class(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				prefix,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					A2(
+						_elm_lang$core$Maybe$withDefault,
+						'',
+						A2(
+							_elm_lang$core$Maybe$map,
+							function (v) {
+								return A2(_elm_lang$core$Basics_ops['++'], v, '-');
+							},
+							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(_p10.screenSize))),
+					_rundis$elm_bootstrap$Bootstrap_Grid_Internal$verticalAlignOption(_p10.align))));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignsToAttributes = F2(
+	function (prefix, aligns) {
+		var align = function (a) {
+			return A2(
+				_elm_lang$core$Maybe$map,
+				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignClass(prefix),
+				a);
+		};
+		return A2(
+			_elm_lang$core$List$filterMap,
+			_elm_lang$core$Basics$identity,
+			A2(_elm_lang$core$List$map, align, aligns));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$pushesToAttributes = function (pushes) {
+	var push = function (m) {
+		var _p11 = m;
+		if (_p11.ctor === 'Just') {
+			return _elm_lang$core$Maybe$Just(
+				_elm_lang$html$Html_Attributes$class(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'push',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString(_p11._0.screenSize),
+							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$moveCountOption(_p11._0.moveCount)))));
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	};
+	return A2(
+		_elm_lang$core$List$filterMap,
+		_elm_lang$core$Basics$identity,
+		A2(_elm_lang$core$List$map, push, pushes));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$pullsToAttributes = function (pulls) {
+	var pull = function (m) {
+		var _p12 = m;
+		if (_p12.ctor === 'Just') {
+			return _elm_lang$core$Maybe$Just(
+				_elm_lang$html$Html_Attributes$class(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'pull',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString(_p12._0.screenSize),
+							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$moveCountOption(_p12._0.moveCount)))));
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	};
+	return A2(
+		_elm_lang$core$List$filterMap,
+		_elm_lang$core$Basics$identity,
+		A2(_elm_lang$core$List$map, pull, pulls));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetClass = function (_p13) {
+	var _p14 = _p13;
+	return _elm_lang$html$Html_Attributes$class(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'offset',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString(_p14.screenSize),
+				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetCountOption(_p14.offsetCount))));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetsToAttributes = function (offsets) {
+	var offset = function (m) {
+		return A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetClass, m);
+	};
+	return A2(
+		_elm_lang$core$List$filterMap,
+		_elm_lang$core$Basics$identity,
+		A2(_elm_lang$core$List$map, offset, offsets));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthClass = function (_p15) {
+	var _p16 = _p15;
+	return _elm_lang$html$Html_Attributes$class(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'col',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(
+					_elm_lang$core$Maybe$withDefault,
+					'',
+					A2(
+						_elm_lang$core$Maybe$map,
+						function (v) {
+							return A2(_elm_lang$core$Basics_ops['++'], '-', v);
+						},
+						_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(_p16.screenSize))),
+				A2(
+					_elm_lang$core$Maybe$withDefault,
+					'',
+					A2(
+						_elm_lang$core$Maybe$map,
+						function (v) {
+							return A2(_elm_lang$core$Basics_ops['++'], '-', v);
+						},
+						_rundis$elm_bootstrap$Bootstrap_Grid_Internal$columnCountOption(_p16.columnCount))))));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthsToAttributes = function (widths) {
+	var width = function (w) {
+		return A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthClass, w);
+	};
+	return A2(
+		_elm_lang$core$List$filterMap,
+		_elm_lang$core$Basics$identity,
+		A2(_elm_lang$core$List$map, width, widths));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultRowOptions = {
+	attributes: {ctor: '[]'},
+	vAlignXs: _elm_lang$core$Maybe$Nothing,
+	vAlignSm: _elm_lang$core$Maybe$Nothing,
+	vAlignMd: _elm_lang$core$Maybe$Nothing,
+	vAlignLg: _elm_lang$core$Maybe$Nothing,
+	vAlignXl: _elm_lang$core$Maybe$Nothing,
+	hAlignXs: _elm_lang$core$Maybe$Nothing,
+	hAlignSm: _elm_lang$core$Maybe$Nothing,
+	hAlignMd: _elm_lang$core$Maybe$Nothing,
+	hAlignLg: _elm_lang$core$Maybe$Nothing,
+	hAlignXl: _elm_lang$core$Maybe$Nothing
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultColOptions = {
+	attributes: {ctor: '[]'},
+	widthXs: _elm_lang$core$Maybe$Nothing,
+	widthSm: _elm_lang$core$Maybe$Nothing,
+	widthMd: _elm_lang$core$Maybe$Nothing,
+	widthLg: _elm_lang$core$Maybe$Nothing,
+	widthXl: _elm_lang$core$Maybe$Nothing,
+	offsetXs: _elm_lang$core$Maybe$Nothing,
+	offsetSm: _elm_lang$core$Maybe$Nothing,
+	offsetMd: _elm_lang$core$Maybe$Nothing,
+	offsetLg: _elm_lang$core$Maybe$Nothing,
+	offsetXl: _elm_lang$core$Maybe$Nothing,
+	pullXs: _elm_lang$core$Maybe$Nothing,
+	pullSm: _elm_lang$core$Maybe$Nothing,
+	pullMd: _elm_lang$core$Maybe$Nothing,
+	pullLg: _elm_lang$core$Maybe$Nothing,
+	pullXl: _elm_lang$core$Maybe$Nothing,
+	pushXs: _elm_lang$core$Maybe$Nothing,
+	pushSm: _elm_lang$core$Maybe$Nothing,
+	pushMd: _elm_lang$core$Maybe$Nothing,
+	pushLg: _elm_lang$core$Maybe$Nothing,
+	pushXl: _elm_lang$core$Maybe$Nothing,
+	alignXs: _elm_lang$core$Maybe$Nothing,
+	alignSm: _elm_lang$core$Maybe$Nothing,
+	alignMd: _elm_lang$core$Maybe$Nothing,
+	alignLg: _elm_lang$core$Maybe$Nothing,
+	alignXl: _elm_lang$core$Maybe$Nothing
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowHAlign = F2(
+	function (align, options) {
+		var _p17 = align.screenSize;
+		switch (_p17.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						hAlignXs: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						hAlignSm: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						hAlignMd: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						hAlignLg: _elm_lang$core$Maybe$Just(align)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						hAlignXl: _elm_lang$core$Maybe$Just(align)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowVAlign = F2(
+	function (align, options) {
+		var _p18 = align.screenSize;
+		switch (_p18.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						vAlignXs: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						vAlignSm: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						vAlignMd: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						vAlignLg: _elm_lang$core$Maybe$Just(align)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						vAlignXl: _elm_lang$core$Maybe$Just(align)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowOption = F2(
+	function (modifier, options) {
+		var _p19 = modifier;
+		switch (_p19.ctor) {
+			case 'RowAttrs':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p19._0)
+					});
+			case 'RowVAlign':
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowVAlign, _p19._0, options);
+			default:
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowHAlign, _p19._0, options);
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColAlign = F2(
+	function (align, options) {
+		var _p20 = align.screenSize;
+		switch (_p20.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						alignXs: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						alignSm: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						alignMd: _elm_lang$core$Maybe$Just(align)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						alignLg: _elm_lang$core$Maybe$Just(align)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						alignXl: _elm_lang$core$Maybe$Just(align)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPush = F2(
+	function (push, options) {
+		var _p21 = push.screenSize;
+		switch (_p21.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pushXs: _elm_lang$core$Maybe$Just(push)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pushSm: _elm_lang$core$Maybe$Just(push)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pushMd: _elm_lang$core$Maybe$Just(push)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pushLg: _elm_lang$core$Maybe$Just(push)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pushXl: _elm_lang$core$Maybe$Just(push)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPull = F2(
+	function (pull, options) {
+		var _p22 = pull.screenSize;
+		switch (_p22.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pullXs: _elm_lang$core$Maybe$Just(pull)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pullSm: _elm_lang$core$Maybe$Just(pull)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pullMd: _elm_lang$core$Maybe$Just(pull)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pullLg: _elm_lang$core$Maybe$Just(pull)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						pullXl: _elm_lang$core$Maybe$Just(pull)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOffset = F2(
+	function (offset, options) {
+		var _p23 = offset.screenSize;
+		switch (_p23.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						offsetXs: _elm_lang$core$Maybe$Just(offset)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						offsetSm: _elm_lang$core$Maybe$Just(offset)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						offsetMd: _elm_lang$core$Maybe$Just(offset)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						offsetLg: _elm_lang$core$Maybe$Just(offset)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						offsetXl: _elm_lang$core$Maybe$Just(offset)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColWidth = F2(
+	function (width, options) {
+		var _p24 = width.screenSize;
+		switch (_p24.ctor) {
+			case 'XS':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						widthXs: _elm_lang$core$Maybe$Just(width)
+					});
+			case 'SM':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						widthSm: _elm_lang$core$Maybe$Just(width)
+					});
+			case 'MD':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						widthMd: _elm_lang$core$Maybe$Just(width)
+					});
+			case 'LG':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						widthLg: _elm_lang$core$Maybe$Just(width)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						widthXl: _elm_lang$core$Maybe$Just(width)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOption = F2(
+	function (modifier, options) {
+		var _p25 = modifier;
+		switch (_p25.ctor) {
+			case 'ColAttrs':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p25._0)
+					});
+			case 'ColWidth':
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColWidth, _p25._0, options);
+			case 'ColOffset':
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOffset, _p25._0, options);
+			case 'ColPull':
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPull, _p25._0, options);
+			case 'ColPush':
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPush, _p25._0, options);
+			default:
+				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColAlign, _p25._0, options);
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowAttributes = function (modifiers) {
+	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowOption, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultRowOptions, modifiers);
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('row'),
+			_1: {ctor: '[]'}
+		},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(
+				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignsToAttributes,
+				'align-items-',
+				{
+					ctor: '::',
+					_0: options.vAlignXs,
+					_1: {
+						ctor: '::',
+						_0: options.vAlignSm,
+						_1: {
+							ctor: '::',
+							_0: options.vAlignMd,
+							_1: {
+								ctor: '::',
+								_0: options.vAlignLg,
+								_1: {
+									ctor: '::',
+									_0: options.vAlignXl,
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignsToAttributes(
+					{
+						ctor: '::',
+						_0: options.hAlignXs,
+						_1: {
+							ctor: '::',
+							_0: options.hAlignSm,
+							_1: {
+								ctor: '::',
+								_0: options.hAlignMd,
+								_1: {
+									ctor: '::',
+									_0: options.hAlignLg,
+									_1: {
+										ctor: '::',
+										_0: options.hAlignXl,
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}),
+				options.attributes)));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Width = F2(
+	function (a, b) {
+		return {screenSize: a, columnCount: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset = F2(
+	function (a, b) {
+		return {screenSize: a, offsetCount: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Pull = F2(
+	function (a, b) {
+		return {screenSize: a, moveCount: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Push = F2(
+	function (a, b) {
+		return {screenSize: a, moveCount: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$VAlign = F2(
+	function (a, b) {
+		return {screenSize: a, align: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$HAlign = F2(
+	function (a, b) {
+		return {screenSize: a, align: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOptions = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return function (l) {
+												return function (m) {
+													return function (n) {
+														return function (o) {
+															return function (p) {
+																return function (q) {
+																	return function (r) {
+																		return function (s) {
+																			return function (t) {
+																				return function (u) {
+																					return function (v) {
+																						return function (w) {
+																							return function (x) {
+																								return function (y) {
+																									return function (z) {
+																										return {attributes: a, widthXs: b, widthSm: c, widthMd: d, widthLg: e, widthXl: f, offsetXs: g, offsetSm: h, offsetMd: i, offsetLg: j, offsetXl: k, pullXs: l, pullSm: m, pullMd: n, pullLg: o, pullXl: p, pushXs: q, pushSm: r, pushMd: s, pushLg: t, pushXl: u, alignXs: v, alignSm: w, alignMd: x, alignLg: y, alignXl: z};
+																									};
+																								};
+																							};
+																						};
+																					};
+																				};
+																			};
+																		};
+																	};
+																};
+															};
+														};
+													};
+												};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowOptions = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return {attributes: a, vAlignXs: b, vAlignSm: c, vAlignMd: d, vAlignLg: e, vAlignXl: f, hAlignXs: g, hAlignSm: h, hAlignMd: i, hAlignLg: j, hAlignXl: k};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAttrs = function (a) {
+	return {ctor: 'ColAttrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAlign = function (a) {
+	return {ctor: 'ColAlign', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign = F2(
+	function (size, align) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAlign(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$VAlign, size, align));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPush = function (a) {
+	return {ctor: 'ColPush', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$push = F2(
+	function (size, count) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPush(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Push, size, count));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPull = function (a) {
+	return {ctor: 'ColPull', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull = F2(
+	function (size, count) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPull(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Pull, size, count));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOffset = function (a) {
+	return {ctor: 'ColOffset', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset = F2(
+	function (size, count) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOffset(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset, size, count));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColWidth = function (a) {
+	return {ctor: 'ColWidth', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$width = F2(
+	function (size, count) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColWidth(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Width, size, count));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowAttrs = function (a) {
+	return {ctor: 'RowAttrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowHAlign = function (a) {
+	return {ctor: 'RowHAlign', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign = F2(
+	function (size, align) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowHAlign(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$HAlign, size, align));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowVAlign = function (a) {
+	return {ctor: 'RowVAlign', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign = F2(
+	function (size, align) {
+		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowVAlign(
+			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$VAlign, size, align));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL = {ctor: 'XL'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG = {ctor: 'LG'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD = {ctor: 'MD'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM = {ctor: 'SM'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS = {ctor: 'XS'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto = {ctor: 'ColAuto'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12 = {ctor: 'Col12'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11 = {ctor: 'Col11'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10 = {ctor: 'Col10'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9 = {ctor: 'Col9'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8 = {ctor: 'Col8'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7 = {ctor: 'Col7'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6 = {ctor: 'Col6'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5 = {ctor: 'Col5'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4 = {ctor: 'Col4'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3 = {ctor: 'Col3'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2 = {ctor: 'Col2'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1 = {ctor: 'Col1'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col = {ctor: 'Col'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colAttributes = function (modifiers) {
+	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOption, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultColOptions, modifiers);
+	var shouldAddDefaultXs = _elm_lang$core$Native_Utils.eq(
+		_elm_lang$core$List$length(
+			A2(
+				_elm_lang$core$List$filterMap,
+				_elm_lang$core$Basics$identity,
+				{
+					ctor: '::',
+					_0: options.widthXs,
+					_1: {
+						ctor: '::',
+						_0: options.widthSm,
+						_1: {
+							ctor: '::',
+							_0: options.widthMd,
+							_1: {
+								ctor: '::',
+								_0: options.widthLg,
+								_1: {
+									ctor: '::',
+									_0: options.widthXl,
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				})),
+		0);
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthsToAttributes(
+			{
+				ctor: '::',
+				_0: shouldAddDefaultXs ? _elm_lang$core$Maybe$Just(
+					A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col)) : options.widthXs,
+				_1: {
+					ctor: '::',
+					_0: options.widthSm,
+					_1: {
+						ctor: '::',
+						_0: options.widthMd,
+						_1: {
+							ctor: '::',
+							_0: options.widthLg,
+							_1: {
+								ctor: '::',
+								_0: options.widthXl,
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetsToAttributes(
+				{
+					ctor: '::',
+					_0: options.offsetXs,
+					_1: {
+						ctor: '::',
+						_0: options.offsetSm,
+						_1: {
+							ctor: '::',
+							_0: options.offsetMd,
+							_1: {
+								ctor: '::',
+								_0: options.offsetLg,
+								_1: {
+									ctor: '::',
+									_0: options.offsetXl,
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pullsToAttributes(
+					{
+						ctor: '::',
+						_0: options.pullXs,
+						_1: {
+							ctor: '::',
+							_0: options.pullSm,
+							_1: {
+								ctor: '::',
+								_0: options.pullMd,
+								_1: {
+									ctor: '::',
+									_0: options.pullLg,
+									_1: {
+										ctor: '::',
+										_0: options.pullXl,
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pushesToAttributes(
+						{
+							ctor: '::',
+							_0: options.pushXs,
+							_1: {
+								ctor: '::',
+								_0: options.pushSm,
+								_1: {
+									ctor: '::',
+									_0: options.pushMd,
+									_1: {
+										ctor: '::',
+										_0: options.pushLg,
+										_1: {
+											ctor: '::',
+											_0: options.pushXl,
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}
+						}),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						A2(
+							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignsToAttributes,
+							'align-self-',
+							{
+								ctor: '::',
+								_0: options.alignXs,
+								_1: {
+									ctor: '::',
+									_0: options.alignSm,
+									_1: {
+										ctor: '::',
+										_0: options.alignMd,
+										_1: {
+											ctor: '::',
+											_0: options.alignLg,
+											_1: {
+												ctor: '::',
+												_0: options.alignXl,
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}),
+						options.attributes)))));
+};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11 = {ctor: 'Offset11'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10 = {ctor: 'Offset10'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9 = {ctor: 'Offset9'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8 = {ctor: 'Offset8'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7 = {ctor: 'Offset7'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6 = {ctor: 'Offset6'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5 = {ctor: 'Offset5'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4 = {ctor: 'Offset4'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3 = {ctor: 'Offset3'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2 = {ctor: 'Offset2'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1 = {ctor: 'Offset1'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0 = {ctor: 'Offset0'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12 = {ctor: 'Move12'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11 = {ctor: 'Move11'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10 = {ctor: 'Move10'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9 = {ctor: 'Move9'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8 = {ctor: 'Move8'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7 = {ctor: 'Move7'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6 = {ctor: 'Move6'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5 = {ctor: 'Move5'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4 = {ctor: 'Move4'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3 = {ctor: 'Move3'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2 = {ctor: 'Move2'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1 = {ctor: 'Move1'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0 = {ctor: 'Move0'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom = {ctor: 'Bottom'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle = {ctor: 'Middle'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top = {ctor: 'Top'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between = {ctor: 'Between'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around = {ctor: 'Around'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right = {ctor: 'Right'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center = {ctor: 'Center'};
+var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left = {ctor: 'Left'};
+
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$roleClass = function (role) {
+	var _p0 = role;
+	switch (_p0.ctor) {
+		case 'Primary':
+			return 'primary';
+		case 'Secondary':
+			return 'secondary';
+		case 'Success':
+			return 'success';
+		case 'Info':
+			return 'info';
+		case 'Warning':
+			return 'warning';
+		case 'Danger':
+			return 'danger';
+		default:
+			return 'link';
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$applyModifier = F2(
+	function (modifier, options) {
+		var _p1 = modifier;
+		switch (_p1.ctor) {
+			case 'Size':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						size: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'Coloring':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						coloring: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'Block':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{block: true});
+			case 'Disabled':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{disabled: _p1._0});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p1._0)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$defaultOptions = {
+	coloring: _elm_lang$core$Maybe$Nothing,
+	block: false,
+	disabled: false,
+	size: _elm_lang$core$Maybe$Nothing,
+	attributes: {ctor: '[]'}
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes = function (modifiers) {
+	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Internal_Button$applyModifier, _rundis$elm_bootstrap$Bootstrap_Internal_Button$defaultOptions, modifiers);
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$classList(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'btn', _1: true},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'btn-block', _1: options.block},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'disabled', _1: options.disabled},
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$disabled(options.disabled),
+				_1: {ctor: '[]'}
+			}
+		},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			function () {
+				var _p2 = A2(_elm_lang$core$Maybe$andThen, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption, options.size);
+				if (_p2.ctor === 'Just') {
+					return {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class(
+							A2(_elm_lang$core$Basics_ops['++'], 'btn-', _p2._0)),
+						_1: {ctor: '[]'}
+					};
+				} else {
+					return {ctor: '[]'};
+				}
+			}(),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				function () {
+					var _p3 = options.coloring;
+					if (_p3.ctor === 'Just') {
+						if (_p3._0.ctor === 'Roled') {
+							return {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class(
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										'btn-',
+										_rundis$elm_bootstrap$Bootstrap_Internal_Button$roleClass(_p3._0._0))),
+								_1: {ctor: '[]'}
+							};
+						} else {
+							return {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class(
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										'btn-outline-',
+										_rundis$elm_bootstrap$Bootstrap_Internal_Button$roleClass(_p3._0._0))),
+								_1: {ctor: '[]'}
+							};
+						}
+					} else {
+						return {ctor: '[]'};
+					}
+				}(),
+				options.attributes)));
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Options = F5(
+	function (a, b, c, d, e) {
+		return {coloring: a, block: b, disabled: c, size: d, attributes: e};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Attrs = function (a) {
+	return {ctor: 'Attrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Disabled = function (a) {
+	return {ctor: 'Disabled', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Block = {ctor: 'Block'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring = function (a) {
+	return {ctor: 'Coloring', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Size = function (a) {
+	return {ctor: 'Size', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined = function (a) {
+	return {ctor: 'Outlined', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled = function (a) {
+	return {ctor: 'Roled', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Link = {ctor: 'Link'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Danger = {ctor: 'Danger'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Warning = {ctor: 'Warning'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Info = {ctor: 'Info'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Success = {ctor: 'Success'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Secondary = {ctor: 'Secondary'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Primary = {ctor: 'Primary'};
+
+var _rundis$elm_bootstrap$Bootstrap_Button$disabled = function (disabled) {
+	return _rundis$elm_bootstrap$Bootstrap_Internal_Button$Disabled(disabled);
+};
+var _rundis$elm_bootstrap$Bootstrap_Button$block = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Block;
+var _rundis$elm_bootstrap$Bootstrap_Button$outlineDanger = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
+	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Danger));
+var _rundis$elm_bootstrap$Bootstrap_Button$outlineWarning = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
+	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Warning));
+var _rundis$elm_bootstrap$Bootstrap_Button$outlineInfo = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
+	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Info));
+var _rundis$elm_bootstrap$Bootstrap_Button$outlineSuccess = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
+	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Success));
+var _rundis$elm_bootstrap$Bootstrap_Button$outlineSecondary = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
+	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Secondary));
+var _rundis$elm_bootstrap$Bootstrap_Button$outlinePrimary = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
+	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Primary));
+var _rundis$elm_bootstrap$Bootstrap_Button$roleLink = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
+	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Link));
+var _rundis$elm_bootstrap$Bootstrap_Button$danger = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
+	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Danger));
+var _rundis$elm_bootstrap$Bootstrap_Button$warning = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
+	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Warning));
+var _rundis$elm_bootstrap$Bootstrap_Button$info = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
+	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Info));
+var _rundis$elm_bootstrap$Bootstrap_Button$success = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
+	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Success));
+var _rundis$elm_bootstrap$Bootstrap_Button$secondary = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
+	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Secondary));
+var _rundis$elm_bootstrap$Bootstrap_Button$primary = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
+	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Primary));
+var _rundis$elm_bootstrap$Bootstrap_Button$large = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG);
+var _rundis$elm_bootstrap$Bootstrap_Button$small = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM);
+var _rundis$elm_bootstrap$Bootstrap_Button$attrs = function (attrs) {
+	return _rundis$elm_bootstrap$Bootstrap_Internal_Button$Attrs(attrs);
+};
+var _rundis$elm_bootstrap$Bootstrap_Button$onClick = function (message) {
+	var defaultOptions = _elm_lang$html$Html_Events$defaultOptions;
+	return _rundis$elm_bootstrap$Bootstrap_Button$attrs(
+		{
+			ctor: '::',
+			_0: A3(
+				_elm_lang$html$Html_Events$onWithOptions,
+				'click',
+				_elm_lang$core$Native_Utils.update(
+					defaultOptions,
+					{preventDefault: true}),
+				_elm_lang$core$Json_Decode$succeed(message)),
+			_1: {ctor: '[]'}
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Button$checkboxButton = F3(
+	function (checked, options, children) {
+		return A2(
+			_elm_lang$html$Html$label,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$classList(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'active', _1: checked},
+						_1: {ctor: '[]'}
+					}),
+				_1: _rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes(options)
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$input,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$type_('checkbox'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$checked(checked),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$autocomplete(false),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: children
+			});
+	});
+var _rundis$elm_bootstrap$Bootstrap_Button$radioButton = F3(
+	function (checked, options, children) {
+		var hideRadio = A2(_elm_lang$html$Html_Attributes$attribute, 'data-toggle', 'button');
+		return A2(
+			_elm_lang$html$Html$label,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$classList(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'active', _1: checked},
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: hideRadio,
+					_1: _rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes(options)
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$input,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$type_('radio'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$checked(checked),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$autocomplete(false),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: children
+			});
+	});
+var _rundis$elm_bootstrap$Bootstrap_Button$linkButton = F2(
+	function (options, children) {
+		return A2(
+			_elm_lang$html$Html$a,
+			{
+				ctor: '::',
+				_0: A2(_elm_lang$html$Html_Attributes$attribute, 'role', 'button'),
+				_1: _rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes(options)
+			},
+			children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Button$button = F2(
+	function (options, children) {
+		return A2(
+			_elm_lang$html$Html$button,
+			_rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes(options),
+			children);
+	});
+
+var _aYuMatsuzawa$yubot$Poller_Styles$mx2 = _elm_lang$html$Html_Attributes$class('mx-2');
+var _aYuMatsuzawa$yubot$Poller_Styles$p3 = _elm_lang$html$Html_Attributes$class('p-3');
+var _aYuMatsuzawa$yubot$Poller_Styles$py3 = _elm_lang$html$Html_Attributes$class('py-3');
+var _aYuMatsuzawa$yubot$Poller_Styles$display1 = _elm_lang$html$Html_Attributes$class('display-1');
+var _aYuMatsuzawa$yubot$Poller_Styles$rounded = _elm_lang$html$Html_Attributes$class('rounded');
+var _aYuMatsuzawa$yubot$Poller_Styles$whiteBack = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'rgb(255, 255, 255)'},
+		_1: {ctor: '[]'}
+	});
+var _aYuMatsuzawa$yubot$Poller_Styles$introGap = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'padding-top', _1: '30px'},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '30px'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'color', _1: 'rgb(255, 255, 255)'},
+				_1: {ctor: '[]'}
+			}
+		}
+	});
+var _aYuMatsuzawa$yubot$Poller_Styles$greyBack = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'rgba(242, 242, 238, 0.67)'},
+		_1: {ctor: '[]'}
+	});
+var _aYuMatsuzawa$yubot$Poller_Styles$background = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'background-image', _1: 'url(\'static/img/polar_bear.jpg\')'},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'background-size', _1: 'cover'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'height', _1: '100vh'},
+				_1: {ctor: '[]'}
+			}
+		}
+	});
+
+var _aYuMatsuzawa$yubot$Html_Utils$mx2Button = F3(
+	function (clickMsg, option, string) {
+		return A2(
+			_rundis$elm_bootstrap$Bootstrap_Button$button,
+			{
+				ctor: '::',
+				_0: option,
+				_1: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Button$attrs(
+						{
+							ctor: '::',
+							_0: _aYuMatsuzawa$yubot$Poller_Styles$mx2,
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(clickMsg),
+						_1: {ctor: '[]'}
+					}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(string),
+				_1: {ctor: '[]'}
+			});
+	});
 var _aYuMatsuzawa$yubot$Html_Utils$leftToHtml = F3(
 	function (string, matchedUrl, index) {
 		var _p0 = index;
@@ -8344,7 +9906,7 @@ var _aYuMatsuzawa$yubot$Html_Utils$findFirstUrl = function (string) {
 	return A3(
 		_elm_lang$core$Regex$find,
 		_elm_lang$core$Regex$AtMost(1),
-		_elm_lang$core$Regex$regex('http(s)?://[a-zA-Z0-9_./#?&%=-]+'),
+		_elm_lang$core$Regex$regex('http(s)?://[a-zA-Z0-9_./#?&%=~+-]+'),
 		string);
 };
 var _aYuMatsuzawa$yubot$Html_Utils$atextImpl = F2(
@@ -8965,121 +10527,6 @@ var _elm_lang$animation_frame$AnimationFrame$subMap = F2(
 		}
 	});
 _elm_lang$core$Native_Platform.effectManagers['AnimationFrame'] = {pkg: 'elm-lang/animation-frame', init: _elm_lang$animation_frame$AnimationFrame$init, onEffects: _elm_lang$animation_frame$AnimationFrame$onEffects, onSelfMsg: _elm_lang$animation_frame$AnimationFrame$onSelfMsg, tag: 'sub', subMap: _elm_lang$animation_frame$AnimationFrame$subMap};
-
-var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode$field, 'keyCode', _elm_lang$core$Json_Decode$int);
-var _elm_lang$html$Html_Events$targetChecked = A2(
-	_elm_lang$core$Json_Decode$at,
-	{
-		ctor: '::',
-		_0: 'target',
-		_1: {
-			ctor: '::',
-			_0: 'checked',
-			_1: {ctor: '[]'}
-		}
-	},
-	_elm_lang$core$Json_Decode$bool);
-var _elm_lang$html$Html_Events$targetValue = A2(
-	_elm_lang$core$Json_Decode$at,
-	{
-		ctor: '::',
-		_0: 'target',
-		_1: {
-			ctor: '::',
-			_0: 'value',
-			_1: {ctor: '[]'}
-		}
-	},
-	_elm_lang$core$Json_Decode$string);
-var _elm_lang$html$Html_Events$defaultOptions = _elm_lang$virtual_dom$VirtualDom$defaultOptions;
-var _elm_lang$html$Html_Events$onWithOptions = _elm_lang$virtual_dom$VirtualDom$onWithOptions;
-var _elm_lang$html$Html_Events$on = _elm_lang$virtual_dom$VirtualDom$on;
-var _elm_lang$html$Html_Events$onFocus = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'focus',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onBlur = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'blur',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onSubmitOptions = _elm_lang$core$Native_Utils.update(
-	_elm_lang$html$Html_Events$defaultOptions,
-	{preventDefault: true});
-var _elm_lang$html$Html_Events$onSubmit = function (msg) {
-	return A3(
-		_elm_lang$html$Html_Events$onWithOptions,
-		'submit',
-		_elm_lang$html$Html_Events$onSubmitOptions,
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onCheck = function (tagger) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'change',
-		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetChecked));
-};
-var _elm_lang$html$Html_Events$onInput = function (tagger) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'input',
-		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetValue));
-};
-var _elm_lang$html$Html_Events$onMouseOut = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseout',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseOver = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseover',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseLeave = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseleave',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseEnter = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseenter',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseUp = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseup',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseDown = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mousedown',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onDoubleClick = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'dblclick',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onClick = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'click',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$Options = F2(
-	function (a, b) {
-		return {stopPropagation: a, preventDefault: b};
-	});
 
 var _rundis$elm_bootstrap$Bootstrap_Tab$applyModifier = F2(
 	function (option, options) {
@@ -10156,1073 +11603,6 @@ var _elm_lang$core$Date$Mar = {ctor: 'Mar'};
 var _elm_lang$core$Date$Feb = {ctor: 'Feb'};
 var _elm_lang$core$Date$Jan = {ctor: 'Jan'};
 
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$horizontalAlignOption = function (align) {
-	var _p0 = align;
-	switch (_p0.ctor) {
-		case 'Left':
-			return 'start';
-		case 'Center':
-			return 'center';
-		case 'Right':
-			return 'end';
-		case 'Around':
-			return 'around';
-		default:
-			return 'between';
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$verticalAlignOption = function (align) {
-	var _p1 = align;
-	switch (_p1.ctor) {
-		case 'Top':
-			return 'start';
-		case 'Middle':
-			return 'center';
-		default:
-			return 'end';
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$moveCountOption = function (size) {
-	var _p2 = size;
-	switch (_p2.ctor) {
-		case 'Move0':
-			return '0';
-		case 'Move1':
-			return '1';
-		case 'Move2':
-			return '2';
-		case 'Move3':
-			return '3';
-		case 'Move4':
-			return '4';
-		case 'Move5':
-			return '5';
-		case 'Move6':
-			return '6';
-		case 'Move7':
-			return '7';
-		case 'Move8':
-			return '8';
-		case 'Move9':
-			return '9';
-		case 'Move10':
-			return '10';
-		case 'Move11':
-			return '11';
-		default:
-			return '12';
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetCountOption = function (size) {
-	var _p3 = size;
-	switch (_p3.ctor) {
-		case 'Offset0':
-			return '0';
-		case 'Offset1':
-			return '1';
-		case 'Offset2':
-			return '2';
-		case 'Offset3':
-			return '3';
-		case 'Offset4':
-			return '4';
-		case 'Offset5':
-			return '5';
-		case 'Offset6':
-			return '6';
-		case 'Offset7':
-			return '7';
-		case 'Offset8':
-			return '8';
-		case 'Offset9':
-			return '9';
-		case 'Offset10':
-			return '10';
-		default:
-			return '11';
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$columnCountOption = function (size) {
-	var _p4 = size;
-	switch (_p4.ctor) {
-		case 'Col':
-			return _elm_lang$core$Maybe$Nothing;
-		case 'Col1':
-			return _elm_lang$core$Maybe$Just('1');
-		case 'Col2':
-			return _elm_lang$core$Maybe$Just('2');
-		case 'Col3':
-			return _elm_lang$core$Maybe$Just('3');
-		case 'Col4':
-			return _elm_lang$core$Maybe$Just('4');
-		case 'Col5':
-			return _elm_lang$core$Maybe$Just('5');
-		case 'Col6':
-			return _elm_lang$core$Maybe$Just('6');
-		case 'Col7':
-			return _elm_lang$core$Maybe$Just('7');
-		case 'Col8':
-			return _elm_lang$core$Maybe$Just('8');
-		case 'Col9':
-			return _elm_lang$core$Maybe$Just('9');
-		case 'Col10':
-			return _elm_lang$core$Maybe$Just('10');
-		case 'Col11':
-			return _elm_lang$core$Maybe$Just('11');
-		case 'Col12':
-			return _elm_lang$core$Maybe$Just('12');
-		default:
-			return _elm_lang$core$Maybe$Just('auto');
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption = function (size) {
-	var _p5 = size;
-	switch (_p5.ctor) {
-		case 'XS':
-			return _elm_lang$core$Maybe$Nothing;
-		case 'SM':
-			return _elm_lang$core$Maybe$Just('sm');
-		case 'MD':
-			return _elm_lang$core$Maybe$Just('md');
-		case 'LG':
-			return _elm_lang$core$Maybe$Just('lg');
-		default:
-			return _elm_lang$core$Maybe$Just('xl');
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString = function (screenSize) {
-	var _p6 = _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(screenSize);
-	if (_p6.ctor === 'Just') {
-		return A2(
-			_elm_lang$core$Basics_ops['++'],
-			'-',
-			A2(_elm_lang$core$Basics_ops['++'], _p6._0, '-'));
-	} else {
-		return '-';
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignClass = function (_p7) {
-	var _p8 = _p7;
-	return _elm_lang$html$Html_Attributes$class(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'justify-content-',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				A2(
-					_elm_lang$core$Maybe$withDefault,
-					'',
-					A2(
-						_elm_lang$core$Maybe$map,
-						function (v) {
-							return A2(_elm_lang$core$Basics_ops['++'], v, '-');
-						},
-						_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(_p8.screenSize))),
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$horizontalAlignOption(_p8.align))));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignsToAttributes = function (aligns) {
-	var align = function (a) {
-		return A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignClass, a);
-	};
-	return A2(
-		_elm_lang$core$List$filterMap,
-		_elm_lang$core$Basics$identity,
-		A2(_elm_lang$core$List$map, align, aligns));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignClass = F2(
-	function (prefix, _p9) {
-		var _p10 = _p9;
-		return _elm_lang$html$Html_Attributes$class(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				prefix,
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					A2(
-						_elm_lang$core$Maybe$withDefault,
-						'',
-						A2(
-							_elm_lang$core$Maybe$map,
-							function (v) {
-								return A2(_elm_lang$core$Basics_ops['++'], v, '-');
-							},
-							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(_p10.screenSize))),
-					_rundis$elm_bootstrap$Bootstrap_Grid_Internal$verticalAlignOption(_p10.align))));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignsToAttributes = F2(
-	function (prefix, aligns) {
-		var align = function (a) {
-			return A2(
-				_elm_lang$core$Maybe$map,
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignClass(prefix),
-				a);
-		};
-		return A2(
-			_elm_lang$core$List$filterMap,
-			_elm_lang$core$Basics$identity,
-			A2(_elm_lang$core$List$map, align, aligns));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$pushesToAttributes = function (pushes) {
-	var push = function (m) {
-		var _p11 = m;
-		if (_p11.ctor === 'Just') {
-			return _elm_lang$core$Maybe$Just(
-				_elm_lang$html$Html_Attributes$class(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'push',
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString(_p11._0.screenSize),
-							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$moveCountOption(_p11._0.moveCount)))));
-		} else {
-			return _elm_lang$core$Maybe$Nothing;
-		}
-	};
-	return A2(
-		_elm_lang$core$List$filterMap,
-		_elm_lang$core$Basics$identity,
-		A2(_elm_lang$core$List$map, push, pushes));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$pullsToAttributes = function (pulls) {
-	var pull = function (m) {
-		var _p12 = m;
-		if (_p12.ctor === 'Just') {
-			return _elm_lang$core$Maybe$Just(
-				_elm_lang$html$Html_Attributes$class(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'pull',
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString(_p12._0.screenSize),
-							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$moveCountOption(_p12._0.moveCount)))));
-		} else {
-			return _elm_lang$core$Maybe$Nothing;
-		}
-	};
-	return A2(
-		_elm_lang$core$List$filterMap,
-		_elm_lang$core$Basics$identity,
-		A2(_elm_lang$core$List$map, pull, pulls));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetClass = function (_p13) {
-	var _p14 = _p13;
-	return _elm_lang$html$Html_Attributes$class(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'offset',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeToPartialString(_p14.screenSize),
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetCountOption(_p14.offsetCount))));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetsToAttributes = function (offsets) {
-	var offset = function (m) {
-		return A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetClass, m);
-	};
-	return A2(
-		_elm_lang$core$List$filterMap,
-		_elm_lang$core$Basics$identity,
-		A2(_elm_lang$core$List$map, offset, offsets));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthClass = function (_p15) {
-	var _p16 = _p15;
-	return _elm_lang$html$Html_Attributes$class(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'col',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				A2(
-					_elm_lang$core$Maybe$withDefault,
-					'',
-					A2(
-						_elm_lang$core$Maybe$map,
-						function (v) {
-							return A2(_elm_lang$core$Basics_ops['++'], '-', v);
-						},
-						_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(_p16.screenSize))),
-				A2(
-					_elm_lang$core$Maybe$withDefault,
-					'',
-					A2(
-						_elm_lang$core$Maybe$map,
-						function (v) {
-							return A2(_elm_lang$core$Basics_ops['++'], '-', v);
-						},
-						_rundis$elm_bootstrap$Bootstrap_Grid_Internal$columnCountOption(_p16.columnCount))))));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthsToAttributes = function (widths) {
-	var width = function (w) {
-		return A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthClass, w);
-	};
-	return A2(
-		_elm_lang$core$List$filterMap,
-		_elm_lang$core$Basics$identity,
-		A2(_elm_lang$core$List$map, width, widths));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultRowOptions = {
-	attributes: {ctor: '[]'},
-	vAlignXs: _elm_lang$core$Maybe$Nothing,
-	vAlignSm: _elm_lang$core$Maybe$Nothing,
-	vAlignMd: _elm_lang$core$Maybe$Nothing,
-	vAlignLg: _elm_lang$core$Maybe$Nothing,
-	vAlignXl: _elm_lang$core$Maybe$Nothing,
-	hAlignXs: _elm_lang$core$Maybe$Nothing,
-	hAlignSm: _elm_lang$core$Maybe$Nothing,
-	hAlignMd: _elm_lang$core$Maybe$Nothing,
-	hAlignLg: _elm_lang$core$Maybe$Nothing,
-	hAlignXl: _elm_lang$core$Maybe$Nothing
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultColOptions = {
-	attributes: {ctor: '[]'},
-	widthXs: _elm_lang$core$Maybe$Nothing,
-	widthSm: _elm_lang$core$Maybe$Nothing,
-	widthMd: _elm_lang$core$Maybe$Nothing,
-	widthLg: _elm_lang$core$Maybe$Nothing,
-	widthXl: _elm_lang$core$Maybe$Nothing,
-	offsetXs: _elm_lang$core$Maybe$Nothing,
-	offsetSm: _elm_lang$core$Maybe$Nothing,
-	offsetMd: _elm_lang$core$Maybe$Nothing,
-	offsetLg: _elm_lang$core$Maybe$Nothing,
-	offsetXl: _elm_lang$core$Maybe$Nothing,
-	pullXs: _elm_lang$core$Maybe$Nothing,
-	pullSm: _elm_lang$core$Maybe$Nothing,
-	pullMd: _elm_lang$core$Maybe$Nothing,
-	pullLg: _elm_lang$core$Maybe$Nothing,
-	pullXl: _elm_lang$core$Maybe$Nothing,
-	pushXs: _elm_lang$core$Maybe$Nothing,
-	pushSm: _elm_lang$core$Maybe$Nothing,
-	pushMd: _elm_lang$core$Maybe$Nothing,
-	pushLg: _elm_lang$core$Maybe$Nothing,
-	pushXl: _elm_lang$core$Maybe$Nothing,
-	alignXs: _elm_lang$core$Maybe$Nothing,
-	alignSm: _elm_lang$core$Maybe$Nothing,
-	alignMd: _elm_lang$core$Maybe$Nothing,
-	alignLg: _elm_lang$core$Maybe$Nothing,
-	alignXl: _elm_lang$core$Maybe$Nothing
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowHAlign = F2(
-	function (align, options) {
-		var _p17 = align.screenSize;
-		switch (_p17.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						hAlignXs: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						hAlignSm: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						hAlignMd: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						hAlignLg: _elm_lang$core$Maybe$Just(align)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						hAlignXl: _elm_lang$core$Maybe$Just(align)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowVAlign = F2(
-	function (align, options) {
-		var _p18 = align.screenSize;
-		switch (_p18.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						vAlignXs: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						vAlignSm: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						vAlignMd: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						vAlignLg: _elm_lang$core$Maybe$Just(align)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						vAlignXl: _elm_lang$core$Maybe$Just(align)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowOption = F2(
-	function (modifier, options) {
-		var _p19 = modifier;
-		switch (_p19.ctor) {
-			case 'RowAttrs':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p19._0)
-					});
-			case 'RowVAlign':
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowVAlign, _p19._0, options);
-			default:
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowHAlign, _p19._0, options);
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColAlign = F2(
-	function (align, options) {
-		var _p20 = align.screenSize;
-		switch (_p20.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						alignXs: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						alignSm: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						alignMd: _elm_lang$core$Maybe$Just(align)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						alignLg: _elm_lang$core$Maybe$Just(align)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						alignXl: _elm_lang$core$Maybe$Just(align)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPush = F2(
-	function (push, options) {
-		var _p21 = push.screenSize;
-		switch (_p21.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pushXs: _elm_lang$core$Maybe$Just(push)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pushSm: _elm_lang$core$Maybe$Just(push)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pushMd: _elm_lang$core$Maybe$Just(push)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pushLg: _elm_lang$core$Maybe$Just(push)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pushXl: _elm_lang$core$Maybe$Just(push)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPull = F2(
-	function (pull, options) {
-		var _p22 = pull.screenSize;
-		switch (_p22.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pullXs: _elm_lang$core$Maybe$Just(pull)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pullSm: _elm_lang$core$Maybe$Just(pull)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pullMd: _elm_lang$core$Maybe$Just(pull)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pullLg: _elm_lang$core$Maybe$Just(pull)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						pullXl: _elm_lang$core$Maybe$Just(pull)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOffset = F2(
-	function (offset, options) {
-		var _p23 = offset.screenSize;
-		switch (_p23.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						offsetXs: _elm_lang$core$Maybe$Just(offset)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						offsetSm: _elm_lang$core$Maybe$Just(offset)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						offsetMd: _elm_lang$core$Maybe$Just(offset)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						offsetLg: _elm_lang$core$Maybe$Just(offset)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						offsetXl: _elm_lang$core$Maybe$Just(offset)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColWidth = F2(
-	function (width, options) {
-		var _p24 = width.screenSize;
-		switch (_p24.ctor) {
-			case 'XS':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						widthXs: _elm_lang$core$Maybe$Just(width)
-					});
-			case 'SM':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						widthSm: _elm_lang$core$Maybe$Just(width)
-					});
-			case 'MD':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						widthMd: _elm_lang$core$Maybe$Just(width)
-					});
-			case 'LG':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						widthLg: _elm_lang$core$Maybe$Just(width)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						widthXl: _elm_lang$core$Maybe$Just(width)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOption = F2(
-	function (modifier, options) {
-		var _p25 = modifier;
-		switch (_p25.ctor) {
-			case 'ColAttrs':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p25._0)
-					});
-			case 'ColWidth':
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColWidth, _p25._0, options);
-			case 'ColOffset':
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOffset, _p25._0, options);
-			case 'ColPull':
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPull, _p25._0, options);
-			case 'ColPush':
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColPush, _p25._0, options);
-			default:
-				return A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColAlign, _p25._0, options);
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowAttributes = function (modifiers) {
-	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyRowOption, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultRowOptions, modifiers);
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('row'),
-			_1: {ctor: '[]'}
-		},
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			A2(
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignsToAttributes,
-				'align-items-',
-				{
-					ctor: '::',
-					_0: options.vAlignXs,
-					_1: {
-						ctor: '::',
-						_0: options.vAlignSm,
-						_1: {
-							ctor: '::',
-							_0: options.vAlignMd,
-							_1: {
-								ctor: '::',
-								_0: options.vAlignLg,
-								_1: {
-									ctor: '::',
-									_0: options.vAlignXl,
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				}),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$hAlignsToAttributes(
-					{
-						ctor: '::',
-						_0: options.hAlignXs,
-						_1: {
-							ctor: '::',
-							_0: options.hAlignSm,
-							_1: {
-								ctor: '::',
-								_0: options.hAlignMd,
-								_1: {
-									ctor: '::',
-									_0: options.hAlignLg,
-									_1: {
-										ctor: '::',
-										_0: options.hAlignXl,
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					}),
-				options.attributes)));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Width = F2(
-	function (a, b) {
-		return {screenSize: a, columnCount: b};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset = F2(
-	function (a, b) {
-		return {screenSize: a, offsetCount: b};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Pull = F2(
-	function (a, b) {
-		return {screenSize: a, moveCount: b};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Push = F2(
-	function (a, b) {
-		return {screenSize: a, moveCount: b};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$VAlign = F2(
-	function (a, b) {
-		return {screenSize: a, align: b};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$HAlign = F2(
-	function (a, b) {
-		return {screenSize: a, align: b};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOptions = function (a) {
-	return function (b) {
-		return function (c) {
-			return function (d) {
-				return function (e) {
-					return function (f) {
-						return function (g) {
-							return function (h) {
-								return function (i) {
-									return function (j) {
-										return function (k) {
-											return function (l) {
-												return function (m) {
-													return function (n) {
-														return function (o) {
-															return function (p) {
-																return function (q) {
-																	return function (r) {
-																		return function (s) {
-																			return function (t) {
-																				return function (u) {
-																					return function (v) {
-																						return function (w) {
-																							return function (x) {
-																								return function (y) {
-																									return function (z) {
-																										return {attributes: a, widthXs: b, widthSm: c, widthMd: d, widthLg: e, widthXl: f, offsetXs: g, offsetSm: h, offsetMd: i, offsetLg: j, offsetXl: k, pullXs: l, pullSm: m, pullMd: n, pullLg: o, pullXl: p, pushXs: q, pushSm: r, pushMd: s, pushLg: t, pushXl: u, alignXs: v, alignSm: w, alignMd: x, alignLg: y, alignXl: z};
-																									};
-																								};
-																							};
-																						};
-																					};
-																				};
-																			};
-																		};
-																	};
-																};
-															};
-														};
-													};
-												};
-											};
-										};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowOptions = function (a) {
-	return function (b) {
-		return function (c) {
-			return function (d) {
-				return function (e) {
-					return function (f) {
-						return function (g) {
-							return function (h) {
-								return function (i) {
-									return function (j) {
-										return function (k) {
-											return {attributes: a, vAlignXs: b, vAlignSm: c, vAlignMd: d, vAlignLg: e, vAlignXl: f, hAlignXs: g, hAlignSm: h, hAlignMd: i, hAlignLg: j, hAlignXl: k};
-										};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAttrs = function (a) {
-	return {ctor: 'ColAttrs', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAlign = function (a) {
-	return {ctor: 'ColAlign', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colVAlign = F2(
-	function (size, align) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAlign(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$VAlign, size, align));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPush = function (a) {
-	return {ctor: 'ColPush', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$push = F2(
-	function (size, count) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPush(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Push, size, count));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPull = function (a) {
-	return {ctor: 'ColPull', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$pull = F2(
-	function (size, count) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColPull(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Pull, size, count));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOffset = function (a) {
-	return {ctor: 'ColOffset', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$offset = F2(
-	function (size, count) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColOffset(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset, size, count));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColWidth = function (a) {
-	return {ctor: 'ColWidth', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$width = F2(
-	function (size, count) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColWidth(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Width, size, count));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowAttrs = function (a) {
-	return {ctor: 'RowAttrs', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowHAlign = function (a) {
-	return {ctor: 'RowHAlign', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowHAlign = F2(
-	function (size, align) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowHAlign(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$HAlign, size, align));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowVAlign = function (a) {
-	return {ctor: 'RowVAlign', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowVAlign = F2(
-	function (size, align) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid_Internal$RowVAlign(
-			A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$VAlign, size, align));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL = {ctor: 'XL'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG = {ctor: 'LG'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD = {ctor: 'MD'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM = {ctor: 'SM'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS = {ctor: 'XS'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$ColAuto = {ctor: 'ColAuto'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col12 = {ctor: 'Col12'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col11 = {ctor: 'Col11'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col10 = {ctor: 'Col10'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col9 = {ctor: 'Col9'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col8 = {ctor: 'Col8'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col7 = {ctor: 'Col7'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col6 = {ctor: 'Col6'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col5 = {ctor: 'Col5'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col4 = {ctor: 'Col4'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col3 = {ctor: 'Col3'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col2 = {ctor: 'Col2'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col1 = {ctor: 'Col1'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col = {ctor: 'Col'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$colAttributes = function (modifiers) {
-	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$applyColOption, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$defaultColOptions, modifiers);
-	var shouldAddDefaultXs = _elm_lang$core$Native_Utils.eq(
-		_elm_lang$core$List$length(
-			A2(
-				_elm_lang$core$List$filterMap,
-				_elm_lang$core$Basics$identity,
-				{
-					ctor: '::',
-					_0: options.widthXs,
-					_1: {
-						ctor: '::',
-						_0: options.widthSm,
-						_1: {
-							ctor: '::',
-							_0: options.widthMd,
-							_1: {
-								ctor: '::',
-								_0: options.widthLg,
-								_1: {
-									ctor: '::',
-									_0: options.widthXl,
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				})),
-		0);
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colWidthsToAttributes(
-			{
-				ctor: '::',
-				_0: shouldAddDefaultXs ? _elm_lang$core$Maybe$Just(
-					A2(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$Width, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Col)) : options.widthXs,
-				_1: {
-					ctor: '::',
-					_0: options.widthSm,
-					_1: {
-						ctor: '::',
-						_0: options.widthMd,
-						_1: {
-							ctor: '::',
-							_0: options.widthLg,
-							_1: {
-								ctor: '::',
-								_0: options.widthXl,
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			}),
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			_rundis$elm_bootstrap$Bootstrap_Grid_Internal$offsetsToAttributes(
-				{
-					ctor: '::',
-					_0: options.offsetXs,
-					_1: {
-						ctor: '::',
-						_0: options.offsetSm,
-						_1: {
-							ctor: '::',
-							_0: options.offsetMd,
-							_1: {
-								ctor: '::',
-								_0: options.offsetLg,
-								_1: {
-									ctor: '::',
-									_0: options.offsetXl,
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				}),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pullsToAttributes(
-					{
-						ctor: '::',
-						_0: options.pullXs,
-						_1: {
-							ctor: '::',
-							_0: options.pullSm,
-							_1: {
-								ctor: '::',
-								_0: options.pullMd,
-								_1: {
-									ctor: '::',
-									_0: options.pullLg,
-									_1: {
-										ctor: '::',
-										_0: options.pullXl,
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					}),
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					_rundis$elm_bootstrap$Bootstrap_Grid_Internal$pushesToAttributes(
-						{
-							ctor: '::',
-							_0: options.pushXs,
-							_1: {
-								ctor: '::',
-								_0: options.pushSm,
-								_1: {
-									ctor: '::',
-									_0: options.pushMd,
-									_1: {
-										ctor: '::',
-										_0: options.pushLg,
-										_1: {
-											ctor: '::',
-											_0: options.pushXl,
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}
-						}),
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						A2(
-							_rundis$elm_bootstrap$Bootstrap_Grid_Internal$vAlignsToAttributes,
-							'align-self-',
-							{
-								ctor: '::',
-								_0: options.alignXs,
-								_1: {
-									ctor: '::',
-									_0: options.alignSm,
-									_1: {
-										ctor: '::',
-										_0: options.alignMd,
-										_1: {
-											ctor: '::',
-											_0: options.alignLg,
-											_1: {
-												ctor: '::',
-												_0: options.alignXl,
-												_1: {ctor: '[]'}
-											}
-										}
-									}
-								}
-							}),
-						options.attributes)))));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset11 = {ctor: 'Offset11'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset10 = {ctor: 'Offset10'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset9 = {ctor: 'Offset9'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset8 = {ctor: 'Offset8'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset7 = {ctor: 'Offset7'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset6 = {ctor: 'Offset6'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset5 = {ctor: 'Offset5'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset4 = {ctor: 'Offset4'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset3 = {ctor: 'Offset3'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset2 = {ctor: 'Offset2'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset1 = {ctor: 'Offset1'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Offset0 = {ctor: 'Offset0'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move12 = {ctor: 'Move12'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move11 = {ctor: 'Move11'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move10 = {ctor: 'Move10'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move9 = {ctor: 'Move9'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move8 = {ctor: 'Move8'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move7 = {ctor: 'Move7'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move6 = {ctor: 'Move6'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move5 = {ctor: 'Move5'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move4 = {ctor: 'Move4'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move3 = {ctor: 'Move3'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move2 = {ctor: 'Move2'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move1 = {ctor: 'Move1'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Move0 = {ctor: 'Move0'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Bottom = {ctor: 'Bottom'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Middle = {ctor: 'Middle'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Top = {ctor: 'Top'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Between = {ctor: 'Between'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Around = {ctor: 'Around'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Right = {ctor: 'Right'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Center = {ctor: 'Center'};
-var _rundis$elm_bootstrap$Bootstrap_Grid_Internal$Left = {ctor: 'Left'};
-
 var _rundis$elm_bootstrap$Bootstrap_Modal$ifElse = F3(
 	function (pred, $true, $false) {
 		return pred ? $true : $false;
@@ -11583,7 +11963,7 @@ var _aYuMatsuzawa$yubot$Polls$dummyPoll = A7(
 	'',
 	_elm_lang$core$Date$fromTime(0),
 	'https://example.com',
-	'1',
+	'10',
 	_elm_lang$core$Maybe$Nothing,
 	'',
 	_elm_lang$core$Maybe$Nothing);
@@ -11596,6 +11976,10 @@ var _aYuMatsuzawa$yubot$Polls$EditModal = F2(
 		return {modalState: a, poll: b};
 	});
 
+var _aYuMatsuzawa$yubot$Polls_Messages$OnEditModal = F2(
+	function (a, b) {
+		return {ctor: 'OnEditModal', _0: a, _1: b};
+	});
 var _aYuMatsuzawa$yubot$Polls_Messages$OnDelete = function (a) {
 	return {ctor: 'OnDelete', _0: a};
 };
@@ -11768,12 +12152,22 @@ var _aYuMatsuzawa$yubot$Polls_Update$update = F2(
 						}),
 					_1: _aYuMatsuzawa$yubot$Polls_Command$delete(_p0._0)
 				};
-			default:
+			case 'OnDelete':
 				if (_p0._0.ctor === 'Ok') {
 					return {ctor: '_Tuple2', _0: model, _1: _aYuMatsuzawa$yubot$Polls_Command$fetchAll};
 				} else {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							pollEditModal: A2(_aYuMatsuzawa$yubot$Polls$EditModal, _p0._0, _p0._1)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 
@@ -13986,26 +14380,283 @@ var _rundis$elm_bootstrap$Bootstrap_Table$tbody = F2(
 			{attributes: attributes, rows: rows});
 	});
 
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$roleClass = function (role) {
-	var _p0 = role;
+var _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationToString = function (validation) {
+	var _p0 = validation;
 	switch (_p0.ctor) {
-		case 'Primary':
-			return 'primary';
-		case 'Secondary':
-			return 'secondary';
 		case 'Success':
 			return 'success';
-		case 'Info':
-			return 'info';
 		case 'Warning':
 			return 'warning';
-		case 'Danger':
-			return 'danger';
 		default:
-			return 'link';
+			return 'danger';
 	}
 };
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$applyModifier = F2(
+var _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationWrapperAttribute = function (validation) {
+	return _elm_lang$html$Html_Attributes$class(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'has-',
+			_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationToString(validation)));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Danger = {ctor: 'Danger'};
+var _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Warning = {ctor: 'Warning'};
+var _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Success = {ctor: 'Success'};
+
+var _rundis$elm_bootstrap$Bootstrap_Form$renderCol = function (_p0) {
+	var _p1 = _p0;
+	return A2(
+		_p1._0.elemFn,
+		_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colAttributes(_p1._0.options),
+		_p1._0.children);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$rowValidation = function (validation) {
+	return _rundis$elm_bootstrap$Bootstrap_Grid_Row$attrs(
+		{
+			ctor: '::',
+			_0: _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationWrapperAttribute(validation),
+			_1: {ctor: '[]'}
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$rowDanger = _rundis$elm_bootstrap$Bootstrap_Form$rowValidation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Danger);
+var _rundis$elm_bootstrap$Bootstrap_Form$rowWarning = _rundis$elm_bootstrap$Bootstrap_Form$rowValidation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Warning);
+var _rundis$elm_bootstrap$Bootstrap_Form$rowSuccess = _rundis$elm_bootstrap$Bootstrap_Form$rowValidation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Success);
+var _rundis$elm_bootstrap$Bootstrap_Form$row = F2(
+	function (options, cols) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('form-group'),
+				_1: _rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowAttributes(options)
+			},
+			A2(_elm_lang$core$List$map, _rundis$elm_bootstrap$Bootstrap_Form$renderCol, cols));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$applyModifier = F2(
+	function (modifier, options) {
+		var _p2 = modifier;
+		if (_p2.ctor === 'Validation') {
+			return _elm_lang$core$Native_Utils.update(
+				options,
+				{
+					validation: _elm_lang$core$Maybe$Just(_p2._0)
+				});
+		} else {
+			return _elm_lang$core$Native_Utils.update(
+				options,
+				{
+					attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p2._0)
+				});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$defaultOptions = {
+	validation: _elm_lang$core$Maybe$Nothing,
+	attributes: {ctor: '[]'}
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$toAttributes = function (modifiers) {
+	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Form$applyModifier, _rundis$elm_bootstrap$Bootstrap_Form$defaultOptions, modifiers);
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('form-group'),
+			_1: {ctor: '[]'}
+		},
+		function () {
+			var _p3 = options.validation;
+			if (_p3.ctor === 'Just') {
+				return {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationWrapperAttribute(_p3._0),
+					_1: {ctor: '[]'}
+				};
+			} else {
+				return A2(
+					_elm_lang$core$Basics_ops['++'],
+					{ctor: '[]'},
+					options.attributes);
+			}
+		}());
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$validationText = F2(
+	function (attributes, children) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('form-control-feedback'),
+				_1: attributes
+			},
+			children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$helpInline = F2(
+	function (attributes, children) {
+		return A2(
+			_elm_lang$html$Html$small,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('text-muted'),
+				_1: attributes
+			},
+			children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$help = F2(
+	function (attributes, children) {
+		return A2(
+			_elm_lang$html$Html$small,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('form-text text-muted'),
+				_1: attributes
+			},
+			children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$label = F2(
+	function (attributes, children) {
+		return A2(
+			_elm_lang$html$Html$label,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('form-control-label'),
+				_1: attributes
+			},
+			children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$group = F2(
+	function (options, children) {
+		return A2(
+			_elm_lang$html$Html$div,
+			_rundis$elm_bootstrap$Bootstrap_Form$toAttributes(options),
+			children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$form = F2(
+	function (attributes, children) {
+		return A2(_elm_lang$html$Html$form, attributes, children);
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$formInline = function (attributes) {
+	return _rundis$elm_bootstrap$Bootstrap_Form$form(
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('form-inline'),
+			_1: attributes
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$Options = F2(
+	function (a, b) {
+		return {validation: a, attributes: b};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$Col = function (a) {
+	return {ctor: 'Col', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$col = F2(
+	function (options, children) {
+		return _rundis$elm_bootstrap$Bootstrap_Form$Col(
+			{elemFn: _elm_lang$html$Html$div, options: options, children: children});
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$colLabel = F2(
+	function (options, children) {
+		return _rundis$elm_bootstrap$Bootstrap_Form$Col(
+			{
+				elemFn: _elm_lang$html$Html$label,
+				options: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$attrs(
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('col-form-label'),
+							_1: {ctor: '[]'}
+						}),
+					_1: options
+				},
+				children: children
+			});
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form$colLabelSm = function (options) {
+	return _rundis$elm_bootstrap$Bootstrap_Form$colLabel(
+		{
+			ctor: '::',
+			_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$attrs(
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('col-form-label-sm'),
+					_1: {ctor: '[]'}
+				}),
+			_1: options
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$colLabelLg = function (options) {
+	return _rundis$elm_bootstrap$Bootstrap_Form$colLabel(
+		{
+			ctor: '::',
+			_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$attrs(
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('col-form-label-lg'),
+					_1: {ctor: '[]'}
+				}),
+			_1: options
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$Attrs = function (a) {
+	return {ctor: 'Attrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$Validation = function (a) {
+	return {ctor: 'Validation', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form$groupSuccess = _rundis$elm_bootstrap$Bootstrap_Form$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Success);
+var _rundis$elm_bootstrap$Bootstrap_Form$groupWarning = _rundis$elm_bootstrap$Bootstrap_Form$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Warning);
+var _rundis$elm_bootstrap$Bootstrap_Form$groupDanger = _rundis$elm_bootstrap$Bootstrap_Form$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Danger);
+
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$validationAttribute = function (validation) {
+	return _elm_lang$html$Html_Attributes$class(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'form-control-',
+			_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationToString(validation)));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$typeAttribute = function (inputType) {
+	return _elm_lang$html$Html_Attributes$type_(
+		function () {
+			var _p0 = inputType;
+			switch (_p0.ctor) {
+				case 'Text':
+					return 'text';
+				case 'Password':
+					return 'password';
+				case 'DatetimeLocal':
+					return 'datetime-local';
+				case 'Date':
+					return 'date';
+				case 'Month':
+					return 'month';
+				case 'Time':
+					return 'time';
+				case 'Week':
+					return 'week';
+				case 'Number':
+					return 'number';
+				case 'Email':
+					return 'email';
+				case 'Url':
+					return 'url';
+				case 'Search':
+					return 'search';
+				case 'Tel':
+					return 'tel';
+				default:
+					return 'color';
+			}
+		}());
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$sizeAttribute = function (size) {
+	return A2(
+		_elm_lang$core$Maybe$map,
+		function (s) {
+			return _elm_lang$html$Html_Attributes$class(
+				A2(_elm_lang$core$Basics_ops['++'], 'form-control-', s));
+		},
+		_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(size));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$applyModifier = F2(
 	function (modifier, options) {
 		var _p1 = modifier;
 		switch (_p1.ctor) {
@@ -14015,20 +14666,50 @@ var _rundis$elm_bootstrap$Bootstrap_Internal_Button$applyModifier = F2(
 					{
 						size: _elm_lang$core$Maybe$Just(_p1._0)
 					});
-			case 'Coloring':
+			case 'Id':
 				return _elm_lang$core$Native_Utils.update(
 					options,
 					{
-						coloring: _elm_lang$core$Maybe$Just(_p1._0)
+						id: _elm_lang$core$Maybe$Just(_p1._0)
 					});
-			case 'Block':
+			case 'Type':
 				return _elm_lang$core$Native_Utils.update(
 					options,
-					{block: true});
+					{tipe: _p1._0});
 			case 'Disabled':
 				return _elm_lang$core$Native_Utils.update(
 					options,
 					{disabled: _p1._0});
+			case 'Value':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						value: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'DefaultValue':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						defaultValue: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'Placeholder':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						placeholder: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'OnInput':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						onInput: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'Validation':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						validation: _elm_lang$core$Maybe$Just(_p1._0)
+					});
 			default:
 				return _elm_lang$core$Native_Utils.update(
 					options,
@@ -14037,33 +14718,263 @@ var _rundis$elm_bootstrap$Bootstrap_Internal_Button$applyModifier = F2(
 					});
 		}
 	});
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$defaultOptions = {
-	coloring: _elm_lang$core$Maybe$Nothing,
-	block: false,
-	disabled: false,
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Options = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return {tipe: a, id: b, size: c, disabled: d, value: e, defaultValue: f, placeholder: g, onInput: h, validation: i, attributes: j};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Input = function (a) {
+	return {ctor: 'Input', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Attrs = function (a) {
+	return {ctor: 'Attrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$attrs = function (attrs) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$Attrs(attrs);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Placeholder = function (a) {
+	return {ctor: 'Placeholder', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$placeholder = function (value) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$Placeholder(value);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Validation = function (a) {
+	return {ctor: 'Validation', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$success = _rundis$elm_bootstrap$Bootstrap_Form_Input$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Success);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$warning = _rundis$elm_bootstrap$Bootstrap_Form_Input$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Warning);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$danger = _rundis$elm_bootstrap$Bootstrap_Form_Input$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Danger);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$OnInput = function (a) {
+	return {ctor: 'OnInput', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput = function (toMsg) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$OnInput(toMsg);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$DefaultValue = function (a) {
+	return {ctor: 'DefaultValue', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$defaultValue = function (value) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$DefaultValue(value);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Value = function (a) {
+	return {ctor: 'Value', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$value = function (value) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$Value(value);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Disabled = function (a) {
+	return {ctor: 'Disabled', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$disabled = function (disabled) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$Disabled(disabled);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Type = function (a) {
+	return {ctor: 'Type', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$create = F2(
+	function (tipe, options) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Input$Input(
+			{
+				options: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$Type(tipe),
+					_1: options
+				}
+			});
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Id = function (a) {
+	return {ctor: 'Id', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$id = function (id) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Input$Id(id);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Size = function (a) {
+	return {ctor: 'Size', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$small = _rundis$elm_bootstrap$Bootstrap_Form_Input$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$large = _rundis$elm_bootstrap$Bootstrap_Form_Input$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Color = {ctor: 'Color'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Tel = {ctor: 'Tel'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Search = {ctor: 'Search'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Url = {ctor: 'Url'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Email = {ctor: 'Email'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Number = {ctor: 'Number'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Week = {ctor: 'Week'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Time = {ctor: 'Time'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Month = {ctor: 'Month'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Date = {ctor: 'Date'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$DatetimeLocal = {ctor: 'DatetimeLocal'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Password = {ctor: 'Password'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$Text = {ctor: 'Text'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$defaultOptions = {
+	tipe: _rundis$elm_bootstrap$Bootstrap_Form_Input$Text,
+	id: _elm_lang$core$Maybe$Nothing,
 	size: _elm_lang$core$Maybe$Nothing,
+	disabled: false,
+	value: _elm_lang$core$Maybe$Nothing,
+	defaultValue: _elm_lang$core$Maybe$Nothing,
+	placeholder: _elm_lang$core$Maybe$Nothing,
+	onInput: _elm_lang$core$Maybe$Nothing,
+	validation: _elm_lang$core$Maybe$Nothing,
 	attributes: {ctor: '[]'}
 };
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes = function (modifiers) {
-	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Internal_Button$applyModifier, _rundis$elm_bootstrap$Bootstrap_Internal_Button$defaultOptions, modifiers);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$toAttributes = function (modifiers) {
+	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Form_Input$applyModifier, _rundis$elm_bootstrap$Bootstrap_Form_Input$defaultOptions, modifiers);
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$classList(
+			_0: _elm_lang$html$Html_Attributes$class('form-control'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$disabled(options.disabled),
+				_1: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$typeAttribute(options.tipe),
+					_1: {ctor: '[]'}
+				}
+			}
+		},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(
+				_elm_lang$core$List$filterMap,
+				_elm_lang$core$Basics$identity,
 				{
 					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'btn', _1: true},
+					_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Attributes$id, options.id),
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'btn-block', _1: options.block},
+						_0: A2(_elm_lang$core$Maybe$andThen, _rundis$elm_bootstrap$Bootstrap_Form_Input$sizeAttribute, options.size),
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'disabled', _1: options.disabled},
-							_1: {ctor: '[]'}
+							_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Attributes$value, options.value),
+							_1: {
+								ctor: '::',
+								_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Attributes$defaultValue, options.defaultValue),
+								_1: {
+									ctor: '::',
+									_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Attributes$placeholder, options.placeholder),
+									_1: {
+										ctor: '::',
+										_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Events$onInput, options.onInput),
+										_1: {
+											ctor: '::',
+											_0: A2(_elm_lang$core$Maybe$map, _rundis$elm_bootstrap$Bootstrap_Form_Input$validationAttribute, options.validation),
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}
 						}
 					}
 				}),
+			options.attributes));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$view = function (_p2) {
+	var _p3 = _p2;
+	return A2(
+		_elm_lang$html$Html$input,
+		_rundis$elm_bootstrap$Bootstrap_Form_Input$toAttributes(_p3._0.options),
+		{ctor: '[]'});
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$input = F2(
+	function (tipe, options) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Input$view(
+			A2(_rundis$elm_bootstrap$Bootstrap_Form_Input$create, tipe, options));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$text = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Text);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$password = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Password);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$datetimeLocal = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$DatetimeLocal);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$date = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Date);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$month = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Month);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$time = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Time);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$week = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Week);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$number = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Number);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$email = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Email);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$url = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Url);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$search = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Search);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$tel = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Tel);
+var _rundis$elm_bootstrap$Bootstrap_Form_Input$color = _rundis$elm_bootstrap$Bootstrap_Form_Input$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$Color);
+
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$sizeAttribute = function (size) {
+	return A2(
+		_elm_lang$core$Maybe$map,
+		function (s) {
+			return _elm_lang$html$Html_Attributes$class(
+				A2(_elm_lang$core$Basics_ops['++'], 'form-control-', s));
+		},
+		_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(size));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$applyModifier = F2(
+	function (modifier, options) {
+		var _p0 = modifier;
+		switch (_p0.ctor) {
+			case 'Size':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						size: _elm_lang$core$Maybe$Just(_p0._0)
+					});
+			case 'Id':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						id: _elm_lang$core$Maybe$Just(_p0._0)
+					});
+			case 'Custom':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{custom: true});
+			case 'Disabled':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{disabled: _p0._0});
+			case 'OnInput':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						onInput: _elm_lang$core$Maybe$Just(_p0._0)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p0._0)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$defaultOptions = {
+	id: _elm_lang$core$Maybe$Nothing,
+	size: _elm_lang$core$Maybe$Nothing,
+	custom: false,
+	disabled: false,
+	onInput: _elm_lang$core$Maybe$Nothing,
+	attributes: {ctor: '[]'}
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$toAttributes = function (modifiers) {
+	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Form_Select$applyModifier, _rundis$elm_bootstrap$Bootstrap_Form_Select$defaultOptions, modifiers);
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		{
+			ctor: '::',
+			_0: options.custom ? _elm_lang$html$Html_Attributes$class('custom-select form-control') : _elm_lang$html$Html_Attributes$class('form-control'),
 			_1: {
 				ctor: '::',
 				_0: _elm_lang$html$Html_Attributes$disabled(options.disabled),
@@ -14072,226 +14983,111 @@ var _rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes = function 
 		},
 		A2(
 			_elm_lang$core$Basics_ops['++'],
-			function () {
-				var _p2 = A2(_elm_lang$core$Maybe$andThen, _rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption, options.size);
-				if (_p2.ctor === 'Just') {
-					return {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class(
-							A2(_elm_lang$core$Basics_ops['++'], 'btn-', _p2._0)),
-						_1: {ctor: '[]'}
-					};
-				} else {
-					return {ctor: '[]'};
-				}
-			}(),
 			A2(
-				_elm_lang$core$Basics_ops['++'],
-				function () {
-					var _p3 = options.coloring;
-					if (_p3.ctor === 'Just') {
-						if (_p3._0.ctor === 'Roled') {
-							return {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class(
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										'btn-',
-										_rundis$elm_bootstrap$Bootstrap_Internal_Button$roleClass(_p3._0._0))),
-								_1: {ctor: '[]'}
-							};
-						} else {
-							return {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class(
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										'btn-outline-',
-										_rundis$elm_bootstrap$Bootstrap_Internal_Button$roleClass(_p3._0._0))),
-								_1: {ctor: '[]'}
-							};
+				_elm_lang$core$List$filterMap,
+				_elm_lang$core$Basics$identity,
+				{
+					ctor: '::',
+					_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Attributes$id, options.id),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$core$Maybe$andThen, _rundis$elm_bootstrap$Bootstrap_Form_Select$sizeAttribute, options.size),
+						_1: {
+							ctor: '::',
+							_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Events$onInput, options.onInput),
+							_1: {ctor: '[]'}
 						}
-					} else {
-						return {ctor: '[]'};
 					}
-				}(),
-				options.attributes)));
+				}),
+			options.attributes));
 };
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Options = F5(
-	function (a, b, c, d, e) {
-		return {coloring: a, block: b, disabled: c, size: d, attributes: e};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$view = function (_p1) {
+	var _p2 = _p1;
+	return A2(
+		_elm_lang$html$Html$select,
+		_rundis$elm_bootstrap$Bootstrap_Form_Select$toAttributes(_p2._0.options),
+		A2(
+			_elm_lang$core$List$map,
+			function (_p3) {
+				var _p4 = _p3;
+				return _p4._0;
+			},
+			_p2._0.items));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$Options = F6(
+	function (a, b, c, d, e, f) {
+		return {id: a, size: b, disabled: c, custom: d, onInput: e, attributes: f};
 	});
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Attrs = function (a) {
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$Select = function (a) {
+	return {ctor: 'Select', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$create = F2(
+	function (options, items) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Select$Select(
+			{options: options, items: items});
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$select = F2(
+	function (options, items) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Select$view(
+			A2(_rundis$elm_bootstrap$Bootstrap_Form_Select$create, options, items));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$Item = function (a) {
+	return {ctor: 'Item', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$item = F2(
+	function (attributes, children) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Select$Item(
+			A2(_elm_lang$html$Html$option, attributes, children));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$Attrs = function (a) {
 	return {ctor: 'Attrs', _0: a};
 };
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Disabled = function (a) {
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$attrs = function (attrs) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Select$Attrs(attrs);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$OnInput = function (a) {
+	return {ctor: 'OnInput', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$onInput = function (toMsg) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Select$OnInput(toMsg);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$Disabled = function (a) {
 	return {ctor: 'Disabled', _0: a};
 };
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Block = {ctor: 'Block'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring = function (a) {
-	return {ctor: 'Coloring', _0: a};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$disabled = function (disabled) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Select$Disabled(disabled);
 };
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Size = function (a) {
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$Custom = {ctor: 'Custom'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$custom = function (options) {
+	return function (_p5) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Select$view(
+			A2(
+				_rundis$elm_bootstrap$Bootstrap_Form_Select$create,
+				{ctor: '::', _0: _rundis$elm_bootstrap$Bootstrap_Form_Select$Custom, _1: options},
+				_p5));
+	};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$Id = function (a) {
+	return {ctor: 'Id', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$id = function (id) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Select$Id(id);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$Size = function (a) {
 	return {ctor: 'Size', _0: a};
 };
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined = function (a) {
-	return {ctor: 'Outlined', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled = function (a) {
-	return {ctor: 'Roled', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Link = {ctor: 'Link'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Danger = {ctor: 'Danger'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Warning = {ctor: 'Warning'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Info = {ctor: 'Info'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Success = {ctor: 'Success'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Secondary = {ctor: 'Secondary'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Button$Primary = {ctor: 'Primary'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$small = _rundis$elm_bootstrap$Bootstrap_Form_Select$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM);
+var _rundis$elm_bootstrap$Bootstrap_Form_Select$large = _rundis$elm_bootstrap$Bootstrap_Form_Select$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG);
 
-var _rundis$elm_bootstrap$Bootstrap_Button$disabled = function (disabled) {
-	return _rundis$elm_bootstrap$Bootstrap_Internal_Button$Disabled(disabled);
+var _aYuMatsuzawa$yubot$Polls_View$headerText = function (poll) {
+	var _p0 = poll.id;
+	if (_p0 === '') {
+		return _elm_lang$html$Html$text('New poll!');
+	} else {
+		return _elm_lang$html$Html$text(
+			A2(_elm_lang$core$Basics_ops['++'], 'ID: ', _p0));
+	}
 };
-var _rundis$elm_bootstrap$Bootstrap_Button$block = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Block;
-var _rundis$elm_bootstrap$Bootstrap_Button$outlineDanger = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Danger));
-var _rundis$elm_bootstrap$Bootstrap_Button$outlineWarning = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Warning));
-var _rundis$elm_bootstrap$Bootstrap_Button$outlineInfo = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Info));
-var _rundis$elm_bootstrap$Bootstrap_Button$outlineSuccess = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Success));
-var _rundis$elm_bootstrap$Bootstrap_Button$outlineSecondary = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Secondary));
-var _rundis$elm_bootstrap$Bootstrap_Button$outlinePrimary = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Primary));
-var _rundis$elm_bootstrap$Bootstrap_Button$roleLink = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Link));
-var _rundis$elm_bootstrap$Bootstrap_Button$danger = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Danger));
-var _rundis$elm_bootstrap$Bootstrap_Button$warning = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Warning));
-var _rundis$elm_bootstrap$Bootstrap_Button$info = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Info));
-var _rundis$elm_bootstrap$Bootstrap_Button$success = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Success));
-var _rundis$elm_bootstrap$Bootstrap_Button$secondary = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Secondary));
-var _rundis$elm_bootstrap$Bootstrap_Button$primary = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Button$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Button$Primary));
-var _rundis$elm_bootstrap$Bootstrap_Button$large = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG);
-var _rundis$elm_bootstrap$Bootstrap_Button$small = _rundis$elm_bootstrap$Bootstrap_Internal_Button$Size(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM);
-var _rundis$elm_bootstrap$Bootstrap_Button$attrs = function (attrs) {
-	return _rundis$elm_bootstrap$Bootstrap_Internal_Button$Attrs(attrs);
-};
-var _rundis$elm_bootstrap$Bootstrap_Button$onClick = function (message) {
-	var defaultOptions = _elm_lang$html$Html_Events$defaultOptions;
-	return _rundis$elm_bootstrap$Bootstrap_Button$attrs(
-		{
-			ctor: '::',
-			_0: A3(
-				_elm_lang$html$Html_Events$onWithOptions,
-				'click',
-				_elm_lang$core$Native_Utils.update(
-					defaultOptions,
-					{preventDefault: true}),
-				_elm_lang$core$Json_Decode$succeed(message)),
-			_1: {ctor: '[]'}
-		});
-};
-var _rundis$elm_bootstrap$Bootstrap_Button$checkboxButton = F3(
-	function (checked, options, children) {
-		return A2(
-			_elm_lang$html$Html$label,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$classList(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'active', _1: checked},
-						_1: {ctor: '[]'}
-					}),
-				_1: _rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes(options)
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$input,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$type_('checkbox'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$checked(checked),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$autocomplete(false),
-								_1: {ctor: '[]'}
-							}
-						}
-					},
-					{ctor: '[]'}),
-				_1: children
-			});
-	});
-var _rundis$elm_bootstrap$Bootstrap_Button$radioButton = F3(
-	function (checked, options, children) {
-		var hideRadio = A2(_elm_lang$html$Html_Attributes$attribute, 'data-toggle', 'button');
-		return A2(
-			_elm_lang$html$Html$label,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$classList(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'active', _1: checked},
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: hideRadio,
-					_1: _rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes(options)
-				}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$input,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$type_('radio'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$checked(checked),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$autocomplete(false),
-								_1: {ctor: '[]'}
-							}
-						}
-					},
-					{ctor: '[]'}),
-				_1: children
-			});
-	});
-var _rundis$elm_bootstrap$Bootstrap_Button$linkButton = F2(
-	function (options, children) {
-		return A2(
-			_elm_lang$html$Html$a,
-			{
-				ctor: '::',
-				_0: A2(_elm_lang$html$Html_Attributes$attribute, 'role', 'button'),
-				_1: _rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes(options)
-			},
-			children);
-	});
-var _rundis$elm_bootstrap$Bootstrap_Button$button = F2(
-	function (options, children) {
-		return A2(
-			_elm_lang$html$Html$button,
-			_rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes(options),
-			children);
-	});
-
 var _aYuMatsuzawa$yubot$Polls_View$deleteModalView = function (deleteModal) {
 	var stateToMsg = function (state) {
 		return A2(_aYuMatsuzawa$yubot$Polls_Messages$OnDeleteModal, state, deleteModal.poll);
@@ -14304,42 +15100,18 @@ var _aYuMatsuzawa$yubot$Polls_View$deleteModalView = function (deleteModal) {
 			{ctor: '[]'},
 			{
 				ctor: '::',
-				_0: A2(
-					_rundis$elm_bootstrap$Bootstrap_Button$button,
-					{
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
-						_1: {
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(
-								_aYuMatsuzawa$yubot$Polls_Messages$OnDeleteConfirmed(deleteModal.poll.id)),
-							_1: {ctor: '[]'}
-						}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Yes, delete'),
-						_1: {ctor: '[]'}
-					}),
+				_0: A3(
+					_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+					_aYuMatsuzawa$yubot$Polls_Messages$OnDeleteConfirmed(deleteModal.poll.id),
+					_rundis$elm_bootstrap$Bootstrap_Button$danger,
+					'Yes, delete'),
 				_1: {
 					ctor: '::',
-					_0: A2(
-						_rundis$elm_bootstrap$Bootstrap_Button$button,
-						{
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Button$outlinePrimary,
-							_1: {
-								ctor: '::',
-								_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(
-									A2(_aYuMatsuzawa$yubot$Polls_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, deleteModal.poll)),
-								_1: {ctor: '[]'}
-							}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Cancel'),
-							_1: {ctor: '[]'}
-						}),
+					_0: A3(
+						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+						A2(_aYuMatsuzawa$yubot$Polls_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, deleteModal.poll),
+						_rundis$elm_bootstrap$Bootstrap_Button$outlineSecondary,
+						'Cancel'),
 					_1: {ctor: '[]'}
 				}
 			},
@@ -14389,8 +15161,8 @@ var _aYuMatsuzawa$yubot$Polls_View$deleteModalView = function (deleteModal) {
 					_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg)))));
 };
 var _aYuMatsuzawa$yubot$Polls_View$intervalToText = function (interval) {
-	var _p0 = _elm_lang$core$String$toInt(interval);
-	if (_p0.ctor === 'Ok') {
+	var _p1 = _elm_lang$core$String$toInt(interval);
+	if (_p1.ctor === 'Ok') {
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
 			'every ',
@@ -14399,6 +15171,205 @@ var _aYuMatsuzawa$yubot$Polls_View$intervalToText = function (interval) {
 		return interval;
 	}
 };
+var _aYuMatsuzawa$yubot$Polls_View$intervalSelect = function (interval) {
+	var item = function (v) {
+		return _elm_lang$core$Native_Utils.eq(v, interval) ? A2(
+			_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$value(v),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$selected(true),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					_aYuMatsuzawa$yubot$Polls_View$intervalToText(v)),
+				_1: {ctor: '[]'}
+			}) : A2(
+			_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$value(v),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					_aYuMatsuzawa$yubot$Polls_View$intervalToText(v)),
+				_1: {ctor: '[]'}
+			});
+	};
+	return A2(
+		_rundis$elm_bootstrap$Bootstrap_Form_Select$select,
+		{
+			ctor: '::',
+			_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$id('interval'),
+			_1: {ctor: '[]'}
+		},
+		A2(
+			_elm_lang$core$List$map,
+			item,
+			{
+				ctor: '::',
+				_0: '1',
+				_1: {
+					ctor: '::',
+					_0: '3',
+					_1: {
+						ctor: '::',
+						_0: '5',
+						_1: {
+							ctor: '::',
+							_0: '10',
+							_1: {
+								ctor: '::',
+								_0: '30',
+								_1: {
+									ctor: '::',
+									_0: 'hourly',
+									_1: {
+										ctor: '::',
+										_0: 'daily',
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}
+				}
+			}));
+};
+var _aYuMatsuzawa$yubot$Polls_View$editForm = function (poll) {
+	return A2(
+		_rundis$elm_bootstrap$Bootstrap_Form$form,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_rundis$elm_bootstrap$Bootstrap_Form$group,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: A2(
+						_rundis$elm_bootstrap$Bootstrap_Form$label,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$for('url'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('URL'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$url(
+							{
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$id('url'),
+								_1: {
+									ctor: '::',
+									_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$defaultValue(poll.url),
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_rundis$elm_bootstrap$Bootstrap_Form$group,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(
+							_rundis$elm_bootstrap$Bootstrap_Form$label,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$for('interval'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Interval'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _aYuMatsuzawa$yubot$Polls_View$intervalSelect(poll.interval),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _aYuMatsuzawa$yubot$Polls_View$editModalView = function (editModal) {
+	var titleText = function (poll) {
+		return _elm_lang$core$Native_Utils.eq(poll, _aYuMatsuzawa$yubot$Polls$dummyPoll) ? _elm_lang$html$Html$text('Creating Poll') : _elm_lang$html$Html$text('Updating Poll');
+	};
+	var stateToMsg = function (state) {
+		return A2(_aYuMatsuzawa$yubot$Polls_Messages$OnEditModal, state, editModal.poll);
+	};
+	return A2(
+		_rundis$elm_bootstrap$Bootstrap_Modal$view,
+		editModal.modalState,
+		A3(
+			_rundis$elm_bootstrap$Bootstrap_Modal$footer,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A3(
+					_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+					A2(_aYuMatsuzawa$yubot$Polls_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, editModal.poll),
+					_rundis$elm_bootstrap$Bootstrap_Button$primary,
+					'Submit'),
+				_1: {
+					ctor: '::',
+					_0: A3(
+						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+						A2(_aYuMatsuzawa$yubot$Polls_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, editModal.poll),
+						_rundis$elm_bootstrap$Bootstrap_Button$outlineSecondary,
+						'Cancel'),
+					_1: {ctor: '[]'}
+				}
+			},
+			A3(
+				_rundis$elm_bootstrap$Bootstrap_Modal$body,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _aYuMatsuzawa$yubot$Polls_View$headerText(editModal.poll),
+					_1: {
+						ctor: '::',
+						_0: _aYuMatsuzawa$yubot$Polls_View$editForm(editModal.poll),
+						_1: {ctor: '[]'}
+					}
+				},
+				A3(
+					_rundis$elm_bootstrap$Bootstrap_Modal$h4,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: titleText(editModal.poll),
+						_1: {ctor: '[]'}
+					},
+					_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg)))));
+};
+var _aYuMatsuzawa$yubot$Polls_View$editPollButton = F3(
+	function (poll, option, string) {
+		return A3(
+			_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+			A2(_aYuMatsuzawa$yubot$Polls_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, poll),
+			option,
+			string);
+	});
 var _aYuMatsuzawa$yubot$Polls_View$pollRow = function (poll) {
 	return A2(
 		_rundis$elm_bootstrap$Bootstrap_Table$tr,
@@ -14452,24 +15423,16 @@ var _aYuMatsuzawa$yubot$Polls_View$pollRow = function (poll) {
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: A2(
-										_rundis$elm_bootstrap$Bootstrap_Button$button,
-										{
-											ctor: '::',
-											_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
-											_1: {
-												ctor: '::',
-												_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(
-													A2(_aYuMatsuzawa$yubot$Polls_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, poll)),
-												_1: {ctor: '[]'}
-											}
-										},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text('Delete'),
-											_1: {ctor: '[]'}
-										}),
-									_1: {ctor: '[]'}
+									_0: A3(_aYuMatsuzawa$yubot$Polls_View$editPollButton, poll, _rundis$elm_bootstrap$Bootstrap_Button$primary, 'Update'),
+									_1: {
+										ctor: '::',
+										_0: A3(
+											_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+											A2(_aYuMatsuzawa$yubot$Polls_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, poll),
+											_rundis$elm_bootstrap$Bootstrap_Button$danger,
+											'Delete'),
+										_1: {ctor: '[]'}
+									}
 								}),
 							_1: {ctor: '[]'}
 						}
@@ -14478,36 +15441,48 @@ var _aYuMatsuzawa$yubot$Polls_View$pollRow = function (poll) {
 			}
 		});
 };
-var _aYuMatsuzawa$yubot$Polls_View$emptyRow = A2(
+var _aYuMatsuzawa$yubot$Polls_View$createRow = A2(
 	_rundis$elm_bootstrap$Bootstrap_Table$tr,
 	{ctor: '[]'},
 	{
 		ctor: '::',
 		_0: A2(
 			_rundis$elm_bootstrap$Bootstrap_Table$td,
+			A2(
+				_elm_lang$core$List$map,
+				_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$colspan(5),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$align('center'),
+						_1: {ctor: '[]'}
+					}
+				}),
 			{
 				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Table$cellAttr(
-					_elm_lang$html$Html_Attributes$colspan(5)),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text('No Polls yet!'),
+				_0: A3(_aYuMatsuzawa$yubot$Polls_View$editPollButton, _aYuMatsuzawa$yubot$Polls$dummyPoll, _rundis$elm_bootstrap$Bootstrap_Button$primary, 'Create!'),
 				_1: {ctor: '[]'}
 			}),
 		_1: {ctor: '[]'}
 	});
 var _aYuMatsuzawa$yubot$Polls_View$rows = function (polls) {
-	var _p1 = polls;
-	if (_p1.ctor === '[]') {
+	var _p2 = polls;
+	if (_p2.ctor === '[]') {
 		return {
 			ctor: '::',
-			_0: _aYuMatsuzawa$yubot$Polls_View$emptyRow,
+			_0: _aYuMatsuzawa$yubot$Polls_View$createRow,
 			_1: {ctor: '[]'}
 		};
 	} else {
-		return A2(_elm_lang$core$List$map, _aYuMatsuzawa$yubot$Polls_View$pollRow, polls);
+		return A2(
+			F2(
+				function (x, y) {
+					return {ctor: '::', _0: x, _1: y};
+				}),
+			_aYuMatsuzawa$yubot$Polls_View$createRow,
+			A2(_elm_lang$core$List$map, _aYuMatsuzawa$yubot$Polls_View$pollRow, polls));
 	}
 };
 var _aYuMatsuzawa$yubot$Polls_View$listView = function (polls) {
@@ -14582,51 +15557,6 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = function (polls) {
 		});
 };
 
-var _aYuMatsuzawa$yubot$Poller_Styles$p3 = _elm_lang$html$Html_Attributes$class('p-3');
-var _aYuMatsuzawa$yubot$Poller_Styles$py3 = _elm_lang$html$Html_Attributes$class('py-3');
-var _aYuMatsuzawa$yubot$Poller_Styles$display1 = _elm_lang$html$Html_Attributes$class('display-1');
-var _aYuMatsuzawa$yubot$Poller_Styles$rounded = _elm_lang$html$Html_Attributes$class('rounded');
-var _aYuMatsuzawa$yubot$Poller_Styles$whiteBack = _elm_lang$html$Html_Attributes$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'rgb(255, 255, 255)'},
-		_1: {ctor: '[]'}
-	});
-var _aYuMatsuzawa$yubot$Poller_Styles$introGap = _elm_lang$html$Html_Attributes$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'padding-top', _1: '30px'},
-		_1: {
-			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '30px'},
-			_1: {
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'color', _1: 'rgb(255, 255, 255)'},
-				_1: {ctor: '[]'}
-			}
-		}
-	});
-var _aYuMatsuzawa$yubot$Poller_Styles$greyBack = _elm_lang$html$Html_Attributes$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'rgba(242, 242, 238, 0.67)'},
-		_1: {ctor: '[]'}
-	});
-var _aYuMatsuzawa$yubot$Poller_Styles$background = _elm_lang$html$Html_Attributes$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'background-image', _1: 'url(\'static/img/polar_bear.jpg\')'},
-		_1: {
-			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: 'background-size', _1: 'cover'},
-			_1: {
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'height', _1: '100vh'},
-				_1: {ctor: '[]'}
-			}
-		}
-	});
-
 var _aYuMatsuzawa$yubot$Poller_View$dummyBlock = _rundis$elm_bootstrap$Bootstrap_Card$view(
 	A3(
 		_rundis$elm_bootstrap$Bootstrap_Card$block,
@@ -14694,7 +15624,14 @@ var _aYuMatsuzawa$yubot$Poller_View$pollList = function (model) {
 					_elm_lang$html$Html$map,
 					_aYuMatsuzawa$yubot$Poller_Messages$PollsMsg,
 					_aYuMatsuzawa$yubot$Polls_View$deleteModalView(model.pollDeleteModal)),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$map,
+						_aYuMatsuzawa$yubot$Poller_Messages$PollsMsg,
+						_aYuMatsuzawa$yubot$Polls_View$editModalView(model.pollEditModal)),
+					_1: {ctor: '[]'}
+				}
 			}
 		});
 };
