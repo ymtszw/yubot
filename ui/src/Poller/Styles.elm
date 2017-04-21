@@ -44,3 +44,7 @@ py3 =
 p3 : Attribute msg
 p3 =
     class "p-3"
+
+mx2 : Attribute msg
+mx2 =
+    class "mx-2"
