@@ -6,16 +6,17 @@ defmodule Yubot.Model.Poll do
   alias Yubot.Model.{Authentication, Action}
 
   defmodule Interval do
-    @type t :: 1 | 3 | 10 | 30 | :hourly | :daily
+    @type t :: binary
 
     @spec validate(term) :: R.t(t)
-    def validate(i) when i in ["hourly", "daily"], do: {:ok, String.to_existing_atom(i)}
-    def validate(i) when i in [3, 10, 30, :hourly, :daily], do: {:ok, i}
+    def validate(i) when i in ["1", "3", "10", "30", "hourly", "daily"], do: {:ok, i}
+    def validate(i) when i in [1, 3, 10, 30, :hourly, :daily], do: {:ok, to_string(i)}
     def validate(_), do: {:error, {:invalid_value, [__MODULE__]}}
 
     def default(), do: 10
 
     @spec to_cron(t) :: SolomonLib.Cron.t
+    def to_cron(1), do: "* * * * *"
     def to_cron(minute) when minute in [3, 10, 30], do: "*/#{minute} * * * *"
     def to_cron(:hourly), do: "0 * * * *"
     def to_cron(:daily), do: "0 0 * * *"
