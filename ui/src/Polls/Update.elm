@@ -1,7 +1,7 @@
 module Polls.Update exposing (..)
 
 import Bootstrap.Modal exposing (hiddenState)
-import Polls exposing (DeleteModal, EditModal, dummyPoll)
+import Polls exposing (..)
 import Polls.Messages exposing (Msg(..))
 import Polls.Command exposing (fetchAll, delete)
 import Poller.Model exposing (Model)
@@ -13,6 +13,13 @@ update msg model =
             ( { model | polls = newPolls }, Cmd.none )
         OnFetchAll (Err error) ->
             ( model, Cmd.none )
+        OnSort sorter ->
+            ( { model
+                | pollsSort = Just sorter
+                , polls = sortPolls sorter model.polls
+                }
+            , Cmd.none
+            )
         OnDeleteModal newState newPoll ->
             ( { model | pollDeleteModal = DeleteModal newState newPoll }, Cmd.none )
         OnDeleteConfirmed id ->
@@ -23,3 +30,13 @@ update msg model =
             ( model, Cmd.none )
         OnEditModal newState newPoll ->
             ( { model | pollEditModal = EditModal newState newPoll }, Cmd.none )
+
+sortPolls : Sorter -> List Poll -> List Poll
+sortPolls ( compareBy, order ) polls =
+    case order of
+        Asc ->
+            List.sortBy compareBy polls
+        Desc ->
+            polls
+                |> List.sortBy compareBy
+                |> List.reverse

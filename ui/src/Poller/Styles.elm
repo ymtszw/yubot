@@ -27,6 +27,16 @@ whiteBack : Attribute msg
 whiteBack =
     style [ ("background-color", "rgb(255, 255, 255)" ) ]
 
+sorting : Attribute msg
+sorting =
+    style
+        [ ( "padding-left", "14px" )
+        , ( "background-image", "url(data:image/gif;base64,R0lGODlhCwALAJEAAAAAAP///xUVFf///yH5BAEAAAMALAAAAAALAAsAAAIUnC2nKLnT4or00PvyrQwrPzUZshQAOw==)" )
+        , ( "background-repeat", "no-repeat" )
+        , ( "background-position", "center left" )
+        , ( "cursor", "pointer" )
+        ]
+
 -- Bootstrap styled class wrappers
 
 rounded : Attribute msg

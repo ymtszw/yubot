@@ -28,3 +28,11 @@ type alias EditModal =
     { modalState : Modal.State
     , poll : Poll
     }
+
+type Ord
+    = Asc
+    | Desc
+
+-- Currently, only string field can be sorted
+type alias Sorter =
+    ( (Poll -> String), Ord )

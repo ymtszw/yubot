@@ -9775,6 +9775,28 @@ var _aYuMatsuzawa$yubot$Poller_Styles$p3 = _elm_lang$html$Html_Attributes$class(
 var _aYuMatsuzawa$yubot$Poller_Styles$py3 = _elm_lang$html$Html_Attributes$class('py-3');
 var _aYuMatsuzawa$yubot$Poller_Styles$display1 = _elm_lang$html$Html_Attributes$class('display-1');
 var _aYuMatsuzawa$yubot$Poller_Styles$rounded = _elm_lang$html$Html_Attributes$class('rounded');
+var _aYuMatsuzawa$yubot$Poller_Styles$sorting = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'padding-left', _1: '14px'},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'background-image', _1: 'url(data:image/gif;base64,R0lGODlhCwALAJEAAAAAAP///xUVFf///yH5BAEAAAMALAAAAAALAAsAAAIUnC2nKLnT4or00PvyrQwrPzUZshQAOw==)'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'background-repeat', _1: 'no-repeat'},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'background-position', _1: 'center left'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'cursor', _1: 'pointer'},
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		}
+	});
 var _aYuMatsuzawa$yubot$Poller_Styles$whiteBack = _elm_lang$html$Html_Attributes$style(
 	{
 		ctor: '::',
@@ -11975,6 +11997,8 @@ var _aYuMatsuzawa$yubot$Polls$EditModal = F2(
 	function (a, b) {
 		return {modalState: a, poll: b};
 	});
+var _aYuMatsuzawa$yubot$Polls$Desc = {ctor: 'Desc'};
+var _aYuMatsuzawa$yubot$Polls$Asc = {ctor: 'Asc'};
 
 var _aYuMatsuzawa$yubot$Polls_Messages$OnEditModal = F2(
 	function (a, b) {
@@ -11990,6 +12014,9 @@ var _aYuMatsuzawa$yubot$Polls_Messages$OnDeleteModal = F2(
 	function (a, b) {
 		return {ctor: 'OnDeleteModal', _0: a, _1: b};
 	});
+var _aYuMatsuzawa$yubot$Polls_Messages$OnSort = function (a) {
+	return {ctor: 'OnSort', _0: a};
+};
 var _aYuMatsuzawa$yubot$Polls_Messages$OnFetchAll = function (a) {
 	return {ctor: 'OnFetchAll', _0: a};
 };
@@ -12100,13 +12127,14 @@ var _aYuMatsuzawa$yubot$Polls_Command$fetchAll = A2(
 
 var _aYuMatsuzawa$yubot$Poller_Model$initialModel = {
 	polls: {ctor: '[]'},
+	pollsSort: _elm_lang$core$Maybe$Nothing,
 	pollDeleteModal: A2(_aYuMatsuzawa$yubot$Polls$DeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, _aYuMatsuzawa$yubot$Polls$dummyPoll),
 	pollEditModal: A2(_aYuMatsuzawa$yubot$Polls$EditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, _aYuMatsuzawa$yubot$Polls$dummyPoll),
 	tabState: _rundis$elm_bootstrap$Bootstrap_Tab$initialState
 };
-var _aYuMatsuzawa$yubot$Poller_Model$Model = F4(
-	function (a, b, c, d) {
-		return {polls: a, pollDeleteModal: b, pollEditModal: c, tabState: d};
+var _aYuMatsuzawa$yubot$Poller_Model$Model = F5(
+	function (a, b, c, d, e) {
+		return {polls: a, pollsSort: b, pollDeleteModal: c, pollEditModal: d, tabState: e};
 	});
 
 var _aYuMatsuzawa$yubot$Poller_Messages$TabMsg = function (a) {
@@ -12116,29 +12144,53 @@ var _aYuMatsuzawa$yubot$Poller_Messages$PollsMsg = function (a) {
 	return {ctor: 'PollsMsg', _0: a};
 };
 
+var _aYuMatsuzawa$yubot$Polls_Update$sortPolls = F2(
+	function (_p0, polls) {
+		var _p1 = _p0;
+		var _p3 = _p1._0;
+		var _p2 = _p1._1;
+		if (_p2.ctor === 'Asc') {
+			return A2(_elm_lang$core$List$sortBy, _p3, polls);
+		} else {
+			return _elm_lang$core$List$reverse(
+				A2(_elm_lang$core$List$sortBy, _p3, polls));
+		}
+	});
 var _aYuMatsuzawa$yubot$Polls_Update$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
+		var _p4 = msg;
+		switch (_p4.ctor) {
 			case 'OnFetchAll':
-				if (_p0._0.ctor === 'Ok') {
+				if (_p4._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
-							{polls: _p0._0._0}),
+							{polls: _p4._0._0}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
+			case 'OnSort':
+				var _p5 = _p4._0;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							pollsSort: _elm_lang$core$Maybe$Just(_p5),
+							polls: A2(_aYuMatsuzawa$yubot$Polls_Update$sortPolls, _p5, model.polls)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'OnDeleteModal':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							pollDeleteModal: A2(_aYuMatsuzawa$yubot$Polls$DeleteModal, _p0._0, _p0._1)
+							pollDeleteModal: A2(_aYuMatsuzawa$yubot$Polls$DeleteModal, _p4._0, _p4._1)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -12150,10 +12202,10 @@ var _aYuMatsuzawa$yubot$Polls_Update$update = F2(
 						{
 							pollDeleteModal: A2(_aYuMatsuzawa$yubot$Polls$DeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, _aYuMatsuzawa$yubot$Polls$dummyPoll)
 						}),
-					_1: _aYuMatsuzawa$yubot$Polls_Command$delete(_p0._0)
+					_1: _aYuMatsuzawa$yubot$Polls_Command$delete(_p4._0)
 				};
 			case 'OnDelete':
-				if (_p0._0.ctor === 'Ok') {
+				if (_p4._0.ctor === 'Ok') {
 					return {ctor: '_Tuple2', _0: model, _1: _aYuMatsuzawa$yubot$Polls_Command$fetchAll};
 				} else {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -12164,7 +12216,7 @@ var _aYuMatsuzawa$yubot$Polls_Update$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							pollEditModal: A2(_aYuMatsuzawa$yubot$Polls$EditModal, _p0._0, _p0._1)
+							pollEditModal: A2(_aYuMatsuzawa$yubot$Polls$EditModal, _p4._0, _p4._1)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -15389,11 +15441,7 @@ var _aYuMatsuzawa$yubot$Polls_View$pollRow = function (poll) {
 				_0: A2(
 					_rundis$elm_bootstrap$Bootstrap_Table$td,
 					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(poll.url),
-						_1: {ctor: '[]'}
-					}),
+					_aYuMatsuzawa$yubot$Html_Utils$atext(poll.url)),
 				_1: {
 					ctor: '::',
 					_0: A2(
@@ -15485,53 +15533,95 @@ var _aYuMatsuzawa$yubot$Polls_View$rows = function (polls) {
 			A2(_elm_lang$core$List$map, _aYuMatsuzawa$yubot$Polls_View$pollRow, polls));
 	}
 };
-var _aYuMatsuzawa$yubot$Polls_View$listView = function (polls) {
-	return _rundis$elm_bootstrap$Bootstrap_Table$table(
-		{
-			options: {
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Table$striped,
-				_1: {ctor: '[]'}
-			},
-			thead: _rundis$elm_bootstrap$Bootstrap_Table$simpleThead(
-				{
+var _aYuMatsuzawa$yubot$Polls_View$toggleSortOnClick = F2(
+	function (newCompareBy, maybeSorter) {
+		var order = function () {
+			var _p3 = maybeSorter;
+			if (_p3.ctor === 'Nothing') {
+				return _aYuMatsuzawa$yubot$Polls$Asc;
+			} else {
+				var _p4 = _p3._0._1;
+				if (_p4.ctor === 'Asc') {
+					return _aYuMatsuzawa$yubot$Polls$Desc;
+				} else {
+					return _aYuMatsuzawa$yubot$Polls$Asc;
+				}
+			}
+		}();
+		return _elm_lang$html$Html_Events$onClick(
+			_aYuMatsuzawa$yubot$Polls_Messages$OnSort(
+				{ctor: '_Tuple2', _0: newCompareBy, _1: order}));
+	});
+var _aYuMatsuzawa$yubot$Polls_View$listView = F2(
+	function (polls, pollsSort) {
+		return _rundis$elm_bootstrap$Bootstrap_Table$table(
+			{
+				options: {
 					ctor: '::',
-					_0: A2(
-						_rundis$elm_bootstrap$Bootstrap_Table$th,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('ID'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
+					_0: _rundis$elm_bootstrap$Bootstrap_Table$striped,
+					_1: {ctor: '[]'}
+				},
+				thead: _rundis$elm_bootstrap$Bootstrap_Table$simpleThead(
+					{
 						ctor: '::',
 						_0: A2(
 							_rundis$elm_bootstrap$Bootstrap_Table$th,
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('URL'),
+								_0: _elm_lang$html$Html$text('ID'),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
 							ctor: '::',
 							_0: A2(
 								_rundis$elm_bootstrap$Bootstrap_Table$th,
-								{ctor: '[]'},
+								A2(
+									_elm_lang$core$List$map,
+									_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
+									{
+										ctor: '::',
+										_0: _aYuMatsuzawa$yubot$Poller_Styles$sorting,
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_aYuMatsuzawa$yubot$Polls_View$toggleSortOnClick,
+												function (_) {
+													return _.url;
+												},
+												pollsSort),
+											_1: {ctor: '[]'}
+										}
+									}),
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Interval'),
+									_0: _elm_lang$html$Html$text('URL'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
 								ctor: '::',
 								_0: A2(
 									_rundis$elm_bootstrap$Bootstrap_Table$th,
-									{ctor: '[]'},
+									A2(
+										_elm_lang$core$List$map,
+										_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
+										{
+											ctor: '::',
+											_0: _aYuMatsuzawa$yubot$Poller_Styles$sorting,
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_aYuMatsuzawa$yubot$Polls_View$toggleSortOnClick,
+													function (_) {
+														return _.interval;
+													},
+													pollsSort),
+												_1: {ctor: '[]'}
+											}
+										}),
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Updated At'),
+										_0: _elm_lang$html$Html$text('Interval'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
@@ -15541,21 +15631,31 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = function (polls) {
 										{ctor: '[]'},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('Actions'),
+											_0: _elm_lang$html$Html$text('Updated At'),
 											_1: {ctor: '[]'}
 										}),
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_rundis$elm_bootstrap$Bootstrap_Table$th,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('Actions'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
 								}
 							}
 						}
-					}
-				}),
-			tbody: A2(
-				_rundis$elm_bootstrap$Bootstrap_Table$tbody,
-				{ctor: '[]'},
-				_aYuMatsuzawa$yubot$Polls_View$rows(polls))
-		});
-};
+					}),
+				tbody: A2(
+					_rundis$elm_bootstrap$Bootstrap_Table$tbody,
+					{ctor: '[]'},
+					_aYuMatsuzawa$yubot$Polls_View$rows(polls))
+			});
+	});
 
 var _aYuMatsuzawa$yubot$Poller_View$dummyBlock = _rundis$elm_bootstrap$Bootstrap_Card$view(
 	A3(
@@ -15613,7 +15713,7 @@ var _aYuMatsuzawa$yubot$Poller_View$pollList = function (model) {
 							_0: A2(
 								_elm_lang$html$Html$map,
 								_aYuMatsuzawa$yubot$Poller_Messages$PollsMsg,
-								_aYuMatsuzawa$yubot$Polls_View$listView(model.polls)),
+								A2(_aYuMatsuzawa$yubot$Polls_View$listView, model.polls, model.pollsSort)),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}

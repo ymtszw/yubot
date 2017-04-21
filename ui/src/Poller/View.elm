@@ -58,7 +58,7 @@ pollList model =
     div []
         [ Grid.simpleRow
             [ Grid.col [ md12 ]
-                [ Html.map PollsMsg (Polls.View.listView model.polls)
+                [ Html.map PollsMsg (Polls.View.listView model.polls model.pollsSort)
                 ]
             ]
         , Html.map PollsMsg (Polls.View.deleteModalView model.pollDeleteModal)

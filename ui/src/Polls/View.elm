@@ -2,6 +2,7 @@ module Polls.View exposing (..)
 
 import Html exposing (Html, text, p)
 import Html.Attributes exposing (colspan, for, value, selected, align)
+import Html.Events exposing (onClick)
 import Html.Utils exposing (atext, mx2Button)
 import Bootstrap.Table as Table exposing (table, th, tr, td, cellAttr)
 import Bootstrap.Button as Button exposing (Option)
@@ -9,22 +10,36 @@ import Bootstrap.Modal as Modal
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Select as Select
-import Polls exposing (Poll, dummyPoll, DeleteModal, EditModal)
+import Polls exposing (..)
 import Polls.Messages exposing (Msg(..))
+import Poller.Styles exposing (sorting)
 
-listView : List Poll -> Html Msg
-listView polls =
+listView : List Poll -> Maybe Sorter -> Html Msg
+listView polls pollsSort =
     table
         { options = [ Table.striped ]
         , thead = Table.simpleThead
             [ th [] [ text "ID" ]
-            , th [] [ text "URL" ]
-            , th [] [ text "Interval" ]
+            , th (List.map cellAttr [ sorting, toggleSortOnClick .url pollsSort ]) [ text "URL" ]
+            , th (List.map cellAttr [ sorting, toggleSortOnClick .interval pollsSort ]) [ text "Interval" ]
             , th [] [ text "Updated At" ]
             , th [] [ text "Actions" ]
             ]
         , tbody = Table.tbody [] <| rows polls
         }
+
+toggleSortOnClick : (Poll -> String) -> Maybe Sorter -> Html.Attribute Msg
+toggleSortOnClick newCompareBy maybeSorter =
+    let
+        order =
+            case maybeSorter of
+                Nothing -> Asc
+                Just ( oldCompareBy, oldOrder ) ->
+                    case oldOrder of
+                        Asc -> Desc
+                        Desc -> Asc
+    in
+        onClick (OnSort ( newCompareBy, order ))
 
 rows : List Poll -> List (Table.Row Msg)
 rows polls =
@@ -49,7 +64,7 @@ pollRow : Poll -> Table.Row Msg
 pollRow poll =
     tr []
         [ td [] [ text poll.id ]
-        , td [] [ text poll.url ]
+        , td [] (atext poll.url)
         , td [] [ text (intervalToText poll.interval) ]
         , td [] [ text (toString poll.updatedAt) ]
         , td []
