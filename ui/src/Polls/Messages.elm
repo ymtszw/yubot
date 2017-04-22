@@ -4,6 +4,7 @@ import Http
 import Bootstrap.Modal
 import Polls exposing (..)
 
+
 type Msg
     = OnFetchAll (Result Http.Error (List Poll))
     | OnSort Sorter

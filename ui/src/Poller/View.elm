@@ -11,12 +11,14 @@ import Poller.Model exposing (Model)
 import Poller.Messages exposing (Msg(PollsMsg, TabMsg))
 import Poller.Styles exposing (..)
 
+
 view : Model -> Html Msg
 view model =
     Grid.containerFluid [ background ]
         [ gap
         , Grid.simpleRow [ mainContent model ]
         ]
+
 
 gap : Html Msg
 gap =
@@ -27,13 +29,17 @@ gap =
             ]
         ]
 
+
 mainContent : Model -> Column Msg
 mainContent model =
     Grid.col
-        [ offsetLg2, lg9, md12
+        [ offsetLg2
+        , lg9
+        , md12
         , attrs [ greyBack, rounded, py3 ]
         ]
         [ mainTabs model ]
+
 
 mainTabs : Model -> Html Msg
 mainTabs model =
@@ -64,6 +70,7 @@ pollList model =
         , Html.map PollsMsg (Polls.View.deleteModalView model.pollDeleteModal)
         , Html.map PollsMsg (Polls.View.editModalView model.pollEditModal)
         ]
+
 
 dummyBlock : Html Msg
 dummyBlock =

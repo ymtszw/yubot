@@ -14,40 +14,51 @@ import Polls exposing (..)
 import Polls.Messages exposing (Msg(..))
 import Poller.Styles exposing (sorting)
 
+
 listView : List Poll -> Maybe Sorter -> Html Msg
 listView polls pollsSort =
     table
         { options = [ Table.striped ]
-        , thead = Table.simpleThead
-            [ th [] [ text "ID" ]
-            , th (List.map cellAttr [ sorting, toggleSortOnClick .url pollsSort ]) [ text "URL" ]
-            , th (List.map cellAttr [ sorting, toggleSortOnClick .interval pollsSort ]) [ text "Interval" ]
-            , th [] [ text "Updated At" ]
-            , th [] [ text "Actions" ]
-            ]
+        , thead =
+            Table.simpleThead
+                [ th [] [ text "ID" ]
+                , th (List.map cellAttr [ sorting, toggleSortOnClick .url pollsSort ]) [ text "URL" ]
+                , th (List.map cellAttr [ sorting, toggleSortOnClick .interval pollsSort ]) [ text "Interval" ]
+                , th [] [ text "Updated At" ]
+                , th [] [ text "Actions" ]
+                ]
         , tbody = Table.tbody [] <| rows polls
         }
+
 
 toggleSortOnClick : (Poll -> String) -> Maybe Sorter -> Html.Attribute Msg
 toggleSortOnClick newCompareBy maybeSorter =
     let
         order =
             case maybeSorter of
-                Nothing -> Asc
+                Nothing ->
+                    Asc
+
                 Just ( oldCompareBy, oldOrder ) ->
                     case oldOrder of
-                        Asc -> Desc
-                        Desc -> Asc
+                        Asc ->
+                            Desc
+
+                        Desc ->
+                            Asc
     in
         onClick (OnSort ( newCompareBy, order ))
+
 
 rows : List Poll -> List (Table.Row Msg)
 rows polls =
     case polls of
         [] ->
             [ createRow ]
+
         nonEmpty ->
             polls |> List.map pollRow |> (::) createRow
+
 
 createRow : Table.Row Msg
 createRow =
@@ -56,9 +67,11 @@ createRow =
             [ editPollButton dummyPoll Button.primary "Create!" ]
         ]
 
+
 editPollButton : Poll -> Option Msg -> String -> Html Msg
 editPollButton poll option string =
     mx2Button (OnEditModal Modal.visibleState poll) option string
+
 
 pollRow : Poll -> Table.Row Msg
 pollRow poll =
@@ -73,13 +86,16 @@ pollRow poll =
             ]
         ]
 
+
 intervalToText : String -> String
 intervalToText interval =
     case String.toInt interval of
         Ok _ ->
             "every " ++ interval ++ " min."
+
         Err _ ->
             interval
+
 
 deleteModalView : DeleteModal -> Html Msg
 deleteModalView deleteModal =
@@ -99,6 +115,7 @@ deleteModalView deleteModal =
                 , mx2Button (OnDeleteModal Modal.hiddenState deleteModal.poll) Button.outlineSecondary "Cancel"
                 ]
             |> Modal.view deleteModal.modalState
+
 
 editModalView : EditModal -> Html Msg
 editModalView editModal =
@@ -124,13 +141,16 @@ editModalView editModal =
                 ]
             |> Modal.view editModal.modalState
 
+
 headerText : Poll -> Html Msg
 headerText poll =
     case poll.id of
         "" ->
             text "New poll!"
+
         id ->
             text ("ID: " ++ id)
+
 
 editForm : Poll -> Html Msg
 editForm poll =
@@ -145,6 +165,7 @@ editForm poll =
             ]
         ]
 
+
 intervalSelect : String -> Html Msg
 intervalSelect interval =
     let
@@ -154,6 +175,6 @@ intervalSelect interval =
             else
                 Select.item [ value v ] [ text (intervalToText v) ]
     in
-        [ "1", "3" , "5", "10", "30", "hourly", "daily" ]
+        [ "1", "3", "5", "10", "30", "hourly", "daily" ]
             |> List.map item
             |> Select.select [ Select.id "interval" ]

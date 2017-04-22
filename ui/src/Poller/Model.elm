@@ -4,6 +4,7 @@ import Bootstrap.Modal exposing (hiddenState)
 import Bootstrap.Tab as Tab
 import Polls exposing (Poll, dummyPoll)
 
+
 type alias Model =
     { polls : List Poll
     , pollsSort : Maybe Polls.Sorter
@@ -11,6 +12,7 @@ type alias Model =
     , pollEditModal : Polls.EditModal
     , tabState : Tab.State
     }
+
 
 initialModel : Model
 initialModel =
