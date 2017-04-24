@@ -11,12 +11,13 @@ import Bootstrap.Modal as Modal
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Select as Select
+import Utils exposing (..)
 import Polls exposing (..)
 import Polls.Messages exposing (Msg(..))
 import Poller.Styles exposing (sorting)
 
 
-listView : List Poll -> Maybe Sorter -> Html Msg
+listView : List Poll -> Maybe (Sorter Poll) -> Html Msg
 listView polls pollsSort =
     table
         { options = [ Table.striped ]
@@ -31,7 +32,7 @@ listView polls pollsSort =
         }
 
 
-toggleSortOnClick : (Poll -> String) -> Maybe Sorter -> Html.Attribute Msg
+toggleSortOnClick : (Poll -> String) -> Maybe (Sorter Poll) -> Html.Attribute Msg
 toggleSortOnClick newCompareBy maybeSorter =
     let
         order =

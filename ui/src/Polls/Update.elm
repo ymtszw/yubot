@@ -1,6 +1,7 @@
 module Polls.Update exposing (..)
 
 import Bootstrap.Modal exposing (hiddenState)
+import Utils exposing (..)
 import Polls exposing (..)
 import Polls.Messages exposing (Msg(..))
 import Polls.Command exposing (fetchAll, delete)
@@ -40,7 +41,7 @@ update msg model =
             ( { model | pollEditModal = EditModal newState newPoll }, Cmd.none )
 
 
-sortPolls : Sorter -> List Poll -> List Poll
+sortPolls : Sorter Poll -> List Poll -> List Poll
 sortPolls ( compareBy, order ) polls =
     case order of
         Asc ->
