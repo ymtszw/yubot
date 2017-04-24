@@ -35,10 +35,10 @@ whiteBack =
 sorting : Attribute msg
 sorting =
     style
-        [ ( "padding-left", "14px" )
+        [ ( "padding-left", "20px" )
         , ( "background-image", "url(data:image/gif;base64,R0lGODlhCwALAJEAAAAAAP///xUVFf///yH5BAEAAAMALAAAAAALAAsAAAIUnC2nKLnT4or00PvyrQwrPzUZshQAOw==)" )
         , ( "background-repeat", "no-repeat" )
-        , ( "background-position", "center left" )
+        , ( "background-position", "6px center" )
         , ( "cursor", "pointer" )
         ]
 

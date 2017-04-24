@@ -9778,7 +9778,7 @@ var _aYuMatsuzawa$yubot$Poller_Styles$rounded = _elm_lang$html$Html_Attributes$c
 var _aYuMatsuzawa$yubot$Poller_Styles$sorting = _elm_lang$html$Html_Attributes$style(
 	{
 		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'padding-left', _1: '14px'},
+		_0: {ctor: '_Tuple2', _0: 'padding-left', _1: '20px'},
 		_1: {
 			ctor: '::',
 			_0: {ctor: '_Tuple2', _0: 'background-image', _1: 'url(data:image/gif;base64,R0lGODlhCwALAJEAAAAAAP///xUVFf///yH5BAEAAAMALAAAAAALAAsAAAIUnC2nKLnT4or00PvyrQwrPzUZshQAOw==)'},
@@ -9787,7 +9787,7 @@ var _aYuMatsuzawa$yubot$Poller_Styles$sorting = _elm_lang$html$Html_Attributes$s
 				_0: {ctor: '_Tuple2', _0: 'background-repeat', _1: 'no-repeat'},
 				_1: {
 					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'background-position', _1: 'center left'},
+					_0: {ctor: '_Tuple2', _0: 'background-position', _1: '6px center'},
 					_1: {
 						ctor: '::',
 						_0: {ctor: '_Tuple2', _0: 'cursor', _1: 'pointer'},
@@ -15118,8 +15118,15 @@ var _aYuMatsuzawa$yubot$Polls_View$headerText = function (poll) {
 	if (_p0 === '') {
 		return _elm_lang$html$Html$text('New poll!');
 	} else {
-		return _elm_lang$html$Html$text(
-			A2(_elm_lang$core$Basics_ops['++'], 'ID: ', _p0));
+		return A2(
+			_elm_lang$html$Html$small,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					A2(_elm_lang$core$Basics_ops['++'], 'ID: ', _p0)),
+				_1: {ctor: '[]'}
+			});
 	}
 };
 var _aYuMatsuzawa$yubot$Polls_View$deleteModalView = function (deleteModal) {
@@ -15421,17 +15428,18 @@ var _aYuMatsuzawa$yubot$Polls_View$pollRow = function (poll) {
 			_0: A2(
 				_rundis$elm_bootstrap$Bootstrap_Table$td,
 				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(poll.id),
-					_1: {ctor: '[]'}
-				}),
+				_aYuMatsuzawa$yubot$Html_Utils$atext(poll.url)),
 			_1: {
 				ctor: '::',
 				_0: A2(
 					_rundis$elm_bootstrap$Bootstrap_Table$td,
 					{ctor: '[]'},
-					_aYuMatsuzawa$yubot$Html_Utils$atext(poll.url)),
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							_aYuMatsuzawa$yubot$Polls_View$intervalToText(poll.interval)),
+						_1: {ctor: '[]'}
+					}),
 				_1: {
 					ctor: '::',
 					_0: A2(
@@ -15440,7 +15448,7 @@ var _aYuMatsuzawa$yubot$Polls_View$pollRow = function (poll) {
 						{
 							ctor: '::',
 							_0: _elm_lang$html$Html$text(
-								_aYuMatsuzawa$yubot$Polls_View$intervalToText(poll.interval)),
+								_aYuMatsuzawa$yubot$Polls_View$toDateString(poll.updatedAt)),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
@@ -15450,30 +15458,18 @@ var _aYuMatsuzawa$yubot$Polls_View$pollRow = function (poll) {
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									_aYuMatsuzawa$yubot$Polls_View$toDateString(poll.updatedAt)),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_rundis$elm_bootstrap$Bootstrap_Table$td,
-								{ctor: '[]'},
-								{
+								_0: A3(_aYuMatsuzawa$yubot$Polls_View$editPollButton, poll, _rundis$elm_bootstrap$Bootstrap_Button$primary, 'Update'),
+								_1: {
 									ctor: '::',
-									_0: A3(_aYuMatsuzawa$yubot$Polls_View$editPollButton, poll, _rundis$elm_bootstrap$Bootstrap_Button$primary, 'Update'),
-									_1: {
-										ctor: '::',
-										_0: A3(
-											_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-											A2(_aYuMatsuzawa$yubot$Polls_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, poll),
-											_rundis$elm_bootstrap$Bootstrap_Button$danger,
-											'Delete'),
-										_1: {ctor: '[]'}
-									}
-								}),
-							_1: {ctor: '[]'}
-						}
+									_0: A3(
+										_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+										A2(_aYuMatsuzawa$yubot$Polls_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, poll),
+										_rundis$elm_bootstrap$Bootstrap_Button$danger,
+										'Delete'),
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
 					}
 				}
 			}
@@ -15556,10 +15552,26 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = F2(
 						ctor: '::',
 						_0: A2(
 							_rundis$elm_bootstrap$Bootstrap_Table$th,
-							{ctor: '[]'},
+							A2(
+								_elm_lang$core$List$map,
+								_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
+								{
+									ctor: '::',
+									_0: _aYuMatsuzawa$yubot$Poller_Styles$sorting,
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_aYuMatsuzawa$yubot$Polls_View$toggleSortOnClick,
+											function (_) {
+												return _.url;
+											},
+											pollsSort),
+										_1: {ctor: '[]'}
+									}
+								}),
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('ID'),
+								_0: _elm_lang$html$Html$text('URL'),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -15577,7 +15589,7 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = F2(
 											_0: A2(
 												_aYuMatsuzawa$yubot$Polls_View$toggleSortOnClick,
 												function (_) {
-													return _.url;
+													return _.interval;
 												},
 												pollsSort),
 											_1: {ctor: '[]'}
@@ -15585,7 +15597,7 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = F2(
 									}),
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('URL'),
+									_0: _elm_lang$html$Html$text('Interval'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
@@ -15603,7 +15615,7 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = F2(
 												_0: A2(
 													_aYuMatsuzawa$yubot$Polls_View$toggleSortOnClick,
 													function (_) {
-														return _.interval;
+														return _.updatedAt;
 													},
 													pollsSort),
 												_1: {ctor: '[]'}
@@ -15611,47 +15623,20 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = F2(
 										}),
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Interval'),
+										_0: _elm_lang$html$Html$text('Updated At'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
 									ctor: '::',
 									_0: A2(
 										_rundis$elm_bootstrap$Bootstrap_Table$th,
-										A2(
-											_elm_lang$core$List$map,
-											_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
-											{
-												ctor: '::',
-												_0: _aYuMatsuzawa$yubot$Poller_Styles$sorting,
-												_1: {
-													ctor: '::',
-													_0: A2(
-														_aYuMatsuzawa$yubot$Polls_View$toggleSortOnClick,
-														function (_) {
-															return _.updatedAt;
-														},
-														pollsSort),
-													_1: {ctor: '[]'}
-												}
-											}),
+										{ctor: '[]'},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('Updated At'),
+											_0: _elm_lang$html$Html$text('Actions'),
 											_1: {ctor: '[]'}
 										}),
-									_1: {
-										ctor: '::',
-										_0: A2(
-											_rundis$elm_bootstrap$Bootstrap_Table$th,
-											{ctor: '[]'},
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html$text('Actions'),
-												_1: {ctor: '[]'}
-											}),
-										_1: {ctor: '[]'}
-									}
+									_1: {ctor: '[]'}
 								}
 							}
 						}

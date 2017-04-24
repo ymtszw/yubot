@@ -1,7 +1,7 @@
 module Polls.View exposing (..)
 
 import Date
-import Html exposing (Html, text, p)
+import Html exposing (Html, text, p, small)
 import Html.Attributes exposing (colspan, for, value, selected, align)
 import Html.Events exposing (onClick)
 import Html.Utils exposing (atext, mx2Button)
@@ -22,8 +22,7 @@ listView polls pollsSort =
         { options = [ Table.striped ]
         , thead =
             Table.simpleThead
-                [ th [] [ text "ID" ]
-                , th (List.map cellAttr [ sorting, toggleSortOnClick .url pollsSort ]) [ text "URL" ]
+                [ th (List.map cellAttr [ sorting, toggleSortOnClick .url pollsSort ]) [ text "URL" ]
                 , th (List.map cellAttr [ sorting, toggleSortOnClick .interval pollsSort ]) [ text "Interval" ]
                 , th (List.map cellAttr [ sorting, toggleSortOnClick .updatedAt pollsSort ]) [ text "Updated At" ]
                 , th [] [ text "Actions" ]
@@ -77,8 +76,7 @@ editPollButton poll option string =
 pollRow : Poll -> Table.Row Msg
 pollRow poll =
     tr []
-        [ td [] [ text poll.id ]
-        , td [] (atext poll.url)
+        [ td [] (atext poll.url)
         , td [] [ text (intervalToText poll.interval) ]
         , td [] [ text (toDateString poll.updatedAt) ]
         , td []
@@ -160,7 +158,7 @@ headerText poll =
             text "New poll!"
 
         id ->
-            text ("ID: " ++ id)
+            small [] [ text ("ID: " ++ id) ]
 
 
 editForm : Poll -> Html Msg
