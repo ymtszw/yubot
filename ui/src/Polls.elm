@@ -1,6 +1,5 @@
 module Polls exposing (..)
 
-import Date exposing (Date)
 import Bootstrap.Modal as Modal
 
 
@@ -9,7 +8,7 @@ import Bootstrap.Modal as Modal
 
 type alias Poll =
     { id : String
-    , updatedAt : Date
+    , updatedAt : String
     , url : String
     , interval : String
     , auth : Maybe String
@@ -20,7 +19,7 @@ type alias Poll =
 
 dummyPoll : Poll
 dummyPoll =
-    Poll "" (Date.fromTime 0) "https://example.com" "10" Nothing "" Nothing
+    Poll "" "2015-01-01T00:00:00Z" "https://example.com" "10" Nothing "" Nothing
 
 
 type alias DeleteModal =
@@ -40,9 +39,7 @@ type Ord
     | Desc
 
 
-
--- Currently, only string field can be sorted
-
-
+{-| Currently, only string field can be sorted
+-}
 type alias Sorter =
     ( Poll -> String, Ord )

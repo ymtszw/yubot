@@ -1,5 +1,6 @@
 module Polls.View exposing (..)
 
+import Date
 import Html exposing (Html, text, p)
 import Html.Attributes exposing (colspan, for, value, selected, align)
 import Html.Events exposing (onClick)
@@ -24,7 +25,7 @@ listView polls pollsSort =
                 [ th [] [ text "ID" ]
                 , th (List.map cellAttr [ sorting, toggleSortOnClick .url pollsSort ]) [ text "URL" ]
                 , th (List.map cellAttr [ sorting, toggleSortOnClick .interval pollsSort ]) [ text "Interval" ]
-                , th [] [ text "Updated At" ]
+                , th (List.map cellAttr [ sorting, toggleSortOnClick .updatedAt pollsSort ]) [ text "Updated At" ]
                 , th [] [ text "Actions" ]
                 ]
         , tbody = Table.tbody [] <| rows polls
@@ -79,7 +80,7 @@ pollRow poll =
         [ td [] [ text poll.id ]
         , td [] (atext poll.url)
         , td [] [ text (intervalToText poll.interval) ]
-        , td [] [ text (toString poll.updatedAt) ]
+        , td [] [ text (toDateString poll.updatedAt) ]
         , td []
             [ editPollButton poll Button.primary "Update"
             , mx2Button (OnDeleteModal Modal.visibleState poll) Button.danger "Delete"
@@ -95,6 +96,16 @@ intervalToText interval =
 
         Err _ ->
             interval
+
+
+toDateString : String -> String
+toDateString string =
+    case Date.fromString string of
+        Ok date ->
+            toString date
+
+        Err x ->
+            "Invalid updatedAt!"
 
 
 deleteModalView : DeleteModal -> Html Msg

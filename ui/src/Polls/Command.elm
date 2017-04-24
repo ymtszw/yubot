@@ -1,8 +1,7 @@
-module Polls.Command exposing (..)
+module Polls.Command exposing (fetchAll, delete)
 
 import Http
 import HttpBuilder exposing (withExpect, send)
-import Date exposing (..)
 import Json.Decode as Decode exposing (field, at)
 import Polls exposing (Poll)
 import Polls.Messages exposing (Msg(OnFetchAll, OnDelete))
@@ -24,22 +23,12 @@ fetchDecoder : Decode.Decoder Poll
 fetchDecoder =
     Decode.map7 Poll
         (field "_id" Decode.string)
-        (field "updated_at" dateDecoder)
+        (field "updated_at" Decode.string)
         (at [ "data", "url" ] Decode.string)
         (at [ "data", "interval" ] Decode.string)
         (at [ "data", "auth" ] (Decode.maybe Decode.string))
         (at [ "data", "action" ] Decode.string)
         (at [ "data", "action" ] filtersDecoder)
-
-
-dateDecoder : Decode.Decoder Date
-dateDecoder =
-    Decode.map (Date.fromString >> (Result.withDefault fallbackTime)) Decode.string
-
-
-fallbackTime : Date
-fallbackTime =
-    Date.fromTime 0.0
 
 
 filtersDecoder : Decode.Decoder (Maybe (List String))

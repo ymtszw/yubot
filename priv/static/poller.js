@@ -11559,72 +11559,6 @@ var _lukewestby$elm_http_builder$HttpBuilder$RequestBuilder = F9(
 		return {method: a, headers: b, url: c, body: d, expect: e, timeout: f, withCredentials: g, queryParams: h, cacheBuster: i};
 	});
 
-//import Result //
-
-var _elm_lang$core$Native_Date = function() {
-
-function fromString(str)
-{
-	var date = new Date(str);
-	return isNaN(date.getTime())
-		? _elm_lang$core$Result$Err('Unable to parse \'' + str + '\' as a date. Dates must be in the ISO 8601 format.')
-		: _elm_lang$core$Result$Ok(date);
-}
-
-var dayTable = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-var monthTable =
-	['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-	 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-
-return {
-	fromString: fromString,
-	year: function(d) { return d.getFullYear(); },
-	month: function(d) { return { ctor: monthTable[d.getMonth()] }; },
-	day: function(d) { return d.getDate(); },
-	hour: function(d) { return d.getHours(); },
-	minute: function(d) { return d.getMinutes(); },
-	second: function(d) { return d.getSeconds(); },
-	millisecond: function(d) { return d.getMilliseconds(); },
-	toTime: function(d) { return d.getTime(); },
-	fromTime: function(t) { return new Date(t); },
-	dayOfWeek: function(d) { return { ctor: dayTable[d.getDay()] }; }
-};
-
-}();
-var _elm_lang$core$Date$millisecond = _elm_lang$core$Native_Date.millisecond;
-var _elm_lang$core$Date$second = _elm_lang$core$Native_Date.second;
-var _elm_lang$core$Date$minute = _elm_lang$core$Native_Date.minute;
-var _elm_lang$core$Date$hour = _elm_lang$core$Native_Date.hour;
-var _elm_lang$core$Date$dayOfWeek = _elm_lang$core$Native_Date.dayOfWeek;
-var _elm_lang$core$Date$day = _elm_lang$core$Native_Date.day;
-var _elm_lang$core$Date$month = _elm_lang$core$Native_Date.month;
-var _elm_lang$core$Date$year = _elm_lang$core$Native_Date.year;
-var _elm_lang$core$Date$fromTime = _elm_lang$core$Native_Date.fromTime;
-var _elm_lang$core$Date$toTime = _elm_lang$core$Native_Date.toTime;
-var _elm_lang$core$Date$fromString = _elm_lang$core$Native_Date.fromString;
-var _elm_lang$core$Date$now = A2(_elm_lang$core$Task$map, _elm_lang$core$Date$fromTime, _elm_lang$core$Time$now);
-var _elm_lang$core$Date$Date = {ctor: 'Date'};
-var _elm_lang$core$Date$Sun = {ctor: 'Sun'};
-var _elm_lang$core$Date$Sat = {ctor: 'Sat'};
-var _elm_lang$core$Date$Fri = {ctor: 'Fri'};
-var _elm_lang$core$Date$Thu = {ctor: 'Thu'};
-var _elm_lang$core$Date$Wed = {ctor: 'Wed'};
-var _elm_lang$core$Date$Tue = {ctor: 'Tue'};
-var _elm_lang$core$Date$Mon = {ctor: 'Mon'};
-var _elm_lang$core$Date$Dec = {ctor: 'Dec'};
-var _elm_lang$core$Date$Nov = {ctor: 'Nov'};
-var _elm_lang$core$Date$Oct = {ctor: 'Oct'};
-var _elm_lang$core$Date$Sep = {ctor: 'Sep'};
-var _elm_lang$core$Date$Aug = {ctor: 'Aug'};
-var _elm_lang$core$Date$Jul = {ctor: 'Jul'};
-var _elm_lang$core$Date$Jun = {ctor: 'Jun'};
-var _elm_lang$core$Date$May = {ctor: 'May'};
-var _elm_lang$core$Date$Apr = {ctor: 'Apr'};
-var _elm_lang$core$Date$Mar = {ctor: 'Mar'};
-var _elm_lang$core$Date$Feb = {ctor: 'Feb'};
-var _elm_lang$core$Date$Jan = {ctor: 'Jan'};
-
 var _rundis$elm_bootstrap$Bootstrap_Modal$ifElse = F3(
 	function (pred, $true, $false) {
 		return pred ? $true : $false;
@@ -11980,15 +11914,7 @@ var _aYuMatsuzawa$yubot$Polls$Poll = F7(
 	function (a, b, c, d, e, f, g) {
 		return {id: a, updatedAt: b, url: c, interval: d, auth: e, action: f, filters: g};
 	});
-var _aYuMatsuzawa$yubot$Polls$dummyPoll = A7(
-	_aYuMatsuzawa$yubot$Polls$Poll,
-	'',
-	_elm_lang$core$Date$fromTime(0),
-	'https://example.com',
-	'10',
-	_elm_lang$core$Maybe$Nothing,
-	'',
-	_elm_lang$core$Maybe$Nothing);
+var _aYuMatsuzawa$yubot$Polls$dummyPoll = A7(_aYuMatsuzawa$yubot$Polls$Poll, '', '2015-01-01T00:00:00Z', 'https://example.com', '10', _elm_lang$core$Maybe$Nothing, '', _elm_lang$core$Maybe$Nothing);
 var _aYuMatsuzawa$yubot$Polls$DeleteModal = F2(
 	function (a, b) {
 		return {modalState: a, poll: b};
@@ -12041,21 +11967,11 @@ var _aYuMatsuzawa$yubot$Polls_Command$filtersDecoder = _elm_lang$core$Json_Decod
 			}
 		},
 		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
-var _aYuMatsuzawa$yubot$Polls_Command$fallbackTime = _elm_lang$core$Date$fromTime(0.0);
-var _aYuMatsuzawa$yubot$Polls_Command$dateDecoder = A2(
-	_elm_lang$core$Json_Decode$map,
-	function (_p0) {
-		return A2(
-			_elm_lang$core$Result$withDefault,
-			_aYuMatsuzawa$yubot$Polls_Command$fallbackTime,
-			_elm_lang$core$Date$fromString(_p0));
-	},
-	_elm_lang$core$Json_Decode$string);
 var _aYuMatsuzawa$yubot$Polls_Command$fetchDecoder = A8(
 	_elm_lang$core$Json_Decode$map7,
 	_aYuMatsuzawa$yubot$Polls$Poll,
 	A2(_elm_lang$core$Json_Decode$field, '_id', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'updated_at', _aYuMatsuzawa$yubot$Polls_Command$dateDecoder),
+	A2(_elm_lang$core$Json_Decode$field, 'updated_at', _elm_lang$core$Json_Decode$string),
 	A2(
 		_elm_lang$core$Json_Decode$at,
 		{
@@ -13853,6 +13769,72 @@ var _rundis$elm_bootstrap$Bootstrap_Card$imgBottom = F3(
 				}));
 	});
 
+//import Result //
+
+var _elm_lang$core$Native_Date = function() {
+
+function fromString(str)
+{
+	var date = new Date(str);
+	return isNaN(date.getTime())
+		? _elm_lang$core$Result$Err('Unable to parse \'' + str + '\' as a date. Dates must be in the ISO 8601 format.')
+		: _elm_lang$core$Result$Ok(date);
+}
+
+var dayTable = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+var monthTable =
+	['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+	 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+
+return {
+	fromString: fromString,
+	year: function(d) { return d.getFullYear(); },
+	month: function(d) { return { ctor: monthTable[d.getMonth()] }; },
+	day: function(d) { return d.getDate(); },
+	hour: function(d) { return d.getHours(); },
+	minute: function(d) { return d.getMinutes(); },
+	second: function(d) { return d.getSeconds(); },
+	millisecond: function(d) { return d.getMilliseconds(); },
+	toTime: function(d) { return d.getTime(); },
+	fromTime: function(t) { return new Date(t); },
+	dayOfWeek: function(d) { return { ctor: dayTable[d.getDay()] }; }
+};
+
+}();
+var _elm_lang$core$Date$millisecond = _elm_lang$core$Native_Date.millisecond;
+var _elm_lang$core$Date$second = _elm_lang$core$Native_Date.second;
+var _elm_lang$core$Date$minute = _elm_lang$core$Native_Date.minute;
+var _elm_lang$core$Date$hour = _elm_lang$core$Native_Date.hour;
+var _elm_lang$core$Date$dayOfWeek = _elm_lang$core$Native_Date.dayOfWeek;
+var _elm_lang$core$Date$day = _elm_lang$core$Native_Date.day;
+var _elm_lang$core$Date$month = _elm_lang$core$Native_Date.month;
+var _elm_lang$core$Date$year = _elm_lang$core$Native_Date.year;
+var _elm_lang$core$Date$fromTime = _elm_lang$core$Native_Date.fromTime;
+var _elm_lang$core$Date$toTime = _elm_lang$core$Native_Date.toTime;
+var _elm_lang$core$Date$fromString = _elm_lang$core$Native_Date.fromString;
+var _elm_lang$core$Date$now = A2(_elm_lang$core$Task$map, _elm_lang$core$Date$fromTime, _elm_lang$core$Time$now);
+var _elm_lang$core$Date$Date = {ctor: 'Date'};
+var _elm_lang$core$Date$Sun = {ctor: 'Sun'};
+var _elm_lang$core$Date$Sat = {ctor: 'Sat'};
+var _elm_lang$core$Date$Fri = {ctor: 'Fri'};
+var _elm_lang$core$Date$Thu = {ctor: 'Thu'};
+var _elm_lang$core$Date$Wed = {ctor: 'Wed'};
+var _elm_lang$core$Date$Tue = {ctor: 'Tue'};
+var _elm_lang$core$Date$Mon = {ctor: 'Mon'};
+var _elm_lang$core$Date$Dec = {ctor: 'Dec'};
+var _elm_lang$core$Date$Nov = {ctor: 'Nov'};
+var _elm_lang$core$Date$Oct = {ctor: 'Oct'};
+var _elm_lang$core$Date$Sep = {ctor: 'Sep'};
+var _elm_lang$core$Date$Aug = {ctor: 'Aug'};
+var _elm_lang$core$Date$Jul = {ctor: 'Jul'};
+var _elm_lang$core$Date$Jun = {ctor: 'Jun'};
+var _elm_lang$core$Date$May = {ctor: 'May'};
+var _elm_lang$core$Date$Apr = {ctor: 'Apr'};
+var _elm_lang$core$Date$Mar = {ctor: 'Mar'};
+var _elm_lang$core$Date$Feb = {ctor: 'Feb'};
+var _elm_lang$core$Date$Jan = {ctor: 'Jan'};
+
 var _rundis$elm_bootstrap$Bootstrap_Table$roleOption = function (role) {
 	var _p0 = role;
 	switch (_p0.ctor) {
@@ -15212,9 +15194,17 @@ var _aYuMatsuzawa$yubot$Polls_View$deleteModalView = function (deleteModal) {
 					},
 					_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg)))));
 };
-var _aYuMatsuzawa$yubot$Polls_View$intervalToText = function (interval) {
-	var _p1 = _elm_lang$core$String$toInt(interval);
+var _aYuMatsuzawa$yubot$Polls_View$toDateString = function (string) {
+	var _p1 = _elm_lang$core$Date$fromString(string);
 	if (_p1.ctor === 'Ok') {
+		return _elm_lang$core$Basics$toString(_p1._0);
+	} else {
+		return 'Invalid updatedAt!';
+	}
+};
+var _aYuMatsuzawa$yubot$Polls_View$intervalToText = function (interval) {
+	var _p2 = _elm_lang$core$String$toInt(interval);
+	if (_p2.ctor === 'Ok') {
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
 			'every ',
@@ -15461,7 +15451,7 @@ var _aYuMatsuzawa$yubot$Polls_View$pollRow = function (poll) {
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html$text(
-									_elm_lang$core$Basics$toString(poll.updatedAt)),
+									_aYuMatsuzawa$yubot$Polls_View$toDateString(poll.updatedAt)),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -15516,8 +15506,8 @@ var _aYuMatsuzawa$yubot$Polls_View$createRow = A2(
 		_1: {ctor: '[]'}
 	});
 var _aYuMatsuzawa$yubot$Polls_View$rows = function (polls) {
-	var _p2 = polls;
-	if (_p2.ctor === '[]') {
+	var _p3 = polls;
+	if (_p3.ctor === '[]') {
 		return {
 			ctor: '::',
 			_0: _aYuMatsuzawa$yubot$Polls_View$createRow,
@@ -15536,12 +15526,12 @@ var _aYuMatsuzawa$yubot$Polls_View$rows = function (polls) {
 var _aYuMatsuzawa$yubot$Polls_View$toggleSortOnClick = F2(
 	function (newCompareBy, maybeSorter) {
 		var order = function () {
-			var _p3 = maybeSorter;
-			if (_p3.ctor === 'Nothing') {
+			var _p4 = maybeSorter;
+			if (_p4.ctor === 'Nothing') {
 				return _aYuMatsuzawa$yubot$Polls$Asc;
 			} else {
-				var _p4 = _p3._0._1;
-				if (_p4.ctor === 'Asc') {
+				var _p5 = _p4._0._1;
+				if (_p5.ctor === 'Asc') {
 					return _aYuMatsuzawa$yubot$Polls$Desc;
 				} else {
 					return _aYuMatsuzawa$yubot$Polls$Asc;
@@ -15628,7 +15618,23 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = F2(
 									ctor: '::',
 									_0: A2(
 										_rundis$elm_bootstrap$Bootstrap_Table$th,
-										{ctor: '[]'},
+										A2(
+											_elm_lang$core$List$map,
+											_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
+											{
+												ctor: '::',
+												_0: _aYuMatsuzawa$yubot$Poller_Styles$sorting,
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_aYuMatsuzawa$yubot$Polls_View$toggleSortOnClick,
+														function (_) {
+															return _.updatedAt;
+														},
+														pollsSort),
+													_1: {ctor: '[]'}
+												}
+											}),
 										{
 											ctor: '::',
 											_0: _elm_lang$html$Html$text('Updated At'),
