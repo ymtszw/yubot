@@ -8,5 +8,5 @@ type Ord
 
 {-| Currently, only string field can be sorted
 -}
-type alias Sorter obj =
-    ( obj -> String, Ord )
+type alias Sorter resource =
+    ( resource -> String, Ord )

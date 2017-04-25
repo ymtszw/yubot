@@ -7,8 +7,10 @@ import Bootstrap.Grid.Col exposing (..)
 import Bootstrap.Tab as Tab
 import Bootstrap.Card as Card
 import Polls.View
+import Polls.ModalView
+import Actions.View
 import Poller.Model exposing (Model)
-import Poller.Messages exposing (Msg(PollsMsg, TabMsg))
+import Poller.Messages exposing (Msg(..))
 import Poller.Styles exposing (..)
 
 
@@ -53,22 +55,38 @@ mainTabs model =
                 , pane = Tab.pane [ whiteBack, p3 ] [ pollList model ]
                 }
             , Tab.item
+                { link = Tab.link [] [ text "Actions" ]
+                , pane = Tab.pane [ whiteBack, p3 ] [ actionList model ]
+                }
+            , Tab.item
                 { link = Tab.link [] [ text "Dummy" ]
                 , pane = Tab.pane [ whiteBack, p3 ] [ dummyBlock ]
                 }
             ]
         |> Tab.view model.tabState
 
+
 pollList : Model -> Html Msg
 pollList model =
     div []
         [ Grid.simpleRow
             [ Grid.col [ md12 ]
-                [ Html.map PollsMsg (Polls.View.listView model.polls model.pollsSort)
+                [ Html.map PollsMsg (Polls.View.listView model.pollRs)
                 ]
             ]
-        , Html.map PollsMsg (Polls.View.deleteModalView model.pollDeleteModal)
-        , Html.map PollsMsg (Polls.View.editModalView model.pollEditModal)
+        , Html.map PollsMsg (Polls.ModalView.deleteModalView model.pollRs)
+        , Html.map PollsMsg (Polls.ModalView.editModalView model.pollRs)
+        ]
+
+
+actionList : Model -> Html Msg
+actionList model =
+    div []
+        [ Grid.simpleRow
+            [ Grid.col [ md12 ]
+                [ Html.map ActionsMsg (Actions.View.listView model.actionRs)
+                ]
+            ]
         ]
 
 

@@ -1,10 +1,17 @@
 module Html.Utils exposing (..)
 
+import Date
 import Regex exposing (Match, HowMany(AtMost), regex)
 import Html exposing (Html, text, a)
 import Html.Attributes exposing (href)
+import Html.Events exposing (onClick)
 import Bootstrap.Button as Button exposing (Option)
+import Utils exposing (Sorter, Ord(..))
+import Resource.Messages exposing (Msg(OnSort))
 import Poller.Styles exposing (mx2)
+
+
+-- Html helpers
 
 
 {-| `text` with autolinking whitespace-splitted URLs.
@@ -62,3 +69,50 @@ mx2Button clickMsg option string =
         , Button.onClick clickMsg
         ]
         [ text string ]
+
+
+
+-- Event helpers
+
+
+toggleSortOnClick : (resource -> String) -> Maybe (Sorter resource) -> Html.Attribute (Msg resource)
+toggleSortOnClick newCompareBy maybeSorter =
+    let
+        order =
+            case maybeSorter of
+                Nothing ->
+                    Asc
+
+                Just ( oldCompareBy, oldOrder ) ->
+                    case oldOrder of
+                        Asc ->
+                            Desc
+
+                        Desc ->
+                            Asc
+    in
+        onClick (OnSort ( newCompareBy, order ))
+
+
+
+-- String helpers
+
+
+toDateString : String -> String
+toDateString string =
+    case Date.fromString string of
+        Ok date ->
+            toString date
+
+        Err x ->
+            "Invalid updatedAt!"
+
+
+intervalToString : String -> String
+intervalToString interval =
+    case String.toInt interval of
+        Ok _ ->
+            "every " ++ interval ++ " min."
+
+        Err _ ->
+            interval

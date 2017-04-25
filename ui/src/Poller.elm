@@ -2,16 +2,21 @@ module Poller exposing (..)
 
 import Html exposing (program)
 import Bootstrap.Tab
-import Polls.Command
+import Resource.Command
+import Polls
+import Actions
 import Poller.Model exposing (Model, initialModel)
-import Poller.Messages exposing (Msg(PollsMsg, TabMsg))
+import Poller.Messages exposing (Msg(..))
 import Poller.Update exposing (update)
 import Poller.View exposing (view)
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( initialModel, Cmd.map PollsMsg Polls.Command.fetchAll )
+    [ (Cmd.map PollsMsg (Resource.Command.fetchAll Polls.config))
+    , (Cmd.map ActionsMsg (Resource.Command.fetchAll Actions.config))
+    ]
+        |> (!) initialModel
 
 
 
