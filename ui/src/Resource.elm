@@ -7,18 +7,12 @@ import Utils exposing (Sorter)
 type alias Resource resource =
     { list : List resource
     , listSort : Maybe (Sorter resource)
-    , deleteModal : DeleteModal resource
-    , editModal : EditModal resource
+    , deleteModal : ModalState resource
+    , editModal : ModalState resource
     }
 
 
-type alias DeleteModal resource =
-    { modalState : Modal.State
-    , target : resource
-    }
-
-
-type alias EditModal resource =
+type alias ModalState resource =
     { modalState : Modal.State
     , target : resource
     }

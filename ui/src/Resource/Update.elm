@@ -30,10 +30,10 @@ update dummyResource config msg resource =
             )
 
         OnDeleteModal newState newTarget ->
-            ( { resource | deleteModal = DeleteModal newState newTarget }, Cmd.none )
+            ( { resource | deleteModal = ModalState newState newTarget }, Cmd.none )
 
         OnDeleteConfirmed id ->
-            ( { resource | deleteModal = DeleteModal hiddenState dummyResource }, (delete config id) )
+            ( { resource | deleteModal = ModalState hiddenState dummyResource }, (delete config id) )
 
         OnDelete (Ok ()) ->
             ( resource, fetchAll config )
@@ -42,7 +42,7 @@ update dummyResource config msg resource =
             ( resource, Cmd.none )
 
         OnEditModal newState newTarget ->
-            ( { resource | editModal = EditModal newState newTarget }, Cmd.none )
+            ( { resource | editModal = ModalState newState newTarget }, Cmd.none )
 
 
 sortList : Sorter resource -> List resource -> List resource

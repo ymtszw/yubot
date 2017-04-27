@@ -2,7 +2,6 @@ module Polls exposing (..)
 
 import Set exposing (Set)
 import Json.Decode as Decode
-import Bootstrap.Modal as Modal
 import Resource exposing (Resource)
 import Resource.Command exposing (Config)
 import Resource.Messages exposing (Msg)
@@ -20,18 +19,6 @@ type alias Poll =
     , auth : Maybe String
     , action : String
     , filters : Maybe (List String)
-    }
-
-
-type alias DeleteModal =
-    { modalState : Modal.State
-    , poll : Poll
-    }
-
-
-type alias EditModal =
-    { modalState : Modal.State
-    , poll : Poll
     }
 
 

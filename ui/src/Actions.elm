@@ -1,7 +1,6 @@
 module Actions exposing (..)
 
 import Json.Decode as Decode
-import Bootstrap.Modal as Modal
 import Resource exposing (Resource)
 import Resource.Command exposing (Config)
 import Resource.Messages exposing (Msg)
@@ -30,18 +29,6 @@ type alias Action =
 dummyAction : Action
 dummyAction =
     Action "" "2015-01-01T00:00:00Z" "POST" "https://example.com" Nothing (BodyTemplate "{}" [])
-
-
-type alias DeleteModal =
-    { modalState : Modal.State
-    , action : Action
-    }
-
-
-type alias EditModal =
-    { modalState : Modal.State
-    , action : Action
-    }
 
 
 
