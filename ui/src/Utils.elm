@@ -10,3 +10,10 @@ type Ord
 -}
 type alias Sorter resource =
     ( resource -> String, Ord )
+
+
+{-| Used for destructuring and dumping nested Model into console
+-}
+flattenNestedKey : String -> ( String, ( String, String ) ) -> ( String, ( String, String ) )
+flattenNestedKey parentKey ( childKey, valueTuple ) =
+    ( parentKey ++ "." ++ childKey, valueTuple )

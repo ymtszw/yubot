@@ -23,6 +23,7 @@ introGap =
     style
         [ ( "padding-top", "30px" )
         , ( "padding-bottom", "30px" )
+        , ( "margin-top", "20px" )
         , ( "color", "rgb(255, 255, 255)" )
         ]
 

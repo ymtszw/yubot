@@ -2,8 +2,8 @@ module Html.Utils exposing (..)
 
 import Date
 import Regex exposing (Match, HowMany(AtMost), regex)
-import Html exposing (Html, text, a)
-import Html.Attributes exposing (href)
+import Html exposing (Html, text, a, img)
+import Html.Attributes exposing (href, src, class)
 import Html.Events exposing (onClick)
 import Bootstrap.Button as Button
 import Utils exposing (Sorter, Ord(..))
@@ -70,6 +70,17 @@ mx2Button clickMsg options string =
             ]
         )
         [ text string ]
+
+
+logo : Html msg
+logo =
+    img
+        [ class "d-inline-block"
+        , class "align-bottom"
+        , class "mx-1"
+        , src "/static/img/poller/favicon32.png"
+        ]
+        []
 
 
 

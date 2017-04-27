@@ -1,11 +1,14 @@
 module Poller.View exposing (..)
 
-import Html exposing (Html, div, h1, p, text)
-import Html.Utils exposing (atext)
+import Html exposing (Html, div, h1, p, text, strong)
+import Html.Utils exposing (atext, logo)
 import Bootstrap.Grid as Grid exposing (Column)
 import Bootstrap.Grid.Col exposing (..)
 import Bootstrap.Tab as Tab
 import Bootstrap.Card as Card
+import Bootstrap.Navbar as Navbar
+import Bootstrap.Button as Button
+import Bootstrap.ButtonGroup as ButtonGroup
 import Polls
 import Polls.View
 import Polls.ModalView
@@ -18,10 +21,44 @@ import Poller.Styles exposing (..)
 
 view : Model -> Html Msg
 view model =
-    Grid.containerFluid [ background ]
-        [ gap
-        , Grid.simpleRow [ mainContent model ]
+    div []
+        [ navbar model
+        , Grid.containerFluid [ background ]
+            [ gap
+            , Grid.simpleRow [ mainContent model ]
+            ]
         ]
+
+
+navbar : Model -> Html Msg
+navbar model =
+    Navbar.config NavbarMsg
+        |> Navbar.withAnimation
+        |> Navbar.collapseSmall
+        |> Navbar.fixTop
+        |> Navbar.brand [] [ logo ]
+        |> Navbar.customItems [ Navbar.customItem (verboseToggle model) ]
+        |> Navbar.view model.navbarState
+
+
+verboseToggle : Model -> Html Msg
+verboseToggle model =
+    let
+        toggleText =
+            if model.verbose then
+                text "On"
+            else
+                text "Off"
+    in
+        ButtonGroup.checkboxButtonGroup [ ButtonGroup.small ]
+            [ ButtonGroup.checkboxButton model.verbose
+                [ Button.outlineInfo
+                , Button.onClick (Verbose (not model.verbose))
+                ]
+                [ text "Verbose: "
+                , strong [] [ toggleText ]
+                ]
+            ]
 
 
 gap : Html Msg
