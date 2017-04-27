@@ -1,4 +1,4 @@
-module Polls.ModalView exposing (..)
+module Actions.ModalView exposing (..)
 
 import Html exposing (Html, text, p, small)
 import Html.Attributes exposing (for, value, selected)
@@ -10,20 +10,20 @@ import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Select as Select
 import Resource exposing (..)
 import Resource.Messages exposing (Msg(..))
-import Polls exposing (Poll, dummyPoll)
+import Actions exposing (Action, dummyAction)
 
 
-deleteModalView : Resource Poll -> Html (Msg Poll)
-deleteModalView pollRs =
+deleteModalView : Resource Action -> Html (Msg Action)
+deleteModalView actionRs =
     let
         target =
-            pollRs.deleteModal.target
+            actionRs.deleteModal.target
 
         stateToMsg state =
             OnDeleteModal state target
     in
         Modal.config stateToMsg
-            |> Modal.h4 [] [ text "Deleting Poll" ]
+            |> Modal.h4 [] [ text "Deleting Action" ]
             |> Modal.body []
                 [ p [] [ text ("ID: " ++ target.id) ]
                 , p [] (atext ("URL: " ++ target.url))
@@ -33,23 +33,23 @@ deleteModalView pollRs =
                 [ mx2Button (OnDeleteConfirmed target.id) Button.danger "Yes, delete"
                 , mx2Button (OnDeleteModal Modal.hiddenState target) Button.outlineSecondary "Cancel"
                 ]
-            |> Modal.view pollRs.deleteModal.modalState
+            |> Modal.view actionRs.deleteModal.modalState
 
 
-editModalView : Resource Poll -> Html (Msg Poll)
-editModalView pollRs =
+editModalView : Resource Action -> Html (Msg Action)
+editModalView actionRs =
     let
         target =
-            pollRs.editModal.target
+            actionRs.editModal.target
 
         stateToMsg state =
             OnEditModal state target
 
-        titleText poll =
-            if poll == dummyPoll then
-                text "Creating Poll"
+        titleText action =
+            if action == dummyAction then
+                text "Creating Action"
             else
-                text "Updating Poll"
+                text "Updating Action"
     in
         Modal.config stateToMsg
             |> Modal.h4 [] [ titleText target ]
@@ -61,42 +61,42 @@ editModalView pollRs =
                 [ mx2Button (OnEditModal Modal.hiddenState target) Button.primary "Submit"
                 , mx2Button (OnEditModal Modal.hiddenState target) Button.outlineSecondary "Cancel"
                 ]
-            |> Modal.view pollRs.editModal.modalState
+            |> Modal.view actionRs.editModal.modalState
 
 
-headerText : Poll -> Html (Msg Poll)
-headerText poll =
-    case poll.id of
+headerText : Action -> Html (Msg Action)
+headerText action =
+    case action.id of
         "" ->
-            text "New poll!"
+            text "New action!"
 
         id ->
             small [] [ text ("ID: " ++ id) ]
 
 
-editForm : Poll -> Html (Msg Poll)
-editForm poll =
+editForm : Action -> Html (Msg Action)
+editForm action =
     Form.form []
         [ Form.group []
-            [ Form.label [ for "poll-url" ] [ text "URL" ]
-            , Input.url [ Input.id "poll-url", Input.defaultValue poll.url ]
+            [ Form.label [ for "action-method" ] [ text "Method" ]
+            , methodSelect action.method
             ]
         , Form.group []
-            [ Form.label [ for "poll-interval" ] [ text "Interval" ]
-            , intervalSelect poll.interval
+            [ Form.label [ for "action-url" ] [ text "URL" ]
+            , Input.url [ Input.id "action-url", Input.defaultValue action.url ]
             ]
         ]
 
 
-intervalSelect : String -> Html (Msg Poll)
-intervalSelect interval =
+methodSelect : String -> Html (Msg Action)
+methodSelect method =
     let
         item v =
-            if v == interval then
-                Select.item [ value v, selected True ] [ text (intervalToString v) ]
+            if v == method then
+                Select.item [ value v, selected True ] [ text (String.toUpper v) ]
             else
-                Select.item [ value v ] [ text (intervalToString v) ]
+                Select.item [ value v ] [ text (String.toUpper v) ]
     in
-        [ "1", "3", "5", "10", "30", "hourly", "daily" ]
+        [ "get", "post", "put" ]
             |> List.map item
-            |> Select.select [ Select.id "poll-interval" ]
+            |> Select.select [ Select.id "action-method" ]

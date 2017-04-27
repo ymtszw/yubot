@@ -1,8 +1,10 @@
 module Actions.View exposing (..)
 
 import Html exposing (Html, text)
-import Html.Utils exposing (atext)
+import Html.Utils exposing (atext, mx2Button)
 import Bootstrap.Table as Table exposing (table, th, tr, td, cellAttr)
+import Bootstrap.Modal as Modal
+import Bootstrap.Button as Button
 import Resource exposing (Resource)
 import Resource.Messages exposing (Msg(..))
 import Actions exposing (Action)
@@ -28,11 +30,19 @@ rows actions =
     actions.list |> List.map actionRow
 
 
+editActionButton : Action -> Button.Option (Msg Action) -> String -> Html (Msg Action)
+editActionButton action option string =
+    mx2Button (OnEditModal Modal.visibleState action) option string
+
+
 actionRow : Action -> Table.Row (Msg Action)
 actionRow action =
     tr []
         [ td [] [ text action.method ]
         , td [] (atext action.url)
         , td [] [ text action.bodyTemplate.body ]
-        , td [] []
+        , td []
+            [ editActionButton action Button.primary "Update"
+            , mx2Button (OnDeleteModal Modal.visibleState action) Button.danger "Delete"
+            ]
         ]

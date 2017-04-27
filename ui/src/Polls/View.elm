@@ -4,7 +4,7 @@ import Html exposing (Html, text)
 import Html.Attributes exposing (colspan, align)
 import Html.Utils exposing (atext, mx2Button, toggleSortOnClick, toDateString, intervalToString)
 import Bootstrap.Table as Table exposing (table, th, tr, td, cellAttr)
-import Bootstrap.Button as Button exposing (Option)
+import Bootstrap.Button as Button
 import Bootstrap.Modal as Modal
 import Resource exposing (..)
 import Resource.Messages exposing (Msg(..))
@@ -45,7 +45,7 @@ createRow =
         ]
 
 
-editPollButton : Poll -> Option (Msg Poll) -> String -> Html (Msg Poll)
+editPollButton : Poll -> Button.Option (Msg Poll) -> String -> Html (Msg Poll)
 editPollButton poll option string =
     mx2Button (OnEditModal Modal.visibleState poll) option string
 

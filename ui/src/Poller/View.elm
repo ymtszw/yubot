@@ -9,6 +9,7 @@ import Bootstrap.Card as Card
 import Polls.View
 import Polls.ModalView
 import Actions.View
+import Actions.ModalView
 import Poller.Model exposing (Model)
 import Poller.Messages exposing (Msg(..))
 import Poller.Styles exposing (..)
@@ -87,6 +88,8 @@ actionList model =
                 [ Html.map ActionsMsg (Actions.View.listView model.actionRs)
                 ]
             ]
+        , Html.map ActionsMsg (Actions.ModalView.deleteModalView model.actionRs)
+        , Html.map ActionsMsg (Actions.ModalView.editModalView model.actionRs)
         ]
 
 
