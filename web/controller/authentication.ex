@@ -21,4 +21,10 @@ defmodule Yubot.Controller.Authentication do
     Authentication.retrieve_list(%{}, Yubot.Dodai.root_key(), group_id(conn))
     |> handle_with_200_json(conn)
   end
+
+  # DELETE /api/authentication/:id
+  def delete(conn) do
+    Authentication.delete(conn.request.path_matches.id, nil, Yubot.Dodai.root_key(), group_id(conn))
+    |> handle_with_204(conn)
+  end
 end

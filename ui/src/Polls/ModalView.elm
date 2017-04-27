@@ -30,8 +30,8 @@ deleteModalView pollRs =
                 , p [] [ text "Are you sure?" ]
                 ]
             |> Modal.footer []
-                [ mx2Button (OnDeleteConfirmed target.id) Button.danger "Yes, delete"
-                , mx2Button (OnDeleteModal Modal.hiddenState target) Button.outlineSecondary "Cancel"
+                [ mx2Button (OnDeleteConfirmed target.id) [ Button.danger ] "Yes, delete"
+                , mx2Button (OnDeleteModal Modal.hiddenState target) [] "Cancel"
                 ]
             |> Modal.view pollRs.deleteModal.modalState
 
@@ -58,8 +58,8 @@ editModalView pollRs =
                 , editForm target
                 ]
             |> Modal.footer []
-                [ mx2Button (OnEditModal Modal.hiddenState target) Button.primary "Submit"
-                , mx2Button (OnEditModal Modal.hiddenState target) Button.outlineSecondary "Cancel"
+                [ mx2Button (OnEditModal Modal.hiddenState target) [ Button.primary ] "Submit"
+                , mx2Button (OnEditModal Modal.hiddenState target) [] "Cancel"
                 ]
             |> Modal.view pollRs.editModal.modalState
 

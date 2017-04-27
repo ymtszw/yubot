@@ -41,13 +41,13 @@ createRow : Table.Row (Msg Poll)
 createRow =
     tr []
         [ td ([ colspan 5, align "center" ] |> List.map cellAttr)
-            [ editPollButton dummyPoll Button.primary "Create!" ]
+            [ editPollButton dummyPoll [ Button.primary, Button.small ] "Create!" ]
         ]
 
 
-editPollButton : Poll -> Button.Option (Msg Poll) -> String -> Html (Msg Poll)
-editPollButton poll option string =
-    mx2Button (OnEditModal Modal.visibleState poll) option string
+editPollButton : Poll -> List (Button.Option (Msg Poll)) -> String -> Html (Msg Poll)
+editPollButton poll options string =
+    mx2Button (OnEditModal Modal.visibleState poll) options string
 
 
 pollRow : Poll -> Table.Row (Msg Poll)
@@ -57,7 +57,7 @@ pollRow poll =
         , td [] [ text (intervalToString poll.interval) ]
         , td [] [ text (toDateString poll.updatedAt) ]
         , td []
-            [ editPollButton poll Button.primary "Update"
-            , mx2Button (OnDeleteModal Modal.visibleState poll) Button.danger "Delete"
+            [ editPollButton poll [ Button.primary, Button.small ] "Update"
+            , mx2Button (OnDeleteModal Modal.visibleState poll) [ Button.danger, Button.small ] "Delete"
             ]
         ]

@@ -70,3 +70,8 @@ p3 =
 mx2 : Attribute msg
 mx2 =
     class "mx-2"
+
+
+my1 : Attribute msg
+my1 =
+    class "my-1"

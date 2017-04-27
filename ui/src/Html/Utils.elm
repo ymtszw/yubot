@@ -5,10 +5,10 @@ import Regex exposing (Match, HowMany(AtMost), regex)
 import Html exposing (Html, text, a)
 import Html.Attributes exposing (href)
 import Html.Events exposing (onClick)
-import Bootstrap.Button as Button exposing (Option)
+import Bootstrap.Button as Button
 import Utils exposing (Sorter, Ord(..))
 import Resource.Messages exposing (Msg(OnSort))
-import Poller.Styles exposing (mx2)
+import Poller.Styles exposing (mx2, my1)
 
 
 -- Html helpers
@@ -61,13 +61,14 @@ leftToHtml string matchedUrl index =
             )
 
 
-mx2Button : msg -> Option msg -> String -> Html msg
-mx2Button clickMsg option string =
+mx2Button : msg -> List (Button.Option msg) -> String -> Html msg
+mx2Button clickMsg options string =
     Button.button
-        [ option
-        , Button.attrs [ mx2 ]
-        , Button.onClick clickMsg
-        ]
+        (List.append options
+            [ Button.attrs [ mx2, my1 ]
+            , Button.onClick clickMsg
+            ]
+        )
         [ text string ]
 
 

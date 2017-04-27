@@ -13,11 +13,13 @@ defmodule Yubot.Router do
   get    "/api/poll"    , Poll, :retrieve_list
   delete "/api/poll/:id", Poll, :delete
 
-  post "/api/action"    , Action, :create
-  get  "/api/action/:id", Action, :retrieve
-  get  "/api/action"    , Action, :retrieve_list
+  post   "/api/action"    , Action, :create
+  get    "/api/action/:id", Action, :retrieve
+  get    "/api/action"    , Action, :retrieve_list
+  delete "/api/action/:id", Action, :delete
 
-  post "/api/authentication"    , Authentication, :create
-  get  "/api/authentication/:id", Authentication, :retrieve
-  get  "/api/authentication"    , Authentication, :retrieve_list
+  post   "/api/authentication"    , Authentication, :create
+  get    "/api/authentication/:id", Authentication, :retrieve
+  get    "/api/authentication"    , Authentication, :retrieve_list
+  delete "/api/authentication/:id", Authentication, :delete
 end

@@ -6,6 +6,7 @@ import Bootstrap.Grid as Grid exposing (Column)
 import Bootstrap.Grid.Col exposing (..)
 import Bootstrap.Tab as Tab
 import Bootstrap.Card as Card
+import Polls
 import Polls.View
 import Polls.ModalView
 import Actions.View
@@ -49,7 +50,7 @@ mainTabs model =
     Tab.config TabMsg
         |> Tab.withAnimation
         |> Tab.justified
-        |> Tab.attrs [ rounded, whiteBack ]
+        |> Tab.attrs []
         |> Tab.items
             [ Tab.item
                 { link = Tab.link [] [ text "Polls" ]
@@ -85,7 +86,7 @@ actionList model =
     div []
         [ Grid.simpleRow
             [ Grid.col [ md12 ]
-                [ Html.map ActionsMsg (Actions.View.listView model.actionRs)
+                [ Html.map ActionsMsg (Actions.View.listView (Polls.usedActionIds model.pollRs.list) model.actionRs)
                 ]
             ]
         , Html.map ActionsMsg (Actions.ModalView.deleteModalView model.actionRs)

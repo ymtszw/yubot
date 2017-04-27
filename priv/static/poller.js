@@ -11408,6 +11408,7 @@ var _rundis$elm_bootstrap$Bootstrap_Button$button = F2(
 			children);
 	});
 
+var _aYuMatsuzawa$yubot$Poller_Styles$my1 = _elm_lang$html$Html_Attributes$class('my-1');
 var _aYuMatsuzawa$yubot$Poller_Styles$mx2 = _elm_lang$html$Html_Attributes$class('mx-2');
 var _aYuMatsuzawa$yubot$Poller_Styles$p3 = _elm_lang$html$Html_Attributes$class('p-3');
 var _aYuMatsuzawa$yubot$Poller_Styles$py3 = _elm_lang$html$Html_Attributes$class('py-3');
@@ -11515,27 +11516,30 @@ var _aYuMatsuzawa$yubot$Html_Utils$toggleSortOnClick = F2(
 				{ctor: '_Tuple2', _0: newCompareBy, _1: order}));
 	});
 var _aYuMatsuzawa$yubot$Html_Utils$mx2Button = F3(
-	function (clickMsg, option, string) {
+	function (clickMsg, options, string) {
 		return A2(
 			_rundis$elm_bootstrap$Bootstrap_Button$button,
-			{
-				ctor: '::',
-				_0: option,
-				_1: {
+			A2(
+				_elm_lang$core$List$append,
+				options,
+				{
 					ctor: '::',
 					_0: _rundis$elm_bootstrap$Bootstrap_Button$attrs(
 						{
 							ctor: '::',
 							_0: _aYuMatsuzawa$yubot$Poller_Styles$mx2,
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: _aYuMatsuzawa$yubot$Poller_Styles$my1,
+								_1: {ctor: '[]'}
+							}
 						}),
 					_1: {
 						ctor: '::',
 						_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(clickMsg),
 						_1: {ctor: '[]'}
 					}
-				}
-			},
+				}),
 			{
 				ctor: '::',
 				_0: _elm_lang$html$Html$text(string),
@@ -12824,14 +12828,18 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$editModalView = function (actionRs) {
 				_0: A3(
 					_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
 					A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-					_rundis$elm_bootstrap$Bootstrap_Button$primary,
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
+						_1: {ctor: '[]'}
+					},
 					'Submit'),
 				_1: {
 					ctor: '::',
 					_0: A3(
 						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
 						A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-						_rundis$elm_bootstrap$Bootstrap_Button$outlineSecondary,
+						{ctor: '[]'},
 						'Cancel'),
 					_1: {ctor: '[]'}
 				}
@@ -12874,14 +12882,18 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView = function (actionRs) 
 				_0: A3(
 					_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
 					_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteConfirmed(target.id),
-					_rundis$elm_bootstrap$Bootstrap_Button$danger,
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
+						_1: {ctor: '[]'}
+					},
 					'Yes, delete'),
 				_1: {
 					ctor: '::',
 					_0: A3(
 						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
 						A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-						_rundis$elm_bootstrap$Bootstrap_Button$outlineSecondary,
+						{ctor: '[]'},
 						'Cancel'),
 					_1: {ctor: '[]'}
 				}
@@ -12905,8 +12917,22 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView = function (actionRs) 
 						_0: A2(
 							_elm_lang$html$Html$p,
 							{ctor: '[]'},
-							_aYuMatsuzawa$yubot$Html_Utils$atext(
-								A2(_elm_lang$core$Basics_ops['++'], 'URL: ', target.url))),
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Action: '),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$code,
+										{ctor: '[]'},
+										_aYuMatsuzawa$yubot$Html_Utils$atext(
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												_elm_lang$core$String$toUpper(target.method),
+												A2(_elm_lang$core$Basics_ops['++'], ' ', target.url)))),
+									_1: {ctor: '[]'}
+								}
+							}),
 						_1: {
 							ctor: '::',
 							_0: A2(
@@ -12914,10 +12940,44 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView = function (actionRs) 
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Are you sure?'),
+									_0: _elm_lang$html$Html$text('Body:'),
 									_1: {ctor: '[]'}
 								}),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$pre,
+									{
+										ctor: '::',
+										_0: _aYuMatsuzawa$yubot$Poller_Styles$rounded,
+										_1: {
+											ctor: '::',
+											_0: _aYuMatsuzawa$yubot$Poller_Styles$greyBack,
+											_1: {
+												ctor: '::',
+												_0: _aYuMatsuzawa$yubot$Poller_Styles$p3,
+												_1: {ctor: '[]'}
+											}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(target.bodyTemplate.body),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$p,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Are you sure?'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}
 						}
 					}
 				},
@@ -12931,6 +12991,137 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView = function (actionRs) 
 					},
 					_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg)))));
 };
+
+var _elm_lang$core$Set$foldr = F3(
+	function (f, b, _p0) {
+		var _p1 = _p0;
+		return A3(
+			_elm_lang$core$Dict$foldr,
+			F3(
+				function (k, _p2, b) {
+					return A2(f, k, b);
+				}),
+			b,
+			_p1._0);
+	});
+var _elm_lang$core$Set$foldl = F3(
+	function (f, b, _p3) {
+		var _p4 = _p3;
+		return A3(
+			_elm_lang$core$Dict$foldl,
+			F3(
+				function (k, _p5, b) {
+					return A2(f, k, b);
+				}),
+			b,
+			_p4._0);
+	});
+var _elm_lang$core$Set$toList = function (_p6) {
+	var _p7 = _p6;
+	return _elm_lang$core$Dict$keys(_p7._0);
+};
+var _elm_lang$core$Set$size = function (_p8) {
+	var _p9 = _p8;
+	return _elm_lang$core$Dict$size(_p9._0);
+};
+var _elm_lang$core$Set$member = F2(
+	function (k, _p10) {
+		var _p11 = _p10;
+		return A2(_elm_lang$core$Dict$member, k, _p11._0);
+	});
+var _elm_lang$core$Set$isEmpty = function (_p12) {
+	var _p13 = _p12;
+	return _elm_lang$core$Dict$isEmpty(_p13._0);
+};
+var _elm_lang$core$Set$Set_elm_builtin = function (a) {
+	return {ctor: 'Set_elm_builtin', _0: a};
+};
+var _elm_lang$core$Set$empty = _elm_lang$core$Set$Set_elm_builtin(_elm_lang$core$Dict$empty);
+var _elm_lang$core$Set$singleton = function (k) {
+	return _elm_lang$core$Set$Set_elm_builtin(
+		A2(
+			_elm_lang$core$Dict$singleton,
+			k,
+			{ctor: '_Tuple0'}));
+};
+var _elm_lang$core$Set$insert = F2(
+	function (k, _p14) {
+		var _p15 = _p14;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A3(
+				_elm_lang$core$Dict$insert,
+				k,
+				{ctor: '_Tuple0'},
+				_p15._0));
+	});
+var _elm_lang$core$Set$fromList = function (xs) {
+	return A3(_elm_lang$core$List$foldl, _elm_lang$core$Set$insert, _elm_lang$core$Set$empty, xs);
+};
+var _elm_lang$core$Set$map = F2(
+	function (f, s) {
+		return _elm_lang$core$Set$fromList(
+			A2(
+				_elm_lang$core$List$map,
+				f,
+				_elm_lang$core$Set$toList(s)));
+	});
+var _elm_lang$core$Set$remove = F2(
+	function (k, _p16) {
+		var _p17 = _p16;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$remove, k, _p17._0));
+	});
+var _elm_lang$core$Set$union = F2(
+	function (_p19, _p18) {
+		var _p20 = _p19;
+		var _p21 = _p18;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$union, _p20._0, _p21._0));
+	});
+var _elm_lang$core$Set$intersect = F2(
+	function (_p23, _p22) {
+		var _p24 = _p23;
+		var _p25 = _p22;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$intersect, _p24._0, _p25._0));
+	});
+var _elm_lang$core$Set$diff = F2(
+	function (_p27, _p26) {
+		var _p28 = _p27;
+		var _p29 = _p26;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$diff, _p28._0, _p29._0));
+	});
+var _elm_lang$core$Set$filter = F2(
+	function (p, _p30) {
+		var _p31 = _p30;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(
+				_elm_lang$core$Dict$filter,
+				F2(
+					function (k, _p32) {
+						return p(k);
+					}),
+				_p31._0));
+	});
+var _elm_lang$core$Set$partition = F2(
+	function (p, _p33) {
+		var _p34 = _p33;
+		var _p35 = A2(
+			_elm_lang$core$Dict$partition,
+			F2(
+				function (k, _p36) {
+					return p(k);
+				}),
+			_p34._0);
+		var p1 = _p35._0;
+		var p2 = _p35._1;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Set$Set_elm_builtin(p1),
+			_1: _elm_lang$core$Set$Set_elm_builtin(p2)
+		};
+	});
 
 var _elm_lang$html$Html_Keyed$node = _elm_lang$virtual_dom$VirtualDom$keyedNode;
 var _elm_lang$html$Html_Keyed$ol = _elm_lang$html$Html_Keyed$node('ol');
@@ -13516,43 +13707,62 @@ var _rundis$elm_bootstrap$Bootstrap_Table$tbody = F2(
 	});
 
 var _aYuMatsuzawa$yubot$Actions_View$editActionButton = F3(
-	function (action, option, string) {
+	function (action, options, string) {
 		return A3(
 			_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
 			A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, action),
-			option,
+			options,
 			string);
 	});
-var _aYuMatsuzawa$yubot$Actions_View$actionRow = function (action) {
-	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Table$tr,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_rundis$elm_bootstrap$Bootstrap_Table$td,
-				{ctor: '[]'},
-				{
+var _aYuMatsuzawa$yubot$Actions_View$actionRow = F2(
+	function (usedActionIds, action) {
+		var _p0 = A2(_elm_lang$core$Set$member, action.id, usedActionIds) ? {
+			ctor: '_Tuple2',
+			_0: {
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(true),
+				_1: {
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(action.method),
+					_0: _rundis$elm_bootstrap$Bootstrap_Button$small,
 					_1: {ctor: '[]'}
-				}),
-			_1: {
+				}
+			},
+			_1: 'Used'
+		} : {
+			ctor: '_Tuple2',
+			_0: {
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
+				_1: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Button$small,
+					_1: {ctor: '[]'}
+				}
+			},
+			_1: 'Delete'
+		};
+		var deleteButtonOptions = _p0._0;
+		var deleteButtonString = _p0._1;
+		return A2(
+			_rundis$elm_bootstrap$Bootstrap_Table$tr,
+			{ctor: '[]'},
+			{
 				ctor: '::',
 				_0: A2(
 					_rundis$elm_bootstrap$Bootstrap_Table$td,
 					{ctor: '[]'},
-					_aYuMatsuzawa$yubot$Html_Utils$atext(action.url)),
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							_elm_lang$core$String$toUpper(action.method)),
+						_1: {ctor: '[]'}
+					}),
 				_1: {
 					ctor: '::',
 					_0: A2(
 						_rundis$elm_bootstrap$Bootstrap_Table$td,
 						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(action.bodyTemplate.body),
-							_1: {ctor: '[]'}
-						}),
+						_aYuMatsuzawa$yubot$Html_Utils$atext(action.url)),
 					_1: {
 						ctor: '::',
 						_0: A2(
@@ -13560,53 +13770,71 @@ var _aYuMatsuzawa$yubot$Actions_View$actionRow = function (action) {
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: A3(_aYuMatsuzawa$yubot$Actions_View$editActionButton, action, _rundis$elm_bootstrap$Bootstrap_Button$primary, 'Update'),
-								_1: {
+								_0: _elm_lang$html$Html$text(
+									_aYuMatsuzawa$yubot$Html_Utils$toDateString(action.updatedAt)),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_rundis$elm_bootstrap$Bootstrap_Table$td,
+								{ctor: '[]'},
+								{
 									ctor: '::',
 									_0: A3(
-										_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-										A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, action),
-										_rundis$elm_bootstrap$Bootstrap_Button$danger,
-										'Delete'),
-									_1: {ctor: '[]'}
-								}
-							}),
-						_1: {ctor: '[]'}
+										_aYuMatsuzawa$yubot$Actions_View$editActionButton,
+										action,
+										{
+											ctor: '::',
+											_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
+											_1: {
+												ctor: '::',
+												_0: _rundis$elm_bootstrap$Bootstrap_Button$small,
+												_1: {ctor: '[]'}
+											}
+										},
+										'Update'),
+									_1: {
+										ctor: '::',
+										_0: A3(
+											_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+											A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, action),
+											deleteButtonOptions,
+											deleteButtonString),
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: {ctor: '[]'}
+						}
 					}
 				}
-			}
-		});
-};
-var _aYuMatsuzawa$yubot$Actions_View$rows = function (actions) {
-	return A2(_elm_lang$core$List$map, _aYuMatsuzawa$yubot$Actions_View$actionRow, actions.list);
-};
-var _aYuMatsuzawa$yubot$Actions_View$listView = function (actions) {
-	return _rundis$elm_bootstrap$Bootstrap_Table$table(
-		{
-			options: {
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Table$striped,
-				_1: {ctor: '[]'}
-			},
-			thead: _rundis$elm_bootstrap$Bootstrap_Table$simpleThead(
-				{
+			});
+	});
+var _aYuMatsuzawa$yubot$Actions_View$rows = F2(
+	function (usedActionIds, actionRs) {
+		return A2(
+			_elm_lang$core$List$map,
+			_aYuMatsuzawa$yubot$Actions_View$actionRow(usedActionIds),
+			actionRs.list);
+	});
+var _aYuMatsuzawa$yubot$Actions_View$listView = F2(
+	function (usedActionIds, actionRs) {
+		return _rundis$elm_bootstrap$Bootstrap_Table$table(
+			{
+				options: {
 					ctor: '::',
-					_0: A2(
-						_rundis$elm_bootstrap$Bootstrap_Table$th,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Method'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
+					_0: _rundis$elm_bootstrap$Bootstrap_Table$striped,
+					_1: {ctor: '[]'}
+				},
+				thead: _rundis$elm_bootstrap$Bootstrap_Table$simpleThead(
+					{
 						ctor: '::',
 						_0: A2(
 							_rundis$elm_bootstrap$Bootstrap_Table$th,
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('URL'),
+								_0: _elm_lang$html$Html$text('Method'),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -13616,30 +13844,56 @@ var _aYuMatsuzawa$yubot$Actions_View$listView = function (actions) {
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Body Template'),
+									_0: _elm_lang$html$Html$text('URL'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
 								ctor: '::',
 								_0: A2(
 									_rundis$elm_bootstrap$Bootstrap_Table$th,
-									{ctor: '[]'},
+									A2(
+										_elm_lang$core$List$map,
+										_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
+										{
+											ctor: '::',
+											_0: _aYuMatsuzawa$yubot$Poller_Styles$sorting,
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_aYuMatsuzawa$yubot$Html_Utils$toggleSortOnClick,
+													function (_) {
+														return _.updatedAt;
+													},
+													actionRs.listSort),
+												_1: {ctor: '[]'}
+											}
+										}),
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Actions'),
+										_0: _elm_lang$html$Html$text('Updated At'),
 										_1: {ctor: '[]'}
 									}),
-								_1: {ctor: '[]'}
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_rundis$elm_bootstrap$Bootstrap_Table$th,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Actions'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
 							}
 						}
-					}
-				}),
-			tbody: A2(
-				_rundis$elm_bootstrap$Bootstrap_Table$tbody,
-				{ctor: '[]'},
-				_aYuMatsuzawa$yubot$Actions_View$rows(actions))
-		});
-};
+					}),
+				tbody: A2(
+					_rundis$elm_bootstrap$Bootstrap_Table$tbody,
+					{ctor: '[]'},
+					A2(_aYuMatsuzawa$yubot$Actions_View$rows, usedActionIds, actionRs))
+			});
+	});
 
 var _elm_lang$animation_frame$Native_AnimationFrame = function()
 {
@@ -14258,6 +14512,15 @@ var _rundis$elm_bootstrap$Bootstrap_Tab$pane = F2(
 			{attributes: attributes, children: children});
 	});
 
+var _aYuMatsuzawa$yubot$Polls$usedActionIds = function (polls) {
+	return _elm_lang$core$Set$fromList(
+		A2(
+			_elm_lang$core$List$map,
+			function (_) {
+				return _.action;
+			},
+			polls));
+};
 var _aYuMatsuzawa$yubot$Polls$Poll = F7(
 	function (a, b, c, d, e, f, g) {
 		return {id: a, updatedAt: b, url: c, interval: d, auth: e, action: f, filters: g};
@@ -15682,11 +15945,11 @@ var _rundis$elm_bootstrap$Bootstrap_Card$imgBottom = F3(
 	});
 
 var _aYuMatsuzawa$yubot$Polls_View$editPollButton = F3(
-	function (poll, option, string) {
+	function (poll, options, string) {
 		return A3(
 			_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
 			A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, poll),
-			option,
+			options,
 			string);
 	});
 var _aYuMatsuzawa$yubot$Polls_View$pollRow = function (poll) {
@@ -15728,13 +15991,33 @@ var _aYuMatsuzawa$yubot$Polls_View$pollRow = function (poll) {
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: A3(_aYuMatsuzawa$yubot$Polls_View$editPollButton, poll, _rundis$elm_bootstrap$Bootstrap_Button$primary, 'Update'),
+								_0: A3(
+									_aYuMatsuzawa$yubot$Polls_View$editPollButton,
+									poll,
+									{
+										ctor: '::',
+										_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
+										_1: {
+											ctor: '::',
+											_0: _rundis$elm_bootstrap$Bootstrap_Button$small,
+											_1: {ctor: '[]'}
+										}
+									},
+									'Update'),
 								_1: {
 									ctor: '::',
 									_0: A3(
 										_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
 										A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, poll),
-										_rundis$elm_bootstrap$Bootstrap_Button$danger,
+										{
+											ctor: '::',
+											_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
+											_1: {
+												ctor: '::',
+												_0: _rundis$elm_bootstrap$Bootstrap_Button$small,
+												_1: {ctor: '[]'}
+											}
+										},
 										'Delete'),
 									_1: {ctor: '[]'}
 								}
@@ -15766,7 +16049,19 @@ var _aYuMatsuzawa$yubot$Polls_View$createRow = A2(
 				}),
 			{
 				ctor: '::',
-				_0: A3(_aYuMatsuzawa$yubot$Polls_View$editPollButton, _aYuMatsuzawa$yubot$Polls$dummyPoll, _rundis$elm_bootstrap$Bootstrap_Button$primary, 'Create!'),
+				_0: A3(
+					_aYuMatsuzawa$yubot$Polls_View$editPollButton,
+					_aYuMatsuzawa$yubot$Polls$dummyPoll,
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Button$small,
+							_1: {ctor: '[]'}
+						}
+					},
+					'Create!'),
 				_1: {ctor: '[]'}
 			}),
 		_1: {ctor: '[]'}
@@ -16072,14 +16367,18 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$editModalView = function (pollRs) {
 				_0: A3(
 					_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
 					A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-					_rundis$elm_bootstrap$Bootstrap_Button$primary,
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
+						_1: {ctor: '[]'}
+					},
 					'Submit'),
 				_1: {
 					ctor: '::',
 					_0: A3(
 						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
 						A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-						_rundis$elm_bootstrap$Bootstrap_Button$outlineSecondary,
+						{ctor: '[]'},
 						'Cancel'),
 					_1: {ctor: '[]'}
 				}
@@ -16122,14 +16421,18 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$deleteModalView = function (pollRs) {
 				_0: A3(
 					_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
 					_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteConfirmed(target.id),
-					_rundis$elm_bootstrap$Bootstrap_Button$danger,
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
+						_1: {ctor: '[]'}
+					},
 					'Yes, delete'),
 				_1: {
 					ctor: '::',
 					_0: A3(
 						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
 						A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-						_rundis$elm_bootstrap$Bootstrap_Button$outlineSecondary,
+						{ctor: '[]'},
 						'Cancel'),
 					_1: {ctor: '[]'}
 				}
@@ -16236,7 +16539,10 @@ var _aYuMatsuzawa$yubot$Poller_View$actionList = function (model) {
 							_0: A2(
 								_elm_lang$html$Html$map,
 								_aYuMatsuzawa$yubot$Poller_Messages$ActionsMsg,
-								_aYuMatsuzawa$yubot$Actions_View$listView(model.actionRs)),
+								A2(
+									_aYuMatsuzawa$yubot$Actions_View$listView,
+									_aYuMatsuzawa$yubot$Polls$usedActionIds(model.pollRs.list),
+									model.actionRs)),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
@@ -16400,15 +16706,7 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 			},
 			A2(
 				_rundis$elm_bootstrap$Bootstrap_Tab$attrs,
-				{
-					ctor: '::',
-					_0: _aYuMatsuzawa$yubot$Poller_Styles$rounded,
-					_1: {
-						ctor: '::',
-						_0: _aYuMatsuzawa$yubot$Poller_Styles$whiteBack,
-						_1: {ctor: '[]'}
-					}
-				},
+				{ctor: '[]'},
 				_rundis$elm_bootstrap$Bootstrap_Tab$justified(
 					_rundis$elm_bootstrap$Bootstrap_Tab$withAnimation(
 						_rundis$elm_bootstrap$Bootstrap_Tab$config(_aYuMatsuzawa$yubot$Poller_Messages$TabMsg))))));

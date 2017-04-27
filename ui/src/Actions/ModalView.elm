@@ -1,6 +1,6 @@
 module Actions.ModalView exposing (..)
 
-import Html exposing (Html, text, p, small)
+import Html exposing (Html, text, p, small, pre, code)
 import Html.Attributes exposing (for, value, selected)
 import Html.Utils exposing (atext, mx2Button, intervalToString)
 import Bootstrap.Button as Button exposing (Option)
@@ -11,6 +11,7 @@ import Bootstrap.Form.Select as Select
 import Resource exposing (..)
 import Resource.Messages exposing (Msg(..))
 import Actions exposing (Action, dummyAction)
+import Poller.Styles exposing (..)
 
 
 deleteModalView : Resource Action -> Html (Msg Action)
@@ -26,12 +27,17 @@ deleteModalView actionRs =
             |> Modal.h4 [] [ text "Deleting Action" ]
             |> Modal.body []
                 [ p [] [ text ("ID: " ++ target.id) ]
-                , p [] (atext ("URL: " ++ target.url))
+                , p []
+                    [ text "Action: "
+                    , code [] (atext ((String.toUpper target.method) ++ " " ++ target.url))
+                    ]
+                , p [] [ text "Body:" ]
+                , pre [ rounded, greyBack, p3 ] [ text target.bodyTemplate.body ]
                 , p [] [ text "Are you sure?" ]
                 ]
             |> Modal.footer []
-                [ mx2Button (OnDeleteConfirmed target.id) Button.danger "Yes, delete"
-                , mx2Button (OnDeleteModal Modal.hiddenState target) Button.outlineSecondary "Cancel"
+                [ mx2Button (OnDeleteConfirmed target.id) [ Button.danger ] "Yes, delete"
+                , mx2Button (OnDeleteModal Modal.hiddenState target) [] "Cancel"
                 ]
             |> Modal.view actionRs.deleteModal.modalState
 
@@ -58,8 +64,8 @@ editModalView actionRs =
                 , editForm target
                 ]
             |> Modal.footer []
-                [ mx2Button (OnEditModal Modal.hiddenState target) Button.primary "Submit"
-                , mx2Button (OnEditModal Modal.hiddenState target) Button.outlineSecondary "Cancel"
+                [ mx2Button (OnEditModal Modal.hiddenState target) [ Button.primary ] "Submit"
+                , mx2Button (OnEditModal Modal.hiddenState target) [] "Cancel"
                 ]
             |> Modal.view actionRs.editModal.modalState
 

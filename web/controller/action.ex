@@ -36,4 +36,10 @@ defmodule Yubot.Controller.Action do
     Action.retrieve_list(%{}, Yubot.Dodai.root_key(), group_id(conn))
     |> handle_with_200_json(conn)
   end
+
+  # DELETE /api/action/:id
+  def delete(conn) do
+    Action.delete(conn.request.path_matches.id, nil, Yubot.Dodai.root_key(), group_id(conn))
+    |> handle_with_204(conn)
+  end
 end

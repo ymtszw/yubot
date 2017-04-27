@@ -1,5 +1,6 @@
 module Polls exposing (..)
 
+import Set exposing (Set)
 import Json.Decode as Decode
 import Bootstrap.Modal as Modal
 import Resource exposing (Resource)
@@ -22,11 +23,6 @@ type alias Poll =
     }
 
 
-dummyPoll : Poll
-dummyPoll =
-    Poll "" "2015-01-01T00:00:00Z" "https://example.com" "10" Nothing "" Nothing
-
-
 type alias DeleteModal =
     { modalState : Modal.State
     , poll : Poll
@@ -37,6 +33,18 @@ type alias EditModal =
     { modalState : Modal.State
     , poll : Poll
     }
+
+
+dummyPoll : Poll
+dummyPoll =
+    Poll "" "2015-01-01T00:00:00Z" "https://example.com" "10" Nothing "" Nothing
+
+
+usedActionIds : List Poll -> Set String
+usedActionIds polls =
+    polls
+        |> List.map .action
+        |> Set.fromList
 
 
 
