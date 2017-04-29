@@ -34,7 +34,7 @@ ui: poller ;
 
 .PHONY: poller
 poller:
-	elm-make --warn --output=priv/static/poller.js ui/src/Poller.elm
+	elm-make --debug --warn --output=priv/static/poller.js ui/src/Poller.elm
 
 .PHONY: uiwatch
 uiwatch:
