@@ -1,14 +1,15 @@
-module Polls.View exposing (..)
+module Polls.View exposing (listView)
 
 import Html exposing (Html, text)
 import Html.Attributes exposing (colspan, align)
-import Html.Utils exposing (atext, mx2Button, toggleSortOnClick, toDateString, intervalToString)
+import Html.Utils exposing (atext, mx2Button, toggleSortOnClick)
 import Bootstrap.Table as Table exposing (table, th, tr, td, cellAttr)
 import Bootstrap.Button as Button
 import Bootstrap.Modal as Modal
+import Utils exposing (timestampToString)
 import Resource exposing (..)
 import Resource.Messages exposing (Msg(..))
-import Polls exposing (Poll, dummyPoll)
+import Polls exposing (Poll, dummyPoll, intervalToString)
 import Poller.Styles exposing (sorting)
 
 
@@ -55,7 +56,7 @@ pollRow poll =
     tr []
         [ td [] (atext poll.url)
         , td [] [ text (intervalToString poll.interval) ]
-        , td [] [ text (toDateString poll.updatedAt) ]
+        , td [] [ text (timestampToString poll.updatedAt) ]
         , td []
             [ editPollButton poll [ Button.primary, Button.small ] "Update"
             , mx2Button (OnDeleteModal Modal.visibleState poll) [ Button.danger, Button.small ] "Delete"

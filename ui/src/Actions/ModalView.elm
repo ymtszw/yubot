@@ -1,8 +1,8 @@
-module Actions.ModalView exposing (..)
+module Actions.ModalView exposing (deleteModalView, editModalView)
 
 import Html exposing (Html, text, p, small, pre, code)
 import Html.Attributes exposing (for, value, selected)
-import Html.Utils exposing (atext, mx2Button, intervalToString)
+import Html.Utils exposing (atext, mx2Button)
 import Bootstrap.Button as Button exposing (Option)
 import Bootstrap.Modal as Modal
 import Bootstrap.Form as Form
@@ -94,7 +94,7 @@ editForm action =
         ]
 
 
-methodSelect : String -> Html (Msg Action)
+methodSelect : Actions.Method -> Html (Msg Action)
 methodSelect method =
     let
         item v =

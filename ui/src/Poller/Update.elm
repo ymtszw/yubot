@@ -1,40 +1,30 @@
-module Poller.Update exposing (..)
+module Poller.Update exposing (update)
 
 import Polls
 import Actions
-import Poller.Model exposing (Model, diffDump)
+import Poller.Model exposing (Model)
 import Poller.Messages exposing (Msg(..))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    let
-        ( updatedModel, newCmd ) =
-            case msg of
-                PollsMsg subMsg ->
-                    let
-                        ( updatedPollRs, cmd ) =
-                            Polls.update subMsg model.pollRs
-                    in
-                        ( { model | pollRs = updatedPollRs }, Cmd.map PollsMsg cmd )
+    case msg of
+        PollsMsg subMsg ->
+            let
+                ( updatedPollRs, cmd ) =
+                    Polls.update subMsg model.pollRs
+            in
+                ( { model | pollRs = updatedPollRs }, Cmd.map PollsMsg cmd )
 
-                ActionsMsg subMsg ->
-                    let
-                        ( updatedActionRs, cmd ) =
-                            Actions.update subMsg model.actionRs
-                    in
-                        ( { model | actionRs = updatedActionRs }, Cmd.map ActionsMsg cmd )
+        ActionsMsg subMsg ->
+            let
+                ( updatedActionRs, cmd ) =
+                    Actions.update subMsg model.actionRs
+            in
+                ( { model | actionRs = updatedActionRs }, Cmd.map ActionsMsg cmd )
 
-                TabMsg state ->
-                    ( { model | tabState = state }, Cmd.none )
+        TabMsg state ->
+            ( { model | tabState = state }, Cmd.none )
 
-                NavbarMsg state ->
-                    ( { model | navbarState = state }, Cmd.none )
-
-                Verbose bool ->
-                    ( { model | verbose = bool }, Cmd.none )
-    in
-        if model.verbose || updatedModel.verbose then
-            ( diffDump model updatedModel, newCmd )
-        else
-            ( updatedModel, newCmd )
+        NavbarMsg state ->
+            ( { model | navbarState = state }, Cmd.none )

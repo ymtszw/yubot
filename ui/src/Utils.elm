@@ -1,19 +1,31 @@
-module Utils exposing (..)
+module Utils
+    exposing
+        ( EntityId
+        , Timestamp
+        , Url
+        , timestampToString
+        )
+
+import Date
 
 
-type Ord
-    = Asc
-    | Desc
+type alias EntityId =
+    String
 
 
-{-| Currently, only string field can be sorted
--}
-type alias Sorter resource =
-    ( resource -> String, Ord )
+type alias Timestamp =
+    String
 
 
-{-| Used for destructuring and dumping nested Model into console
--}
-flattenNestedKey : String -> ( String, ( String, String ) ) -> ( String, ( String, String ) )
-flattenNestedKey parentKey ( childKey, valueTuple ) =
-    ( parentKey ++ "." ++ childKey, valueTuple )
+type alias Url =
+    String
+
+
+timestampToString : Timestamp -> String
+timestampToString string =
+    case Date.fromString string of
+        Ok date ->
+            toString date
+
+        Err x ->
+            "Invalid updatedAt!"

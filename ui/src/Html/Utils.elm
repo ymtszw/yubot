@@ -1,12 +1,18 @@
-module Html.Utils exposing (..)
+module Html.Utils
+    exposing
+        ( atext
+        , mx2Button
+        , logo
+        , toggleSortOnClick
+        )
 
-import Date
 import Regex exposing (Match, HowMany(AtMost), regex)
 import Html exposing (Html, text, a, img)
 import Html.Attributes exposing (href, src, class)
 import Html.Events exposing (onClick)
 import Bootstrap.Button as Button
-import Utils exposing (Sorter, Ord(..))
+import Utils exposing (Url)
+import Resource exposing (Sorter, Ord(..))
 import Resource.Messages exposing (Msg(OnSort))
 import Poller.Styles exposing (mx2, my1)
 
@@ -47,7 +53,7 @@ findFirstUrl string =
     Regex.find (AtMost 1) (regex "http(s)?://[a-zA-Z0-9_./#?&%=~+-]+") string
 
 
-leftToHtml : String -> String -> Int -> ( List (Html msg), String )
+leftToHtml : String -> Url -> Int -> ( List (Html msg), String )
 leftToHtml string matchedUrl index =
     case index of
         0 ->
@@ -88,43 +94,19 @@ logo =
 
 
 toggleSortOnClick : (resource -> String) -> Maybe (Sorter resource) -> Html.Attribute (Msg resource)
-toggleSortOnClick newCompareBy maybeSorter =
+toggleSortOnClick newProperty maybeSorter =
     let
-        order =
+        newOrder =
             case maybeSorter of
                 Nothing ->
                     Asc
 
-                Just ( oldCompareBy, oldOrder ) ->
-                    case oldOrder of
+                Just { property, order } ->
+                    case order of
                         Asc ->
                             Desc
 
                         Desc ->
                             Asc
     in
-        onClick (OnSort ( newCompareBy, order ))
-
-
-
--- String helpers
-
-
-toDateString : String -> String
-toDateString string =
-    case Date.fromString string of
-        Ok date ->
-            toString date
-
-        Err x ->
-            "Invalid updatedAt!"
-
-
-intervalToString : String -> String
-intervalToString interval =
-    case String.toInt interval of
-        Ok _ ->
-            "every " ++ interval ++ " min."
-
-        Err _ ->
-            interval
+        onClick (OnSort (Sorter newProperty newOrder))

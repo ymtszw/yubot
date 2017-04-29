@@ -1,8 +1,9 @@
-module Resource.Command exposing (..)
+module Resource.Command exposing (Config, fetchAll, delete)
 
 import Http
 import HttpBuilder exposing (withExpect, send)
 import Json.Decode as Decode exposing (field, at)
+import Utils exposing (EntityId)
 import Resource.Messages exposing (Msg(OnFetchAll, OnDelete))
 
 
@@ -19,7 +20,7 @@ fetchAll config =
         |> send OnFetchAll
 
 
-delete : Config resource -> String -> Cmd (Msg resource)
+delete : Config resource -> EntityId -> Cmd (Msg resource)
 delete config id =
     HttpBuilder.delete (config.resourcePath ++ "/" ++ id)
         |> send OnDelete

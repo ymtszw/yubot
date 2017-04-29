@@ -1,8 +1,8 @@
-module Polls.ModalView exposing (..)
+module Polls.ModalView exposing (deleteModalView, editModalView)
 
 import Html exposing (Html, text, p, small)
 import Html.Attributes exposing (for, value, selected)
-import Html.Utils exposing (atext, mx2Button, intervalToString)
+import Html.Utils exposing (atext, mx2Button)
 import Bootstrap.Button as Button exposing (Option)
 import Bootstrap.Modal as Modal
 import Bootstrap.Form as Form
@@ -10,7 +10,7 @@ import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Select as Select
 import Resource exposing (..)
 import Resource.Messages exposing (Msg(..))
-import Polls exposing (Poll, dummyPoll)
+import Polls exposing (Poll, Interval, dummyPoll, intervalToString)
 
 
 deleteModalView : Resource Poll -> Html (Msg Poll)
@@ -88,7 +88,7 @@ editForm poll =
         ]
 
 
-intervalSelect : String -> Html (Msg Poll)
+intervalSelect : Interval -> Html (Msg Poll)
 intervalSelect interval =
     let
         item v =

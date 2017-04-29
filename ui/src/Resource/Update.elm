@@ -1,8 +1,7 @@
-module Resource.Update exposing (..)
+module Resource.Update exposing (update)
 
 import Bootstrap.Modal exposing (hiddenState)
-import Utils exposing (..)
-import Resource exposing (..)
+import Resource exposing (Resource, ModalState)
 import Resource.Messages exposing (Msg(..))
 import Resource.Command exposing (Config, fetchAll, delete)
 
@@ -24,7 +23,7 @@ update dummyResource config msg resource =
         OnSort sorter ->
             ( { resource
                 | listSort = Just sorter
-                , list = sortList sorter resource.list
+                , list = Resource.sortList sorter resource.list
               }
             , Cmd.none
             )
@@ -43,15 +42,3 @@ update dummyResource config msg resource =
 
         OnEditModal newState newTarget ->
             ( { resource | editModal = ModalState newState newTarget }, Cmd.none )
-
-
-sortList : Sorter resource -> List resource -> List resource
-sortList ( compareBy, order ) list =
-    case order of
-        Asc ->
-            List.sortBy compareBy list
-
-        Desc ->
-            list
-                |> List.sortBy compareBy
-                |> List.reverse

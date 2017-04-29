@@ -1,6 +1,14 @@
-module Actions exposing (..)
+module Actions
+    exposing
+        ( Action
+        , Method
+        , dummyAction
+        , config
+        , update
+        )
 
 import Json.Decode as Decode
+import Utils exposing (EntityId, Timestamp, Url)
 import Resource exposing (Resource)
 import Resource.Command exposing (Config)
 import Resource.Messages exposing (Msg)
@@ -10,6 +18,10 @@ import Resource.Update
 -- Model
 
 
+type alias Method =
+    String
+
+
 type alias BodyTemplate =
     { body : String
     , variables : List String
@@ -17,11 +29,11 @@ type alias BodyTemplate =
 
 
 type alias Action =
-    { id : String
-    , updatedAt : String
-    , method : String
-    , url : String
-    , auth : Maybe String
+    { id : EntityId
+    , updatedAt : Timestamp
+    , method : Method
+    , url : Url
+    , auth : Maybe EntityId
     , bodyTemplate : BodyTemplate
     }
 

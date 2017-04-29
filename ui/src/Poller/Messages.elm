@@ -1,4 +1,4 @@
-module Poller.Messages exposing (..)
+module Poller.Messages exposing (Msg(..))
 
 import Bootstrap.Tab
 import Bootstrap.Navbar
@@ -12,4 +12,3 @@ type Msg
     | ActionsMsg (Resource.Messages.Msg Actions.Action)
     | TabMsg Bootstrap.Tab.State
     | NavbarMsg Bootstrap.Navbar.State
-    | Verbose Bool

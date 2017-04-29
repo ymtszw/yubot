@@ -1,7 +1,17 @@
-module Polls exposing (..)
+module Polls
+    exposing
+        ( Poll
+        , Interval
+        , dummyPoll
+        , config
+        , update
+        , usedActionIds
+        , intervalToString
+        )
 
 import Set exposing (Set)
 import Json.Decode as Decode
+import Utils exposing (..)
 import Resource exposing (Resource)
 import Resource.Command exposing (Config)
 import Resource.Messages exposing (Msg)
@@ -11,14 +21,22 @@ import Resource.Update
 -- Model
 
 
+type alias Interval =
+    String
+
+
+type alias JqFilter =
+    String
+
+
 type alias Poll =
-    { id : String
-    , updatedAt : String
-    , url : String
-    , interval : String
-    , auth : Maybe String
-    , action : String
-    , filters : Maybe (List String)
+    { id : EntityId
+    , updatedAt : Timestamp
+    , url : Url
+    , interval : Interval
+    , auth : Maybe EntityId
+    , action : EntityId
+    , filters : Maybe (List JqFilter)
     }
 
 
@@ -27,11 +45,21 @@ dummyPoll =
     Poll "" "2015-01-01T00:00:00Z" "https://example.com" "10" Nothing "" Nothing
 
 
-usedActionIds : List Poll -> Set String
+usedActionIds : List Poll -> Set EntityId
 usedActionIds polls =
     polls
         |> List.map .action
         |> Set.fromList
+
+
+intervalToString : Interval -> String
+intervalToString interval =
+    case String.toInt interval of
+        Ok _ ->
+            "every " ++ interval ++ " min."
+
+        Err _ ->
+            interval
 
 
 

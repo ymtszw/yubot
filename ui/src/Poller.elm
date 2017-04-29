@@ -1,4 +1,4 @@
-module Poller exposing (..)
+module Poller exposing (main)
 
 import Html exposing (program)
 import Bootstrap.Tab
