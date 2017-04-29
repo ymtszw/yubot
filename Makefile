@@ -34,9 +34,14 @@ ui: poller ;
 
 .PHONY: poller
 poller:
-	elm-make --debug --warn --output=priv/static/poller.js ui/src/Poller.elm
+	elm-make --yes --debug --warn --output=priv/static/poller.js ui/src/Poller.elm
 
 .PHONY: uiwatch
 uiwatch:
 	make ui
-	fswatch -o -l 2 ui/src elm-package.json | xargs -n1 -x -I{} make ui
+	fswatch -o -l 2 Makefile ui/src elm-package.json | xargs -n1 -x -I{} make ui
+
+.PHONY: clean
+clean:
+	rm -f priv/static/poller.js
+	rm -rf elm-stuff/*
