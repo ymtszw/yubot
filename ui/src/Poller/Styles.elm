@@ -4,15 +4,6 @@ import Html exposing (Attribute)
 import Html.Attributes exposing (style, class)
 
 
-background : Attribute msg
-background =
-    style
-        [ ( "background-image", "url('static/img/polar_bear.jpg')" )
-        , ( "background-size", "cover" )
-        , ( "height", "100vh" )
-        ]
-
-
 greyBack : Attribute msg
 greyBack =
     style [ ( "background-color", "rgba(242, 242, 238, 0.67)" ) ]

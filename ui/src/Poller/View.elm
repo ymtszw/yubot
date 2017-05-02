@@ -22,7 +22,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ navbar model
-        , Grid.containerFluid [ background ]
+        , Grid.containerFluid []
             [ gap
             , Grid.simpleRow [ mainContent model ]
             ]
