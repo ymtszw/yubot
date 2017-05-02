@@ -6,6 +6,7 @@ import Bootstrap.Navbar
 import Resource.Command
 import Polls
 import Actions
+import Authentications
 import Poller.Model exposing (Model, initialModel)
 import Poller.Messages exposing (Msg(..))
 import Poller.Update exposing (update)
@@ -20,6 +21,7 @@ init =
     in
         [ (Cmd.map PollsMsg (Resource.Command.fetchAll Polls.config))
         , (Cmd.map ActionsMsg (Resource.Command.fetchAll Actions.config))
+        , (Cmd.map AuthMsg (Resource.Command.fetchAll Authentications.config))
         , navbarCmd
         ]
             |> (!) (initialModel navbarState)

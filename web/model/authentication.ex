@@ -2,7 +2,13 @@ use Croma
 
 defmodule Yubot.Model.Authentication do
   @moduledoc """
-  Authentication object for both polling endpoint and action target endpoint.
+  Authentication object for both polling endpoint and HTTP action target endpoint.
+
+  ## Types
+
+  - `:raw` - Put `:token` value in "Authorization" header as is, on request.
+  - `:bearer` - Put `:token` value in "Authorization" header as "Bearer <token_value>" on request.
+  - `:hipchat` - Same as `:bearer`. Require notification_token or token with broader scope granted.
   """
 
   alias Croma.Result, as: R
@@ -13,7 +19,7 @@ defmodule Yubot.Model.Authentication do
   end
 
   defmodule Type do
-    use Croma.SubtypeOfAtom, values: [:raw, :bearer]
+    use Croma.SubtypeOfAtom, values: [:raw, :bearer, :hipchat]
   end
 
   use SolomonAcs.Dodai.Model.Datastore, data_fields: [

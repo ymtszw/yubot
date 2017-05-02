@@ -12,6 +12,7 @@ import Polls.View
 import Polls.ModalView
 import Actions.View
 import Actions.ModalView
+import Authentications.View
 import Poller.Model exposing (Model)
 import Poller.Messages exposing (Msg(..))
 import Poller.Styles exposing (..)
@@ -76,6 +77,10 @@ mainTabs model =
                 , pane = Tab.pane [ whiteBack, p3 ] [ actionList model ]
                 }
             , Tab.item
+                { link = Tab.link [] [ text "Credentials" ]
+                , pane = Tab.pane [ whiteBack, p3 ] [ authList model ]
+                }
+            , Tab.item
                 { link = Tab.link [] [ text "Dummy" ]
                 , pane = Tab.pane [ whiteBack, p3 ] [ dummyBlock ]
                 }
@@ -106,6 +111,17 @@ actionList model =
             ]
         , Html.map ActionsMsg (Actions.ModalView.deleteModalView model.actionRs)
         , Html.map ActionsMsg (Actions.ModalView.editModalView model.actionRs)
+        ]
+
+
+authList : Model -> Html Msg
+authList model =
+    div []
+        [ Grid.simpleRow
+            [ Grid.col [ md12 ]
+                [ Html.map AuthMsg (Authentications.View.listView model.authRs)
+                ]
+            ]
         ]
 
 

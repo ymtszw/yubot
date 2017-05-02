@@ -15425,20 +15425,6 @@ var _aYuMatsuzawa$yubot$Poller_Styles$greyBack = _elm_lang$html$Html_Attributes$
 		_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'rgba(242, 242, 238, 0.67)'},
 		_1: {ctor: '[]'}
 	});
-var _aYuMatsuzawa$yubot$Poller_Styles$background = _elm_lang$html$Html_Attributes$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'background-image', _1: 'url(\'static/img/polar_bear.jpg\')'},
-		_1: {
-			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: 'background-size', _1: 'cover'},
-			_1: {
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'height', _1: '100vh'},
-				_1: {ctor: '[]'}
-			}
-		}
-	});
 
 var _aYuMatsuzawa$yubot$Html_Utils$toggleSortOnClick = F2(
 	function (newProperty, maybeSorter) {
@@ -17858,6 +17844,214 @@ var _aYuMatsuzawa$yubot$Actions_View$listView = F2(
 					A2(_aYuMatsuzawa$yubot$Actions_View$rows, usedActionIds, actionRs))
 			});
 	});
+
+var _aYuMatsuzawa$yubot$Authentications$Authentication = F5(
+	function (a, b, c, d, e) {
+		return {id: a, updatedAt: b, name: c, type_: d, token: e};
+	});
+var _aYuMatsuzawa$yubot$Authentications$dummyAuthentication = A5(_aYuMatsuzawa$yubot$Authentications$Authentication, '', '2015-01-01T00:00:00Z', '', '', '');
+var _aYuMatsuzawa$yubot$Authentications$fetchDecoder = A6(
+	_elm_lang$core$Json_Decode$map5,
+	_aYuMatsuzawa$yubot$Authentications$Authentication,
+	A2(_elm_lang$core$Json_Decode$field, '_id', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'updated_at', _elm_lang$core$Json_Decode$string),
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'data',
+			_1: {
+				ctor: '::',
+				_0: 'name',
+				_1: {ctor: '[]'}
+			}
+		},
+		_elm_lang$core$Json_Decode$string),
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'data',
+			_1: {
+				ctor: '::',
+				_0: 'type',
+				_1: {ctor: '[]'}
+			}
+		},
+		_elm_lang$core$Json_Decode$string),
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'data',
+			_1: {
+				ctor: '::',
+				_0: 'token',
+				_1: {ctor: '[]'}
+			}
+		},
+		_elm_lang$core$Json_Decode$string));
+var _aYuMatsuzawa$yubot$Authentications$config = A2(_aYuMatsuzawa$yubot$Resource_Command$Config, '/api/authentication', _aYuMatsuzawa$yubot$Authentications$fetchDecoder);
+var _aYuMatsuzawa$yubot$Authentications$update = F2(
+	function (msg, resource) {
+		return A4(_aYuMatsuzawa$yubot$Resource_Update$update, _aYuMatsuzawa$yubot$Authentications$dummyAuthentication, _aYuMatsuzawa$yubot$Authentications$config, msg, resource);
+	});
+
+var _aYuMatsuzawa$yubot$Authentications_View$authRow = function (authentication) {
+	return A2(
+		_rundis$elm_bootstrap$Bootstrap_Table$tr,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_rundis$elm_bootstrap$Bootstrap_Table$td,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(authentication.name),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_rundis$elm_bootstrap$Bootstrap_Table$td,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(authentication.type_),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_rundis$elm_bootstrap$Bootstrap_Table$td,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								_aYuMatsuzawa$yubot$Utils$timestampToString(authentication.updatedAt)),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_rundis$elm_bootstrap$Bootstrap_Table$td,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: A3(
+									_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+									A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, authentication),
+									{
+										ctor: '::',
+										_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(true),
+										_1: {
+											ctor: '::',
+											_0: _rundis$elm_bootstrap$Bootstrap_Button$small,
+											_1: {ctor: '[]'}
+										}
+									},
+									'Update'),
+								_1: {
+									ctor: '::',
+									_0: A3(
+										_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+										A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, authentication),
+										{
+											ctor: '::',
+											_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(true),
+											_1: {
+												ctor: '::',
+												_0: _rundis$elm_bootstrap$Bootstrap_Button$small,
+												_1: {ctor: '[]'}
+											}
+										},
+										'Delete'),
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		});
+};
+var _aYuMatsuzawa$yubot$Authentications_View$listView = function (authRs) {
+	return _rundis$elm_bootstrap$Bootstrap_Table$table(
+		{
+			options: {
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Table$striped,
+				_1: {ctor: '[]'}
+			},
+			thead: _rundis$elm_bootstrap$Bootstrap_Table$simpleThead(
+				{
+					ctor: '::',
+					_0: A2(
+						_rundis$elm_bootstrap$Bootstrap_Table$th,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Name'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_rundis$elm_bootstrap$Bootstrap_Table$th,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Type'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_rundis$elm_bootstrap$Bootstrap_Table$th,
+								A2(
+									_elm_lang$core$List$map,
+									_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
+									{
+										ctor: '::',
+										_0: _aYuMatsuzawa$yubot$Poller_Styles$sorting,
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_aYuMatsuzawa$yubot$Html_Utils$toggleSortOnClick,
+												function (_) {
+													return _.updatedAt;
+												},
+												authRs.listSort),
+											_1: {ctor: '[]'}
+										}
+									}),
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Updated At'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_rundis$elm_bootstrap$Bootstrap_Table$th,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Actions'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}),
+			tbody: A2(
+				_rundis$elm_bootstrap$Bootstrap_Table$tbody,
+				{ctor: '[]'},
+				A2(_elm_lang$core$List$map, _aYuMatsuzawa$yubot$Authentications_View$authRow, authRs.list))
+		});
+};
 
 var _elm_lang$animation_frame$Native_AnimationFrame = function()
 {
@@ -20723,13 +20917,14 @@ var _aYuMatsuzawa$yubot$Poller_Model$initialModel = function (navbarState) {
 	return {
 		pollRs: _aYuMatsuzawa$yubot$Resource$initialResource(_aYuMatsuzawa$yubot$Polls$dummyPoll),
 		actionRs: _aYuMatsuzawa$yubot$Resource$initialResource(_aYuMatsuzawa$yubot$Actions$dummyAction),
+		authRs: _aYuMatsuzawa$yubot$Resource$initialResource(_aYuMatsuzawa$yubot$Authentications$dummyAuthentication),
 		tabState: _rundis$elm_bootstrap$Bootstrap_Tab$initialState,
 		navbarState: navbarState
 	};
 };
-var _aYuMatsuzawa$yubot$Poller_Model$Model = F4(
-	function (a, b, c, d) {
-		return {pollRs: a, actionRs: b, tabState: c, navbarState: d};
+var _aYuMatsuzawa$yubot$Poller_Model$Model = F5(
+	function (a, b, c, d, e) {
+		return {pollRs: a, actionRs: b, authRs: c, tabState: d, navbarState: e};
 	});
 
 var _aYuMatsuzawa$yubot$Poller_Messages$NavbarMsg = function (a) {
@@ -20737,6 +20932,9 @@ var _aYuMatsuzawa$yubot$Poller_Messages$NavbarMsg = function (a) {
 };
 var _aYuMatsuzawa$yubot$Poller_Messages$TabMsg = function (a) {
 	return {ctor: 'TabMsg', _0: a};
+};
+var _aYuMatsuzawa$yubot$Poller_Messages$AuthMsg = function (a) {
+	return {ctor: 'AuthMsg', _0: a};
 };
 var _aYuMatsuzawa$yubot$Poller_Messages$ActionsMsg = function (a) {
 	return {ctor: 'ActionsMsg', _0: a};
@@ -20770,6 +20968,17 @@ var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
 						model,
 						{actionRs: updatedActionRs}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _aYuMatsuzawa$yubot$Poller_Messages$ActionsMsg, cmd)
+				};
+			case 'AuthMsg':
+				var _p3 = A2(_aYuMatsuzawa$yubot$Authentications$update, _p0._0, model.authRs);
+				var updatedAuthRs = _p3._0;
+				var cmd = _p3._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{authRs: updatedAuthRs}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _aYuMatsuzawa$yubot$Poller_Messages$AuthMsg, cmd)
 				};
 			case 'TabMsg':
 				return {
@@ -22479,6 +22688,35 @@ var _aYuMatsuzawa$yubot$Poller_View$dummyBlock = _rundis$elm_bootstrap$Bootstrap
 		},
 		_rundis$elm_bootstrap$Bootstrap_Card$config(
 			{ctor: '[]'})));
+var _aYuMatsuzawa$yubot$Poller_View$authList = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _rundis$elm_bootstrap$Bootstrap_Grid$simpleRow(
+				{
+					ctor: '::',
+					_0: A2(
+						_rundis$elm_bootstrap$Bootstrap_Grid$col,
+						{
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$md12,
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$map,
+								_aYuMatsuzawa$yubot$Poller_Messages$AuthMsg,
+								_aYuMatsuzawa$yubot$Authentications_View$listView(model.authRs)),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
 var _aYuMatsuzawa$yubot$Poller_View$actionList = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -22641,7 +22879,7 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Dummy'),
+										_0: _elm_lang$html$Html$text('Credentials'),
 										_1: {ctor: '[]'}
 									}),
 								pane: A2(
@@ -22657,11 +22895,41 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 									},
 									{
 										ctor: '::',
-										_0: _aYuMatsuzawa$yubot$Poller_View$dummyBlock,
+										_0: _aYuMatsuzawa$yubot$Poller_View$authList(model),
 										_1: {ctor: '[]'}
 									})
 							}),
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Tab$item(
+								{
+									link: A2(
+										_rundis$elm_bootstrap$Bootstrap_Tab$link,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Dummy'),
+											_1: {ctor: '[]'}
+										}),
+									pane: A2(
+										_rundis$elm_bootstrap$Bootstrap_Tab$pane,
+										{
+											ctor: '::',
+											_0: _aYuMatsuzawa$yubot$Poller_Styles$whiteBack,
+											_1: {
+												ctor: '::',
+												_0: _aYuMatsuzawa$yubot$Poller_Styles$p3,
+												_1: {ctor: '[]'}
+											}
+										},
+										{
+											ctor: '::',
+											_0: _aYuMatsuzawa$yubot$Poller_View$dummyBlock,
+											_1: {ctor: '[]'}
+										})
+								}),
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			},
@@ -22790,11 +23058,7 @@ var _aYuMatsuzawa$yubot$Poller_View$view = function (model) {
 				ctor: '::',
 				_0: A2(
 					_rundis$elm_bootstrap$Bootstrap_Grid$containerFluid,
-					{
-						ctor: '::',
-						_0: _aYuMatsuzawa$yubot$Poller_Styles$background,
-						_1: {ctor: '[]'}
-					},
+					{ctor: '[]'},
 					{
 						ctor: '::',
 						_0: _aYuMatsuzawa$yubot$Poller_View$gap,
@@ -22850,8 +23114,15 @@ var _aYuMatsuzawa$yubot$Poller$init = function () {
 					_aYuMatsuzawa$yubot$Resource_Command$fetchAll(_aYuMatsuzawa$yubot$Actions$config)),
 				_1: {
 					ctor: '::',
-					_0: navbarCmd,
-					_1: {ctor: '[]'}
+					_0: A2(
+						_elm_lang$core$Platform_Cmd$map,
+						_aYuMatsuzawa$yubot$Poller_Messages$AuthMsg,
+						_aYuMatsuzawa$yubot$Resource_Command$fetchAll(_aYuMatsuzawa$yubot$Authentications$config)),
+					_1: {
+						ctor: '::',
+						_0: navbarCmd,
+						_1: {ctor: '[]'}
+					}
 				}
 			}
 		});
@@ -22862,7 +23133,7 @@ var _aYuMatsuzawa$yubot$Poller$main = _elm_lang$html$Html$program(
 var Elm = {};
 Elm['Poller'] = Elm['Poller'] || {};
 if (typeof _aYuMatsuzawa$yubot$Poller$main !== 'undefined') {
-    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Bootstrap.Tab.State":{"args":[],"tags":{"State":["{ activeTab : Int, visibility : Bootstrap.Tab.Visibility }"]}},"Bootstrap.Tab.Visibility":{"args":[],"tags":{"Start":[],"Showing":[],"Hidden":[]}},"Resource.Messages.Msg":{"args":["resource"],"tags":{"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","resource"],"OnSort":["Resource.Sorter resource"],"OnFetchAll":["Result.Result Http.Error (List resource)"],"OnDeleteConfirmed":["Utils.EntityId"],"OnEditModal":["Bootstrap.Modal.State","resource"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Resource.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"NavbarMsg":["Bootstrap.Navbar.State"],"ActionsMsg":["Resource.Messages.Msg Actions.Action"],"PollsMsg":["Resource.Messages.Msg Polls.Poll"],"TabMsg":["Bootstrap.Tab.State"]}}},"aliases":{"Utils.EntityId":{"args":[],"type":"String"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Resource.Sorter":{"args":["resource"],"type":"{ property : resource -> String, order : Resource.Ord }"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Url":{"args":[],"type":"String"},"Polls.Interval":{"args":[],"type":"String"},"Polls.Poll":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Utils.EntityId , action : Utils.EntityId , filters : Maybe.Maybe (List Polls.JqFilter) }"},"Actions.Action":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Utils.EntityId , bodyTemplate : Actions.BodyTemplate }"},"Actions.BodyTemplate":{"args":[],"type":"{ body : String, variables : List String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
+    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Bootstrap.Tab.State":{"args":[],"tags":{"State":["{ activeTab : Int, visibility : Bootstrap.Tab.Visibility }"]}},"Bootstrap.Tab.Visibility":{"args":[],"tags":{"Start":[],"Showing":[],"Hidden":[]}},"Resource.Messages.Msg":{"args":["resource"],"tags":{"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","resource"],"OnSort":["Resource.Sorter resource"],"OnFetchAll":["Result.Result Http.Error (List resource)"],"OnDeleteConfirmed":["Utils.EntityId"],"OnEditModal":["Bootstrap.Modal.State","resource"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Resource.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"NavbarMsg":["Bootstrap.Navbar.State"],"AuthMsg":["Resource.Messages.Msg Authentications.Authentication"],"ActionsMsg":["Resource.Messages.Msg Actions.Action"],"PollsMsg":["Resource.Messages.Msg Polls.Poll"],"TabMsg":["Bootstrap.Tab.State"]}}},"aliases":{"Utils.EntityId":{"args":[],"type":"String"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Authentications.AuthType":{"args":[],"type":"String"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Authentications.DecodedToken":{"args":[],"type":"String"},"Resource.Sorter":{"args":["resource"],"type":"{ property : resource -> String, order : Resource.Ord }"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Url":{"args":[],"type":"String"},"Authentications.Authentication":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , name : String , type_ : Authentications.AuthType , token : Authentications.DecodedToken }"},"Polls.Interval":{"args":[],"type":"String"},"Polls.Poll":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Utils.EntityId , action : Utils.EntityId , filters : Maybe.Maybe (List Polls.JqFilter) }"},"Actions.Action":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Utils.EntityId , bodyTemplate : Actions.BodyTemplate }"},"Actions.BodyTemplate":{"args":[],"type":"{ body : String, variables : List String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])
