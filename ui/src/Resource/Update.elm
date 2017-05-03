@@ -12,33 +12,36 @@ update :
     -> Msg resource
     -> Resource resource
     -> ( Resource resource, Cmd (Msg resource) )
-update dummyResource config msg resource =
+update dummyResource config msg rs =
     case msg of
         OnFetchAll (Ok newResources) ->
-            ( { resource | list = newResources }, Cmd.none )
+            ( { rs | list = newResources }, Cmd.none )
 
         OnFetchAll (Err error) ->
-            ( resource, Cmd.none )
+            ( rs, Cmd.none )
 
         OnSort sorter ->
-            ( { resource
+            ( { rs
                 | listSort = Just sorter
-                , list = Resource.sortList sorter resource.list
+                , list = Resource.sortList sorter rs.list
               }
             , Cmd.none
             )
 
         OnDeleteModal newState newTarget ->
-            ( { resource | deleteModal = ModalState newState newTarget }, Cmd.none )
+            ( { rs | deleteModal = ModalState newState newTarget }, Cmd.none )
 
         OnDeleteConfirmed id ->
-            ( { resource | deleteModal = ModalState hiddenState dummyResource }, (delete config id) )
+            ( { rs | deleteModal = ModalState hiddenState dummyResource }, (delete config id) )
 
         OnDelete (Ok ()) ->
-            ( resource, fetchAll config )
+            ( rs, fetchAll config )
 
         OnDelete (Err error) ->
-            ( resource, Cmd.none )
+            ( rs, Cmd.none )
 
         OnEditModal newState newTarget ->
-            ( { resource | editModal = ModalState newState newTarget }, Cmd.none )
+            ( { rs | editModal = ModalState newState newTarget }, Cmd.none )
+
+        OnEditInput newTarget ->
+            ( { rs | editModal = ModalState rs.editModal.modalState newTarget }, Cmd.none )

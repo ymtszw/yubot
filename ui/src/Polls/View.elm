@@ -41,7 +41,7 @@ rows polls =
 createRow : Table.Row (Msg Poll)
 createRow =
     tr []
-        [ td ([ colspan 5, align "center" ] |> List.map cellAttr)
+        [ td (List.map cellAttr [ colspan 5, align "center" ])
             [ editPollButton dummyPoll [ Button.primary, Button.small ] "Create!" ]
         ]
 

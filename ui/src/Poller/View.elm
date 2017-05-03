@@ -97,7 +97,7 @@ pollList model =
                 ]
             ]
         , Html.map PollsMsg (Polls.ModalView.deleteModalView model.pollRs)
-        , Html.map PollsMsg (Polls.ModalView.editModalView model.pollRs)
+        , Html.map PollsMsg (Polls.ModalView.editModalView model.authRs.list model.pollRs)
         ]
 
 

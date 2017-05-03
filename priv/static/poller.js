@@ -14720,6 +14720,9 @@ var _lukewestby$elm_http_builder$HttpBuilder$RequestBuilder = F9(
 		return {method: a, headers: b, url: c, body: d, expect: e, timeout: f, withCredentials: g, queryParams: h, cacheBuster: i};
 	});
 
+var _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput = function (a) {
+	return {ctor: 'OnEditInput', _0: a};
+};
 var _aYuMatsuzawa$yubot$Resource_Messages$OnEditModal = F2(
 	function (a, b) {
 		return {ctor: 'OnEditModal', _0: a, _1: b};
@@ -14768,7 +14771,7 @@ var _aYuMatsuzawa$yubot$Resource_Command$Config = F2(
 	});
 
 var _aYuMatsuzawa$yubot$Resource_Update$update = F4(
-	function (dummyResource, config, msg, resource) {
+	function (dummyResource, config, msg, rs) {
 		var _p0 = msg;
 		switch (_p0.ctor) {
 			case 'OnFetchAll':
@@ -14776,22 +14779,22 @@ var _aYuMatsuzawa$yubot$Resource_Update$update = F4(
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
-							resource,
+							rs,
 							{list: _p0._0._0}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
-					return {ctor: '_Tuple2', _0: resource, _1: _elm_lang$core$Platform_Cmd$none};
+					return {ctor: '_Tuple2', _0: rs, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 			case 'OnSort':
 				var _p1 = _p0._0;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						resource,
+						rs,
 						{
 							listSort: _elm_lang$core$Maybe$Just(_p1),
-							list: A2(_aYuMatsuzawa$yubot$Resource$sortList, _p1, resource.list)
+							list: A2(_aYuMatsuzawa$yubot$Resource$sortList, _p1, rs.list)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -14799,7 +14802,7 @@ var _aYuMatsuzawa$yubot$Resource_Update$update = F4(
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						resource,
+						rs,
 						{
 							deleteModal: A2(_aYuMatsuzawa$yubot$Resource$ModalState, _p0._0, _p0._1)
 						}),
@@ -14809,7 +14812,7 @@ var _aYuMatsuzawa$yubot$Resource_Update$update = F4(
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						resource,
+						rs,
 						{
 							deleteModal: A2(_aYuMatsuzawa$yubot$Resource$ModalState, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, dummyResource)
 						}),
@@ -14819,19 +14822,29 @@ var _aYuMatsuzawa$yubot$Resource_Update$update = F4(
 				if (_p0._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
-						_0: resource,
+						_0: rs,
 						_1: _aYuMatsuzawa$yubot$Resource_Command$fetchAll(config)
 					};
 				} else {
-					return {ctor: '_Tuple2', _0: resource, _1: _elm_lang$core$Platform_Cmd$none};
+					return {ctor: '_Tuple2', _0: rs, _1: _elm_lang$core$Platform_Cmd$none};
 				}
+			case 'OnEditModal':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						rs,
+						{
+							editModal: A2(_aYuMatsuzawa$yubot$Resource$ModalState, _p0._0, _p0._1)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			default:
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						resource,
+						rs,
 						{
-							editModal: A2(_aYuMatsuzawa$yubot$Resource$ModalState, _p0._0, _p0._1)
+							editModal: A2(_aYuMatsuzawa$yubot$Resource$ModalState, rs.editModal.modalState, _p0._0)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -17845,6 +17858,23 @@ var _aYuMatsuzawa$yubot$Actions_View$listView = F2(
 			});
 	});
 
+var _aYuMatsuzawa$yubot$Authentications$listForPoll = function (authList) {
+	var filterFun = function (auth) {
+		return A2(
+			_elm_lang$core$List$member,
+			auth.type_,
+			{
+				ctor: '::',
+				_0: 'raw',
+				_1: {
+					ctor: '::',
+					_0: 'bearer',
+					_1: {ctor: '[]'}
+				}
+			});
+	};
+	return A2(_elm_lang$core$List$filter, filterFun, authList);
+};
 var _aYuMatsuzawa$yubot$Authentications$Authentication = F5(
 	function (a, b, c, d, e) {
 		return {id: a, updatedAt: b, name: c, type_: d, token: e};
@@ -22363,9 +22393,297 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = function (pollRs) {
 		});
 };
 
-var _aYuMatsuzawa$yubot$Polls_ModalView$intervalSelect = function (interval) {
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$stateAttribute = function (state) {
+	var _p0 = state;
+	switch (_p0.ctor) {
+		case 'On':
+			return _elm_lang$html$Html_Attributes$checked(true);
+		case 'Off':
+			return _elm_lang$html$Html_Attributes$checked(false);
+		default:
+			return A2(_elm_lang$html$Html_Attributes$attribute, 'indeterminate', 'true');
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$toAttributes = function (options) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class(
+				options.custom ? 'custom-control-input' : 'form-check-input'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$type_('checkbox'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$disabled(options.disabled),
+					_1: {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$stateAttribute(options.state),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(
+				_elm_lang$core$List$filterMap,
+				_elm_lang$core$Basics$identity,
+				{
+					ctor: '::',
+					_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Events$onCheck, options.onChecked),
+					_1: {ctor: '[]'}
+				}),
+			options.attributes));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$applyModifier = F2(
+	function (modifier, options) {
+		var _p1 = modifier;
+		switch (_p1.ctor) {
+			case 'Value':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{state: _p1._0});
+			case 'Inline':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{inline: true});
+			case 'OnChecked':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						onChecked: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'Custom':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{custom: true});
+			case 'Disabled':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{disabled: _p1._0});
+			case 'Validation':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						validation: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p1._0)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Options = F7(
+	function (a, b, c, d, e, f, g) {
+		return {state: a, inline: b, custom: c, disabled: d, onChecked: e, validation: f, attributes: g};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Checkbox = function (a) {
+	return {ctor: 'Checkbox', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$create = F2(
+	function (options, label) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Checkbox(
+			{options: options, label: label});
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Attrs = function (a) {
+	return {ctor: 'Attrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$attrs = function (attrs) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Attrs(attrs);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Validation = function (a) {
+	return {ctor: 'Validation', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$success = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Success);
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$warning = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Warning);
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$danger = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Danger);
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Disabled = function (a) {
+	return {ctor: 'Disabled', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$disabled = function (disabled) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Disabled(disabled);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Custom = {ctor: 'Custom'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$OnChecked = function (a) {
+	return {ctor: 'OnChecked', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$onCheck = function (toMsg) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$OnChecked(toMsg);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Inline = {ctor: 'Inline'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$inline = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Inline;
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Value = function (a) {
+	return {ctor: 'Value', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Indeterminate = {ctor: 'Indeterminate'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$indeterminate = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Value(_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Indeterminate);
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Off = {ctor: 'Off'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$defaultOptions = {
+	state: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Off,
+	inline: false,
+	custom: false,
+	disabled: false,
+	onChecked: _elm_lang$core$Maybe$Nothing,
+	validation: _elm_lang$core$Maybe$Nothing,
+	attributes: {ctor: '[]'}
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$view = function (_p2) {
+	var _p3 = _p2;
+	var _p5 = _p3._0;
+	var opts = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$applyModifier, _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$defaultOptions, _p5.options);
+	var validationAttrs = function () {
+		var _p4 = opts.validation;
+		if (_p4.ctor === 'Just') {
+			return {
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationWrapperAttribute(_p4._0),
+				_1: {ctor: '[]'}
+			};
+		} else {
+			return {ctor: '[]'};
+		}
+	}();
+	return opts.custom ? A2(
+		_elm_lang$html$Html$div,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$classList(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'custom-controls-stacked', _1: !opts.inline},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'd-inline-block', _1: opts.inline},
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			validationAttrs),
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$label,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('custom-control custom-checkbox'),
+						_1: {ctor: '[]'}
+					},
+					validationAttrs),
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$input,
+						_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$toAttributes(opts),
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$span,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('custom-control-indicator'),
+								_1: {ctor: '[]'}
+							},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$span,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('custom-control-description'),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(_p5.label),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		}) : A2(
+		_elm_lang$html$Html$div,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$classList(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'form-check', _1: true},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'form-check-inline', _1: opts.inline},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'disabled', _1: opts.disabled},
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			validationAttrs),
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$label,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('form-check-label'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$input,
+						_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$toAttributes(opts),
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							A2(_elm_lang$core$Basics_ops['++'], ' ', _p5.label)),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$checkbox = F2(
+	function (options, label) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$view(
+			A2(_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$create, options, label));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$custom = function (options) {
+	return function (_p6) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$view(
+			A2(
+				_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$create,
+				{ctor: '::', _0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Custom, _1: options},
+				_p6));
+	};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$On = {ctor: 'On'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$checked = function (isCheck) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Value(
+		isCheck ? _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$On : _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Off);
+};
+
+var _aYuMatsuzawa$yubot$Polls_ModalView$intervalSelect = function (poll) {
 	var item = function (v) {
-		return _elm_lang$core$Native_Utils.eq(v, interval) ? A2(
+		return _elm_lang$core$Native_Utils.eq(v, poll.interval) ? A2(
 			_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
 			{
 				ctor: '::',
@@ -22400,7 +22718,17 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$intervalSelect = function (interval) {
 		{
 			ctor: '::',
 			_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$id('poll-interval'),
-			_1: {ctor: '[]'}
+			_1: {
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$onInput(
+					function (interval) {
+						return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+							_elm_lang$core$Native_Utils.update(
+								poll,
+								{interval: interval}));
+					}),
+				_1: {ctor: '[]'}
+			}
 		},
 		A2(
 			_elm_lang$core$List$map,
@@ -22435,45 +22763,147 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$intervalSelect = function (interval) {
 				}
 			}));
 };
-var _aYuMatsuzawa$yubot$Polls_ModalView$editForm = function (poll) {
-	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Form$form,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_rundis$elm_bootstrap$Bootstrap_Form$group,
-				{ctor: '[]'},
+var _aYuMatsuzawa$yubot$Polls_ModalView$authSelect = F2(
+	function (authList, poll) {
+		var itemText = function (auth) {
+			return _elm_lang$html$Html$text(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					auth.name,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						' (',
+						A2(_elm_lang$core$Basics_ops['++'], auth.id, ')'))));
+		};
+		var item = function (auth) {
+			return _elm_lang$core$Native_Utils.eq(
+				poll.auth,
+				_elm_lang$core$Maybe$Just(auth.id)) ? A2(
+				_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
 				{
 					ctor: '::',
-					_0: A2(
-						_rundis$elm_bootstrap$Bootstrap_Form$label,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$for('poll-url'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('URL'),
-							_1: {ctor: '[]'}
-						}),
+					_0: _elm_lang$html$Html_Attributes$value(auth.id),
 					_1: {
 						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$url(
-							{
-								ctor: '::',
-								_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$id('poll-url'),
-								_1: {
-									ctor: '::',
-									_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$defaultValue(poll.url),
-									_1: {ctor: '[]'}
-								}
-							}),
+						_0: _elm_lang$html$Html_Attributes$selected(true),
 						_1: {ctor: '[]'}
 					}
-				}),
-			_1: {
+				},
+				{
+					ctor: '::',
+					_0: itemText(auth),
+					_1: {ctor: '[]'}
+				}) : A2(
+				_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$value(auth.id),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: itemText(auth),
+					_1: {ctor: '[]'}
+				});
+		};
+		var select = A2(
+			_rundis$elm_bootstrap$Bootstrap_Form_Select$select,
+			{
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$id('poll-auth'),
+				_1: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$onInput(
+						function (authId) {
+							return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+								_elm_lang$core$Native_Utils.update(
+									poll,
+									{
+										auth: _elm_lang$core$Maybe$Just(authId)
+									}));
+						}),
+					_1: {ctor: '[]'}
+				}
+			},
+			A2(
+				_elm_lang$core$List$map,
+				item,
+				_aYuMatsuzawa$yubot$Authentications$listForPoll(authList)));
+		var _p0 = poll.auth;
+		if (_p0.ctor === 'Nothing') {
+			return _elm_lang$html$Html$text('');
+		} else {
+			return select;
+		}
+	});
+var _aYuMatsuzawa$yubot$Polls_ModalView$authOnCheck = F3(
+	function (headAuthId, poll, checked) {
+		var _p1 = checked;
+		if (_p1 === false) {
+			return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+				_elm_lang$core$Native_Utils.update(
+					poll,
+					{auth: _elm_lang$core$Maybe$Nothing}));
+		} else {
+			return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+				_elm_lang$core$Native_Utils.update(
+					poll,
+					{
+						auth: _elm_lang$core$Maybe$Just(headAuthId)
+					}));
+		}
+	});
+var _aYuMatsuzawa$yubot$Polls_ModalView$authCheck = F2(
+	function (authList, poll) {
+		var checked = function () {
+			var _p2 = poll.auth;
+			if (_p2.ctor === 'Nothing') {
+				return false;
+			} else {
+				return true;
+			}
+		}();
+		var _p3 = function () {
+			var _p4 = authList;
+			if (_p4.ctor === '[]') {
+				return {ctor: '_Tuple2', _0: true, _1: ''};
+			} else {
+				return {ctor: '_Tuple2', _0: false, _1: _p4._0.id};
+			}
+		}();
+		var disabled = _p3._0;
+		var headAuthId = _p3._1;
+		return A2(
+			_elm_lang$html$Html$small,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$checkbox,
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$checked(checked),
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$disabled(disabled),
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$onCheck(
+									A2(_aYuMatsuzawa$yubot$Polls_ModalView$authOnCheck, headAuthId, poll)),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					'Require authentication?'),
+				_1: {ctor: '[]'}
+			});
+	});
+var _aYuMatsuzawa$yubot$Polls_ModalView$editForm = F2(
+	function (authList, poll) {
+		return A2(
+			_rundis$elm_bootstrap$Bootstrap_Form$form,
+			{ctor: '[]'},
+			{
 				ctor: '::',
 				_0: A2(
 					_rundis$elm_bootstrap$Bootstrap_Form$group,
@@ -22484,97 +22914,145 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$editForm = function (poll) {
 							_rundis$elm_bootstrap$Bootstrap_Form$label,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$for('poll-interval'),
+								_0: _elm_lang$html$Html_Attributes$for('poll-url'),
 								_1: {ctor: '[]'}
 							},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('Interval'),
+								_0: _elm_lang$html$Html$text('URL'),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
 							ctor: '::',
-							_0: _aYuMatsuzawa$yubot$Polls_ModalView$intervalSelect(poll.interval),
-							_1: {ctor: '[]'}
+							_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$url(
+								{
+									ctor: '::',
+									_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$id('poll-url'),
+									_1: {
+										ctor: '::',
+										_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$value(poll.url),
+										_1: {
+											ctor: '::',
+											_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput(
+												function (url) {
+													return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+														_elm_lang$core$Native_Utils.update(
+															poll,
+															{url: url}));
+												}),
+											_1: {ctor: '[]'}
+										}
+									}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(_aYuMatsuzawa$yubot$Polls_ModalView$authCheck, authList, poll),
+								_1: {ctor: '[]'}
+							}
 						}
 					}),
-				_1: {ctor: '[]'}
-			}
+				_1: {
+					ctor: '::',
+					_0: A2(_aYuMatsuzawa$yubot$Polls_ModalView$authSelect, authList, poll),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_rundis$elm_bootstrap$Bootstrap_Form$group,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: A2(
+									_rundis$elm_bootstrap$Bootstrap_Form$label,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$for('poll-interval'),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Interval'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: _aYuMatsuzawa$yubot$Polls_ModalView$intervalSelect(poll),
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	});
+var _aYuMatsuzawa$yubot$Polls_ModalView$headerText = function (poll) {
+	return _elm_lang$core$Native_Utils.eq(poll.id, '') ? _elm_lang$html$Html$text('New poll!') : A2(
+		_elm_lang$html$Html$small,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(
+				A2(_elm_lang$core$Basics_ops['++'], 'ID: ', poll.id)),
+			_1: {ctor: '[]'}
 		});
 };
-var _aYuMatsuzawa$yubot$Polls_ModalView$headerText = function (poll) {
-	var _p0 = poll.id;
-	if (_p0 === '') {
-		return _elm_lang$html$Html$text('New poll!');
-	} else {
+var _aYuMatsuzawa$yubot$Polls_ModalView$editModalView = F2(
+	function (authList, pollRs) {
+		var titleText = function (poll) {
+			return _elm_lang$core$Native_Utils.eq(poll.id, '') ? _elm_lang$html$Html$text('Creating Poll') : _elm_lang$html$Html$text('Updating Poll');
+		};
+		var target = pollRs.editModal.target;
+		var stateToMsg = function (state) {
+			return A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, state, target);
+		};
 		return A2(
-			_elm_lang$html$Html$small,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					A2(_elm_lang$core$Basics_ops['++'], 'ID: ', _p0)),
-				_1: {ctor: '[]'}
-			});
-	}
-};
-var _aYuMatsuzawa$yubot$Polls_ModalView$editModalView = function (pollRs) {
-	var titleText = function (poll) {
-		return _elm_lang$core$Native_Utils.eq(poll, _aYuMatsuzawa$yubot$Polls$dummyPoll) ? _elm_lang$html$Html$text('Creating Poll') : _elm_lang$html$Html$text('Updating Poll');
-	};
-	var target = pollRs.editModal.target;
-	var stateToMsg = function (state) {
-		return A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, state, target);
-	};
-	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Modal$view,
-		pollRs.editModal.modalState,
-		A3(
-			_rundis$elm_bootstrap$Bootstrap_Modal$footer,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: A3(
-					_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-					A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-					{
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
-						_1: {ctor: '[]'}
-					},
-					'Submit'),
-				_1: {
+			_rundis$elm_bootstrap$Bootstrap_Modal$view,
+			pollRs.editModal.modalState,
+			A3(
+				_rundis$elm_bootstrap$Bootstrap_Modal$footer,
+				{ctor: '[]'},
+				{
 					ctor: '::',
 					_0: A3(
 						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
 						A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-						{ctor: '[]'},
-						'Cancel'),
-					_1: {ctor: '[]'}
-				}
-			},
-			A3(
-				_rundis$elm_bootstrap$Bootstrap_Modal$body,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _aYuMatsuzawa$yubot$Polls_ModalView$headerText(target),
+						{
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
+							_1: {ctor: '[]'}
+						},
+						'Submit'),
 					_1: {
 						ctor: '::',
-						_0: _aYuMatsuzawa$yubot$Polls_ModalView$editForm(target),
+						_0: A3(
+							_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+							A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
+							{ctor: '[]'},
+							'Cancel'),
 						_1: {ctor: '[]'}
 					}
 				},
 				A3(
-					_rundis$elm_bootstrap$Bootstrap_Modal$h4,
+					_rundis$elm_bootstrap$Bootstrap_Modal$body,
 					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: titleText(target),
-						_1: {ctor: '[]'}
+						_0: _aYuMatsuzawa$yubot$Polls_ModalView$headerText(target),
+						_1: {
+							ctor: '::',
+							_0: A2(_aYuMatsuzawa$yubot$Polls_ModalView$editForm, authList, target),
+							_1: {ctor: '[]'}
+						}
 					},
-					_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg)))));
-};
+					A3(
+						_rundis$elm_bootstrap$Bootstrap_Modal$h4,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: titleText(target),
+							_1: {ctor: '[]'}
+						},
+						_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg)))));
+	});
 var _aYuMatsuzawa$yubot$Polls_ModalView$deleteModalView = function (pollRs) {
 	var target = pollRs.deleteModal.target;
 	var stateToMsg = function (state) {
@@ -22800,7 +23278,7 @@ var _aYuMatsuzawa$yubot$Poller_View$pollList = function (model) {
 					_0: A2(
 						_elm_lang$html$Html$map,
 						_aYuMatsuzawa$yubot$Poller_Messages$PollsMsg,
-						_aYuMatsuzawa$yubot$Polls_ModalView$editModalView(model.pollRs)),
+						A2(_aYuMatsuzawa$yubot$Polls_ModalView$editModalView, model.authRs.list, model.pollRs)),
 					_1: {ctor: '[]'}
 				}
 			}
@@ -23133,7 +23611,7 @@ var _aYuMatsuzawa$yubot$Poller$main = _elm_lang$html$Html$program(
 var Elm = {};
 Elm['Poller'] = Elm['Poller'] || {};
 if (typeof _aYuMatsuzawa$yubot$Poller$main !== 'undefined') {
-    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Bootstrap.Tab.State":{"args":[],"tags":{"State":["{ activeTab : Int, visibility : Bootstrap.Tab.Visibility }"]}},"Bootstrap.Tab.Visibility":{"args":[],"tags":{"Start":[],"Showing":[],"Hidden":[]}},"Resource.Messages.Msg":{"args":["resource"],"tags":{"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","resource"],"OnSort":["Resource.Sorter resource"],"OnFetchAll":["Result.Result Http.Error (List resource)"],"OnDeleteConfirmed":["Utils.EntityId"],"OnEditModal":["Bootstrap.Modal.State","resource"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Resource.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"NavbarMsg":["Bootstrap.Navbar.State"],"AuthMsg":["Resource.Messages.Msg Authentications.Authentication"],"ActionsMsg":["Resource.Messages.Msg Actions.Action"],"PollsMsg":["Resource.Messages.Msg Polls.Poll"],"TabMsg":["Bootstrap.Tab.State"]}}},"aliases":{"Utils.EntityId":{"args":[],"type":"String"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Authentications.AuthType":{"args":[],"type":"String"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Authentications.DecodedToken":{"args":[],"type":"String"},"Resource.Sorter":{"args":["resource"],"type":"{ property : resource -> String, order : Resource.Ord }"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Url":{"args":[],"type":"String"},"Authentications.Authentication":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , name : String , type_ : Authentications.AuthType , token : Authentications.DecodedToken }"},"Polls.Interval":{"args":[],"type":"String"},"Polls.Poll":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Utils.EntityId , action : Utils.EntityId , filters : Maybe.Maybe (List Polls.JqFilter) }"},"Actions.Action":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Utils.EntityId , bodyTemplate : Actions.BodyTemplate }"},"Actions.BodyTemplate":{"args":[],"type":"{ body : String, variables : List String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
+    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Bootstrap.Tab.State":{"args":[],"tags":{"State":["{ activeTab : Int, visibility : Bootstrap.Tab.Visibility }"]}},"Bootstrap.Tab.Visibility":{"args":[],"tags":{"Start":[],"Showing":[],"Hidden":[]}},"Resource.Messages.Msg":{"args":["resource"],"tags":{"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","resource"],"OnSort":["Resource.Sorter resource"],"OnFetchAll":["Result.Result Http.Error (List resource)"],"OnDeleteConfirmed":["Utils.EntityId"],"OnEditInput":["resource"],"OnEditModal":["Bootstrap.Modal.State","resource"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Resource.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"NavbarMsg":["Bootstrap.Navbar.State"],"AuthMsg":["Resource.Messages.Msg Authentications.Authentication"],"ActionsMsg":["Resource.Messages.Msg Actions.Action"],"PollsMsg":["Resource.Messages.Msg Polls.Poll"],"TabMsg":["Bootstrap.Tab.State"]}}},"aliases":{"Utils.EntityId":{"args":[],"type":"String"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Authentications.AuthType":{"args":[],"type":"String"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Authentications.DecodedToken":{"args":[],"type":"String"},"Resource.Sorter":{"args":["resource"],"type":"{ property : resource -> String, order : Resource.Ord }"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Url":{"args":[],"type":"String"},"Authentications.Authentication":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , name : String , type_ : Authentications.AuthType , token : Authentications.DecodedToken }"},"Polls.Interval":{"args":[],"type":"String"},"Polls.Poll":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Utils.EntityId , action : Utils.EntityId , filters : Maybe.Maybe (List Polls.JqFilter) }"},"Actions.Action":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Utils.EntityId , bodyTemplate : Actions.BodyTemplate }"},"Actions.BodyTemplate":{"args":[],"type":"{ body : String, variables : List String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

@@ -1,4 +1,4 @@
-module Authentications exposing (Authentication, dummyAuthentication, config, update)
+module Authentications exposing (Authentication, dummyAuthentication, config, update, listForPoll)
 
 import Json.Decode as Decode
 import Utils exposing (EntityId, Timestamp)
@@ -31,6 +31,15 @@ type alias DecodedToken =
 dummyAuthentication : Authentication
 dummyAuthentication =
     Authentication "" "2015-01-01T00:00:00Z" "" "" ""
+
+
+listForPoll : List Authentication -> List Authentication
+listForPoll authList =
+    let
+        filterFun auth =
+            List.member auth.type_ [ "raw", "bearer" ]
+    in
+        List.filter filterFun authList
 
 
 

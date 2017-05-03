@@ -13,3 +13,4 @@ type Msg resource
     | OnDeleteConfirmed EntityId
     | OnDelete (Result Http.Error ())
     | OnEditModal Bootstrap.Modal.State resource
+    | OnEditInput resource
