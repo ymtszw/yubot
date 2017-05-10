@@ -131,8 +131,8 @@ dummyBlock =
         |> Card.block []
             [ Card.text []
                 [ p [] (atext "Dummy texts with URLs.")
-                , p [] (atext "Elm(http://elm-lang.org/)はいいぞ。")
-                , p [] (atext "複雑なURLがhttps://www.wikiwand.com/ja/%E9%96%A2%E6%95%B0%E5%9E%8B%E8%A8%80%E8%AA%9E日本語文の中にあっても大丈夫。")
+                , p [] (atext "Elm(http://elm-lang.org/)はいいぞ。Elixir(http://elixir-lang.org)もいいぞ。")
+                , p [] (atext "atextヘルパーでは複雑なURLがhttps://www.wikiwand.com/ja/%E9%96%A2%E6%95%B0%E5%9E%8B%E8%A8%80%E8%AA%9E日本語文の中にあっても大丈夫。")
                 ]
             ]
         |> Card.view

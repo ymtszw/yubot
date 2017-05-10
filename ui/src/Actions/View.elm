@@ -3,7 +3,7 @@ module Actions.View exposing (listView, preview)
 import Set exposing (Set)
 import Html exposing (Html, text, div, p, pre, code)
 import Html.Attributes exposing (class)
-import Html.Utils exposing (atext, mx2Button, toggleSortOnClick)
+import Html.Utils exposing (atext, highlightVariables, mx2Button, toggleSortOnClick)
 import Bootstrap.Table as Table exposing (table, th, tr, td, cellAttr)
 import Bootstrap.Modal as Modal
 import Bootstrap.Button as Button
@@ -68,6 +68,7 @@ preview action =
         varCodes vars =
             vars
                 |> List.map (\var -> code [] [ text var ])
+                |> List.intersperse (text ", ")
 
         vars vars =
             case vars of
@@ -82,9 +83,9 @@ preview action =
     in
         div [ class "action-preview" ]
             [ p []
-                [ text "Action: "
+                [ text "Target: "
                 , code [] (atext ((String.toUpper action.method) ++ " " ++ action.url))
                 ]
-            , pre [ rounded, greyBack, p3 ] [ text action.bodyTemplate.body ]
+            , pre [ rounded, greyBack, p3 ] (highlightVariables action.bodyTemplate.body)
             , vars action.bodyTemplate.variables
             ]

@@ -36,13 +36,13 @@ type alias Poll =
     , interval : Interval
     , auth : Maybe EntityId
     , action : EntityId
-    , filters : Maybe (List JqFilter)
+    , filters : List JqFilter
     }
 
 
 dummyPoll : Poll
 dummyPoll =
-    Poll "" "2015-01-01T00:00:00Z" "https://example.com" "10" Nothing "" Nothing
+    Poll "" "2015-01-01T00:00:00Z" "https://example.com" "10" Nothing "" []
 
 
 usedActionIds : List Poll -> Set EntityId
@@ -80,7 +80,7 @@ fetchDecoder =
         (Decode.at [ "data", "interval" ] Decode.string)
         (Decode.at [ "data", "auth" ] (Decode.maybe Decode.string))
         (Decode.at [ "data", "action" ] Decode.string)
-        (Decode.at [ "data", "filters" ] (Decode.maybe (Decode.list Decode.string)))
+        (Decode.at [ "data", "filters" ] (Decode.list Decode.string))
 
 
 

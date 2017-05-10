@@ -2,6 +2,7 @@ module Actions
     exposing
         ( Action
         , Method
+        , Body
         , dummyAction
         , config
         , update
@@ -26,8 +27,12 @@ type alias Method =
     String
 
 
+type alias Body =
+    String
+
+
 type alias BodyTemplate =
-    { body : String
+    { body : Body
     , variables : List String
     }
 

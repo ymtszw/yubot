@@ -1,6 +1,7 @@
 module Html.Utils
     exposing
         ( atext
+        , highlightVariables
         , mx2Button
         , logo
         , toggleSortOnClick
@@ -11,9 +12,9 @@ import Html exposing (Html, text, a, img)
 import Html.Attributes exposing (href, src, class)
 import Html.Events exposing (onClick)
 import Bootstrap.Button as Button
-import Utils exposing (Url)
 import Resource exposing (Sorter, Ord(..))
 import Resource.Messages exposing (Msg(OnSort))
+import Actions
 import Poller.Styles exposing (mx2, my1)
 
 
@@ -30,41 +31,79 @@ atext string =
 
 atextImpl : String -> List (Html msg) -> List (Html msg)
 atextImpl string htmls =
-    case string of
-        "" ->
-            htmls
+    let
+        findFirst =
+            Regex.find (AtMost 1) (regex "http(s)?://[a-zA-Z0-9_./#?&%=~+-]+")
 
-        _ ->
-            case findFirstUrl string of
-                [] ->
-                    htmls ++ [ text string ]
+        leftToHtml string matchedUrl index =
+            case index of
+                0 ->
+                    ( [ a [ href matchedUrl ] [ text matchedUrl ] ]
+                    , String.dropLeft (String.length matchedUrl) string
+                    )
 
-                { match, index } :: _ ->
-                    -- Expect only one at most
-                    let
-                        ( newHtmls, tailString ) =
-                            leftToHtml string match index
-                    in
-                        atextImpl tailString newHtmls
+                _ ->
+                    ( [ text (String.left index string), a [ href matchedUrl ] [ text matchedUrl ] ]
+                    , String.dropLeft (index + String.length matchedUrl) string
+                    )
+    in
+        case string of
+            "" ->
+                htmls
+
+            _ ->
+                case findFirst string of
+                    [] ->
+                        htmls ++ [ text string ]
+
+                    { match, index } :: _ ->
+                        -- Expect only one at most
+                        let
+                            ( newHtmls, tailString ) =
+                                leftToHtml string match index
+                        in
+                            atextImpl tailString (htmls ++ newHtmls)
 
 
-findFirstUrl : String -> List Match
-findFirstUrl string =
-    Regex.find (AtMost 1) (regex "http(s)?://[a-zA-Z0-9_./#?&%=~+-]+") string
+highlightVariables : Actions.Body -> List (Html msg)
+highlightVariables body =
+    highlightVariablesImpl body []
 
 
-leftToHtml : String -> Url -> Int -> ( List (Html msg), String )
-leftToHtml string matchedUrl index =
-    case index of
-        0 ->
-            ( [ a [ href matchedUrl ] [ text matchedUrl ] ]
-            , String.dropLeft (String.length matchedUrl) string
-            )
+highlightVariablesImpl : Actions.Body -> List (Html msg) -> List (Html msg)
+highlightVariablesImpl bodyTail htmls =
+    let
+        findFirst =
+            Regex.find (AtMost 1) (regex "#\\{(.*?)\\}")
 
-        _ ->
-            ( [ text (String.left index string), a [ href matchedUrl ] [ text matchedUrl ] ]
-            , String.dropLeft (index + String.length matchedUrl) string
-            )
+        leftToHtml string matchedVar index =
+            case index of
+                0 ->
+                    ( [ Html.strong [ class "text-danger" ] [ text matchedVar ] ]
+                    , String.dropLeft (String.length matchedVar) string
+                    )
+
+                _ ->
+                    ( [ text (String.left index string), Html.strong [ class "text-danger" ] [ text matchedVar ] ]
+                    , String.dropLeft (index + String.length matchedVar) string
+                    )
+    in
+        case bodyTail of
+            "" ->
+                htmls
+
+            _ ->
+                case findFirst bodyTail of
+                    [] ->
+                        htmls ++ [ text bodyTail ]
+
+                    { match, index } :: _ ->
+                        -- Expect only one at most
+                        let
+                            ( newHtmls, newTail ) =
+                                leftToHtml bodyTail match index
+                        in
+                            highlightVariablesImpl newTail (htmls ++ newHtmls)
 
 
 mx2Button : msg -> List (Button.Option msg) -> String -> Html msg

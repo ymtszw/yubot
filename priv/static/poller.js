@@ -15522,81 +15522,177 @@ var _aYuMatsuzawa$yubot$Html_Utils$mx2Button = F3(
 				_1: {ctor: '[]'}
 			});
 	});
-var _aYuMatsuzawa$yubot$Html_Utils$leftToHtml = F3(
-	function (string, matchedUrl, index) {
-		var _p2 = index;
-		if (_p2 === 0) {
-			return {
-				ctor: '_Tuple2',
-				_0: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$a,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$href(matchedUrl),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(matchedUrl),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				},
-				_1: A2(
-					_elm_lang$core$String$dropLeft,
-					_elm_lang$core$String$length(matchedUrl),
-					string)
-			};
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: {
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						A2(_elm_lang$core$String$left, index, string)),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$a,
-							{
+var _aYuMatsuzawa$yubot$Html_Utils$highlightVariablesImpl = F2(
+	function (bodyTail, htmls) {
+		highlightVariablesImpl:
+		while (true) {
+			var leftToHtml = F3(
+				function (string, matchedVar, index) {
+					var _p2 = index;
+					if (_p2 === 0) {
+						return {
+							ctor: '_Tuple2',
+							_0: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$href(matchedUrl),
+								_0: A2(
+									_elm_lang$html$Html$strong,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('text-danger'),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(matchedVar),
+										_1: {ctor: '[]'}
+									}),
 								_1: {ctor: '[]'}
 							},
-							{
+							_1: A2(
+								_elm_lang$core$String$dropLeft,
+								_elm_lang$core$String$length(matchedVar),
+								string)
+						};
+					} else {
+						return {
+							ctor: '_Tuple2',
+							_0: {
 								ctor: '::',
-								_0: _elm_lang$html$Html$text(matchedUrl),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
+								_0: _elm_lang$html$Html$text(
+									A2(_elm_lang$core$String$left, index, string)),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$strong,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$class('text-danger'),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(matchedVar),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							},
+							_1: A2(
+								_elm_lang$core$String$dropLeft,
+								index + _elm_lang$core$String$length(matchedVar),
+								string)
+						};
 					}
-				},
-				_1: A2(
-					_elm_lang$core$String$dropLeft,
-					index + _elm_lang$core$String$length(matchedUrl),
-					string)
-			};
+				});
+			var findFirst = A2(
+				_elm_lang$core$Regex$find,
+				_elm_lang$core$Regex$AtMost(1),
+				_elm_lang$core$Regex$regex('#\\{(.*?)\\}'));
+			var _p3 = bodyTail;
+			if (_p3 === '') {
+				return htmls;
+			} else {
+				var _p4 = findFirst(bodyTail);
+				if (_p4.ctor === '[]') {
+					return A2(
+						_elm_lang$core$Basics_ops['++'],
+						htmls,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(bodyTail),
+							_1: {ctor: '[]'}
+						});
+				} else {
+					var _p5 = A3(leftToHtml, bodyTail, _p4._0.match, _p4._0.index);
+					var newHtmls = _p5._0;
+					var newTail = _p5._1;
+					var _v5 = newTail,
+						_v6 = A2(_elm_lang$core$Basics_ops['++'], htmls, newHtmls);
+					bodyTail = _v5;
+					htmls = _v6;
+					continue highlightVariablesImpl;
+				}
+			}
 		}
 	});
-var _aYuMatsuzawa$yubot$Html_Utils$findFirstUrl = function (string) {
-	return A3(
-		_elm_lang$core$Regex$find,
-		_elm_lang$core$Regex$AtMost(1),
-		_elm_lang$core$Regex$regex('http(s)?://[a-zA-Z0-9_./#?&%=~+-]+'),
-		string);
+var _aYuMatsuzawa$yubot$Html_Utils$highlightVariables = function (body) {
+	return A2(
+		_aYuMatsuzawa$yubot$Html_Utils$highlightVariablesImpl,
+		body,
+		{ctor: '[]'});
 };
 var _aYuMatsuzawa$yubot$Html_Utils$atextImpl = F2(
 	function (string, htmls) {
 		atextImpl:
 		while (true) {
-			var _p3 = string;
-			if (_p3 === '') {
+			var leftToHtml = F3(
+				function (string, matchedUrl, index) {
+					var _p6 = index;
+					if (_p6 === 0) {
+						return {
+							ctor: '_Tuple2',
+							_0: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$a,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$href(matchedUrl),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(matchedUrl),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							},
+							_1: A2(
+								_elm_lang$core$String$dropLeft,
+								_elm_lang$core$String$length(matchedUrl),
+								string)
+						};
+					} else {
+						return {
+							ctor: '_Tuple2',
+							_0: {
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									A2(_elm_lang$core$String$left, index, string)),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$a,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$href(matchedUrl),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(matchedUrl),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							},
+							_1: A2(
+								_elm_lang$core$String$dropLeft,
+								index + _elm_lang$core$String$length(matchedUrl),
+								string)
+						};
+					}
+				});
+			var findFirst = A2(
+				_elm_lang$core$Regex$find,
+				_elm_lang$core$Regex$AtMost(1),
+				_elm_lang$core$Regex$regex('http(s)?://[a-zA-Z0-9_./#?&%=~+-]+'));
+			var _p7 = string;
+			if (_p7 === '') {
 				return htmls;
 			} else {
-				var _p4 = _aYuMatsuzawa$yubot$Html_Utils$findFirstUrl(string);
-				if (_p4.ctor === '[]') {
+				var _p8 = findFirst(string);
+				if (_p8.ctor === '[]') {
 					return A2(
 						_elm_lang$core$Basics_ops['++'],
 						htmls,
@@ -15606,13 +15702,13 @@ var _aYuMatsuzawa$yubot$Html_Utils$atextImpl = F2(
 							_1: {ctor: '[]'}
 						});
 				} else {
-					var _p5 = A3(_aYuMatsuzawa$yubot$Html_Utils$leftToHtml, string, _p4._0.match, _p4._0.index);
-					var newHtmls = _p5._0;
-					var tailString = _p5._1;
-					var _v5 = tailString,
-						_v6 = newHtmls;
-					string = _v5;
-					htmls = _v6;
+					var _p9 = A3(leftToHtml, string, _p8._0.match, _p8._0.index);
+					var newHtmls = _p9._0;
+					var tailString = _p9._1;
+					var _v10 = tailString,
+						_v11 = A2(_elm_lang$core$Basics_ops['++'], htmls, newHtmls);
+					string = _v10;
+					htmls = _v11;
 					continue atextImpl;
 				}
 			}
@@ -17363,18 +17459,21 @@ var _rundis$elm_bootstrap$Bootstrap_Table$tbody = F2(
 var _aYuMatsuzawa$yubot$Actions_View$preview = function (action) {
 	var varCodes = function (vars) {
 		return A2(
-			_elm_lang$core$List$map,
-			function ($var) {
-				return A2(
-					_elm_lang$html$Html$code,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text($var),
-						_1: {ctor: '[]'}
-					});
-			},
-			vars);
+			_elm_lang$core$List$intersperse,
+			_elm_lang$html$Html$text(', '),
+			A2(
+				_elm_lang$core$List$map,
+				function ($var) {
+					return A2(
+						_elm_lang$html$Html$code,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text($var),
+							_1: {ctor: '[]'}
+						});
+				},
+				vars));
 	};
 	var vars = function (vars) {
 		var _p0 = vars;
@@ -17407,7 +17506,7 @@ var _aYuMatsuzawa$yubot$Actions_View$preview = function (action) {
 				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text('Action: '),
+					_0: _elm_lang$html$Html$text('Target: '),
 					_1: {
 						ctor: '::',
 						_0: A2(
@@ -17438,11 +17537,7 @@ var _aYuMatsuzawa$yubot$Actions_View$preview = function (action) {
 							}
 						}
 					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(action.bodyTemplate.body),
-						_1: {ctor: '[]'}
-					}),
+					_aYuMatsuzawa$yubot$Html_Utils$highlightVariables(action.bodyTemplate.body)),
 				_1: {
 					ctor: '::',
 					_0: vars(action.bodyTemplate.variables),
@@ -20922,7 +21017,15 @@ var _aYuMatsuzawa$yubot$Polls$Poll = F7(
 	function (a, b, c, d, e, f, g) {
 		return {id: a, updatedAt: b, url: c, interval: d, auth: e, action: f, filters: g};
 	});
-var _aYuMatsuzawa$yubot$Polls$dummyPoll = A7(_aYuMatsuzawa$yubot$Polls$Poll, '', '2015-01-01T00:00:00Z', 'https://example.com', '10', _elm_lang$core$Maybe$Nothing, '', _elm_lang$core$Maybe$Nothing);
+var _aYuMatsuzawa$yubot$Polls$dummyPoll = A7(
+	_aYuMatsuzawa$yubot$Polls$Poll,
+	'',
+	'2015-01-01T00:00:00Z',
+	'https://example.com',
+	'10',
+	_elm_lang$core$Maybe$Nothing,
+	'',
+	{ctor: '[]'});
 var _aYuMatsuzawa$yubot$Polls$fetchDecoder = A8(
 	_elm_lang$core$Json_Decode$map7,
 	_aYuMatsuzawa$yubot$Polls$Poll,
@@ -20987,8 +21090,7 @@ var _aYuMatsuzawa$yubot$Polls$fetchDecoder = A8(
 				_1: {ctor: '[]'}
 			}
 		},
-		_elm_lang$core$Json_Decode$maybe(
-			_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string))));
+		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
 var _aYuMatsuzawa$yubot$Polls$config = A2(_aYuMatsuzawa$yubot$Resource_Command$Config, '/api/poll', _aYuMatsuzawa$yubot$Polls$fetchDecoder);
 var _aYuMatsuzawa$yubot$Polls$update = F2(
 	function (msg, resource) {
@@ -22444,6 +22546,168 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = function (pollRs) {
 				_aYuMatsuzawa$yubot$Polls_View$rows(pollRs.list))
 		});
 };
+
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$sizeAttribute = function (size) {
+	return A2(
+		_elm_lang$core$Maybe$map,
+		function (s) {
+			return _elm_lang$html$Html_Attributes$class(
+				A2(_elm_lang$core$Basics_ops['++'], 'input-group-', s));
+		},
+		_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(size));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$view = function (_p0) {
+	var _p1 = _p0;
+	var _p7 = _p1._0;
+	var _p2 = _p7.input;
+	var input = _p2._0;
+	return A2(
+		_elm_lang$html$Html$div,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('input-group'),
+				_1: {ctor: '[]'}
+			},
+			A2(
+				_elm_lang$core$List$filterMap,
+				_elm_lang$core$Basics$identity,
+				{
+					ctor: '::',
+					_0: A2(_elm_lang$core$Maybe$andThen, _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$sizeAttribute, _p7.size),
+					_1: {ctor: '[]'}
+				})),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(
+				_elm_lang$core$List$map,
+				function (_p3) {
+					var _p4 = _p3;
+					return _p4._0;
+				},
+				_p7.predecessors),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				{
+					ctor: '::',
+					_0: input,
+					_1: {ctor: '[]'}
+				},
+				A2(
+					_elm_lang$core$List$map,
+					function (_p5) {
+						var _p6 = _p5;
+						return _p6._0;
+					},
+					_p7.successors))));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config = function (a) {
+	return {ctor: 'Config', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$config = function (input) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config(
+		{
+			input: input,
+			predecessors: {ctor: '[]'},
+			successors: {ctor: '[]'},
+			size: _elm_lang$core$Maybe$Nothing,
+			attributes: {ctor: '[]'}
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$predecessors = F2(
+	function (addons, _p8) {
+		var _p9 = _p8;
+		return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config(
+			_elm_lang$core$Native_Utils.update(
+				_p9._0,
+				{predecessors: addons}));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$successors = F2(
+	function (addons, _p10) {
+		var _p11 = _p10;
+		return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config(
+			_elm_lang$core$Native_Utils.update(
+				_p11._0,
+				{successors: addons}));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$large = function (_p12) {
+	var _p13 = _p12;
+	return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config(
+		_elm_lang$core$Native_Utils.update(
+			_p13._0,
+			{
+				size: _elm_lang$core$Maybe$Just(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG)
+			}));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$small = function (_p14) {
+	var _p15 = _p14;
+	return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config(
+		_elm_lang$core$Native_Utils.update(
+			_p15._0,
+			{
+				size: _elm_lang$core$Maybe$Just(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM)
+			}));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$attrs = F2(
+	function (attributes, _p16) {
+		var _p17 = _p16;
+		return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config(
+			_elm_lang$core$Native_Utils.update(
+				_p17._0,
+				{attributes: attributes}));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Input = function (a) {
+	return {ctor: 'Input', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input = F2(
+	function (inputFn, options) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Input(
+			inputFn(options));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$text = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$text);
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$password = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$password);
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$datetimeLocal = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$datetimeLocal);
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$date = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$date);
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$month = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$month);
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$time = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$time);
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$week = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$week);
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$number = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$number);
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$email = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$email);
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$url = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$url);
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$search = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$search);
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$tel = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$tel);
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Addon = function (a) {
+	return {ctor: 'Addon', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$span = F2(
+	function (attributes, children) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Addon(
+			A2(
+				_elm_lang$html$Html$span,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('input-group-addon'),
+					_1: attributes
+				},
+				children));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$button = F2(
+	function (options, children) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Addon(
+			A2(
+				_elm_lang$html$Html$span,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('input-group-btn'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(_rundis$elm_bootstrap$Bootstrap_Button$button, options, children),
+					_1: {ctor: '[]'}
+				}));
+	});
 
 var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$stateAttribute = function (state) {
 	var _p0 = state;
@@ -24032,17 +24296,145 @@ var _elm_community$list_extra$List_Extra$init = function () {
 var _elm_community$list_extra$List_Extra$last = _elm_community$list_extra$List_Extra$foldl1(
 	_elm_lang$core$Basics$flip(_elm_lang$core$Basics$always));
 
-var _aYuMatsuzawa$yubot$Polls_ModalView$actionBody = F2(
-	function (actionList, actionId) {
-		var bodyById = function (id) {
-			var _p0 = A2(
-				_elm_community$list_extra$List_Extra$find,
-				function (action) {
-					return _elm_lang$core$Native_Utils.eq(action.id, actionId);
-				},
-				actionList);
-			if (_p0.ctor === 'Just') {
-				return _aYuMatsuzawa$yubot$Actions_View$preview(_p0._0);
+var _aYuMatsuzawa$yubot$Polls_ModalView$filterInput = F2(
+	function (maybeAction, poll) {
+		var onInputMessage = F2(
+			function (index, newFilter) {
+				var _p0 = A3(_elm_community$list_extra$List_Extra$setAt, index, newFilter, poll.filters);
+				if (_p0.ctor === 'Just') {
+					return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+						_elm_lang$core$Native_Utils.update(
+							poll,
+							{filters: _p0._0}));
+				} else {
+					return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(poll);
+				}
+			});
+		var inputgroup = F2(
+			function (index, _p1) {
+				var _p2 = _p1;
+				return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$view(
+					A2(
+						_rundis$elm_bootstrap$Bootstrap_Form_InputGroup$predecessors,
+						{
+							ctor: '::',
+							_0: A2(
+								_rundis$elm_bootstrap$Bootstrap_Form_InputGroup$span,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$code,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(_p2._0),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						},
+						_rundis$elm_bootstrap$Bootstrap_Form_InputGroup$config(
+							_rundis$elm_bootstrap$Bootstrap_Form_InputGroup$text(
+								{
+									ctor: '::',
+									_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$id(
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'poll-filters-',
+											_elm_lang$core$Basics$toString(index))),
+									_1: {
+										ctor: '::',
+										_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$value(_p2._1),
+										_1: {
+											ctor: '::',
+											_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput(
+												onInputMessage(index)),
+											_1: {ctor: '[]'}
+										}
+									}
+								}))));
+			});
+		var variableAndFilterPairs = function (action) {
+			return A2(_elm_community$list_extra$List_Extra$zip, action.bodyTemplate.variables, poll.filters);
+		};
+		var inputs = function () {
+			var _p3 = maybeAction;
+			if (_p3.ctor === 'Just') {
+				var _p4 = variableAndFilterPairs(_p3._0);
+				if (_p4.ctor === '[]') {
+					return {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Alert$info(
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('No variables.'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					};
+				} else {
+					return A2(
+						_elm_lang$core$List$intersperse,
+						A2(
+							_elm_lang$html$Html$br,
+							{ctor: '[]'},
+							{ctor: '[]'}),
+						A2(_elm_lang$core$List$indexedMap, inputgroup, _p4));
+				}
+			} else {
+				return {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Alert$danger(
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Cannot find action!'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				};
+			}
+		}();
+		var _p5 = poll.action;
+		if (_p5 === '') {
+			return {
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Alert$info(
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('No variables.'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			};
+		} else {
+			return inputs;
+		}
+	});
+var _aYuMatsuzawa$yubot$Polls_ModalView$actionPreview = F2(
+	function (maybeAction, poll) {
+		var previewOrError = function () {
+			var _p6 = maybeAction;
+			if (_p6.ctor === 'Just') {
+				return _rundis$elm_bootstrap$Bootstrap_Card$view(
+					A3(
+						_rundis$elm_bootstrap$Bootstrap_Card$block,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: A2(
+								_rundis$elm_bootstrap$Bootstrap_Card$text,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _aYuMatsuzawa$yubot$Actions_View$preview(_p6._0),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						},
+						_rundis$elm_bootstrap$Bootstrap_Card$config(
+							{ctor: '[]'})));
 			} else {
 				return _rundis$elm_bootstrap$Bootstrap_Alert$danger(
 					{
@@ -24051,16 +24443,60 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$actionBody = F2(
 						_1: {ctor: '[]'}
 					});
 			}
-		};
-		var _p1 = actionId;
-		if (_p1 === '') {
+		}();
+		var _p7 = poll.action;
+		if (_p7 === '') {
 			return _elm_lang$html$Html$text('');
 		} else {
-			return bodyById(_p1);
+			return previewOrError;
 		}
 	});
 var _aYuMatsuzawa$yubot$Polls_ModalView$actionSelect = F2(
 	function (actionList, poll) {
+		var emptyStringList = function (action) {
+			return A2(
+				_elm_lang$core$List$map,
+				function (_p8) {
+					return '';
+				},
+				action.bodyTemplate.variables);
+		};
+		var onInputMessage = function (actionId) {
+			var _p9 = A2(
+				_elm_community$list_extra$List_Extra$find,
+				function (a) {
+					return _elm_lang$core$Native_Utils.eq(a.id, actionId);
+				},
+				actionList);
+			if (_p9.ctor === 'Just') {
+				return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+					_elm_lang$core$Native_Utils.update(
+						poll,
+						{
+							action: actionId,
+							filters: emptyStringList(_p9._0)
+						}));
+			} else {
+				return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+					_elm_lang$core$Native_Utils.update(
+						poll,
+						{action: actionId}));
+			}
+		};
+		var itemLabel = function (action) {
+			var _p10 = action.label;
+			if (_p10.ctor === 'Nothing') {
+				return action.id;
+			} else {
+				return A2(
+					_elm_lang$core$Basics_ops['++'],
+					_p10._0,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						' (',
+						A2(_elm_lang$core$Basics_ops['++'], action.id, ')')));
+			}
+		};
 		var item = function (action) {
 			return A2(
 				_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
@@ -24076,7 +24512,8 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$actionSelect = F2(
 				},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(action.id),
+					_0: _elm_lang$html$Html$text(
+						itemLabel(action)),
 					_1: {ctor: '[]'}
 				});
 		};
@@ -24114,13 +24551,7 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$actionSelect = F2(
 				_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$id('poll-action'),
 				_1: {
 					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$onInput(
-						function (actionId) {
-							return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
-								_elm_lang$core$Native_Utils.update(
-									poll,
-									{action: actionId}));
-						}),
+					_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$onInput(onInputMessage),
 					_1: {ctor: '[]'}
 				}
 			},
@@ -24280,8 +24711,8 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$authSelect = F2(
 				_elm_lang$core$List$map,
 				item,
 				_aYuMatsuzawa$yubot$Authentications$listForPoll(authList)));
-		var _p2 = poll.auth;
-		if (_p2.ctor === 'Nothing') {
+		var _p11 = poll.auth;
+		if (_p11.ctor === 'Nothing') {
 			return _elm_lang$html$Html$text('');
 		} else {
 			return A2(
@@ -24311,8 +24742,8 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$authSelect = F2(
 	});
 var _aYuMatsuzawa$yubot$Polls_ModalView$authOnCheck = F3(
 	function (headAuthId, poll, checked) {
-		var _p3 = checked;
-		if (_p3 === false) {
+		var _p12 = checked;
+		if (_p12 === false) {
 			return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
 				_elm_lang$core$Native_Utils.update(
 					poll,
@@ -24329,23 +24760,23 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$authOnCheck = F3(
 var _aYuMatsuzawa$yubot$Polls_ModalView$authCheck = F2(
 	function (authList, poll) {
 		var checked = function () {
-			var _p4 = poll.auth;
-			if (_p4.ctor === 'Nothing') {
+			var _p13 = poll.auth;
+			if (_p13.ctor === 'Nothing') {
 				return false;
 			} else {
 				return true;
 			}
 		}();
-		var _p5 = function () {
-			var _p6 = authList;
-			if (_p6.ctor === '[]') {
+		var _p14 = function () {
+			var _p15 = authList;
+			if (_p15.ctor === '[]') {
 				return {ctor: '_Tuple2', _0: true, _1: ''};
 			} else {
-				return {ctor: '_Tuple2', _0: false, _1: _p6._0.id};
+				return {ctor: '_Tuple2', _0: false, _1: _p15._0.id};
 			}
 		}();
-		var disabled = _p5._0;
-		var headAuthId = _p5._1;
+		var disabled = _p14._0;
+		var headAuthId = _p14._1;
 		return A2(
 			_elm_lang$html$Html$small,
 			{ctor: '[]'},
@@ -24373,6 +24804,12 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$authCheck = F2(
 	});
 var _aYuMatsuzawa$yubot$Polls_ModalView$editForm = F3(
 	function (actionList, authList, poll) {
+		var maybeCurrentAction = A2(
+			_elm_community$list_extra$List_Extra$find,
+			function (action) {
+				return _elm_lang$core$Native_Utils.eq(action.id, poll.action);
+			},
+			actionList);
 		return A2(
 			_rundis$elm_bootstrap$Bootstrap_Form$form,
 			{ctor: '[]'},
@@ -24463,7 +24900,7 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$editForm = F3(
 										_rundis$elm_bootstrap$Bootstrap_Form$label,
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$for('pool-action'),
+											_0: _elm_lang$html$Html_Attributes$for('poll-action'),
 											_1: {ctor: '[]'}
 										},
 										{
@@ -24479,8 +24916,32 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$editForm = F3(
 								}),
 							_1: {
 								ctor: '::',
-								_0: A2(_aYuMatsuzawa$yubot$Polls_ModalView$actionBody, actionList, poll.action),
-								_1: {ctor: '[]'}
+								_0: A2(_aYuMatsuzawa$yubot$Polls_ModalView$actionPreview, maybeCurrentAction, poll),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_rundis$elm_bootstrap$Bootstrap_Form$group,
+										{ctor: '[]'},
+										A2(
+											F2(
+												function (x, y) {
+													return {ctor: '::', _0: x, _1: y};
+												}),
+											A2(
+												_rundis$elm_bootstrap$Bootstrap_Form$label,
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$for('poll-filters-0'),
+													_1: {ctor: '[]'}
+												},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('Jq Filters'),
+													_1: {ctor: '[]'}
+												}),
+											A2(_aYuMatsuzawa$yubot$Polls_ModalView$filterInput, maybeCurrentAction, poll))),
+									_1: {ctor: '[]'}
+								}
 							}
 						}
 					}
@@ -24655,13 +25116,13 @@ var _aYuMatsuzawa$yubot$Poller_View$dummyBlock = _rundis$elm_bootstrap$Bootstrap
 						_0: A2(
 							_elm_lang$html$Html$p,
 							{ctor: '[]'},
-							_aYuMatsuzawa$yubot$Html_Utils$atext('Elm(http://elm-lang.org/)はいいぞ。')),
+							_aYuMatsuzawa$yubot$Html_Utils$atext('Elm(http://elm-lang.org/)はいいぞ。Elixir(http://elixir-lang.org)もいいぞ。')),
 						_1: {
 							ctor: '::',
 							_0: A2(
 								_elm_lang$html$Html$p,
 								{ctor: '[]'},
-								_aYuMatsuzawa$yubot$Html_Utils$atext('複雑なURLがhttps://www.wikiwand.com/ja/%E9%96%A2%E6%95%B0%E5%9E%8B%E8%A8%80%E8%AA%9E日本語文の中にあっても大丈夫。')),
+								_aYuMatsuzawa$yubot$Html_Utils$atext('atextヘルパーでは複雑なURLがhttps://www.wikiwand.com/ja/%E9%96%A2%E6%95%B0%E5%9E%8B%E8%A8%80%E8%AA%9E日本語文の中にあっても大丈夫。')),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -25115,7 +25576,7 @@ var _aYuMatsuzawa$yubot$Poller$main = _elm_lang$html$Html$program(
 var Elm = {};
 Elm['Poller'] = Elm['Poller'] || {};
 if (typeof _aYuMatsuzawa$yubot$Poller$main !== 'undefined') {
-    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Bootstrap.Tab.State":{"args":[],"tags":{"State":["{ activeTab : Int, visibility : Bootstrap.Tab.Visibility }"]}},"Bootstrap.Tab.Visibility":{"args":[],"tags":{"Start":[],"Showing":[],"Hidden":[]}},"Resource.Messages.Msg":{"args":["resource"],"tags":{"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","resource"],"OnSort":["Resource.Sorter resource"],"OnFetchAll":["Result.Result Http.Error (List resource)"],"OnDeleteConfirmed":["Utils.EntityId"],"OnEditInput":["resource"],"OnEditModal":["Bootstrap.Modal.State","resource"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Resource.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"NavbarMsg":["Bootstrap.Navbar.State"],"AuthMsg":["Resource.Messages.Msg Authentications.Authentication"],"ActionsMsg":["Resource.Messages.Msg Actions.Action"],"PollsMsg":["Resource.Messages.Msg Polls.Poll"],"TabMsg":["Bootstrap.Tab.State"]}}},"aliases":{"Utils.EntityId":{"args":[],"type":"String"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Authentications.AuthType":{"args":[],"type":"String"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Authentications.DecodedToken":{"args":[],"type":"String"},"Resource.Sorter":{"args":["resource"],"type":"{ property : resource -> String, order : Resource.Ord }"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Url":{"args":[],"type":"String"},"Authentications.Authentication":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , name : String , type_ : Authentications.AuthType , token : Authentications.DecodedToken }"},"Polls.Interval":{"args":[],"type":"String"},"Polls.Poll":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Utils.EntityId , action : Utils.EntityId , filters : Maybe.Maybe (List Polls.JqFilter) }"},"Actions.Action":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , label : Maybe.Maybe Actions.Label , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Utils.EntityId , bodyTemplate : Actions.BodyTemplate }"},"Actions.Label":{"args":[],"type":"String"},"Actions.BodyTemplate":{"args":[],"type":"{ body : String, variables : List String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
+    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Bootstrap.Tab.State":{"args":[],"tags":{"State":["{ activeTab : Int, visibility : Bootstrap.Tab.Visibility }"]}},"Bootstrap.Tab.Visibility":{"args":[],"tags":{"Start":[],"Showing":[],"Hidden":[]}},"Resource.Messages.Msg":{"args":["resource"],"tags":{"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","resource"],"OnSort":["Resource.Sorter resource"],"OnFetchAll":["Result.Result Http.Error (List resource)"],"OnDeleteConfirmed":["Utils.EntityId"],"OnEditInput":["resource"],"OnEditModal":["Bootstrap.Modal.State","resource"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Resource.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"NavbarMsg":["Bootstrap.Navbar.State"],"AuthMsg":["Resource.Messages.Msg Authentications.Authentication"],"ActionsMsg":["Resource.Messages.Msg Actions.Action"],"PollsMsg":["Resource.Messages.Msg Polls.Poll"],"TabMsg":["Bootstrap.Tab.State"]}}},"aliases":{"Utils.EntityId":{"args":[],"type":"String"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Authentications.AuthType":{"args":[],"type":"String"},"Actions.Body":{"args":[],"type":"String"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Authentications.DecodedToken":{"args":[],"type":"String"},"Resource.Sorter":{"args":["resource"],"type":"{ property : resource -> String, order : Resource.Ord }"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Url":{"args":[],"type":"String"},"Authentications.Authentication":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , name : String , type_ : Authentications.AuthType , token : Authentications.DecodedToken }"},"Polls.Interval":{"args":[],"type":"String"},"Polls.Poll":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Utils.EntityId , action : Utils.EntityId , filters : List Polls.JqFilter }"},"Actions.Action":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , label : Maybe.Maybe Actions.Label , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Utils.EntityId , bodyTemplate : Actions.BodyTemplate }"},"Actions.Label":{"args":[],"type":"String"},"Actions.BodyTemplate":{"args":[],"type":"{ body : Actions.Body, variables : List String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

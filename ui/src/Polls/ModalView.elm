@@ -5,8 +5,10 @@ import Html.Attributes exposing (for, value, selected, class, disabled)
 import Html.Utils exposing (atext, mx2Button)
 import Bootstrap.Button as Button exposing (Option)
 import Bootstrap.Modal as Modal
+import Bootstrap.Card as Card
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
+import Bootstrap.Form.InputGroup as InputGroup
 import Bootstrap.Form.Checkbox as Checkbox
 import Bootstrap.Form.Select as Select
 import Bootstrap.Alert as Alert
@@ -82,27 +84,34 @@ headerText poll =
 
 editForm : List Action -> List Authentication -> Poll -> Html (Msg Poll)
 editForm actionList authList poll =
-    Form.form []
-        [ Form.group []
-            [ Form.label [ for "poll-url" ] [ text "URL" ]
-            , Input.url
-                [ Input.id "poll-url"
-                , Input.value poll.url
-                , Input.onInput (\url -> OnEditInput { poll | url = url })
+    let
+        maybeCurrentAction =
+            LE.find (\action -> action.id == poll.action) actionList
+    in
+        Form.form []
+            [ Form.group []
+                [ Form.label [ for "poll-url" ] [ text "URL" ]
+                , Input.url
+                    [ Input.id "poll-url"
+                    , Input.value poll.url
+                    , Input.onInput (\url -> OnEditInput { poll | url = url })
+                    ]
+                , authCheck authList poll
                 ]
-            , authCheck authList poll
+            , authSelect authList poll
+            , Form.group []
+                [ Form.label [ for "poll-interval" ] [ text "Interval" ]
+                , intervalSelect poll
+                ]
+            , Form.group []
+                [ Form.label [ for "poll-action" ] [ text "Action" ]
+                , actionSelect actionList poll
+                ]
+            , actionPreview maybeCurrentAction poll
+            , filterInput maybeCurrentAction poll
+                |> (::) (Form.label [ for "poll-filters-0" ] [ text "Jq Filters" ])
+                |> Form.group []
             ]
-        , authSelect authList poll
-        , Form.group []
-            [ Form.label [ for "poll-interval" ] [ text "Interval" ]
-            , intervalSelect poll
-            ]
-        , Form.group []
-            [ Form.label [ for "pool-action" ] [ text "Action" ]
-            , actionSelect actionList poll
-            ]
-        , actionBody actionList poll.action
-        ]
 
 
 authCheck : List Authentication -> Poll -> Html (Msg Poll)
@@ -205,32 +214,104 @@ actionSelect actionList poll =
                 ]
                 [ text "-- Select Action --" ]
 
+        itemLabel action =
+            case action.label of
+                Nothing ->
+                    action.id
+
+                Just label ->
+                    label ++ " (" ++ action.id ++ ")"
+
         item action =
-            Select.item [ value action.id, selected (poll.action == action.id) ] [ text action.id ]
+            Select.item [ value action.id, selected (poll.action == action.id) ] [ text (itemLabel action) ]
+
+        emptyStringList action =
+            List.map (\_ -> "") action.bodyTemplate.variables
+
+        onInputMessage actionId =
+            case LE.find (\a -> a.id == actionId) actionList of
+                Just action ->
+                    OnEditInput { poll | action = actionId, filters = (emptyStringList action) }
+
+                Nothing ->
+                    -- Should not happen
+                    OnEditInput { poll | action = actionId }
     in
         actionList
             |> List.map item
             |> (::) (header poll)
             |> Select.select
                 [ Select.id "poll-action"
-                , Select.onInput (\actionId -> OnEditInput { poll | action = actionId })
+                , Select.onInput onInputMessage
                 ]
 
 
-actionBody : List Action -> Utils.EntityId -> Html (Msg Poll)
-actionBody actionList actionId =
+actionPreview : Maybe Action -> Poll -> Html (Msg Poll)
+actionPreview maybeAction poll =
     let
-        bodyById id =
-            case (LE.find (\action -> action.id == actionId) actionList) of
+        previewOrError =
+            case maybeAction of
                 Just action ->
-                    Actions.View.preview action
+                    Card.config []
+                        |> Card.block [] [ Card.text [] [ Actions.View.preview action ] ]
+                        |> Card.view
 
                 Nothing ->
                     Alert.danger [ text "Cannot find action!" ]
     in
-        case actionId of
+        case poll.action of
             "" ->
+                -- dummyPoll
                 text ""
 
             id ->
-                bodyById id
+                previewOrError
+
+
+filterInput : Maybe Action -> Poll -> List (Html (Msg Poll))
+filterInput maybeAction poll =
+    let
+        variableAndFilterPairs action =
+            LE.zip action.bodyTemplate.variables poll.filters
+
+        onInputMessage index newFilter =
+            case LE.setAt index newFilter poll.filters of
+                Just newFilters ->
+                    OnEditInput { poll | filters = newFilters }
+
+                Nothing ->
+                    -- Should not happen
+                    OnEditInput poll
+
+        inputgroup index ( variable, currentFilter ) =
+            InputGroup.text
+                [ Input.id ("poll-filters-" ++ (toString index))
+                , Input.value currentFilter
+                , Input.onInput (onInputMessage index)
+                ]
+                |> InputGroup.config
+                |> InputGroup.predecessors [ InputGroup.span [] [ code [] [ text variable ] ] ]
+                |> InputGroup.view
+
+        inputs =
+            case maybeAction of
+                Just action ->
+                    case variableAndFilterPairs action of
+                        [] ->
+                            [ Alert.info [ text "No variables." ] ]
+
+                        pairs ->
+                            pairs
+                                |> List.indexedMap inputgroup
+                                |> List.intersperse (Html.br [] [])
+
+                Nothing ->
+                    [ Alert.danger [ text "Cannot find action!" ] ]
+    in
+        case poll.action of
+            "" ->
+                -- dummyPoll
+                [ Alert.info [ text "No variables." ] ]
+
+            id ->
+                inputs
