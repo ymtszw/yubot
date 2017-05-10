@@ -1,6 +1,6 @@
 module Actions.ModalView exposing (deleteModalView, editModalView)
 
-import Html exposing (Html, text, p, small, pre, code)
+import Html exposing (Html, text, div, p, small, pre, code)
 import Html.Attributes exposing (for, value, selected)
 import Html.Utils exposing (atext, mx2Button)
 import Bootstrap.Button as Button exposing (Option)
@@ -11,7 +11,7 @@ import Bootstrap.Form.Select as Select
 import Resource exposing (..)
 import Resource.Messages exposing (Msg(..))
 import Actions exposing (Action, dummyAction)
-import Poller.Styles exposing (..)
+import Actions.View
 
 
 deleteModalView : Resource Action -> Html (Msg Action)
@@ -27,12 +27,7 @@ deleteModalView actionRs =
             |> Modal.h4 [] [ text "Deleting Action" ]
             |> Modal.body []
                 [ p [] [ text ("ID: " ++ target.id) ]
-                , p []
-                    [ text "Action: "
-                    , code [] (atext ((String.toUpper target.method) ++ " " ++ target.url))
-                    ]
-                , p [] [ text "Body:" ]
-                , pre [ rounded, greyBack, p3 ] [ text target.bodyTemplate.body ]
+                , Actions.View.preview target
                 , p [] [ text "Are you sure?" ]
                 ]
             |> Modal.footer []

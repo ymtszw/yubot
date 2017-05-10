@@ -18,6 +18,10 @@ import Resource.Update
 -- Model
 
 
+type alias Label =
+    String
+
+
 type alias Method =
     String
 
@@ -31,6 +35,7 @@ type alias BodyTemplate =
 type alias Action =
     { id : EntityId
     , updatedAt : Timestamp
+    , label : Maybe Label
     , method : Method
     , url : Url
     , auth : Maybe EntityId
@@ -40,7 +45,7 @@ type alias Action =
 
 dummyAction : Action
 dummyAction =
-    Action "" "2015-01-01T00:00:00Z" "POST" "https://example.com" Nothing (BodyTemplate "{}" [])
+    Action "" "2015-01-01T00:00:00Z" Nothing "POST" "https://example.com" Nothing (BodyTemplate "{}" [])
 
 
 
@@ -54,9 +59,10 @@ config =
 
 fetchDecoder : Decode.Decoder Action
 fetchDecoder =
-    Decode.map6 Action
+    Decode.map7 Action
         (Decode.field "_id" Decode.string)
         (Decode.field "updated_at" Decode.string)
+        (Decode.at [ "data", "label" ] (Decode.maybe Decode.string))
         (Decode.at [ "data", "method" ] Decode.string)
         (Decode.at [ "data", "url" ] Decode.string)
         (Decode.at [ "data", "auth" ] (Decode.maybe Decode.string))

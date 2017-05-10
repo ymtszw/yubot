@@ -1,7 +1,7 @@
 module Polls.ModalView exposing (deleteModalView, editModalView)
 
-import Html exposing (Html, text, p, small)
-import Html.Attributes exposing (for, value, selected, class)
+import Html exposing (Html, text, div, p, small, pre, code)
+import Html.Attributes exposing (for, value, selected, class, disabled)
 import Html.Utils exposing (atext, mx2Button)
 import Bootstrap.Button as Button exposing (Option)
 import Bootstrap.Modal as Modal
@@ -9,11 +9,15 @@ import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Checkbox as Checkbox
 import Bootstrap.Form.Select as Select
+import Bootstrap.Alert as Alert
+import List.Extra as LE
 import Utils
 import Resource exposing (..)
 import Resource.Messages exposing (Msg(..))
 import Polls exposing (Poll, Interval, dummyPoll, intervalToString)
-import Authentications as Auth
+import Actions exposing (Action)
+import Actions.View
+import Authentications as Auth exposing (Authentication)
 
 
 deleteModalView : Resource Poll -> Html (Msg Poll)
@@ -39,8 +43,8 @@ deleteModalView pollRs =
             |> Modal.view pollRs.deleteModal.modalState
 
 
-editModalView : List Auth.Authentication -> Resource Poll -> Html (Msg Poll)
-editModalView authList pollRs =
+editModalView : List Action -> List Authentication -> Resource Poll -> Html (Msg Poll)
+editModalView actionList authList pollRs =
     let
         target =
             pollRs.editModal.target
@@ -55,10 +59,11 @@ editModalView authList pollRs =
                 text "Updating Poll"
     in
         Modal.config stateToMsg
+            |> Modal.large
             |> Modal.h4 [] [ titleText target ]
             |> Modal.body []
                 [ headerText target
-                , editForm authList target
+                , editForm actionList authList target
                 ]
             |> Modal.footer []
                 [ mx2Button (OnEditModal Modal.hiddenState target) [ Button.primary ] "Submit"
@@ -75,8 +80,8 @@ headerText poll =
         small [] [ text ("ID: " ++ poll.id) ]
 
 
-editForm : List Auth.Authentication -> Poll -> Html (Msg Poll)
-editForm authList poll =
+editForm : List Action -> List Authentication -> Poll -> Html (Msg Poll)
+editForm actionList authList poll =
     Form.form []
         [ Form.group []
             [ Form.label [ for "poll-url" ] [ text "URL" ]
@@ -92,10 +97,15 @@ editForm authList poll =
             [ Form.label [ for "poll-interval" ] [ text "Interval" ]
             , intervalSelect poll
             ]
+        , Form.group []
+            [ Form.label [ for "pool-action" ] [ text "Action" ]
+            , actionSelect actionList poll
+            ]
+        , actionBody actionList poll.action
         ]
 
 
-authCheck : List Auth.Authentication -> Poll -> Html (Msg Poll)
+authCheck : List Authentication -> Poll -> Html (Msg Poll)
 authCheck authList poll =
     let
         ( disabled, headAuthId ) =
@@ -134,7 +144,7 @@ authOnCheck headAuthId poll checked =
             OnEditInput { poll | auth = Just headAuthId }
 
 
-authSelect : List Auth.Authentication -> Poll -> Html (Msg Poll)
+authSelect : List Authentication -> Poll -> Html (Msg Poll)
 authSelect authList poll =
     let
         itemText auth =
@@ -160,7 +170,10 @@ authSelect authList poll =
                 text ""
 
             Just _ ->
-                select
+                Form.group []
+                    [ Form.label [ for "poll-auth" ] [ text "Credential for URL" ]
+                    , select
+                    ]
 
 
 intervalSelect : Poll -> Html (Msg Poll)
@@ -178,3 +191,46 @@ intervalSelect poll =
                 [ Select.id "poll-interval"
                 , Select.onInput (\interval -> OnEditInput { poll | interval = interval })
                 ]
+
+
+actionSelect : List Action -> Poll -> Html (Msg Poll)
+actionSelect actionList poll =
+    let
+        header poll =
+            Select.item
+                [ value ""
+                , selected (poll.action == "")
+                , disabled True
+                , class "select-header"
+                ]
+                [ text "-- Select Action --" ]
+
+        item action =
+            Select.item [ value action.id, selected (poll.action == action.id) ] [ text action.id ]
+    in
+        actionList
+            |> List.map item
+            |> (::) (header poll)
+            |> Select.select
+                [ Select.id "poll-action"
+                , Select.onInput (\actionId -> OnEditInput { poll | action = actionId })
+                ]
+
+
+actionBody : List Action -> Utils.EntityId -> Html (Msg Poll)
+actionBody actionList actionId =
+    let
+        bodyById id =
+            case (LE.find (\action -> action.id == actionId) actionList) of
+                Just action ->
+                    Actions.View.preview action
+
+                Nothing ->
+                    Alert.danger [ text "Cannot find action!" ]
+    in
+        case actionId of
+            "" ->
+                text ""
+
+            id ->
+                bodyById id

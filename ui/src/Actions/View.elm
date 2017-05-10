@@ -1,7 +1,8 @@
-module Actions.View exposing (listView)
+module Actions.View exposing (listView, preview)
 
 import Set exposing (Set)
-import Html exposing (Html, text)
+import Html exposing (Html, text, div, p, pre, code)
+import Html.Attributes exposing (class)
 import Html.Utils exposing (atext, mx2Button, toggleSortOnClick)
 import Bootstrap.Table as Table exposing (table, th, tr, td, cellAttr)
 import Bootstrap.Modal as Modal
@@ -10,7 +11,7 @@ import Utils exposing (EntityId, timestampToString)
 import Resource exposing (Resource)
 import Resource.Messages exposing (Msg(..))
 import Actions exposing (Action)
-import Poller.Styles exposing (sorting)
+import Poller.Styles exposing (..)
 
 
 listView : Set EntityId -> Resource Action -> Html (Msg Action)
@@ -58,4 +59,32 @@ actionRow usedActionIds action =
                 [ editActionButton action [ Button.primary, Button.small ] "Update"
                 , mx2Button (OnDeleteModal Modal.visibleState action) deleteButtonOptions deleteButtonString
                 ]
+            ]
+
+
+preview : Action -> Html (Msg resource)
+preview action =
+    let
+        varCodes vars =
+            vars
+                |> List.map (\var -> code [] [ text var ])
+
+        vars vars =
+            case vars of
+                [] ->
+                    text ""
+
+                vars ->
+                    vars
+                        |> varCodes
+                        |> (::) (text "Variables: ")
+                        |> p []
+    in
+        div [ class "action-preview" ]
+            [ p []
+                [ text "Action: "
+                , code [] (atext ((String.toUpper action.method) ++ " " ++ action.url))
+                ]
+            , pre [ rounded, greyBack, p3 ] [ text action.bodyTemplate.body ]
+            , vars action.bodyTemplate.variables
             ]

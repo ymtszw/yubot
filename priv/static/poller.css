@@ -3,3 +3,7 @@ body {
   background-size: cover;
   background-attachment: fixed;
 }
+
+select#poll-action option.select-header {
+  display: none;
+}
