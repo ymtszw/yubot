@@ -14,15 +14,15 @@ defmodule Yubot.Controller.Action do
   defp create_impl(%{"auth" => create_auth_body} = body, key, group_id) when is_map(create_auth_body) do
     Authentication.encrypt_token_and_insert(%{data: create_auth_body}, key, group_id)
     |> R.bind(fn %Authentication{_id: auth_id} ->
-      Action.insert(%{data: %{body | "auth" => auth_id}}, key, group_id)
+      Action.parse_template_and_insert(%{data: %{body | "auth" => auth_id}}, key, group_id)
     end)
   end
   defp create_impl(%{"auth" => auth_id} = body, key, group_id) when is_binary(auth_id) do
     Authentication.retrieve(auth_id, key)
-    |> R.bind(fn %Authentication{} -> Action.insert(%{data: body}, key, group_id) end)
+    |> R.bind(fn %Authentication{} -> Action.parse_template_and_insert(%{data: body}, key, group_id) end)
   end
   defp create_impl(body, key, group_id) do
-    Action.insert(%{data: body}, key, group_id)
+    Action.parse_template_and_insert(%{data: body}, key, group_id)
   end
 
   # GET /api/action/:id

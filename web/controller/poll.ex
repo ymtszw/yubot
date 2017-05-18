@@ -13,7 +13,7 @@ defmodule Yubot.Controller.Poll do
   end
 
   defp create_impl(%{"auth" => auth, "action" => action} = body, key, group_id)
-  when (is_map(action) or is_binary(action)) and (is_map(auth) or is_binary(auth)) do
+      when (is_map(action) or is_binary(action)) and (is_map(auth) or is_binary(auth)) do
     R.m do
       %Authentication{_id: auth_id} <- ensure_authentication(auth, key, group_id)
       %Action{_id: action_id, data: %Action.Data{body_template: %ST{variables: variables}}} <- ensure_action(action, key, group_id)
@@ -21,7 +21,7 @@ defmodule Yubot.Controller.Poll do
     end
   end
   defp create_impl(%{"action" => action} = body, key, group_id)
-  when is_map(action) or is_binary(action) do
+      when is_map(action) or is_binary(action) do
     ensure_action(action, key, group_id)
     |> R.bind(fn %Action{_id: action_id, data: %Action.Data{body_template: %ST{variables: variables}}} ->
       validate_filter_length_and_insert_poll(variables, %{body | "action" => action_id}, key, group_id)
@@ -29,7 +29,7 @@ defmodule Yubot.Controller.Poll do
   end
 
   defp validate_filter_length_and_insert_poll(variables, %{"filters" => filters} = body, key, group_id)
-  when length(variables) == length(filters) do
+      when length(variables) == length(filters) do
     Poll.insert(%{data: body}, key, group_id)
   end
   defp validate_filter_length_and_insert_poll(variables, body, _key, _group_id) do
@@ -38,21 +38,13 @@ defmodule Yubot.Controller.Poll do
 
   defp ensure_action(%{"auth" => auth} = body, key, group_id) when is_map(auth) or is_binary(auth) do
     ensure_authentication(auth, key, group_id)
-    |> R.bind(fn %Authentication{_id: auth_id} -> parse_template_and_insert_action(%{body | "auth" => auth_id}, key, group_id) end)
+    |> R.bind(fn %Authentication{_id: auth_id} -> Action.parse_template_and_insert(%{data: %{body | "auth" => auth_id}}, key, group_id) end)
   end
   defp ensure_action(action_id, key, group_id) when is_binary(action_id) do
     Action.retrieve(action_id, key, group_id)
   end
   defp ensure_action(body, key, group_id) do
-    parse_template_and_insert_action(body, key, group_id)
-  end
-
-  defp parse_template_and_insert_action(%{"body_template" => template} = body, key, group_id) when is_binary(template) do
-    ST.parse(template)
-    |> R.bind(fn parsed -> Action.insert(%{data: %{body | "body_template" => parsed}}, key, group_id) end)
-  end
-  defp parse_template_and_insert_action(body, _key, _group_id) do
-    bad_request(body)
+    Action.parse_template_and_insert(%{data: body}, key, group_id)
   end
 
   defp ensure_authentication(create_auth_body, key, group_id) when is_map(create_auth_body) do

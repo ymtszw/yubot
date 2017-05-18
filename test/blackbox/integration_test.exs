@@ -64,4 +64,36 @@ defmodule Yubot.Blackbox.IntegrationTest do
     assert body3["data"]["type"] == "bearer"
     assert body3["data"]["token"] == "target_credential" # Decrypted
   end
+
+  test "POST /api/action should create Action" do
+    %Res{status: 201, body: res_body0} = Req.bb_post_json("/api/action", %{
+      "method" => "post",
+      "url" => "https://target.com",
+      "auth" => %{
+        "name" => "Target Credential",
+        "type" => "bearer",
+        "token" => "target_credential",
+      },
+      "body_template" => ~S"""
+      {
+        "var": #{var}
+      }
+      """,
+    })
+    body0 = Poison.decode!(res_body0)
+    assert is_binary(body0["_id"])
+    assert body0["data"]["body_template"]["body"] == ~S"""
+    {
+      "var": #{var}
+    }
+    """
+    assert body0["data"]["body_template"]["variables"] == ["var"]
+
+    %Res{status: 200, body: res_body1} = Req.bb_get("/api/authentication/#{body0["data"]["auth"]}")
+    body1 = Poison.decode!(res_body1)
+    assert body1["_id"] == body0["data"]["auth"]
+    assert body1["data"]["name"] == "Target Credential"
+    assert body1["data"]["type"] == "bearer"
+    assert body1["data"]["token"] == "target_credential" # Decrypted
+  end
 end

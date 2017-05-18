@@ -5,6 +5,8 @@ defmodule Yubot.Model.Action do
   HTTP action object.
   """
 
+  alias Croma.Result, as: R
+  alias Yubot.StringTemplate
   alias Yubot.Model.Authentication
 
   defmodule Type do
@@ -22,4 +24,9 @@ defmodule Yubot.Model.Action do
     body_template: Yubot.StringTemplate,
     type: Type,
   ]
+
+  defun parse_template_and_insert(%{data: %{"body_template" => bt0}} = ia0 :: insert_action_t, key :: v[String.t], group_id :: v[Dodai.GroupId.t]) :: R.t(t) do
+    StringTemplate.parse(bt0)
+    |> R.bind(&insert(put_in(ia0.data["body_template"], &1), key, group_id))
+  end
 end
