@@ -18092,26 +18092,112 @@ var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$checked = function (isCheck) {
 		isCheck ? _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$On : _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Off);
 };
 
+var _aYuMatsuzawa$yubot$Authentications_View$authSelect = F4(
+	function (authList, label, maybeAuthId, onSelect) {
+		var itemText = function (auth) {
+			return _elm_lang$html$Html$text(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					auth.name,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						' (',
+						A2(_elm_lang$core$Basics_ops['++'], auth.id, ')'))));
+		};
+		var item = function (auth) {
+			return _elm_lang$core$Native_Utils.eq(
+				maybeAuthId,
+				_elm_lang$core$Maybe$Just(auth.id)) ? A2(
+				_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$value(auth.id),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$selected(true),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: itemText(auth),
+					_1: {ctor: '[]'}
+				}) : A2(
+				_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$value(auth.id),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: itemText(auth),
+					_1: {ctor: '[]'}
+				});
+		};
+		var select = A2(
+			_rundis$elm_bootstrap$Bootstrap_Form_Select$select,
+			{
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$id(
+					A2(_elm_lang$core$Basics_ops['++'], label, '-auth')),
+				_1: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$onInput(onSelect),
+					_1: {ctor: '[]'}
+				}
+			},
+			A2(_elm_lang$core$List$map, item, authList));
+		var _p0 = maybeAuthId;
+		if (_p0.ctor === 'Nothing') {
+			return _elm_lang$html$Html$text('');
+		} else {
+			return A2(
+				_rundis$elm_bootstrap$Bootstrap_Form$group,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: A2(
+						_rundis$elm_bootstrap$Bootstrap_Form$label,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$for(
+								A2(_elm_lang$core$Basics_ops['++'], label, '-auth')),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Credential for URL'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: select,
+						_1: {ctor: '[]'}
+					}
+				});
+		}
+	});
 var _aYuMatsuzawa$yubot$Authentications_View$authCheck = F3(
-	function (authList, auth, onCheck) {
+	function (authList, maybeAuthId, onCheck) {
 		var checked = function () {
-			var _p0 = auth;
-			if (_p0.ctor === 'Nothing') {
+			var _p1 = maybeAuthId;
+			if (_p1.ctor === 'Nothing') {
 				return false;
 			} else {
 				return true;
 			}
 		}();
-		var _p1 = function () {
-			var _p2 = authList;
-			if (_p2.ctor === '[]') {
+		var _p2 = function () {
+			var _p3 = authList;
+			if (_p3.ctor === '[]') {
 				return {ctor: '_Tuple2', _0: true, _1: ''};
 			} else {
-				return {ctor: '_Tuple2', _0: false, _1: _p2._0.id};
+				return {ctor: '_Tuple2', _0: false, _1: _p3._0.id};
 			}
 		}();
-		var disabled = _p1._0;
-		var headAuthId = _p1._1;
+		var disabled = _p2._0;
+		var headAuthId = _p2._1;
 		return A2(
 			_elm_lang$html$Html$small,
 			{ctor: '[]'},
@@ -18293,6 +18379,15 @@ var _aYuMatsuzawa$yubot$Authentications_View$listView = function (authRs) {
 		});
 };
 
+var _aYuMatsuzawa$yubot$Actions_ModalView$authOnSelect = F2(
+	function (action, authId) {
+		return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+			_elm_lang$core$Native_Utils.update(
+				action,
+				{
+					auth: _elm_lang$core$Maybe$Just(authId)
+				}));
+	});
 var _aYuMatsuzawa$yubot$Actions_ModalView$authOnCheck = F3(
 	function (action, authId, checked) {
 		var _p0 = checked;
@@ -18458,7 +18553,16 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$editForm = F2(
 								}
 							}
 						}),
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: A4(
+							_aYuMatsuzawa$yubot$Authentications_View$authSelect,
+							authList,
+							'action',
+							action.auth,
+							_aYuMatsuzawa$yubot$Actions_ModalView$authOnSelect(action)),
+						_1: {ctor: '[]'}
+					}
 				}
 			});
 	});
@@ -24737,105 +24841,19 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$intervalSelect = function (poll) {
 				}
 			}));
 };
-var _aYuMatsuzawa$yubot$Polls_ModalView$authSelect = F2(
-	function (authList, poll) {
-		var itemText = function (auth) {
-			return _elm_lang$html$Html$text(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					auth.name,
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						' (',
-						A2(_elm_lang$core$Basics_ops['++'], auth.id, ')'))));
-		};
-		var item = function (auth) {
-			return _elm_lang$core$Native_Utils.eq(
-				poll.auth,
-				_elm_lang$core$Maybe$Just(auth.id)) ? A2(
-				_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
+var _aYuMatsuzawa$yubot$Polls_ModalView$authOnSelect = F2(
+	function (poll, authId) {
+		return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+			_elm_lang$core$Native_Utils.update(
+				poll,
 				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$value(auth.id),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$selected(true),
-						_1: {ctor: '[]'}
-					}
-				},
-				{
-					ctor: '::',
-					_0: itemText(auth),
-					_1: {ctor: '[]'}
-				}) : A2(
-				_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$value(auth.id),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: itemText(auth),
-					_1: {ctor: '[]'}
-				});
-		};
-		var select = A2(
-			_rundis$elm_bootstrap$Bootstrap_Form_Select$select,
-			{
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$id('poll-auth'),
-				_1: {
-					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$onInput(
-						function (authId) {
-							return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
-								_elm_lang$core$Native_Utils.update(
-									poll,
-									{
-										auth: _elm_lang$core$Maybe$Just(authId)
-									}));
-						}),
-					_1: {ctor: '[]'}
-				}
-			},
-			A2(
-				_elm_lang$core$List$map,
-				item,
-				_aYuMatsuzawa$yubot$Authentications$listForPoll(authList)));
-		var _p11 = poll.auth;
-		if (_p11.ctor === 'Nothing') {
-			return _elm_lang$html$Html$text('');
-		} else {
-			return A2(
-				_rundis$elm_bootstrap$Bootstrap_Form$group,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A2(
-						_rundis$elm_bootstrap$Bootstrap_Form$label,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$for('poll-auth'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Credential for URL'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: select,
-						_1: {ctor: '[]'}
-					}
-				});
-		}
+					auth: _elm_lang$core$Maybe$Just(authId)
+				}));
 	});
 var _aYuMatsuzawa$yubot$Polls_ModalView$authOnCheck = F3(
 	function (poll, headAuthId, checked) {
-		var _p12 = checked;
-		if (_p12 === false) {
+		var _p11 = checked;
+		if (_p11 === false) {
 			return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
 				_elm_lang$core$Native_Utils.update(
 					poll,
@@ -24914,7 +24932,12 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$editForm = F3(
 					}),
 				_1: {
 					ctor: '::',
-					_0: A2(_aYuMatsuzawa$yubot$Polls_ModalView$authSelect, authList, poll),
+					_0: A4(
+						_aYuMatsuzawa$yubot$Authentications_View$authSelect,
+						_aYuMatsuzawa$yubot$Authentications$listForPoll(authList),
+						'poll',
+						poll.auth,
+						_aYuMatsuzawa$yubot$Polls_ModalView$authOnSelect(poll)),
 					_1: {
 						ctor: '::',
 						_0: A2(

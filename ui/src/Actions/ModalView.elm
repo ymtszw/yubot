@@ -14,7 +14,7 @@ import Resource.Messages exposing (Msg(..))
 import Actions exposing (Action, dummyAction)
 import Actions.View
 import Authentications exposing (Authentication)
-import Authentications.View exposing (authCheck)
+import Authentications.View exposing (authCheck, authSelect)
 
 
 deleteModalView : Resource Action -> Html (Msg Action)
@@ -94,6 +94,7 @@ editForm authList action =
                 ]
             , authCheck authList action.auth (authOnCheck action)
             ]
+        , authSelect authList "action" action.auth (authOnSelect action)
         ]
 
 
@@ -122,3 +123,8 @@ authOnCheck action authId checked =
 
         True ->
             OnEditInput { action | auth = Just authId }
+
+
+authOnSelect : Action -> Utils.EntityId -> Msg Action
+authOnSelect action authId =
+    OnEditInput { action | auth = Just authId }

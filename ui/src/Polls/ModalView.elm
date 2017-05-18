@@ -19,7 +19,7 @@ import Polls exposing (Poll, Interval, dummyPoll, intervalToString)
 import Actions exposing (Action)
 import Actions.View
 import Authentications as Auth exposing (Authentication)
-import Authentications.View exposing (authCheck)
+import Authentications.View exposing (authCheck, authSelect)
 
 
 deleteModalView : Resource Poll -> Html (Msg Poll)
@@ -98,7 +98,7 @@ editForm actionList authList poll =
                     ]
                 , authCheck authList poll.auth (authOnCheck poll)
                 ]
-            , authSelect authList poll
+            , authSelect (Auth.listForPoll authList) "poll" poll.auth (authOnSelect poll)
             , Form.group []
                 [ Form.label [ for "poll-interval" ] [ text "Interval" ]
                 , intervalSelect poll
@@ -124,36 +124,9 @@ authOnCheck poll headAuthId checked =
             OnEditInput { poll | auth = Just headAuthId }
 
 
-authSelect : List Authentication -> Poll -> Html (Msg Poll)
-authSelect authList poll =
-    let
-        itemText auth =
-            text (auth.name ++ " (" ++ auth.id ++ ")")
-
-        item auth =
-            if poll.auth == Just auth.id then
-                Select.item [ value auth.id, selected True ] [ itemText auth ]
-            else
-                Select.item [ value auth.id ] [ itemText auth ]
-
-        select =
-            authList
-                |> Auth.listForPoll
-                |> List.map item
-                |> Select.select
-                    [ Select.id "poll-auth"
-                    , Select.onInput (\authId -> OnEditInput { poll | auth = Just authId })
-                    ]
-    in
-        case poll.auth of
-            Nothing ->
-                text ""
-
-            Just _ ->
-                Form.group []
-                    [ Form.label [ for "poll-auth" ] [ text "Credential for URL" ]
-                    , select
-                    ]
+authOnSelect : Poll -> Utils.EntityId -> Msg Poll
+authOnSelect poll authId =
+    OnEditInput { poll | auth = Just authId }
 
 
 intervalSelect : Poll -> Html (Msg Poll)
