@@ -54,17 +54,19 @@ editModalView actionList authList pollRs =
         stateToMsg state =
             OnEditModal state target
 
-        titleText poll =
-            if poll.id == "" then
-                text "Creating Poll"
+        ( headerText, titleText ) =
+            if target.id == "" then
+                ( text "New poll!", text "Creating Poll" )
             else
-                text "Updating Poll"
+                ( small [] [ text ("ID: " ++ target.id) ]
+                , text "Updating Poll"
+                )
     in
         Modal.config stateToMsg
             |> Modal.large
-            |> Modal.h4 [] [ titleText target ]
+            |> Modal.h4 [] [ titleText ]
             |> Modal.body []
-                [ headerText target
+                [ headerText
                 , editForm actionList authList target
                 ]
             |> Modal.footer []
@@ -72,14 +74,6 @@ editModalView actionList authList pollRs =
                 , mx2Button (OnEditModal Modal.hiddenState target) [] "Cancel"
                 ]
             |> Modal.view pollRs.editModal.modalState
-
-
-headerText : Poll -> Html (Msg Poll)
-headerText poll =
-    if poll.id == "" then
-        text "New poll!"
-    else
-        small [] [ text ("ID: " ++ poll.id) ]
 
 
 editForm : List Action -> List Authentication -> Poll -> Html (Msg Poll)

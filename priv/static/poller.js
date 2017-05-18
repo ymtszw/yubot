@@ -18566,31 +18566,31 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$editForm = F2(
 				}
 			});
 	});
-var _aYuMatsuzawa$yubot$Actions_ModalView$headerText = function (action) {
-	var _p1 = action.id;
-	if (_p1 === '') {
-		return _elm_lang$html$Html$text('New action!');
-	} else {
-		return A2(
-			_elm_lang$html$Html$small,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					A2(_elm_lang$core$Basics_ops['++'], 'ID: ', _p1)),
-				_1: {ctor: '[]'}
-			});
-	}
-};
 var _aYuMatsuzawa$yubot$Actions_ModalView$editModalView = F2(
 	function (authList, actionRs) {
-		var titleText = function (action) {
-			return _elm_lang$core$Native_Utils.eq(action, _aYuMatsuzawa$yubot$Actions$dummyAction) ? _elm_lang$html$Html$text('Creating Action') : _elm_lang$html$Html$text('Updating Action');
-		};
 		var target = actionRs.editModal.target;
 		var stateToMsg = function (state) {
 			return A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, state, target);
 		};
+		var _p1 = _elm_lang$core$Native_Utils.eq(target.id, '') ? {
+			ctor: '_Tuple2',
+			_0: _elm_lang$html$Html$text('New action!'),
+			_1: _elm_lang$html$Html$text('Creating Action')
+		} : {
+			ctor: '_Tuple2',
+			_0: A2(
+				_elm_lang$html$Html$small,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						A2(_elm_lang$core$Basics_ops['++'], 'ID: ', target.id)),
+					_1: {ctor: '[]'}
+				}),
+			_1: _elm_lang$html$Html$text('Updating Action')
+		};
+		var headerText = _p1._0;
+		var titleText = _p1._1;
 		return A2(
 			_rundis$elm_bootstrap$Bootstrap_Modal$view,
 			actionRs.editModal.modalState,
@@ -18623,7 +18623,7 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$editModalView = F2(
 					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _aYuMatsuzawa$yubot$Actions_ModalView$headerText(target),
+						_0: headerText,
 						_1: {
 							ctor: '::',
 							_0: A2(_aYuMatsuzawa$yubot$Actions_ModalView$editForm, authList, target),
@@ -18635,10 +18635,11 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$editModalView = F2(
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: titleText(target),
+							_0: titleText,
 							_1: {ctor: '[]'}
 						},
-						_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg)))));
+						_rundis$elm_bootstrap$Bootstrap_Modal$large(
+							_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg))))));
 	});
 var _aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView = function (actionRs) {
 	var target = actionRs.deleteModal.target;
@@ -25022,26 +25023,31 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$editForm = F3(
 				}
 			});
 	});
-var _aYuMatsuzawa$yubot$Polls_ModalView$headerText = function (poll) {
-	return _elm_lang$core$Native_Utils.eq(poll.id, '') ? _elm_lang$html$Html$text('New poll!') : A2(
-		_elm_lang$html$Html$small,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(
-				A2(_elm_lang$core$Basics_ops['++'], 'ID: ', poll.id)),
-			_1: {ctor: '[]'}
-		});
-};
 var _aYuMatsuzawa$yubot$Polls_ModalView$editModalView = F3(
 	function (actionList, authList, pollRs) {
-		var titleText = function (poll) {
-			return _elm_lang$core$Native_Utils.eq(poll.id, '') ? _elm_lang$html$Html$text('Creating Poll') : _elm_lang$html$Html$text('Updating Poll');
-		};
 		var target = pollRs.editModal.target;
 		var stateToMsg = function (state) {
 			return A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, state, target);
 		};
+		var _p12 = _elm_lang$core$Native_Utils.eq(target.id, '') ? {
+			ctor: '_Tuple2',
+			_0: _elm_lang$html$Html$text('New poll!'),
+			_1: _elm_lang$html$Html$text('Creating Poll')
+		} : {
+			ctor: '_Tuple2',
+			_0: A2(
+				_elm_lang$html$Html$small,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						A2(_elm_lang$core$Basics_ops['++'], 'ID: ', target.id)),
+					_1: {ctor: '[]'}
+				}),
+			_1: _elm_lang$html$Html$text('Updating Poll')
+		};
+		var headerText = _p12._0;
+		var titleText = _p12._1;
 		return A2(
 			_rundis$elm_bootstrap$Bootstrap_Modal$view,
 			pollRs.editModal.modalState,
@@ -25074,7 +25080,7 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$editModalView = F3(
 					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _aYuMatsuzawa$yubot$Polls_ModalView$headerText(target),
+						_0: headerText,
 						_1: {
 							ctor: '::',
 							_0: A3(_aYuMatsuzawa$yubot$Polls_ModalView$editForm, actionList, authList, target),
@@ -25086,7 +25092,7 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$editModalView = F3(
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: titleText(target),
+							_0: titleText,
 							_1: {ctor: '[]'}
 						},
 						_rundis$elm_bootstrap$Bootstrap_Modal$large(

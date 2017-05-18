@@ -49,16 +49,19 @@ editModalView authList actionRs =
         stateToMsg state =
             OnEditModal state target
 
-        titleText action =
-            if action == dummyAction then
-                text "Creating Action"
+        ( headerText, titleText ) =
+            if target.id == "" then
+                ( text "New action!", text "Creating Action" )
             else
-                text "Updating Action"
+                ( small [] [ text ("ID: " ++ target.id) ]
+                , text "Updating Action"
+                )
     in
         Modal.config stateToMsg
-            |> Modal.h4 [] [ titleText target ]
+            |> Modal.large
+            |> Modal.h4 [] [ titleText ]
             |> Modal.body []
-                [ headerText target
+                [ headerText
                 , editForm authList target
                 ]
             |> Modal.footer []
@@ -66,16 +69,6 @@ editModalView authList actionRs =
                 , mx2Button (OnEditModal Modal.hiddenState target) [] "Cancel"
                 ]
             |> Modal.view actionRs.editModal.modalState
-
-
-headerText : Action -> Html (Msg Action)
-headerText action =
-    case action.id of
-        "" ->
-            text "New action!"
-
-        id ->
-            small [] [ text ("ID: " ++ id) ]
 
 
 editForm : List Authentication -> Action -> Html (Msg Action)
