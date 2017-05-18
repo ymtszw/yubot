@@ -50,7 +50,7 @@ type alias Action =
 
 dummyAction : Action
 dummyAction =
-    Action "" "2015-01-01T00:00:00Z" Nothing "POST" "https://example.com" Nothing (BodyTemplate "{}" [])
+    Action "" "2015-01-01T00:00:00Z" Nothing "post" "https://example.com" Nothing (BodyTemplate "{}" [])
 
 
 

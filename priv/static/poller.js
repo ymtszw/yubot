@@ -14872,7 +14872,7 @@ var _aYuMatsuzawa$yubot$Actions$dummyAction = A7(
 	'',
 	'2015-01-01T00:00:00Z',
 	_elm_lang$core$Maybe$Nothing,
-	'POST',
+	'post',
 	'https://example.com',
 	_elm_lang$core$Maybe$Nothing,
 	A2(
@@ -17735,276 +17735,6 @@ var _aYuMatsuzawa$yubot$Actions_View$listView = F2(
 			});
 	});
 
-var _aYuMatsuzawa$yubot$Actions_ModalView$methodSelect = function (method) {
-	var item = function (v) {
-		return _elm_lang$core$Native_Utils.eq(v, method) ? A2(
-			_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$value(v),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$selected(true),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					_elm_lang$core$String$toUpper(v)),
-				_1: {ctor: '[]'}
-			}) : A2(
-			_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$value(v),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					_elm_lang$core$String$toUpper(v)),
-				_1: {ctor: '[]'}
-			});
-	};
-	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Form_Select$select,
-		{
-			ctor: '::',
-			_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$id('action-method'),
-			_1: {ctor: '[]'}
-		},
-		A2(
-			_elm_lang$core$List$map,
-			item,
-			{
-				ctor: '::',
-				_0: 'get',
-				_1: {
-					ctor: '::',
-					_0: 'post',
-					_1: {
-						ctor: '::',
-						_0: 'put',
-						_1: {ctor: '[]'}
-					}
-				}
-			}));
-};
-var _aYuMatsuzawa$yubot$Actions_ModalView$editForm = function (action) {
-	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Form$form,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_rundis$elm_bootstrap$Bootstrap_Form$group,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A2(
-						_rundis$elm_bootstrap$Bootstrap_Form$label,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$for('action-method'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Method'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: _aYuMatsuzawa$yubot$Actions_ModalView$methodSelect(action.method),
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_rundis$elm_bootstrap$Bootstrap_Form$group,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: A2(
-							_rundis$elm_bootstrap$Bootstrap_Form$label,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$for('action-url'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('URL'),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$url(
-								{
-									ctor: '::',
-									_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$id('action-url'),
-									_1: {
-										ctor: '::',
-										_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$defaultValue(action.url),
-										_1: {ctor: '[]'}
-									}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _aYuMatsuzawa$yubot$Actions_ModalView$headerText = function (action) {
-	var _p0 = action.id;
-	if (_p0 === '') {
-		return _elm_lang$html$Html$text('New action!');
-	} else {
-		return A2(
-			_elm_lang$html$Html$small,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					A2(_elm_lang$core$Basics_ops['++'], 'ID: ', _p0)),
-				_1: {ctor: '[]'}
-			});
-	}
-};
-var _aYuMatsuzawa$yubot$Actions_ModalView$editModalView = function (actionRs) {
-	var titleText = function (action) {
-		return _elm_lang$core$Native_Utils.eq(action, _aYuMatsuzawa$yubot$Actions$dummyAction) ? _elm_lang$html$Html$text('Creating Action') : _elm_lang$html$Html$text('Updating Action');
-	};
-	var target = actionRs.editModal.target;
-	var stateToMsg = function (state) {
-		return A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, state, target);
-	};
-	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Modal$view,
-		actionRs.editModal.modalState,
-		A3(
-			_rundis$elm_bootstrap$Bootstrap_Modal$footer,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: A3(
-					_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-					A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-					{
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
-						_1: {ctor: '[]'}
-					},
-					'Submit'),
-				_1: {
-					ctor: '::',
-					_0: A3(
-						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-						A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-						{ctor: '[]'},
-						'Cancel'),
-					_1: {ctor: '[]'}
-				}
-			},
-			A3(
-				_rundis$elm_bootstrap$Bootstrap_Modal$body,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _aYuMatsuzawa$yubot$Actions_ModalView$headerText(target),
-					_1: {
-						ctor: '::',
-						_0: _aYuMatsuzawa$yubot$Actions_ModalView$editForm(target),
-						_1: {ctor: '[]'}
-					}
-				},
-				A3(
-					_rundis$elm_bootstrap$Bootstrap_Modal$h4,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: titleText(target),
-						_1: {ctor: '[]'}
-					},
-					_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg)))));
-};
-var _aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView = function (actionRs) {
-	var target = actionRs.deleteModal.target;
-	var stateToMsg = function (state) {
-		return A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, state, target);
-	};
-	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Modal$view,
-		actionRs.deleteModal.modalState,
-		A3(
-			_rundis$elm_bootstrap$Bootstrap_Modal$footer,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: A3(
-					_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-					_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteConfirmed(target.id),
-					{
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
-						_1: {ctor: '[]'}
-					},
-					'Yes, delete'),
-				_1: {
-					ctor: '::',
-					_0: A3(
-						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-						A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-						{ctor: '[]'},
-						'Cancel'),
-					_1: {ctor: '[]'}
-				}
-			},
-			A3(
-				_rundis$elm_bootstrap$Bootstrap_Modal$body,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$p,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								A2(_elm_lang$core$Basics_ops['++'], 'ID: ', target.id)),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: _aYuMatsuzawa$yubot$Actions_View$preview(target),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$p,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Are you sure?'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				},
-				A3(
-					_rundis$elm_bootstrap$Bootstrap_Modal$h4,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Deleting Action'),
-						_1: {ctor: '[]'}
-					},
-					_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg)))));
-};
-
 var _aYuMatsuzawa$yubot$Authentications$listForPoll = function (authList) {
 	var filterFun = function (auth) {
 		return A2(
@@ -18074,6 +17804,339 @@ var _aYuMatsuzawa$yubot$Authentications$update = F2(
 		return A4(_aYuMatsuzawa$yubot$Resource_Update$update, _aYuMatsuzawa$yubot$Authentications$dummyAuthentication, _aYuMatsuzawa$yubot$Authentications$config, msg, resource);
 	});
 
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$stateAttribute = function (state) {
+	var _p0 = state;
+	switch (_p0.ctor) {
+		case 'On':
+			return _elm_lang$html$Html_Attributes$checked(true);
+		case 'Off':
+			return _elm_lang$html$Html_Attributes$checked(false);
+		default:
+			return A2(_elm_lang$html$Html_Attributes$attribute, 'indeterminate', 'true');
+	}
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$toAttributes = function (options) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class(
+				options.custom ? 'custom-control-input' : 'form-check-input'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$type_('checkbox'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$disabled(options.disabled),
+					_1: {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$stateAttribute(options.state),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(
+				_elm_lang$core$List$filterMap,
+				_elm_lang$core$Basics$identity,
+				{
+					ctor: '::',
+					_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Events$onCheck, options.onChecked),
+					_1: {ctor: '[]'}
+				}),
+			options.attributes));
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$applyModifier = F2(
+	function (modifier, options) {
+		var _p1 = modifier;
+		switch (_p1.ctor) {
+			case 'Value':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{state: _p1._0});
+			case 'Inline':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{inline: true});
+			case 'OnChecked':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						onChecked: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			case 'Custom':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{custom: true});
+			case 'Disabled':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{disabled: _p1._0});
+			case 'Validation':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						validation: _elm_lang$core$Maybe$Just(_p1._0)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p1._0)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Options = F7(
+	function (a, b, c, d, e, f, g) {
+		return {state: a, inline: b, custom: c, disabled: d, onChecked: e, validation: f, attributes: g};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Checkbox = function (a) {
+	return {ctor: 'Checkbox', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$create = F2(
+	function (options, label) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Checkbox(
+			{options: options, label: label});
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Attrs = function (a) {
+	return {ctor: 'Attrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$attrs = function (attrs) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Attrs(attrs);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Validation = function (a) {
+	return {ctor: 'Validation', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$success = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Success);
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$warning = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Warning);
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$danger = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Danger);
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Disabled = function (a) {
+	return {ctor: 'Disabled', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$disabled = function (disabled) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Disabled(disabled);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Custom = {ctor: 'Custom'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$OnChecked = function (a) {
+	return {ctor: 'OnChecked', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$onCheck = function (toMsg) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$OnChecked(toMsg);
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Inline = {ctor: 'Inline'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$inline = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Inline;
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Value = function (a) {
+	return {ctor: 'Value', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Indeterminate = {ctor: 'Indeterminate'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$indeterminate = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Value(_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Indeterminate);
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Off = {ctor: 'Off'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$defaultOptions = {
+	state: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Off,
+	inline: false,
+	custom: false,
+	disabled: false,
+	onChecked: _elm_lang$core$Maybe$Nothing,
+	validation: _elm_lang$core$Maybe$Nothing,
+	attributes: {ctor: '[]'}
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$view = function (_p2) {
+	var _p3 = _p2;
+	var _p5 = _p3._0;
+	var opts = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$applyModifier, _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$defaultOptions, _p5.options);
+	var validationAttrs = function () {
+		var _p4 = opts.validation;
+		if (_p4.ctor === 'Just') {
+			return {
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationWrapperAttribute(_p4._0),
+				_1: {ctor: '[]'}
+			};
+		} else {
+			return {ctor: '[]'};
+		}
+	}();
+	return opts.custom ? A2(
+		_elm_lang$html$Html$div,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$classList(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'custom-controls-stacked', _1: !opts.inline},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'd-inline-block', _1: opts.inline},
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			validationAttrs),
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$label,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('custom-control custom-checkbox'),
+						_1: {ctor: '[]'}
+					},
+					validationAttrs),
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$input,
+						_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$toAttributes(opts),
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$span,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('custom-control-indicator'),
+								_1: {ctor: '[]'}
+							},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$span,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('custom-control-description'),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(_p5.label),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		}) : A2(
+		_elm_lang$html$Html$div,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$classList(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'form-check', _1: true},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'form-check-inline', _1: opts.inline},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'disabled', _1: opts.disabled},
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			validationAttrs),
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$label,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('form-check-label'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$input,
+						_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$toAttributes(opts),
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							A2(_elm_lang$core$Basics_ops['++'], ' ', _p5.label)),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$checkbox = F2(
+	function (options, label) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$view(
+			A2(_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$create, options, label));
+	});
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$custom = function (options) {
+	return function (_p6) {
+		return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$view(
+			A2(
+				_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$create,
+				{ctor: '::', _0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Custom, _1: options},
+				_p6));
+	};
+};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$On = {ctor: 'On'};
+var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$checked = function (isCheck) {
+	return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Value(
+		isCheck ? _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$On : _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Off);
+};
+
+var _aYuMatsuzawa$yubot$Authentications_View$authCheck = F3(
+	function (authList, auth, onCheck) {
+		var checked = function () {
+			var _p0 = auth;
+			if (_p0.ctor === 'Nothing') {
+				return false;
+			} else {
+				return true;
+			}
+		}();
+		var _p1 = function () {
+			var _p2 = authList;
+			if (_p2.ctor === '[]') {
+				return {ctor: '_Tuple2', _0: true, _1: ''};
+			} else {
+				return {ctor: '_Tuple2', _0: false, _1: _p2._0.id};
+			}
+		}();
+		var disabled = _p1._0;
+		var headAuthId = _p1._1;
+		return A2(
+			_elm_lang$html$Html$small,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$checkbox,
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$checked(checked),
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$disabled(disabled),
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$onCheck(
+									onCheck(headAuthId)),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					'Require authentication?'),
+				_1: {ctor: '[]'}
+			});
+	});
 var _aYuMatsuzawa$yubot$Authentications_View$authRow = function (authentication) {
 	return A2(
 		_rundis$elm_bootstrap$Bootstrap_Table$tr,
@@ -18228,6 +18291,323 @@ var _aYuMatsuzawa$yubot$Authentications_View$listView = function (authRs) {
 				{ctor: '[]'},
 				A2(_elm_lang$core$List$map, _aYuMatsuzawa$yubot$Authentications_View$authRow, authRs.list))
 		});
+};
+
+var _aYuMatsuzawa$yubot$Actions_ModalView$authOnCheck = F3(
+	function (action, authId, checked) {
+		var _p0 = checked;
+		if (_p0 === false) {
+			return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+				_elm_lang$core$Native_Utils.update(
+					action,
+					{auth: _elm_lang$core$Maybe$Nothing}));
+		} else {
+			return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+				_elm_lang$core$Native_Utils.update(
+					action,
+					{
+						auth: _elm_lang$core$Maybe$Just(authId)
+					}));
+		}
+	});
+var _aYuMatsuzawa$yubot$Actions_ModalView$methodSelect = function (action) {
+	var item = function (v) {
+		return _elm_lang$core$Native_Utils.eq(v, action.method) ? A2(
+			_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$value(v),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$selected(true),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					_elm_lang$core$String$toUpper(v)),
+				_1: {ctor: '[]'}
+			}) : A2(
+			_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$value(v),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					_elm_lang$core$String$toUpper(v)),
+				_1: {ctor: '[]'}
+			});
+	};
+	return A2(
+		_rundis$elm_bootstrap$Bootstrap_Form_Select$select,
+		{
+			ctor: '::',
+			_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$id('action-method'),
+			_1: {
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$onInput(
+					function (method) {
+						return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+							_elm_lang$core$Native_Utils.update(
+								action,
+								{method: method}));
+					}),
+				_1: {ctor: '[]'}
+			}
+		},
+		A2(
+			_elm_lang$core$List$map,
+			item,
+			{
+				ctor: '::',
+				_0: 'post',
+				_1: {
+					ctor: '::',
+					_0: 'put',
+					_1: {
+						ctor: '::',
+						_0: 'get',
+						_1: {ctor: '[]'}
+					}
+				}
+			}));
+};
+var _aYuMatsuzawa$yubot$Actions_ModalView$editForm = F2(
+	function (authList, action) {
+		return A2(
+			_rundis$elm_bootstrap$Bootstrap_Form$form,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_rundis$elm_bootstrap$Bootstrap_Form$group,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(
+							_rundis$elm_bootstrap$Bootstrap_Form$label,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$for('action-method'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Method'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _aYuMatsuzawa$yubot$Actions_ModalView$methodSelect(action),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_rundis$elm_bootstrap$Bootstrap_Form$group,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: A2(
+								_rundis$elm_bootstrap$Bootstrap_Form$label,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$for('action-url'),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('URL'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$url(
+									{
+										ctor: '::',
+										_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$id('action-url'),
+										_1: {
+											ctor: '::',
+											_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$defaultValue(action.url),
+											_1: {
+												ctor: '::',
+												_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput(
+													function (url) {
+														return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+															_elm_lang$core$Native_Utils.update(
+																action,
+																{url: url}));
+													}),
+												_1: {ctor: '[]'}
+											}
+										}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A3(
+										_aYuMatsuzawa$yubot$Authentications_View$authCheck,
+										authList,
+										action.auth,
+										_aYuMatsuzawa$yubot$Actions_ModalView$authOnCheck(action)),
+									_1: {ctor: '[]'}
+								}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _aYuMatsuzawa$yubot$Actions_ModalView$headerText = function (action) {
+	var _p1 = action.id;
+	if (_p1 === '') {
+		return _elm_lang$html$Html$text('New action!');
+	} else {
+		return A2(
+			_elm_lang$html$Html$small,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					A2(_elm_lang$core$Basics_ops['++'], 'ID: ', _p1)),
+				_1: {ctor: '[]'}
+			});
+	}
+};
+var _aYuMatsuzawa$yubot$Actions_ModalView$editModalView = F2(
+	function (authList, actionRs) {
+		var titleText = function (action) {
+			return _elm_lang$core$Native_Utils.eq(action, _aYuMatsuzawa$yubot$Actions$dummyAction) ? _elm_lang$html$Html$text('Creating Action') : _elm_lang$html$Html$text('Updating Action');
+		};
+		var target = actionRs.editModal.target;
+		var stateToMsg = function (state) {
+			return A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, state, target);
+		};
+		return A2(
+			_rundis$elm_bootstrap$Bootstrap_Modal$view,
+			actionRs.editModal.modalState,
+			A3(
+				_rundis$elm_bootstrap$Bootstrap_Modal$footer,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: A3(
+						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+						A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
+						{
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
+							_1: {ctor: '[]'}
+						},
+						'Submit'),
+					_1: {
+						ctor: '::',
+						_0: A3(
+							_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+							A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
+							{ctor: '[]'},
+							'Cancel'),
+						_1: {ctor: '[]'}
+					}
+				},
+				A3(
+					_rundis$elm_bootstrap$Bootstrap_Modal$body,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _aYuMatsuzawa$yubot$Actions_ModalView$headerText(target),
+						_1: {
+							ctor: '::',
+							_0: A2(_aYuMatsuzawa$yubot$Actions_ModalView$editForm, authList, target),
+							_1: {ctor: '[]'}
+						}
+					},
+					A3(
+						_rundis$elm_bootstrap$Bootstrap_Modal$h4,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: titleText(target),
+							_1: {ctor: '[]'}
+						},
+						_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg)))));
+	});
+var _aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView = function (actionRs) {
+	var target = actionRs.deleteModal.target;
+	var stateToMsg = function (state) {
+		return A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, state, target);
+	};
+	return A2(
+		_rundis$elm_bootstrap$Bootstrap_Modal$view,
+		actionRs.deleteModal.modalState,
+		A3(
+			_rundis$elm_bootstrap$Bootstrap_Modal$footer,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A3(
+					_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+					_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteConfirmed(target.id),
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
+						_1: {ctor: '[]'}
+					},
+					'Yes, delete'),
+				_1: {
+					ctor: '::',
+					_0: A3(
+						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+						A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
+						{ctor: '[]'},
+						'Cancel'),
+					_1: {ctor: '[]'}
+				}
+			},
+			A3(
+				_rundis$elm_bootstrap$Bootstrap_Modal$body,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$p,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								A2(_elm_lang$core$Basics_ops['++'], 'ID: ', target.id)),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _aYuMatsuzawa$yubot$Actions_View$preview(target),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$p,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Are you sure?'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				A3(
+					_rundis$elm_bootstrap$Bootstrap_Modal$h4,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Deleting Action'),
+						_1: {ctor: '[]'}
+					},
+					_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg)))));
 };
 
 var _elm_lang$animation_frame$Native_AnimationFrame = function()
@@ -22709,294 +23089,6 @@ var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$button = F2(
 				}));
 	});
 
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$stateAttribute = function (state) {
-	var _p0 = state;
-	switch (_p0.ctor) {
-		case 'On':
-			return _elm_lang$html$Html_Attributes$checked(true);
-		case 'Off':
-			return _elm_lang$html$Html_Attributes$checked(false);
-		default:
-			return A2(_elm_lang$html$Html_Attributes$attribute, 'indeterminate', 'true');
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$toAttributes = function (options) {
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class(
-				options.custom ? 'custom-control-input' : 'form-check-input'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$type_('checkbox'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$disabled(options.disabled),
-					_1: {
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$stateAttribute(options.state),
-						_1: {ctor: '[]'}
-					}
-				}
-			}
-		},
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			A2(
-				_elm_lang$core$List$filterMap,
-				_elm_lang$core$Basics$identity,
-				{
-					ctor: '::',
-					_0: A2(_elm_lang$core$Maybe$map, _elm_lang$html$Html_Events$onCheck, options.onChecked),
-					_1: {ctor: '[]'}
-				}),
-			options.attributes));
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$applyModifier = F2(
-	function (modifier, options) {
-		var _p1 = modifier;
-		switch (_p1.ctor) {
-			case 'Value':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{state: _p1._0});
-			case 'Inline':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{inline: true});
-			case 'OnChecked':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						onChecked: _elm_lang$core$Maybe$Just(_p1._0)
-					});
-			case 'Custom':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{custom: true});
-			case 'Disabled':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{disabled: _p1._0});
-			case 'Validation':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						validation: _elm_lang$core$Maybe$Just(_p1._0)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p1._0)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Options = F7(
-	function (a, b, c, d, e, f, g) {
-		return {state: a, inline: b, custom: c, disabled: d, onChecked: e, validation: f, attributes: g};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Checkbox = function (a) {
-	return {ctor: 'Checkbox', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$create = F2(
-	function (options, label) {
-		return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Checkbox(
-			{options: options, label: label});
-	});
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Attrs = function (a) {
-	return {ctor: 'Attrs', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$attrs = function (attrs) {
-	return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Attrs(attrs);
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Validation = function (a) {
-	return {ctor: 'Validation', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$success = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Success);
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$warning = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Warning);
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$danger = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Validation(_rundis$elm_bootstrap$Bootstrap_Form_FormInternal$Danger);
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Disabled = function (a) {
-	return {ctor: 'Disabled', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$disabled = function (disabled) {
-	return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Disabled(disabled);
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Custom = {ctor: 'Custom'};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$OnChecked = function (a) {
-	return {ctor: 'OnChecked', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$onCheck = function (toMsg) {
-	return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$OnChecked(toMsg);
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Inline = {ctor: 'Inline'};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$inline = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Inline;
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Value = function (a) {
-	return {ctor: 'Value', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Indeterminate = {ctor: 'Indeterminate'};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$indeterminate = _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Value(_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Indeterminate);
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Off = {ctor: 'Off'};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$defaultOptions = {
-	state: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Off,
-	inline: false,
-	custom: false,
-	disabled: false,
-	onChecked: _elm_lang$core$Maybe$Nothing,
-	validation: _elm_lang$core$Maybe$Nothing,
-	attributes: {ctor: '[]'}
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$view = function (_p2) {
-	var _p3 = _p2;
-	var _p5 = _p3._0;
-	var opts = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$applyModifier, _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$defaultOptions, _p5.options);
-	var validationAttrs = function () {
-		var _p4 = opts.validation;
-		if (_p4.ctor === 'Just') {
-			return {
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Form_FormInternal$validationWrapperAttribute(_p4._0),
-				_1: {ctor: '[]'}
-			};
-		} else {
-			return {ctor: '[]'};
-		}
-	}();
-	return opts.custom ? A2(
-		_elm_lang$html$Html$div,
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$classList(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'custom-controls-stacked', _1: !opts.inline},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'd-inline-block', _1: opts.inline},
-							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {ctor: '[]'}
-			},
-			validationAttrs),
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$label,
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('custom-control custom-checkbox'),
-						_1: {ctor: '[]'}
-					},
-					validationAttrs),
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$input,
-						_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$toAttributes(opts),
-						{ctor: '[]'}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$span,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('custom-control-indicator'),
-								_1: {ctor: '[]'}
-							},
-							{ctor: '[]'}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$span,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('custom-control-description'),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text(_p5.label),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				}),
-			_1: {ctor: '[]'}
-		}) : A2(
-		_elm_lang$html$Html$div,
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$classList(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'form-check', _1: true},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'form-check-inline', _1: opts.inline},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'disabled', _1: opts.disabled},
-								_1: {ctor: '[]'}
-							}
-						}
-					}),
-				_1: {ctor: '[]'}
-			},
-			validationAttrs),
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$label,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('form-check-label'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$input,
-						_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$toAttributes(opts),
-						{ctor: '[]'}),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							A2(_elm_lang$core$Basics_ops['++'], ' ', _p5.label)),
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {ctor: '[]'}
-		});
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$checkbox = F2(
-	function (options, label) {
-		return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$view(
-			A2(_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$create, options, label));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$custom = function (options) {
-	return function (_p6) {
-		return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$view(
-			A2(
-				_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$create,
-				{ctor: '::', _0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Custom, _1: options},
-				_p6));
-	};
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$On = {ctor: 'On'};
-var _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$checked = function (isCheck) {
-	return _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Value(
-		isCheck ? _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$On : _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$Off);
-};
-
 var _rundis$elm_bootstrap$Bootstrap_Alert$roleClass = function (role) {
 	var _p0 = role;
 	switch (_p0.ctor) {
@@ -24741,7 +24833,7 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$authSelect = F2(
 		}
 	});
 var _aYuMatsuzawa$yubot$Polls_ModalView$authOnCheck = F3(
-	function (headAuthId, poll, checked) {
+	function (poll, headAuthId, checked) {
 		var _p12 = checked;
 		if (_p12 === false) {
 			return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
@@ -24756,51 +24848,6 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$authOnCheck = F3(
 						auth: _elm_lang$core$Maybe$Just(headAuthId)
 					}));
 		}
-	});
-var _aYuMatsuzawa$yubot$Polls_ModalView$authCheck = F2(
-	function (authList, poll) {
-		var checked = function () {
-			var _p13 = poll.auth;
-			if (_p13.ctor === 'Nothing') {
-				return false;
-			} else {
-				return true;
-			}
-		}();
-		var _p14 = function () {
-			var _p15 = authList;
-			if (_p15.ctor === '[]') {
-				return {ctor: '_Tuple2', _0: true, _1: ''};
-			} else {
-				return {ctor: '_Tuple2', _0: false, _1: _p15._0.id};
-			}
-		}();
-		var disabled = _p14._0;
-		var headAuthId = _p14._1;
-		return A2(
-			_elm_lang$html$Html$small,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: A2(
-					_rundis$elm_bootstrap$Bootstrap_Form_Checkbox$checkbox,
-					{
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$checked(checked),
-						_1: {
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$disabled(disabled),
-							_1: {
-								ctor: '::',
-								_0: _rundis$elm_bootstrap$Bootstrap_Form_Checkbox$onCheck(
-									A2(_aYuMatsuzawa$yubot$Polls_ModalView$authOnCheck, headAuthId, poll)),
-								_1: {ctor: '[]'}
-							}
-						}
-					},
-					'Require authentication?'),
-				_1: {ctor: '[]'}
-			});
 	});
 var _aYuMatsuzawa$yubot$Polls_ModalView$editForm = F3(
 	function (actionList, authList, poll) {
@@ -24856,7 +24903,11 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$editForm = F3(
 								}),
 							_1: {
 								ctor: '::',
-								_0: A2(_aYuMatsuzawa$yubot$Polls_ModalView$authCheck, authList, poll),
+								_0: A3(
+									_aYuMatsuzawa$yubot$Authentications_View$authCheck,
+									authList,
+									poll.auth,
+									_aYuMatsuzawa$yubot$Polls_ModalView$authOnCheck(poll)),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -25200,7 +25251,7 @@ var _aYuMatsuzawa$yubot$Poller_View$actionList = function (model) {
 					_0: A2(
 						_elm_lang$html$Html$map,
 						_aYuMatsuzawa$yubot$Poller_Messages$ActionsMsg,
-						_aYuMatsuzawa$yubot$Actions_ModalView$editModalView(model.actionRs)),
+						A2(_aYuMatsuzawa$yubot$Actions_ModalView$editModalView, model.authRs.list, model.actionRs)),
 					_1: {ctor: '[]'}
 				}
 			}

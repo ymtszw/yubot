@@ -9,7 +9,6 @@ import Bootstrap.Card as Card
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Form.InputGroup as InputGroup
-import Bootstrap.Form.Checkbox as Checkbox
 import Bootstrap.Form.Select as Select
 import Bootstrap.Alert as Alert
 import List.Extra as LE
@@ -20,6 +19,7 @@ import Polls exposing (Poll, Interval, dummyPoll, intervalToString)
 import Actions exposing (Action)
 import Actions.View
 import Authentications as Auth exposing (Authentication)
+import Authentications.View exposing (authCheck)
 
 
 deleteModalView : Resource Poll -> Html (Msg Poll)
@@ -96,7 +96,7 @@ editForm actionList authList poll =
                     , Input.value poll.url
                     , Input.onInput (\url -> OnEditInput { poll | url = url })
                     ]
-                , authCheck authList poll
+                , authCheck authList poll.auth (authOnCheck poll)
                 ]
             , authSelect authList poll
             , Form.group []
@@ -114,37 +114,8 @@ editForm actionList authList poll =
             ]
 
 
-authCheck : List Authentication -> Poll -> Html (Msg Poll)
-authCheck authList poll =
-    let
-        ( disabled, headAuthId ) =
-            case authList of
-                [] ->
-                    ( True, "" )
-
-                hd :: _ ->
-                    ( False, hd.id )
-
-        checked =
-            case poll.auth of
-                Nothing ->
-                    False
-
-                Just _ ->
-                    True
-    in
-        small []
-            [ Checkbox.checkbox
-                [ Checkbox.checked checked
-                , Checkbox.disabled disabled
-                , Checkbox.onCheck (authOnCheck headAuthId poll)
-                ]
-                "Require authentication?"
-            ]
-
-
-authOnCheck : Utils.EntityId -> Poll -> Bool -> Msg Poll
-authOnCheck headAuthId poll checked =
+authOnCheck : Poll -> Utils.EntityId -> Bool -> Msg Poll
+authOnCheck poll headAuthId checked =
     case checked of
         False ->
             OnEditInput { poll | auth = Nothing }

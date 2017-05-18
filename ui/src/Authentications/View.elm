@@ -1,10 +1,11 @@
-module Authentications.View exposing (listView)
+module Authentications.View exposing (listView, authCheck)
 
-import Html exposing (Html, text)
+import Html exposing (Html, text, small)
 import Html.Utils exposing (toggleSortOnClick, mx2Button)
 import Bootstrap.Table as Table exposing (th, tr, td, cellAttr)
 import Bootstrap.Modal as Modal
 import Bootstrap.Button as Button
+import Bootstrap.Form.Checkbox as Checkbox
 import Utils exposing (timestampToString)
 import Resource exposing (Resource)
 import Resource.Messages exposing (Msg(..))
@@ -39,3 +40,32 @@ authRow authentication =
             , mx2Button (OnDeleteModal Modal.visibleState authentication) [ Button.disabled True, Button.small ] "Delete"
             ]
         ]
+
+
+authCheck : List Authentication -> Maybe Utils.EntityId -> (Utils.EntityId -> Bool -> Msg resourece) -> Html (Msg resourece)
+authCheck authList auth onCheck =
+    let
+        ( disabled, headAuthId ) =
+            case authList of
+                [] ->
+                    ( True, "" )
+
+                hd :: _ ->
+                    ( False, hd.id )
+
+        checked =
+            case auth of
+                Nothing ->
+                    False
+
+                Just _ ->
+                    True
+    in
+        small []
+            [ Checkbox.checkbox
+                [ Checkbox.checked checked
+                , Checkbox.disabled disabled
+                , Checkbox.onCheck (onCheck headAuthId)
+                ]
+                "Require authentication?"
+            ]

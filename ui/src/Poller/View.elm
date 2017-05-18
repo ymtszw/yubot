@@ -110,7 +110,7 @@ actionList model =
                 ]
             ]
         , Html.map ActionsMsg (Actions.ModalView.deleteModalView model.actionRs)
-        , Html.map ActionsMsg (Actions.ModalView.editModalView model.actionRs)
+        , Html.map ActionsMsg (Actions.ModalView.editModalView model.authRs.list model.actionRs)
         ]
 
 
