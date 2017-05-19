@@ -40,6 +40,11 @@ monospace =
     style [ ( "font-family", "Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace" ) ]
 
 
+xSmall : Attribute msg
+xSmall =
+    style [ ( "font-size", "x-small" ) ]
+
+
 
 -- Bootstrap styled class wrappers
 

@@ -1,7 +1,8 @@
 module Poller.View exposing (view)
 
 import Html exposing (Html, div, h1, p, text, strong)
-import Html.Utils exposing (atext, logo)
+import Html.Attributes exposing (class, src)
+import Html.Utils exposing (atext)
 import Bootstrap.Grid as Grid exposing (Column)
 import Bootstrap.Grid.Col exposing (..)
 import Bootstrap.Tab as Tab
@@ -15,7 +16,7 @@ import Actions.ModalView
 import Authentications.View
 import Poller.Model exposing (Model)
 import Poller.Messages exposing (Msg(..))
-import Poller.Styles exposing (..)
+import Poller.Styles as Styles exposing (..)
 
 
 view : Model -> Html Msg
@@ -38,6 +39,20 @@ navbar model =
         |> Navbar.brand [] [ logo ]
         |> Navbar.customItems []
         |> Navbar.view model.navbarState
+
+
+logo : Html Msg
+logo =
+    Html.h3 [ class "mb-0" ]
+        [ Html.img
+            [ class "align-bottom"
+            , class "mx-1"
+            , src "/static/img/poller/favicon32.png"
+            ]
+            []
+        , text "Poller"
+        , Html.small [ Styles.xSmall ] [ text "the Bear" ]
+        ]
 
 
 gap : Html Msg

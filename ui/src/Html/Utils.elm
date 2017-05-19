@@ -3,13 +3,12 @@ module Html.Utils
         ( atext
         , highlightVariables
         , mx2Button
-        , logo
         , errorAlert
         , toggleSortOnClick
         )
 
 import Regex exposing (Match, HowMany(AtMost), regex)
-import Html exposing (Html, text, a, img)
+import Html exposing (Html, text, a)
 import Html.Attributes exposing (href, src, class)
 import Html.Events exposing (onClick)
 import Bootstrap.Button as Button
@@ -18,7 +17,7 @@ import Utils
 import Resource exposing (Sorter, Ord(..))
 import Resource.Messages exposing (Msg(OnSort))
 import StringTemplate
-import Poller.Styles exposing (mx2, my1)
+import Poller.Styles as Styles exposing (mx2, my1)
 
 
 -- Html helpers
@@ -118,17 +117,6 @@ mx2Button clickMsg options string =
             ]
         )
         [ text string ]
-
-
-logo : Html msg
-logo =
-    img
-        [ class "d-inline-block"
-        , class "align-bottom"
-        , class "mx-1"
-        , src "/static/img/poller/favicon32.png"
-        ]
-        []
 
 
 errorAlert : List Utils.ErrorMessage -> Html msg

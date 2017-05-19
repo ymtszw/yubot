@@ -16955,6 +16955,12 @@ var _aYuMatsuzawa$yubot$Poller_Styles$p3 = _elm_lang$html$Html_Attributes$class(
 var _aYuMatsuzawa$yubot$Poller_Styles$py3 = _elm_lang$html$Html_Attributes$class('py-3');
 var _aYuMatsuzawa$yubot$Poller_Styles$display1 = _elm_lang$html$Html_Attributes$class('display-1');
 var _aYuMatsuzawa$yubot$Poller_Styles$rounded = _elm_lang$html$Html_Attributes$class('rounded');
+var _aYuMatsuzawa$yubot$Poller_Styles$xSmall = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'font-size', _1: 'x-small'},
+		_1: {ctor: '[]'}
+	});
 var _aYuMatsuzawa$yubot$Poller_Styles$monospace = _elm_lang$html$Html_Attributes$style(
 	{
 		ctor: '::',
@@ -17068,26 +17074,6 @@ var _aYuMatsuzawa$yubot$Html_Utils$errorAlert = function (errors) {
 			A2(_elm_lang$core$List$map, alert, errors));
 	}
 };
-var _aYuMatsuzawa$yubot$Html_Utils$logo = A2(
-	_elm_lang$html$Html$img,
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$class('d-inline-block'),
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('align-bottom'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('mx-1'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$src('/static/img/poller/favicon32.png'),
-					_1: {ctor: '[]'}
-				}
-			}
-		}
-	},
-	{ctor: '[]'});
 var _aYuMatsuzawa$yubot$Html_Utils$mx2Button = F3(
 	function (clickMsg, options, string) {
 		return A2(
@@ -26029,6 +26015,52 @@ var _aYuMatsuzawa$yubot$Poller_View$gap = _rundis$elm_bootstrap$Bootstrap_Grid$s
 			}),
 		_1: {ctor: '[]'}
 	});
+var _aYuMatsuzawa$yubot$Poller_View$logo = A2(
+	_elm_lang$html$Html$h3,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$class('mb-0'),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$img,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('align-bottom'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('mx-1'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$src('/static/img/poller/favicon32.png'),
+						_1: {ctor: '[]'}
+					}
+				}
+			},
+			{ctor: '[]'}),
+		_1: {
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('Poller'),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$small,
+					{
+						ctor: '::',
+						_0: _aYuMatsuzawa$yubot$Poller_Styles$xSmall,
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('the Bear'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		}
+	});
 var _aYuMatsuzawa$yubot$Poller_View$navbar = function (model) {
 	return A2(
 		_rundis$elm_bootstrap$Bootstrap_Navbar$view,
@@ -26041,7 +26073,7 @@ var _aYuMatsuzawa$yubot$Poller_View$navbar = function (model) {
 				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: _aYuMatsuzawa$yubot$Html_Utils$logo,
+					_0: _aYuMatsuzawa$yubot$Poller_View$logo,
 					_1: {ctor: '[]'}
 				},
 				_rundis$elm_bootstrap$Bootstrap_Navbar$fixTop(
