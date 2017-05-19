@@ -29,10 +29,10 @@ update dummyResource config msg rs =
             )
 
         OnDeleteModal newState newTarget ->
-            ( { rs | deleteModal = ModalState newState newTarget }, Cmd.none )
+            ( { rs | deleteModal = ModalState newState newTarget [] }, Cmd.none )
 
         OnDeleteConfirmed id ->
-            ( { rs | deleteModal = ModalState hiddenState dummyResource }, (delete config id) )
+            ( { rs | deleteModal = ModalState hiddenState dummyResource [] }, (delete config id) )
 
         OnDelete (Ok ()) ->
             ( rs, fetchAll config )
@@ -41,7 +41,17 @@ update dummyResource config msg rs =
             ( rs, Cmd.none )
 
         OnEditModal newState newTarget ->
-            ( { rs | editModal = ModalState newState newTarget }, Cmd.none )
+            ( { rs | editModal = ModalState newState newTarget [] }, Cmd.none )
 
         OnEditInput newTarget ->
-            ( { rs | editModal = ModalState rs.editModal.modalState newTarget }, Cmd.none )
+            ( { rs | editModal = ModalState rs.editModal.modalState newTarget [] }, Cmd.none )
+
+        OnEditInputWithError newTarget newErrorMessage ->
+            let
+                oldState =
+                    rs.editModal.modalState
+
+                oldErrors =
+                    rs.editModal.errorMessages
+            in
+                ( { rs | editModal = ModalState oldState newTarget (newErrorMessage :: oldErrors) }, Cmd.none )

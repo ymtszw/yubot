@@ -2,7 +2,7 @@ module Resource.Messages exposing (Msg(..))
 
 import Http
 import Bootstrap.Modal
-import Utils exposing (EntityId)
+import Utils exposing (EntityId, ErrorMessage)
 import Resource exposing (Sorter)
 
 
@@ -14,3 +14,4 @@ type Msg resource
     | OnDelete (Result Http.Error ())
     | OnEditModal Bootstrap.Modal.State resource
     | OnEditInput resource
+    | OnEditInputWithError resource ErrorMessage

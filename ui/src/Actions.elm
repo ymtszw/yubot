@@ -2,7 +2,7 @@ module Actions
     exposing
         ( Action
         , Method
-        , Body
+        , Type(..)
         , dummyAction
         , config
         , update
@@ -14,6 +14,7 @@ import Resource exposing (Resource)
 import Resource.Command exposing (Config)
 import Resource.Messages exposing (Msg)
 import Resource.Update
+import StringTemplate exposing (StringTemplate)
 
 
 -- Model
@@ -27,14 +28,9 @@ type alias Method =
     String
 
 
-type alias Body =
-    String
-
-
-type alias BodyTemplate =
-    { body : Body
-    , variables : List String
-    }
+type Type
+    = Hipchat
+    | Http
 
 
 type alias Action =
@@ -44,13 +40,14 @@ type alias Action =
     , method : Method
     , url : Url
     , auth : Maybe EntityId
-    , bodyTemplate : BodyTemplate
+    , bodyTemplate : StringTemplate
+    , type_ : Type
     }
 
 
 dummyAction : Action
 dummyAction =
-    Action "" "2015-01-01T00:00:00Z" Nothing "post" "https://example.com" Nothing (BodyTemplate "{}" [])
+    Action "" "2015-01-01T00:00:00Z" Nothing "post" "https://example.com" Nothing (StringTemplate "{}" []) Http
 
 
 
@@ -64,7 +61,7 @@ config =
 
 fetchDecoder : Decode.Decoder Action
 fetchDecoder =
-    Decode.map7 Action
+    Decode.map8 Action
         (Decode.field "_id" Decode.string)
         (Decode.field "updated_at" Decode.string)
         (Decode.at [ "data", "label" ] (Decode.maybe Decode.string))
@@ -72,13 +69,29 @@ fetchDecoder =
         (Decode.at [ "data", "url" ] Decode.string)
         (Decode.at [ "data", "auth" ] (Decode.maybe Decode.string))
         (Decode.at [ "data", "body_template" ] bodyTemplateDecoder)
+        (Decode.at [ "data", "type" ] (typeDecoder))
 
 
-bodyTemplateDecoder : Decode.Decoder BodyTemplate
+bodyTemplateDecoder : Decode.Decoder StringTemplate
 bodyTemplateDecoder =
-    Decode.map2 BodyTemplate
+    Decode.map2 StringTemplate
         (Decode.field "body" Decode.string)
         (Decode.field "variables" (Decode.list Decode.string))
+
+
+typeDecoder : Decode.Decoder Type
+typeDecoder =
+    let
+        stringToType string =
+            case string of
+                "hipchat" ->
+                    Hipchat
+
+                _ ->
+                    -- "http"
+                    Http
+    in
+        Decode.map stringToType Decode.string
 
 
 

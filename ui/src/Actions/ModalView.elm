@@ -8,13 +8,16 @@ import Bootstrap.Modal as Modal
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Select as Select
+import Bootstrap.Form.Textarea as Textarea
 import Utils
 import Resource exposing (..)
 import Resource.Messages exposing (Msg(..))
+import StringTemplate exposing (StringTemplate)
 import Actions exposing (Action, dummyAction)
 import Actions.View
 import Authentications exposing (Authentication)
 import Authentications.View exposing (authCheck, authSelect)
+import Poller.Styles exposing (monospace)
 
 
 deleteModalView : Resource Action -> Html (Msg Action)
@@ -63,6 +66,7 @@ editModalView authList actionRs =
             |> Modal.body []
                 [ headerText
                 , editForm authList target
+                , Html.Utils.errorAlert actionRs.editModal.errorMessages
                 ]
             |> Modal.footer []
                 [ mx2Button (OnEditModal Modal.hiddenState target) [ Button.primary ] "Submit"
@@ -75,6 +79,14 @@ editForm : List Authentication -> Action -> Html (Msg Action)
 editForm authList action =
     Form.form []
         [ Form.group []
+            [ Form.label [ for "action-label" ] [ text "Label" ]
+            , Input.text
+                [ Input.id "action-label"
+                , Input.value (Maybe.withDefault "" action.label)
+                , Input.onInput (\label -> OnEditInput { action | label = Just label })
+                ]
+            ]
+        , Form.group []
             [ Form.label [ for "action-method" ] [ text "Method" ]
             , methodSelect action
             ]
@@ -82,12 +94,13 @@ editForm authList action =
             [ Form.label [ for "action-url" ] [ text "URL" ]
             , Input.url
                 [ Input.id "action-url"
-                , Input.defaultValue action.url
+                , Input.value action.url
                 , Input.onInput (\url -> OnEditInput { action | url = url })
                 ]
             , authCheck authList action.auth (authOnCheck action)
             ]
         , authSelect authList "action" action.auth (authOnSelect action)
+        , bodyTemplateInput action
         ]
 
 
@@ -121,3 +134,28 @@ authOnCheck action authId checked =
 authOnSelect : Action -> Utils.EntityId -> Msg Action
 authOnSelect action authId =
     OnEditInput { action | auth = Just authId }
+
+
+bodyTemplateInput : Action -> Html (Msg Action)
+bodyTemplateInput action =
+    Form.group []
+        [ Form.label [ for "action-bodyTemplate" ] [ text "Body Template" ]
+        , Textarea.textarea
+            [ Textarea.id "action-bodyTemplate"
+            , Textarea.attrs [ monospace ]
+            , Textarea.rows 5
+            , Textarea.value action.bodyTemplate.body
+            , Textarea.onInput (bodyTemplateOnInput action)
+            ]
+        , Actions.View.variableList action.bodyTemplate.variables
+        ]
+
+
+bodyTemplateOnInput : Action -> StringTemplate.Body -> Msg Action
+bodyTemplateOnInput action body =
+    case StringTemplate.validate body of
+        Ok vars ->
+            OnEditInput { action | bodyTemplate = StringTemplate body vars }
+
+        Err message ->
+            OnEditInputWithError { action | bodyTemplate = StringTemplate body action.bodyTemplate.variables } message

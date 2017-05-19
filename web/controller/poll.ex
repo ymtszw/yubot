@@ -38,13 +38,13 @@ defmodule Yubot.Controller.Poll do
 
   defp ensure_action(%{"auth" => auth} = body, key, group_id) when is_map(auth) or is_binary(auth) do
     ensure_authentication(auth, key, group_id)
-    |> R.bind(fn %Authentication{_id: auth_id} -> Action.parse_template_and_insert(%{data: %{body | "auth" => auth_id}}, key, group_id) end)
+    |> R.bind(fn %Authentication{_id: auth_id} -> Action.insert(%{data: %{body | "auth" => auth_id}}, key, group_id) end)
   end
   defp ensure_action(action_id, key, group_id) when is_binary(action_id) do
     Action.retrieve(action_id, key, group_id)
   end
   defp ensure_action(body, key, group_id) do
-    Action.parse_template_and_insert(%{data: body}, key, group_id)
+    Action.insert(%{data: body}, key, group_id)
   end
 
   defp ensure_authentication(create_auth_body, key, group_id) when is_map(create_auth_body) do

@@ -4,6 +4,7 @@ module Html.Utils
         , highlightVariables
         , mx2Button
         , logo
+        , errorAlert
         , toggleSortOnClick
         )
 
@@ -12,9 +13,11 @@ import Html exposing (Html, text, a, img)
 import Html.Attributes exposing (href, src, class)
 import Html.Events exposing (onClick)
 import Bootstrap.Button as Button
+import Bootstrap.Alert as Alert
+import Utils
 import Resource exposing (Sorter, Ord(..))
 import Resource.Messages exposing (Msg(OnSort))
-import Actions
+import StringTemplate
 import Poller.Styles exposing (mx2, my1)
 
 
@@ -65,12 +68,12 @@ atextImpl string htmls =
                             atextImpl tailString (htmls ++ newHtmls)
 
 
-highlightVariables : Actions.Body -> List (Html msg)
+highlightVariables : StringTemplate.Body -> List (Html msg)
 highlightVariables body =
     highlightVariablesImpl body []
 
 
-highlightVariablesImpl : Actions.Body -> List (Html msg) -> List (Html msg)
+highlightVariablesImpl : StringTemplate.Body -> List (Html msg) -> List (Html msg)
 highlightVariablesImpl bodyTail htmls =
     let
         findFirst =
@@ -126,6 +129,25 @@ logo =
         , src "/static/img/poller/favicon32.png"
         ]
         []
+
+
+errorAlert : List Utils.ErrorMessage -> Html msg
+errorAlert errors =
+    let
+        alert ( label, message ) =
+            Alert.danger
+                [ Html.strong [] [ text ("[" ++ label ++ "] ") ]
+                , text message
+                ]
+    in
+        case errors of
+            [] ->
+                text ""
+
+            _ ->
+                errors
+                    |> List.map alert
+                    |> Html.div []
 
 
 

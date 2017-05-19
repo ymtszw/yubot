@@ -1,4 +1,4 @@
-module Actions.View exposing (listView, preview)
+module Actions.View exposing (listView, variableList, preview)
 
 import Set exposing (Set)
 import Html exposing (Html, text, div, p, pre, code)
@@ -62,30 +62,31 @@ actionRow usedActionIds action =
             ]
 
 
-preview : Action -> Html (Msg resource)
-preview action =
+variableList : List String -> Html (Msg resource)
+variableList variables =
     let
-        varCodes vars =
-            vars
+        varCodes =
+            variables
                 |> List.map (\var -> code [] [ text var ])
                 |> List.intersperse (text ", ")
-
-        vars vars =
-            case vars of
-                [] ->
-                    text ""
-
-                vars ->
-                    vars
-                        |> varCodes
-                        |> (::) (text "Variables: ")
-                        |> p []
     in
-        div [ class "action-preview" ]
-            [ p []
-                [ text "Target: "
-                , code [] (atext ((String.toUpper action.method) ++ " " ++ action.url))
-                ]
-            , pre [ rounded, greyBack, p3 ] (highlightVariables action.bodyTemplate.body)
-            , vars action.bodyTemplate.variables
+        case variables of
+            [] ->
+                text ""
+
+            _ ->
+                varCodes
+                    |> (::) (text "Variables: ")
+                    |> p []
+
+
+preview : Action -> Html (Msg resource)
+preview action =
+    div [ class "action-preview" ]
+        [ p []
+            [ text "Target: "
+            , code [] (atext ((String.toUpper action.method) ++ " " ++ action.url))
             ]
+        , pre [ rounded, greyBack, p3 ] (highlightVariables action.bodyTemplate.body)
+        , variableList action.bodyTemplate.variables
+        ]

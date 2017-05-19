@@ -25,11 +25,13 @@ defmodule Yubot.Blackbox.IntegrationTest do
           "type" => "bearer",
           "token" => "target_credential",
         },
-        "body_template" => ~S"""
-        {
-          "var": #{var}
-        }
-        """,
+        "body_template" => %{
+          "body" => ~S"""
+          {
+            "var": #{var}
+          }
+          """
+        },
       },
       "filters" => [".var"]
     })
@@ -74,11 +76,13 @@ defmodule Yubot.Blackbox.IntegrationTest do
         "type" => "bearer",
         "token" => "target_credential",
       },
-      "body_template" => ~S"""
-      {
-        "var": #{var}
-      }
-      """,
+      "body_template" => %{
+        "body" => ~S"""
+        {
+          "var": #{var}
+        }
+        """
+      },
     })
     body0 = Poison.decode!(res_body0)
     assert is_binary(body0["_id"])

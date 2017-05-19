@@ -3,6 +3,7 @@ module Utils
         ( EntityId
         , Timestamp
         , Url
+        , ErrorMessage
         , timestampToString
         )
 
@@ -19,6 +20,14 @@ type alias Timestamp =
 
 type alias Url =
     String
+
+
+type alias Label =
+    String
+
+
+type alias ErrorMessage =
+    ( Label, String )
 
 
 timestampToString : Timestamp -> String

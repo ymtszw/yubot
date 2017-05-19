@@ -9,6 +9,7 @@ module Resource
         )
 
 import Bootstrap.Modal as Modal exposing (hiddenState)
+import Utils
 
 
 type alias Resource resource =
@@ -33,6 +34,7 @@ type alias Sorter resource =
 type alias ModalState resource =
     { modalState : Modal.State
     , target : resource
+    , errorMessages : List Utils.ErrorMessage
     }
 
 
@@ -41,8 +43,8 @@ initialResource dummyResource =
     Resource
         []
         Nothing
-        (ModalState hiddenState dummyResource)
-        (ModalState hiddenState dummyResource)
+        (ModalState hiddenState dummyResource [])
+        (ModalState hiddenState dummyResource [])
 
 
 sortList : Sorter resource -> List resource -> List resource

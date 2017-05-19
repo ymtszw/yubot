@@ -24,28 +24,54 @@ defmodule Yubot.StringTemplate do
     end
   end
 
-  use Croma.Struct, fields: [
-    body: Croma.String,
-    variables: Croma.TypeGen.list_of(Variable),
-  ]
+  defstruct [:body, :variables]
+  @type t :: %__MODULE__{body: String.t, variables: [Variable.t]}
+
+  defun validate(v :: term) :: R.t(t) do
+    (%{"body" => body, "variables" => vars}  ) when is_binary(body) and is_list(vars) -> validate_impl(body, vars)
+    (%{body: body, variables: vars}          ) when is_binary(body) and is_list(vars) -> validate_impl(body, vars)
+    (%__MODULE__{body: body, variables: vars}) when is_binary(body) and is_list(vars) -> validate_impl(body, vars)
+    (_otherwise                              )                                        -> {:error, {:invalid_value, [__MODULE__]}}
+  end
+
+  defp validate_impl(body, vars) do
+    extract_variables(body)
+    |> R.bind(fn
+      ^vars -> {:ok, %__MODULE__{body: body, variables: vars}}
+      _else -> {:error, {:invalid_value, [__MODULE__]}} # `vars` in request and extraction result does not match; either client or this module went wrong
+    end)
+  end
 
   @doc """
-  Parse template `body` and extract unique variables, then build `#{inspect(__MODULE__)}` struct.
+  Parse template `body` in `dict`, and extract unique variables, then build `#{inspect(__MODULE__)}` struct.
+
+  Ignores existing (or non-existing) `variables` field in `dict`.
   """
-  defun parse(body :: v[String.t]) :: R.t(t) do
-    extract_variables(body)
-    |> R.bind(&new(%{body: body, variables: &1}))
+  defun new(dict :: map | list) :: R.t(t) do
+    (%{"body" => body})                    -> extract_variables(body) |> R.map(&%__MODULE__{body: body, variables: &1})
+    (%{body: body}    )                    -> extract_variables(body) |> R.map(&%__MODULE__{body: body, variables: &1})
+    (list             ) when is_list(list) -> new_from_list(list)
+    (_otherwise       )                    -> {:error, {:invalid_value, [__MODULE__]}}
+  end
+
+  defp new_from_list(list) do
+    case list[:body] do
+      nil -> {:error, {:value_missing, [__MODULE__, String]}}
+      body -> extract_variables(body) |> R.map(&%__MODULE__{body: body, variables: &1})
+    end
   end
 
   @placeholder_pattern ~r/#\{(.*)\}/U
 
-  defun extract_variables(body :: v[String.t]) :: R.t([Variable.t]) do
+  @spec extract_variables(term) :: R.t([Variable.t])
+  def extract_variables(body) when is_binary(body) do
     Regex.scan(@placeholder_pattern, body, capture: :all_but_first)
     |> List.flatten()
     |> Enum.uniq()
     |> Enum.map(&Variable.validate_with_message/1)
     |> R.sequence()
   end
+  def extract_variables(_), do: {:error, {:invalid_value, [String]}}
 
   @doc """
   Render `template` with variables in `dict`.
@@ -93,5 +119,5 @@ defmodule Yubot.StringTemplate do
     end)
   end
 
-  Croma.Result.define_bang_version_of(parse: 1, render: 2)
+  Croma.Result.define_bang_version_of(validate: 1, new: 1, render: 2)
 end

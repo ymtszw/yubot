@@ -18,7 +18,7 @@ wasm/_build:
 
 .PHONY: start
 start: gear_config
-	@YUBOT_CONFIG_JSON='$(shell cat ./gear_config)' iex -S mix
+	@YUBOT_CONFIG_JSON='$(shell cat ./gear_config)' LOG_LEVEL=debug iex -S mix
 gear_config:
 	@echo "gear_config file is missing"
 	@exit 1
@@ -28,6 +28,10 @@ test_blackbox_local: gear_config started
 	@BLACKBOX_TEST_SECRET_JSON='$(shell cat ./gear_config)' TEST_MODE=blackbox_local TEST_PORT=8080 PORT=8081 mix test
 started:
 	@curl -fso /dev/null http://yubot.localhost:8080/
+
+.PHONY: test
+test:
+	@PORT=8079 mix test
 
 .PHONY: ui
 ui: poller ;

@@ -35,6 +35,11 @@ sorting =
         ]
 
 
+monospace : Attribute msg
+monospace =
+    style [ ( "font-family", "Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace" ) ]
+
+
 
 -- Bootstrap styled class wrappers
 
