@@ -23,10 +23,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ navbar model
-        , Grid.containerFluid []
-            [ gap
-            , Grid.simpleRow [ mainContent model ]
-            ]
+        , Grid.containerFluid [ class "mt-4" ] [ Grid.simpleRow [ mainContent model ] ]
         ]
 
 
@@ -35,7 +32,6 @@ navbar model =
     Navbar.config NavbarMsg
         |> Navbar.withAnimation
         |> Navbar.collapseSmall
-        |> Navbar.fixTop
         |> Navbar.brand [] [ logo ]
         |> Navbar.customItems []
         |> Navbar.view model.navbarState
@@ -55,25 +51,9 @@ logo =
         ]
 
 
-gap : Html Msg
-gap =
-    Grid.simpleRow
-        [ Grid.col [ md12, attrs [ Styles.introGap ] ]
-            [ h1 [ class "display-1" ] [ text "Poller the Bear" ]
-            , p [] [ text "I am the Bear who watches over the globe." ]
-            ]
-        ]
-
-
 mainContent : Model -> Column Msg
 mainContent model =
-    Grid.col
-        [ offsetLg2
-        , lg9
-        , md12
-        , attrs [ Styles.greyBack, class "rounded", class "py-3" ]
-        ]
-        [ mainTabs model ]
+    Grid.col [] [ mainTabs model ]
 
 
 mainTabs : Model -> Html Msg

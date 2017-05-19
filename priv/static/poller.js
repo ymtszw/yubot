@@ -19018,6 +19018,12 @@ var _rundis$elm_bootstrap$Bootstrap_Table$tbody = F2(
 			{attributes: attributes, rows: rows});
 	});
 
+var _aYuMatsuzawa$yubot$Poller_Styles$hidden = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'display', _1: 'none'},
+		_1: {ctor: '[]'}
+	});
 var _aYuMatsuzawa$yubot$Poller_Styles$xSmall = _elm_lang$html$Html_Attributes$style(
 	{
 		ctor: '::',
@@ -25188,7 +25194,7 @@ var _aYuMatsuzawa$yubot$Polls_ModalView$actionSelect = F2(
 							_0: _elm_lang$html$Html_Attributes$disabled(true),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('select-header'),
+								_0: _aYuMatsuzawa$yubot$Poller_Styles$hidden,
 								_1: {ctor: '[]'}
 							}
 						}
@@ -25925,90 +25931,13 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 var _aYuMatsuzawa$yubot$Poller_View$mainContent = function (model) {
 	return A2(
 		_rundis$elm_bootstrap$Bootstrap_Grid$col,
-		{
-			ctor: '::',
-			_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$offsetLg2,
-			_1: {
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$lg9,
-				_1: {
-					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$md12,
-					_1: {
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$attrs(
-							{
-								ctor: '::',
-								_0: _aYuMatsuzawa$yubot$Poller_Styles$greyBack,
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('rounded'),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('py-3'),
-										_1: {ctor: '[]'}
-									}
-								}
-							}),
-						_1: {ctor: '[]'}
-					}
-				}
-			}
-		},
+		{ctor: '[]'},
 		{
 			ctor: '::',
 			_0: _aYuMatsuzawa$yubot$Poller_View$mainTabs(model),
 			_1: {ctor: '[]'}
 		});
 };
-var _aYuMatsuzawa$yubot$Poller_View$gap = _rundis$elm_bootstrap$Bootstrap_Grid$simpleRow(
-	{
-		ctor: '::',
-		_0: A2(
-			_rundis$elm_bootstrap$Bootstrap_Grid$col,
-			{
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$md12,
-				_1: {
-					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$attrs(
-						{
-							ctor: '::',
-							_0: _aYuMatsuzawa$yubot$Poller_Styles$introGap,
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$h1,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('display-1'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Poller the Bear'),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$p,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('I am the Bear who watches over the globe.'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
-			}),
-		_1: {ctor: '[]'}
-	});
 var _aYuMatsuzawa$yubot$Poller_View$logo = A2(
 	_elm_lang$html$Html$h3,
 	{
@@ -26070,10 +25999,9 @@ var _aYuMatsuzawa$yubot$Poller_View$navbar = function (model) {
 					_0: _aYuMatsuzawa$yubot$Poller_View$logo,
 					_1: {ctor: '[]'}
 				},
-				_rundis$elm_bootstrap$Bootstrap_Navbar$fixTop(
-					_rundis$elm_bootstrap$Bootstrap_Navbar$collapseSmall(
-						_rundis$elm_bootstrap$Bootstrap_Navbar$withAnimation(
-							_rundis$elm_bootstrap$Bootstrap_Navbar$config(_aYuMatsuzawa$yubot$Poller_Messages$NavbarMsg)))))));
+				_rundis$elm_bootstrap$Bootstrap_Navbar$collapseSmall(
+					_rundis$elm_bootstrap$Bootstrap_Navbar$withAnimation(
+						_rundis$elm_bootstrap$Bootstrap_Navbar$config(_aYuMatsuzawa$yubot$Poller_Messages$NavbarMsg))))));
 };
 var _aYuMatsuzawa$yubot$Poller_View$view = function (model) {
 	return A2(
@@ -26086,20 +26014,20 @@ var _aYuMatsuzawa$yubot$Poller_View$view = function (model) {
 				ctor: '::',
 				_0: A2(
 					_rundis$elm_bootstrap$Bootstrap_Grid$containerFluid,
-					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _aYuMatsuzawa$yubot$Poller_View$gap,
-						_1: {
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Grid$simpleRow(
-								{
-									ctor: '::',
-									_0: _aYuMatsuzawa$yubot$Poller_View$mainContent(model),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
+						_0: _elm_lang$html$Html_Attributes$class('mt-4'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Grid$simpleRow(
+							{
+								ctor: '::',
+								_0: _aYuMatsuzawa$yubot$Poller_View$mainContent(model),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
 					}),
 				_1: {ctor: '[]'}
 			}

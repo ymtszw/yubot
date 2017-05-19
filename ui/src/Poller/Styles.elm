@@ -43,3 +43,8 @@ monospace =
 xSmall : Attribute msg
 xSmall =
     style [ ( "font-size", "x-small" ) ]
+
+
+hidden : Attribute msg
+hidden =
+    style [ ( "display", "none" ) ]
