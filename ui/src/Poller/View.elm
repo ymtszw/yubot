@@ -16,7 +16,7 @@ import Actions.ModalView
 import Authentications.View
 import Poller.Model exposing (Model)
 import Poller.Messages exposing (Msg(..))
-import Poller.Styles as Styles exposing (..)
+import Poller.Styles as Styles
 
 
 view : Model -> Html Msg
@@ -58,8 +58,8 @@ logo =
 gap : Html Msg
 gap =
     Grid.simpleRow
-        [ Grid.col [ md12, attrs [ introGap ] ]
-            [ h1 [ display1 ] [ text "Poller the Bear" ]
+        [ Grid.col [ md12, attrs [ Styles.introGap ] ]
+            [ h1 [ class "display-1" ] [ text "Poller the Bear" ]
             , p [] [ text "I am the Bear who watches over the globe." ]
             ]
         ]
@@ -71,7 +71,7 @@ mainContent model =
         [ offsetLg2
         , lg9
         , md12
-        , attrs [ greyBack, rounded, py3 ]
+        , attrs [ Styles.greyBack, class "rounded", class "py-3" ]
         ]
         [ mainTabs model ]
 
@@ -85,19 +85,19 @@ mainTabs model =
         |> Tab.items
             [ Tab.item
                 { link = Tab.link [] [ text "Polls" ]
-                , pane = Tab.pane [ whiteBack, p3 ] [ pollList model ]
+                , pane = Tab.pane [ Styles.whiteBack, class "p-3" ] [ pollList model ]
                 }
             , Tab.item
                 { link = Tab.link [] [ text "Actions" ]
-                , pane = Tab.pane [ whiteBack, p3 ] [ actionList model ]
+                , pane = Tab.pane [ Styles.whiteBack, class "p-3" ] [ actionList model ]
                 }
             , Tab.item
                 { link = Tab.link [] [ text "Credentials" ]
-                , pane = Tab.pane [ whiteBack, p3 ] [ authList model ]
+                , pane = Tab.pane [ Styles.whiteBack, class "p-3" ] [ authList model ]
                 }
             , Tab.item
                 { link = Tab.link [] [ text "Dummy" ]
-                , pane = Tab.pane [ whiteBack, p3 ] [ dummyBlock ]
+                , pane = Tab.pane [ Styles.whiteBack, class "p-3" ] [ dummyBlock ]
                 }
             ]
         |> Tab.view model.tabState

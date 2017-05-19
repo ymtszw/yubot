@@ -9,7 +9,7 @@ module Html.Utils
 
 import Regex exposing (Match, HowMany(AtMost), regex)
 import Html exposing (Html, text, a)
-import Html.Attributes exposing (href, src, class)
+import Html.Attributes exposing (href, class)
 import Html.Events exposing (onClick)
 import Bootstrap.Button as Button
 import Bootstrap.Alert as Alert
@@ -17,7 +17,6 @@ import Utils
 import Resource exposing (Sorter, Ord(..))
 import Resource.Messages exposing (Msg(OnSort))
 import StringTemplate
-import Poller.Styles as Styles exposing (mx2, my1)
 
 
 -- Html helpers
@@ -112,7 +111,7 @@ mx2Button : msg -> List (Button.Option msg) -> String -> Html msg
 mx2Button clickMsg options string =
     Button.button
         (List.append options
-            [ Button.attrs [ mx2, my1 ]
+            [ Button.attrs [ class "mx-2", class "my-1" ]
             , Button.onClick clickMsg
             ]
         )

@@ -43,37 +43,3 @@ monospace =
 xSmall : Attribute msg
 xSmall =
     style [ ( "font-size", "x-small" ) ]
-
-
-
--- Bootstrap styled class wrappers
-
-
-rounded : Attribute msg
-rounded =
-    class "rounded"
-
-
-display1 : Attribute msg
-display1 =
-    class "display-1"
-
-
-py3 : Attribute msg
-py3 =
-    class "py-3"
-
-
-p3 : Attribute msg
-p3 =
-    class "p-3"
-
-
-mx2 : Attribute msg
-mx2 =
-    class "mx-2"
-
-
-my1 : Attribute msg
-my1 =
-    class "my-1"

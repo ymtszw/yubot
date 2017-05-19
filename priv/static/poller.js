@@ -16949,77 +16949,6 @@ var _rundis$elm_bootstrap$Bootstrap_Alert$success = function (children) {
 	return A2(_rundis$elm_bootstrap$Bootstrap_Alert$alertCustom, _rundis$elm_bootstrap$Bootstrap_Alert$Success, children);
 };
 
-var _aYuMatsuzawa$yubot$Poller_Styles$my1 = _elm_lang$html$Html_Attributes$class('my-1');
-var _aYuMatsuzawa$yubot$Poller_Styles$mx2 = _elm_lang$html$Html_Attributes$class('mx-2');
-var _aYuMatsuzawa$yubot$Poller_Styles$p3 = _elm_lang$html$Html_Attributes$class('p-3');
-var _aYuMatsuzawa$yubot$Poller_Styles$py3 = _elm_lang$html$Html_Attributes$class('py-3');
-var _aYuMatsuzawa$yubot$Poller_Styles$display1 = _elm_lang$html$Html_Attributes$class('display-1');
-var _aYuMatsuzawa$yubot$Poller_Styles$rounded = _elm_lang$html$Html_Attributes$class('rounded');
-var _aYuMatsuzawa$yubot$Poller_Styles$xSmall = _elm_lang$html$Html_Attributes$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'font-size', _1: 'x-small'},
-		_1: {ctor: '[]'}
-	});
-var _aYuMatsuzawa$yubot$Poller_Styles$monospace = _elm_lang$html$Html_Attributes$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'font-family', _1: 'Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace'},
-		_1: {ctor: '[]'}
-	});
-var _aYuMatsuzawa$yubot$Poller_Styles$sorting = _elm_lang$html$Html_Attributes$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'padding-left', _1: '20px'},
-		_1: {
-			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: 'background-image', _1: 'url(data:image/gif;base64,R0lGODlhCwALAJEAAAAAAP///xUVFf///yH5BAEAAAMALAAAAAALAAsAAAIUnC2nKLnT4or00PvyrQwrPzUZshQAOw==)'},
-			_1: {
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'background-repeat', _1: 'no-repeat'},
-				_1: {
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'background-position', _1: '6px center'},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'cursor', _1: 'pointer'},
-						_1: {ctor: '[]'}
-					}
-				}
-			}
-		}
-	});
-var _aYuMatsuzawa$yubot$Poller_Styles$whiteBack = _elm_lang$html$Html_Attributes$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'rgb(255, 255, 255)'},
-		_1: {ctor: '[]'}
-	});
-var _aYuMatsuzawa$yubot$Poller_Styles$introGap = _elm_lang$html$Html_Attributes$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'padding-top', _1: '30px'},
-		_1: {
-			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '30px'},
-			_1: {
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '20px'},
-				_1: {
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'color', _1: 'rgb(255, 255, 255)'},
-					_1: {ctor: '[]'}
-				}
-			}
-		}
-	});
-var _aYuMatsuzawa$yubot$Poller_Styles$greyBack = _elm_lang$html$Html_Attributes$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'rgba(242, 242, 238, 0.67)'},
-		_1: {ctor: '[]'}
-	});
-
 var _aYuMatsuzawa$yubot$Html_Utils$toggleSortOnClick = F2(
 	function (newProperty, maybeSorter) {
 		var newOrder = function () {
@@ -17086,10 +17015,10 @@ var _aYuMatsuzawa$yubot$Html_Utils$mx2Button = F3(
 					_0: _rundis$elm_bootstrap$Bootstrap_Button$attrs(
 						{
 							ctor: '::',
-							_0: _aYuMatsuzawa$yubot$Poller_Styles$mx2,
+							_0: _elm_lang$html$Html_Attributes$class('mx-2'),
 							_1: {
 								ctor: '::',
-								_0: _aYuMatsuzawa$yubot$Poller_Styles$my1,
+								_0: _elm_lang$html$Html_Attributes$class('my-1'),
 								_1: {ctor: '[]'}
 							}
 						}),
@@ -19089,6 +19018,71 @@ var _rundis$elm_bootstrap$Bootstrap_Table$tbody = F2(
 			{attributes: attributes, rows: rows});
 	});
 
+var _aYuMatsuzawa$yubot$Poller_Styles$xSmall = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'font-size', _1: 'x-small'},
+		_1: {ctor: '[]'}
+	});
+var _aYuMatsuzawa$yubot$Poller_Styles$monospace = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'font-family', _1: 'Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace'},
+		_1: {ctor: '[]'}
+	});
+var _aYuMatsuzawa$yubot$Poller_Styles$sorting = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'padding-left', _1: '20px'},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'background-image', _1: 'url(data:image/gif;base64,R0lGODlhCwALAJEAAAAAAP///xUVFf///yH5BAEAAAMALAAAAAALAAsAAAIUnC2nKLnT4or00PvyrQwrPzUZshQAOw==)'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'background-repeat', _1: 'no-repeat'},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'background-position', _1: '6px center'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'cursor', _1: 'pointer'},
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		}
+	});
+var _aYuMatsuzawa$yubot$Poller_Styles$whiteBack = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'rgb(255, 255, 255)'},
+		_1: {ctor: '[]'}
+	});
+var _aYuMatsuzawa$yubot$Poller_Styles$introGap = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'padding-top', _1: '30px'},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '30px'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '20px'},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'color', _1: 'rgb(255, 255, 255)'},
+					_1: {ctor: '[]'}
+				}
+			}
+		}
+	});
+var _aYuMatsuzawa$yubot$Poller_Styles$greyBack = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'rgba(242, 242, 238, 0.67)'},
+		_1: {ctor: '[]'}
+	});
+
 var _aYuMatsuzawa$yubot$Actions_View$variableList = function (variables) {
 	var varCodes = A2(
 		_elm_lang$core$List$intersperse,
@@ -19157,13 +19151,13 @@ var _aYuMatsuzawa$yubot$Actions_View$preview = function (action) {
 					_elm_lang$html$Html$pre,
 					{
 						ctor: '::',
-						_0: _aYuMatsuzawa$yubot$Poller_Styles$rounded,
+						_0: _aYuMatsuzawa$yubot$Poller_Styles$greyBack,
 						_1: {
 							ctor: '::',
-							_0: _aYuMatsuzawa$yubot$Poller_Styles$greyBack,
+							_0: _elm_lang$html$Html_Attributes$class('rounded'),
 							_1: {
 								ctor: '::',
-								_0: _aYuMatsuzawa$yubot$Poller_Styles$p3,
+								_0: _elm_lang$html$Html_Attributes$class('p-3'),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -25819,7 +25813,7 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 								_0: _aYuMatsuzawa$yubot$Poller_Styles$whiteBack,
 								_1: {
 									ctor: '::',
-									_0: _aYuMatsuzawa$yubot$Poller_Styles$p3,
+									_0: _elm_lang$html$Html_Attributes$class('p-3'),
 									_1: {ctor: '[]'}
 								}
 							},
@@ -25848,7 +25842,7 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 									_0: _aYuMatsuzawa$yubot$Poller_Styles$whiteBack,
 									_1: {
 										ctor: '::',
-										_0: _aYuMatsuzawa$yubot$Poller_Styles$p3,
+										_0: _elm_lang$html$Html_Attributes$class('p-3'),
 										_1: {ctor: '[]'}
 									}
 								},
@@ -25877,7 +25871,7 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 										_0: _aYuMatsuzawa$yubot$Poller_Styles$whiteBack,
 										_1: {
 											ctor: '::',
-											_0: _aYuMatsuzawa$yubot$Poller_Styles$p3,
+											_0: _elm_lang$html$Html_Attributes$class('p-3'),
 											_1: {ctor: '[]'}
 										}
 									},
@@ -25906,7 +25900,7 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 											_0: _aYuMatsuzawa$yubot$Poller_Styles$whiteBack,
 											_1: {
 												ctor: '::',
-												_0: _aYuMatsuzawa$yubot$Poller_Styles$p3,
+												_0: _elm_lang$html$Html_Attributes$class('p-3'),
 												_1: {ctor: '[]'}
 											}
 										},
@@ -25948,10 +25942,10 @@ var _aYuMatsuzawa$yubot$Poller_View$mainContent = function (model) {
 								_0: _aYuMatsuzawa$yubot$Poller_Styles$greyBack,
 								_1: {
 									ctor: '::',
-									_0: _aYuMatsuzawa$yubot$Poller_Styles$rounded,
+									_0: _elm_lang$html$Html_Attributes$class('rounded'),
 									_1: {
 										ctor: '::',
-										_0: _aYuMatsuzawa$yubot$Poller_Styles$py3,
+										_0: _elm_lang$html$Html_Attributes$class('py-3'),
 										_1: {ctor: '[]'}
 									}
 								}
@@ -25992,7 +25986,7 @@ var _aYuMatsuzawa$yubot$Poller_View$gap = _rundis$elm_bootstrap$Bootstrap_Grid$s
 					_elm_lang$html$Html$h1,
 					{
 						ctor: '::',
-						_0: _aYuMatsuzawa$yubot$Poller_Styles$display1,
+						_0: _elm_lang$html$Html_Attributes$class('display-1'),
 						_1: {ctor: '[]'}
 					},
 					{
