@@ -1,5 +1,7 @@
 module Poller.Update exposing (update)
 
+import Navigation
+import Routing
 import Polls
 import Actions
 import Authentications
@@ -31,8 +33,11 @@ update msg model =
             in
                 ( { model | authRs = updatedAuthRs }, Cmd.map AuthMsg cmd )
 
-        TabMsg state ->
-            ( { model | tabState = state }, Cmd.none )
-
         NavbarMsg state ->
             ( { model | navbarState = state }, Cmd.none )
+
+        ChangeLocation url ->
+            ( model, Navigation.modifyUrl url )
+
+        OnLocationChange location ->
+            ( { model | route = Routing.parseLocation location }, Cmd.none )

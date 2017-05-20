@@ -5,18 +5,21 @@ module Html.Utils
         , mx2Button
         , errorAlert
         , toggleSortOnClick
+        , navigateOnClick
         )
 
 import Regex exposing (Match, HowMany(AtMost), regex)
 import Html exposing (Html, text, a)
 import Html.Attributes exposing (href, class)
-import Html.Events exposing (onClick)
+import Html.Events
 import Bootstrap.Button as Button
 import Bootstrap.Alert as Alert
 import Utils
 import Resource exposing (Sorter, Ord(..))
 import Resource.Messages exposing (Msg(OnSort))
 import StringTemplate
+import Poller.Messages
+import Poller.Styles
 
 
 -- Html helpers
@@ -157,4 +160,11 @@ toggleSortOnClick newProperty maybeSorter =
                         Desc ->
                             Asc
     in
-        onClick (OnSort (Sorter newProperty newOrder))
+        Html.Events.onClick (OnSort (Sorter newProperty newOrder))
+
+
+navigateOnClick : Utils.Url -> List (Html.Attribute Poller.Messages.Msg)
+navigateOnClick url =
+    [ Poller.Styles.fakeLink
+    , Html.Events.onClick (Poller.Messages.ChangeLocation url)
+    ]

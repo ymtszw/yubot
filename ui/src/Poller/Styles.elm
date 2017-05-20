@@ -48,3 +48,13 @@ xSmall =
 hidden : Attribute msg
 hidden =
     style [ ( "display", "none" ) ]
+
+
+shown : Attribute msg
+shown =
+    style [ ( "display", "block" ) ]
+
+
+fakeLink : Attribute msg
+fakeLink =
+    style [ ( "cursor", "pointer" ) ]

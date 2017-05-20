@@ -1,13 +1,13 @@
 module Poller.View exposing (view)
 
-import Html exposing (Html, div, h1, p, text, strong)
-import Html.Attributes exposing (class, src)
-import Html.Utils exposing (atext)
+import Html exposing (Html, h1, p, text, strong)
+import Html.Attributes exposing (class, src, href)
+import Html.Utils exposing (atext, navigateOnClick)
 import Bootstrap.Grid as Grid exposing (Column)
 import Bootstrap.Grid.Col exposing (..)
-import Bootstrap.Tab as Tab
 import Bootstrap.Card as Card
 import Bootstrap.Navbar as Navbar
+import Routing
 import Polls
 import Polls.View
 import Polls.ModalView
@@ -21,7 +21,7 @@ import Poller.Styles as Styles
 
 view : Model -> Html Msg
 view model =
-    div []
+    Html.div []
         [ navbar model
         , Grid.containerFluid [ class "mt-4" ] [ Grid.simpleRow [ mainContent model ] ]
         ]
@@ -32,7 +32,7 @@ navbar model =
     Navbar.config NavbarMsg
         |> Navbar.withAnimation
         |> Navbar.collapseSmall
-        |> Navbar.brand [] [ logo ]
+        |> Navbar.brand (navigateOnClick "/poller") [ logo ]
         |> Navbar.customItems []
         |> Navbar.view model.navbarState
 
@@ -58,34 +58,49 @@ mainContent model =
 
 mainTabs : Model -> Html Msg
 mainTabs model =
-    Tab.config TabMsg
-        |> Tab.withAnimation
-        |> Tab.justified
-        |> Tab.attrs []
-        |> Tab.items
-            [ Tab.item
-                { link = Tab.link [] [ text "Polls" ]
-                , pane = Tab.pane [ Styles.whiteBack, class "p-3" ] [ pollList model ]
-                }
-            , Tab.item
-                { link = Tab.link [] [ text "Actions" ]
-                , pane = Tab.pane [ Styles.whiteBack, class "p-3" ] [ actionList model ]
-                }
-            , Tab.item
-                { link = Tab.link [] [ text "Credentials" ]
-                , pane = Tab.pane [ Styles.whiteBack, class "p-3" ] [ authList model ]
-                }
-            , Tab.item
-                { link = Tab.link [] [ text "Dummy" ]
-                , pane = Tab.pane [ Styles.whiteBack, class "p-3" ] [ dummyBlock ]
-                }
+    let
+        tabClass index =
+            if Routing.isActiveTab model.route index then
+                class "nav-link active"
+            else
+                class "nav-link"
+
+        tab index ( url, title ) =
+            Html.li [ class "nav-item" ]
+                [ Html.a ((tabClass index) :: navigateOnClick url) [ text title ] ]
+
+        tabs =
+            [ ( "/poller/polls", "Polls" )
+            , ( "/poller/actions", "Actions" )
+            , ( "/poller/credentials", "Credentials" )
             ]
-        |> Tab.view model.tabState
+                |> List.indexedMap tab
+
+        contentClass index =
+            if Routing.isActiveTab model.route index then
+                Styles.shown
+            else
+                Styles.hidden
+
+        content index html =
+            Html.div [ class "tab-pane p-3", contentClass index ] [ html ]
+
+        contents =
+            [ pollList model
+            , actionList model
+            , authList model
+            ]
+                |> List.indexedMap content
+    in
+        Html.div []
+            [ Html.ul [ class "nav nav-tabs nav-justified" ] tabs
+            , Html.div [ class "tab-content" ] contents
+            ]
 
 
 pollList : Model -> Html Msg
 pollList model =
-    div []
+    Html.div []
         [ Grid.simpleRow
             [ Grid.col [ md12 ]
                 [ Html.map PollsMsg (Polls.View.listView model.pollRs)
@@ -98,7 +113,7 @@ pollList model =
 
 actionList : Model -> Html Msg
 actionList model =
-    div []
+    Html.div []
         [ Grid.simpleRow
             [ Grid.col [ md12 ]
                 [ Html.map ActionsMsg (Actions.View.listView (Polls.usedActionIds model.pollRs.list) model.actionRs)
@@ -111,7 +126,7 @@ actionList model =
 
 authList : Model -> Html Msg
 authList model =
-    div []
+    Html.div []
         [ Grid.simpleRow
             [ Grid.col [ md12 ]
                 [ Html.map AuthMsg (Authentications.View.listView model.authRs)
