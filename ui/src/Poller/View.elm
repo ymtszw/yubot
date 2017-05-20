@@ -5,7 +5,6 @@ import Html.Attributes exposing (class, src, href)
 import Html.Utils exposing (atext, navigateOnClick)
 import Bootstrap.Grid as Grid exposing (Column)
 import Bootstrap.Grid.Col exposing (..)
-import Bootstrap.Card as Card
 import Bootstrap.Navbar as Navbar
 import Routing
 import Polls
@@ -133,16 +132,3 @@ authList model =
                 ]
             ]
         ]
-
-
-dummyBlock : Html Msg
-dummyBlock =
-    Card.config []
-        |> Card.block []
-            [ Card.text []
-                [ p [] (atext "Dummy texts with URLs.")
-                , p [] (atext "Elm(http://elm-lang.org/)はいいぞ。Elixir(http://elixir-lang.org)もいいぞ。")
-                , p [] (atext "atextヘルパーでは複雑なURLがhttps://www.wikiwand.com/ja/%E9%96%A2%E6%95%B0%E5%9E%8B%E8%A8%80%E8%AA%9E日本語文の中にあっても大丈夫。")
-                ]
-            ]
-        |> Card.view
