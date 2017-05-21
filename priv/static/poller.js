@@ -6235,10 +6235,107 @@ var _elm_lang$core$Tuple$first = function (_p6) {
 	return _p7._0;
 };
 
+var _aYuMatsuzawa$yubot$Utils$shortenUrl = function (url) {
+	var _p0 = A2(_elm_lang$core$String$split, '://', url);
+	_v0_2:
+	do {
+		if (((_p0.ctor === '::') && (_p0._1.ctor === '::')) && (_p0._1._1.ctor === '[]')) {
+			switch (_p0._0) {
+				case 'http':
+					return _p0._1._0;
+				case 'https':
+					return _p0._1._0;
+				default:
+					break _v0_2;
+			}
+		} else {
+			break _v0_2;
+		}
+	} while(false);
+	return url;
+};
 var _aYuMatsuzawa$yubot$Utils$timestampToString = function (string) {
-	var _p0 = _elm_lang$core$Date$fromString(string);
-	if (_p0.ctor === 'Ok') {
-		return _elm_lang$core$Basics$toString(_p0._0);
+	var toIntMonth = function (date) {
+		var _p1 = _elm_lang$core$Date$month(date);
+		switch (_p1.ctor) {
+			case 'Jan':
+				return 1;
+			case 'Feb':
+				return 2;
+			case 'Mar':
+				return 3;
+			case 'Apr':
+				return 4;
+			case 'May':
+				return 5;
+			case 'Jun':
+				return 6;
+			case 'Jul':
+				return 7;
+			case 'Aug':
+				return 8;
+			case 'Sep':
+				return 9;
+			case 'Oct':
+				return 10;
+			case 'Nov':
+				return 11;
+			default:
+				return 12;
+		}
+	};
+	var _p2 = _elm_lang$core$Date$fromString(string);
+	if (_p2.ctor === 'Ok') {
+		var _p3 = _p2._0;
+		return A2(
+			_elm_lang$core$String$join,
+			'',
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(
+						_elm_lang$core$Date$year(_p3)),
+					'/'),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(
+							toIntMonth(_p3)),
+						'/'),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(
+								_elm_lang$core$Date$day(_p3)),
+							' '),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$core$Basics_ops['++'],
+								_elm_lang$core$Basics$toString(
+									_elm_lang$core$Date$hour(_p3)),
+								':'),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(
+										_elm_lang$core$Date$minute(_p3)),
+									':'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$core$Basics$toString(
+										_elm_lang$core$Date$second(_p3)),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			});
 	} else {
 		return 'Invalid updatedAt!';
 	}
@@ -17541,619 +17638,6 @@ var _elm_lang$navigation$Navigation$onEffects = F4(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Navigation'] = {pkg: 'elm-lang/navigation', init: _elm_lang$navigation$Navigation$init, onEffects: _elm_lang$navigation$Navigation$onEffects, onSelfMsg: _elm_lang$navigation$Navigation$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$navigation$Navigation$cmdMap, subMap: _elm_lang$navigation$Navigation$subMap};
 
-var _elm_lang$animation_frame$Native_AnimationFrame = function()
-{
-
-function create()
-{
-	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
-	{
-		var id = requestAnimationFrame(function() {
-			callback(_elm_lang$core$Native_Scheduler.succeed(Date.now()));
-		});
-
-		return function() {
-			cancelAnimationFrame(id);
-		};
-	});
-}
-
-return {
-	create: create
-};
-
-}();
-
-var _elm_lang$animation_frame$AnimationFrame$rAF = _elm_lang$animation_frame$Native_AnimationFrame.create(
-	{ctor: '_Tuple0'});
-var _elm_lang$animation_frame$AnimationFrame$subscription = _elm_lang$core$Native_Platform.leaf('AnimationFrame');
-var _elm_lang$animation_frame$AnimationFrame$State = F3(
-	function (a, b, c) {
-		return {subs: a, request: b, oldTime: c};
-	});
-var _elm_lang$animation_frame$AnimationFrame$init = _elm_lang$core$Task$succeed(
-	A3(
-		_elm_lang$animation_frame$AnimationFrame$State,
-		{ctor: '[]'},
-		_elm_lang$core$Maybe$Nothing,
-		0));
-var _elm_lang$animation_frame$AnimationFrame$onEffects = F3(
-	function (router, subs, _p0) {
-		var _p1 = _p0;
-		var _p5 = _p1.request;
-		var _p4 = _p1.oldTime;
-		var _p2 = {ctor: '_Tuple2', _0: _p5, _1: subs};
-		if (_p2._0.ctor === 'Nothing') {
-			if (_p2._1.ctor === '[]') {
-				return _elm_lang$core$Task$succeed(
-					A3(
-						_elm_lang$animation_frame$AnimationFrame$State,
-						{ctor: '[]'},
-						_elm_lang$core$Maybe$Nothing,
-						_p4));
-			} else {
-				return A2(
-					_elm_lang$core$Task$andThen,
-					function (pid) {
-						return A2(
-							_elm_lang$core$Task$andThen,
-							function (time) {
-								return _elm_lang$core$Task$succeed(
-									A3(
-										_elm_lang$animation_frame$AnimationFrame$State,
-										subs,
-										_elm_lang$core$Maybe$Just(pid),
-										time));
-							},
-							_elm_lang$core$Time$now);
-					},
-					_elm_lang$core$Process$spawn(
-						A2(
-							_elm_lang$core$Task$andThen,
-							_elm_lang$core$Platform$sendToSelf(router),
-							_elm_lang$animation_frame$AnimationFrame$rAF)));
-			}
-		} else {
-			if (_p2._1.ctor === '[]') {
-				return A2(
-					_elm_lang$core$Task$andThen,
-					function (_p3) {
-						return _elm_lang$core$Task$succeed(
-							A3(
-								_elm_lang$animation_frame$AnimationFrame$State,
-								{ctor: '[]'},
-								_elm_lang$core$Maybe$Nothing,
-								_p4));
-					},
-					_elm_lang$core$Process$kill(_p2._0._0));
-			} else {
-				return _elm_lang$core$Task$succeed(
-					A3(_elm_lang$animation_frame$AnimationFrame$State, subs, _p5, _p4));
-			}
-		}
-	});
-var _elm_lang$animation_frame$AnimationFrame$onSelfMsg = F3(
-	function (router, newTime, _p6) {
-		var _p7 = _p6;
-		var _p10 = _p7.subs;
-		var diff = newTime - _p7.oldTime;
-		var send = function (sub) {
-			var _p8 = sub;
-			if (_p8.ctor === 'Time') {
-				return A2(
-					_elm_lang$core$Platform$sendToApp,
-					router,
-					_p8._0(newTime));
-			} else {
-				return A2(
-					_elm_lang$core$Platform$sendToApp,
-					router,
-					_p8._0(diff));
-			}
-		};
-		return A2(
-			_elm_lang$core$Task$andThen,
-			function (pid) {
-				return A2(
-					_elm_lang$core$Task$andThen,
-					function (_p9) {
-						return _elm_lang$core$Task$succeed(
-							A3(
-								_elm_lang$animation_frame$AnimationFrame$State,
-								_p10,
-								_elm_lang$core$Maybe$Just(pid),
-								newTime));
-					},
-					_elm_lang$core$Task$sequence(
-						A2(_elm_lang$core$List$map, send, _p10)));
-			},
-			_elm_lang$core$Process$spawn(
-				A2(
-					_elm_lang$core$Task$andThen,
-					_elm_lang$core$Platform$sendToSelf(router),
-					_elm_lang$animation_frame$AnimationFrame$rAF)));
-	});
-var _elm_lang$animation_frame$AnimationFrame$Diff = function (a) {
-	return {ctor: 'Diff', _0: a};
-};
-var _elm_lang$animation_frame$AnimationFrame$diffs = function (tagger) {
-	return _elm_lang$animation_frame$AnimationFrame$subscription(
-		_elm_lang$animation_frame$AnimationFrame$Diff(tagger));
-};
-var _elm_lang$animation_frame$AnimationFrame$Time = function (a) {
-	return {ctor: 'Time', _0: a};
-};
-var _elm_lang$animation_frame$AnimationFrame$times = function (tagger) {
-	return _elm_lang$animation_frame$AnimationFrame$subscription(
-		_elm_lang$animation_frame$AnimationFrame$Time(tagger));
-};
-var _elm_lang$animation_frame$AnimationFrame$subMap = F2(
-	function (func, sub) {
-		var _p11 = sub;
-		if (_p11.ctor === 'Time') {
-			return _elm_lang$animation_frame$AnimationFrame$Time(
-				function (_p12) {
-					return func(
-						_p11._0(_p12));
-				});
-		} else {
-			return _elm_lang$animation_frame$AnimationFrame$Diff(
-				function (_p13) {
-					return func(
-						_p11._0(_p13));
-				});
-		}
-	});
-_elm_lang$core$Native_Platform.effectManagers['AnimationFrame'] = {pkg: 'elm-lang/animation-frame', init: _elm_lang$animation_frame$AnimationFrame$init, onEffects: _elm_lang$animation_frame$AnimationFrame$onEffects, onSelfMsg: _elm_lang$animation_frame$AnimationFrame$onSelfMsg, tag: 'sub', subMap: _elm_lang$animation_frame$AnimationFrame$subMap};
-
-var _rundis$elm_bootstrap$Bootstrap_Tab$applyModifier = F2(
-	function (option, options) {
-		var _p0 = option;
-		if (_p0.ctor === 'Attrs') {
-			return _elm_lang$core$Native_Utils.update(
-				options,
-				{
-					attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p0._0)
-				});
-		} else {
-			return _elm_lang$core$Native_Utils.update(
-				options,
-				{
-					layout: _elm_lang$core$Maybe$Just(_p0._0)
-				});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Tab$tabAttributes = function (_p1) {
-	var _p2 = _p1;
-	var _p4 = _p2._0;
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$classList(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'nav', _1: true},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'nav-tabs', _1: !_p4.isPill},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'nav-pills', _1: _p4.isPill},
-							_1: {ctor: '[]'}
-						}
-					}
-				}),
-			_1: {ctor: '[]'}
-		},
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			function () {
-				var _p3 = _p4.layout;
-				if (_p3.ctor === 'Just') {
-					switch (_p3._0.ctor) {
-						case 'Justified':
-							return {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('nav-justified'),
-								_1: {ctor: '[]'}
-							};
-						case 'Fill':
-							return {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('nav-fill'),
-								_1: {ctor: '[]'}
-							};
-						case 'Center':
-							return {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('justify-content-center'),
-								_1: {ctor: '[]'}
-							};
-						default:
-							return {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('justify-content-end'),
-								_1: {ctor: '[]'}
-							};
-					}
-				} else {
-					return {ctor: '[]'};
-				}
-			}(),
-			_p4.attributes));
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$transitionStyle = function (opacity) {
-	return _elm_lang$html$Html_Attributes$style(
-		{
-			ctor: '::',
-			_0: {
-				ctor: '_Tuple2',
-				_0: 'opacity',
-				_1: _elm_lang$core$Basics$toString(opacity)
-			},
-			_1: {
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: '-webkit-transition', _1: 'opacity 0.15s linear'},
-				_1: {
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: '-o-transition', _1: 'opacity 0.15s linear'},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'transition', _1: 'opacity 0.15s linear'},
-						_1: {ctor: '[]'}
-					}
-				}
-			}
-		});
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$activeTabAttributes = F2(
-	function (_p6, _p5) {
-		var _p7 = _p6;
-		var _p8 = _p5;
-		var _p9 = _p7._0.visibility;
-		switch (_p9.ctor) {
-			case 'Hidden':
-				return {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'display', _1: 'none'},
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				};
-			case 'Start':
-				return {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'display', _1: 'block'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'opacity', _1: '0'},
-								_1: {ctor: '[]'}
-							}
-						}),
-					_1: {ctor: '[]'}
-				};
-			default:
-				return {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'display', _1: 'block'},
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Tab$transitionStyle(1),
-						_1: {ctor: '[]'}
-					}
-				};
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Tab$renderTabPane = F4(
-	function (active, _p10, state, config) {
-		var _p11 = _p10;
-		var displayAttrs = active ? A2(_rundis$elm_bootstrap$Bootstrap_Tab$activeTabAttributes, state, config) : {
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'display', _1: 'none'},
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		};
-		return A2(
-			_elm_lang$html$Html$div,
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('tab-pane'),
-					_1: {ctor: '[]'}
-				},
-				A2(_elm_lang$core$Basics_ops['++'], displayAttrs, _p11._0.attributes)),
-			_p11._0.children);
-	});
-var _rundis$elm_bootstrap$Bootstrap_Tab$Options = F3(
-	function (a, b, c) {
-		return {layout: a, isPill: b, attributes: c};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Tab$State = function (a) {
-	return {ctor: 'State', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$Attrs = function (a) {
-	return {ctor: 'Attrs', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$Layout = function (a) {
-	return {ctor: 'Layout', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$Justified = {ctor: 'Justified'};
-var _rundis$elm_bootstrap$Bootstrap_Tab$Fill = {ctor: 'Fill'};
-var _rundis$elm_bootstrap$Bootstrap_Tab$Right = {ctor: 'Right'};
-var _rundis$elm_bootstrap$Bootstrap_Tab$Center = {ctor: 'Center'};
-var _rundis$elm_bootstrap$Bootstrap_Tab$Showing = {ctor: 'Showing'};
-var _rundis$elm_bootstrap$Bootstrap_Tab$subscriptions = F2(
-	function (_p12, toMsg) {
-		var _p13 = _p12;
-		var _p16 = _p13._0;
-		var _p14 = _p16.visibility;
-		if (_p14.ctor === 'Start') {
-			return _elm_lang$animation_frame$AnimationFrame$times(
-				function (_p15) {
-					return toMsg(
-						_rundis$elm_bootstrap$Bootstrap_Tab$State(
-							_elm_lang$core$Native_Utils.update(
-								_p16,
-								{visibility: _rundis$elm_bootstrap$Bootstrap_Tab$Showing})));
-				});
-		} else {
-			return _elm_lang$core$Platform_Sub$none;
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Tab$customInitialState = function (idx) {
-	return _rundis$elm_bootstrap$Bootstrap_Tab$State(
-		{activeTab: idx, visibility: _rundis$elm_bootstrap$Bootstrap_Tab$Showing});
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$initialState = _rundis$elm_bootstrap$Bootstrap_Tab$customInitialState(0);
-var _rundis$elm_bootstrap$Bootstrap_Tab$Start = {ctor: 'Start'};
-var _rundis$elm_bootstrap$Bootstrap_Tab$visibilityTransition = F2(
-	function (withAnimation, visibility) {
-		var _p17 = {ctor: '_Tuple2', _0: withAnimation, _1: visibility};
-		_v9_2:
-		do {
-			if ((_p17.ctor === '_Tuple2') && (_p17._0 === true)) {
-				switch (_p17._1.ctor) {
-					case 'Hidden':
-						return _rundis$elm_bootstrap$Bootstrap_Tab$Start;
-					case 'Start':
-						return _rundis$elm_bootstrap$Bootstrap_Tab$Showing;
-					default:
-						break _v9_2;
-				}
-			} else {
-				break _v9_2;
-			}
-		} while(false);
-		return _rundis$elm_bootstrap$Bootstrap_Tab$Showing;
-	});
-var _rundis$elm_bootstrap$Bootstrap_Tab$transitionHandler = F3(
-	function (toMsg, _p18, withAnimation) {
-		var _p19 = _p18;
-		var _p20 = _p19._0;
-		return _elm_lang$core$Json_Decode$succeed(
-			toMsg(
-				_rundis$elm_bootstrap$Bootstrap_Tab$State(
-					_elm_lang$core$Native_Utils.update(
-						_p20,
-						{
-							visibility: A2(_rundis$elm_bootstrap$Bootstrap_Tab$visibilityTransition, withAnimation, _p20.visibility)
-						}))));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Tab$Hidden = {ctor: 'Hidden'};
-var _rundis$elm_bootstrap$Bootstrap_Tab$renderLink = F4(
-	function (idx, active, _p22, _p21) {
-		var _p23 = _p22;
-		var _p24 = _p21;
-		return A2(
-			_elm_lang$html$Html$li,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('nav-item'),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$a,
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$classList(
-								{
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'nav-link', _1: true},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'active', _1: active},
-										_1: {ctor: '[]'}
-									}
-								}),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$href('#'),
-								_1: {
-									ctor: '::',
-									_0: A3(
-										_elm_lang$html$Html_Events$onWithOptions,
-										'click',
-										{stopPropagation: false, preventDefault: true},
-										_elm_lang$core$Json_Decode$succeed(
-											_p23._0.toMsg(
-												_rundis$elm_bootstrap$Bootstrap_Tab$State(
-													{
-														activeTab: idx,
-														visibility: A2(_rundis$elm_bootstrap$Bootstrap_Tab$visibilityTransition, _p23._0.withAnimation && (!active), _rundis$elm_bootstrap$Bootstrap_Tab$Hidden)
-													})))),
-									_1: {ctor: '[]'}
-								}
-							}
-						},
-						_p24._0.attributes),
-					_p24._0.children),
-				_1: {ctor: '[]'}
-			});
-	});
-var _rundis$elm_bootstrap$Bootstrap_Tab$view = F2(
-	function (_p26, _p25) {
-		var _p27 = _p26;
-		var _p35 = _p27._0.activeTab;
-		var _p28 = _p25;
-		var _p34 = _p28._0.items;
-		var _p33 = _p28;
-		var activeIdx = (_elm_lang$core$Native_Utils.cmp(
-			_p35,
-			_elm_lang$core$List$length(_p34)) > 0) ? 0 : A2(_elm_lang$core$Basics$max, _p35, 0);
-		return A2(
-			_elm_lang$html$Html$div,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$ul,
-					_rundis$elm_bootstrap$Bootstrap_Tab$tabAttributes(_p33),
-					A2(
-						_elm_lang$core$List$indexedMap,
-						F2(
-							function (idx, _p29) {
-								var _p30 = _p29;
-								return A4(
-									_rundis$elm_bootstrap$Bootstrap_Tab$renderLink,
-									idx,
-									_elm_lang$core$Native_Utils.eq(idx, activeIdx),
-									_p33,
-									_p30._0.link);
-							}),
-						_p34)),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('tab-content'),
-							_1: {ctor: '[]'}
-						},
-						A2(
-							_elm_lang$core$List$indexedMap,
-							F2(
-								function (idx, _p31) {
-									var _p32 = _p31;
-									return A4(
-										_rundis$elm_bootstrap$Bootstrap_Tab$renderTabPane,
-										_elm_lang$core$Native_Utils.eq(idx, activeIdx),
-										_p32._0.pane,
-										_p27,
-										_p33);
-								}),
-							_p34)),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
-var _rundis$elm_bootstrap$Bootstrap_Tab$Config = function (a) {
-	return {ctor: 'Config', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$config = function (toMsg) {
-	return _rundis$elm_bootstrap$Bootstrap_Tab$Config(
-		{
-			toMsg: toMsg,
-			items: {ctor: '[]'},
-			isPill: false,
-			withAnimation: false,
-			layout: _elm_lang$core$Maybe$Nothing,
-			attributes: {ctor: '[]'}
-		});
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$items = F2(
-	function (items, _p36) {
-		var _p37 = _p36;
-		return _rundis$elm_bootstrap$Bootstrap_Tab$Config(
-			_elm_lang$core$Native_Utils.update(
-				_p37._0,
-				{items: items}));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Tab$layout = F2(
-	function (layout, _p38) {
-		var _p39 = _p38;
-		return _rundis$elm_bootstrap$Bootstrap_Tab$Config(
-			_elm_lang$core$Native_Utils.update(
-				_p39._0,
-				{
-					layout: _elm_lang$core$Maybe$Just(layout)
-				}));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Tab$justified = _rundis$elm_bootstrap$Bootstrap_Tab$layout(_rundis$elm_bootstrap$Bootstrap_Tab$Justified);
-var _rundis$elm_bootstrap$Bootstrap_Tab$fill = _rundis$elm_bootstrap$Bootstrap_Tab$layout(_rundis$elm_bootstrap$Bootstrap_Tab$Fill);
-var _rundis$elm_bootstrap$Bootstrap_Tab$center = _rundis$elm_bootstrap$Bootstrap_Tab$layout(_rundis$elm_bootstrap$Bootstrap_Tab$Center);
-var _rundis$elm_bootstrap$Bootstrap_Tab$right = _rundis$elm_bootstrap$Bootstrap_Tab$layout(_rundis$elm_bootstrap$Bootstrap_Tab$Right);
-var _rundis$elm_bootstrap$Bootstrap_Tab$pills = function (_p40) {
-	var _p41 = _p40;
-	return _rundis$elm_bootstrap$Bootstrap_Tab$Config(
-		_elm_lang$core$Native_Utils.update(
-			_p41._0,
-			{isPill: true}));
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$withAnimation = function (_p42) {
-	var _p43 = _p42;
-	return _rundis$elm_bootstrap$Bootstrap_Tab$Config(
-		_elm_lang$core$Native_Utils.update(
-			_p43._0,
-			{withAnimation: true}));
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$attrs = F2(
-	function (attrs, _p44) {
-		var _p45 = _p44;
-		var _p46 = _p45._0;
-		return _rundis$elm_bootstrap$Bootstrap_Tab$Config(
-			_elm_lang$core$Native_Utils.update(
-				_p46,
-				{
-					attributes: A2(_elm_lang$core$Basics_ops['++'], _p46.attributes, attrs)
-				}));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Tab$Item = function (a) {
-	return {ctor: 'Item', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$item = function (_p47) {
-	var _p48 = _p47;
-	return _rundis$elm_bootstrap$Bootstrap_Tab$Item(
-		{link: _p48.link, pane: _p48.pane});
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$Link = function (a) {
-	return {ctor: 'Link', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$link = F2(
-	function (attributes, children) {
-		return _rundis$elm_bootstrap$Bootstrap_Tab$Link(
-			{attributes: attributes, children: children});
-	});
-var _rundis$elm_bootstrap$Bootstrap_Tab$Pane = function (a) {
-	return {ctor: 'Pane', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Tab$pane = F2(
-	function (attributes, children) {
-		return _rundis$elm_bootstrap$Bootstrap_Tab$Pane(
-			{attributes: attributes, children: children});
-	});
-
 var _elm_lang$core$Color$fmod = F2(
 	function (f, n) {
 		var integer = _elm_lang$core$Basics$floor(f);
@@ -18448,6 +17932,171 @@ var _debois$elm_dom$DOM$Rectangle = F4(
 	function (a, b, c, d) {
 		return {top: a, left: b, width: c, height: d};
 	});
+
+var _elm_lang$animation_frame$Native_AnimationFrame = function()
+{
+
+function create()
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		var id = requestAnimationFrame(function() {
+			callback(_elm_lang$core$Native_Scheduler.succeed(Date.now()));
+		});
+
+		return function() {
+			cancelAnimationFrame(id);
+		};
+	});
+}
+
+return {
+	create: create
+};
+
+}();
+
+var _elm_lang$animation_frame$AnimationFrame$rAF = _elm_lang$animation_frame$Native_AnimationFrame.create(
+	{ctor: '_Tuple0'});
+var _elm_lang$animation_frame$AnimationFrame$subscription = _elm_lang$core$Native_Platform.leaf('AnimationFrame');
+var _elm_lang$animation_frame$AnimationFrame$State = F3(
+	function (a, b, c) {
+		return {subs: a, request: b, oldTime: c};
+	});
+var _elm_lang$animation_frame$AnimationFrame$init = _elm_lang$core$Task$succeed(
+	A3(
+		_elm_lang$animation_frame$AnimationFrame$State,
+		{ctor: '[]'},
+		_elm_lang$core$Maybe$Nothing,
+		0));
+var _elm_lang$animation_frame$AnimationFrame$onEffects = F3(
+	function (router, subs, _p0) {
+		var _p1 = _p0;
+		var _p5 = _p1.request;
+		var _p4 = _p1.oldTime;
+		var _p2 = {ctor: '_Tuple2', _0: _p5, _1: subs};
+		if (_p2._0.ctor === 'Nothing') {
+			if (_p2._1.ctor === '[]') {
+				return _elm_lang$core$Task$succeed(
+					A3(
+						_elm_lang$animation_frame$AnimationFrame$State,
+						{ctor: '[]'},
+						_elm_lang$core$Maybe$Nothing,
+						_p4));
+			} else {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (pid) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							function (time) {
+								return _elm_lang$core$Task$succeed(
+									A3(
+										_elm_lang$animation_frame$AnimationFrame$State,
+										subs,
+										_elm_lang$core$Maybe$Just(pid),
+										time));
+							},
+							_elm_lang$core$Time$now);
+					},
+					_elm_lang$core$Process$spawn(
+						A2(
+							_elm_lang$core$Task$andThen,
+							_elm_lang$core$Platform$sendToSelf(router),
+							_elm_lang$animation_frame$AnimationFrame$rAF)));
+			}
+		} else {
+			if (_p2._1.ctor === '[]') {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (_p3) {
+						return _elm_lang$core$Task$succeed(
+							A3(
+								_elm_lang$animation_frame$AnimationFrame$State,
+								{ctor: '[]'},
+								_elm_lang$core$Maybe$Nothing,
+								_p4));
+					},
+					_elm_lang$core$Process$kill(_p2._0._0));
+			} else {
+				return _elm_lang$core$Task$succeed(
+					A3(_elm_lang$animation_frame$AnimationFrame$State, subs, _p5, _p4));
+			}
+		}
+	});
+var _elm_lang$animation_frame$AnimationFrame$onSelfMsg = F3(
+	function (router, newTime, _p6) {
+		var _p7 = _p6;
+		var _p10 = _p7.subs;
+		var diff = newTime - _p7.oldTime;
+		var send = function (sub) {
+			var _p8 = sub;
+			if (_p8.ctor === 'Time') {
+				return A2(
+					_elm_lang$core$Platform$sendToApp,
+					router,
+					_p8._0(newTime));
+			} else {
+				return A2(
+					_elm_lang$core$Platform$sendToApp,
+					router,
+					_p8._0(diff));
+			}
+		};
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (pid) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (_p9) {
+						return _elm_lang$core$Task$succeed(
+							A3(
+								_elm_lang$animation_frame$AnimationFrame$State,
+								_p10,
+								_elm_lang$core$Maybe$Just(pid),
+								newTime));
+					},
+					_elm_lang$core$Task$sequence(
+						A2(_elm_lang$core$List$map, send, _p10)));
+			},
+			_elm_lang$core$Process$spawn(
+				A2(
+					_elm_lang$core$Task$andThen,
+					_elm_lang$core$Platform$sendToSelf(router),
+					_elm_lang$animation_frame$AnimationFrame$rAF)));
+	});
+var _elm_lang$animation_frame$AnimationFrame$Diff = function (a) {
+	return {ctor: 'Diff', _0: a};
+};
+var _elm_lang$animation_frame$AnimationFrame$diffs = function (tagger) {
+	return _elm_lang$animation_frame$AnimationFrame$subscription(
+		_elm_lang$animation_frame$AnimationFrame$Diff(tagger));
+};
+var _elm_lang$animation_frame$AnimationFrame$Time = function (a) {
+	return {ctor: 'Time', _0: a};
+};
+var _elm_lang$animation_frame$AnimationFrame$times = function (tagger) {
+	return _elm_lang$animation_frame$AnimationFrame$subscription(
+		_elm_lang$animation_frame$AnimationFrame$Time(tagger));
+};
+var _elm_lang$animation_frame$AnimationFrame$subMap = F2(
+	function (func, sub) {
+		var _p11 = sub;
+		if (_p11.ctor === 'Time') {
+			return _elm_lang$animation_frame$AnimationFrame$Time(
+				function (_p12) {
+					return func(
+						_p11._0(_p12));
+				});
+		} else {
+			return _elm_lang$animation_frame$AnimationFrame$Diff(
+				function (_p13) {
+					return func(
+						_p11._0(_p13));
+				});
+		}
+	});
+_elm_lang$core$Native_Platform.effectManagers['AnimationFrame'] = {pkg: 'elm-lang/animation-frame', init: _elm_lang$animation_frame$AnimationFrame$init, onEffects: _elm_lang$animation_frame$AnimationFrame$onEffects, onSelfMsg: _elm_lang$animation_frame$AnimationFrame$onSelfMsg, tag: 'sub', subMap: _elm_lang$animation_frame$AnimationFrame$subMap};
 
 var _elm_lang$window$Native_Window = function()
 {
@@ -24227,6 +23876,154 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = function (pollRs) {
 				_aYuMatsuzawa$yubot$Polls_View$rows(pollRs.list))
 		});
 };
+var _aYuMatsuzawa$yubot$Polls_View$cardsView = function (pollRs) {
+	var card = function (poll) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('card text-center'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('card-header'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$h4,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									_aYuMatsuzawa$yubot$Utils$shortenUrl(poll.url)),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('card-block alert-success'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$h4,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('card-title'),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Status: OK'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$p,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('card-text'),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												'Run: ',
+												_aYuMatsuzawa$yubot$Polls$intervalToString(poll.interval))),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$p,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$class('card-text'),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(
+												A2(_elm_lang$core$Basics_ops['++'], 'Action: ', poll.action)),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('card-footer'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$small,
+									{
+										ctor: '::',
+										_0: _aYuMatsuzawa$yubot$Poller_Styles$xSmall,
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												'Last run at: ',
+												_aYuMatsuzawa$yubot$Utils$timestampToString(poll.updatedAt))),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	};
+	var cardWithWrap = function (poll) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('col-lg-3 col-md-4 col-sm-6 my-2'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: card(poll),
+				_1: {ctor: '[]'}
+			});
+	};
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('row'),
+			_1: {ctor: '[]'}
+		},
+		A2(_elm_lang$core$List$map, cardWithWrap, pollRs.list));
+};
 
 var _rundis$elm_bootstrap$Bootstrap_Internal_Text$textAlignDirOption = function (dir) {
 	var _p0 = dir;
@@ -26241,7 +26038,10 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 		content,
 		{
 			ctor: '::',
-			_0: _aYuMatsuzawa$yubot$Poller_View$pollList(model),
+			_0: A2(
+				_elm_lang$html$Html$map,
+				_aYuMatsuzawa$yubot$Poller_Messages$PollsMsg,
+				_aYuMatsuzawa$yubot$Polls_View$cardsView(model.pollRs)),
 			_1: {
 				ctor: '::',
 				_0: _aYuMatsuzawa$yubot$Poller_View$actionList(model),

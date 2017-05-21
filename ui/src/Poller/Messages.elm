@@ -1,7 +1,6 @@
 module Poller.Messages exposing (Msg(..))
 
 import Navigation
-import Bootstrap.Tab
 import Bootstrap.Navbar
 import Utils
 import Resource.Messages

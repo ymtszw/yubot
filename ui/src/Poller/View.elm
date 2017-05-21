@@ -83,7 +83,7 @@ mainTabs model =
             Html.div [ class "tab-pane p-3", contentClass index ] [ html ]
 
         contents =
-            [ pollList model
+            [ Html.map PollsMsg (Polls.View.cardsView model.pollRs)
             , actionList model
             , authList model
             ]
