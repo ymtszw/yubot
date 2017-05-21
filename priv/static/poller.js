@@ -23979,117 +23979,6 @@ var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
 		}
 	});
 
-var _rundis$elm_bootstrap$Bootstrap_Grid$renderCol = function (column) {
-	var _p0 = column;
-	switch (_p0.ctor) {
-		case 'Column':
-			return A2(
-				_elm_lang$html$Html$div,
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colAttributes(_p0._0.options),
-				_p0._0.children);
-		case 'ColBreak':
-			return _p0._0;
-		default:
-			return A3(
-				_elm_lang$html$Html_Keyed$node,
-				'div',
-				_rundis$elm_bootstrap$Bootstrap_Grid_Internal$colAttributes(_p0._0.options),
-				_p0._0.children);
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid$keyedRow = F2(
-	function (options, keyedCols) {
-		return A3(
-			_elm_lang$html$Html_Keyed$node,
-			'div',
-			_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowAttributes(options),
-			A2(
-				_elm_lang$core$List$map,
-				function (_p1) {
-					var _p2 = _p1;
-					return {
-						ctor: '_Tuple2',
-						_0: _p2._0,
-						_1: _rundis$elm_bootstrap$Bootstrap_Grid$renderCol(_p2._1)
-					};
-				},
-				keyedCols));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid$row = F2(
-	function (options, cols) {
-		return A2(
-			_elm_lang$html$Html$div,
-			_rundis$elm_bootstrap$Bootstrap_Grid_Internal$rowAttributes(options),
-			A2(_elm_lang$core$List$map, _rundis$elm_bootstrap$Bootstrap_Grid$renderCol, cols));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid$simpleRow = function (cols) {
-	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Grid$row,
-		{ctor: '[]'},
-		cols);
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid$containerFluid = F2(
-	function (attributes, children) {
-		return A2(
-			_elm_lang$html$Html$div,
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('container-fluid'),
-					_1: {ctor: '[]'}
-				},
-				attributes),
-			children);
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid$container = F2(
-	function (attributes, children) {
-		return A2(
-			_elm_lang$html$Html$div,
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('container'),
-					_1: {ctor: '[]'}
-				},
-				attributes),
-			children);
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid$KeyedColumn = function (a) {
-	return {ctor: 'KeyedColumn', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid$keyedCol = F2(
-	function (options, children) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid$KeyedColumn(
-			{options: options, children: children});
-	});
-var _rundis$elm_bootstrap$Bootstrap_Grid$ColBreak = function (a) {
-	return {ctor: 'ColBreak', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid$colBreak = function (attributes) {
-	return _rundis$elm_bootstrap$Bootstrap_Grid$ColBreak(
-		A2(
-			_elm_lang$html$Html$div,
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('w-100'),
-					_1: {ctor: '[]'}
-				},
-				attributes),
-			{ctor: '[]'}));
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid$Column = function (a) {
-	return {ctor: 'Column', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Grid$col = F2(
-	function (options, children) {
-		return _rundis$elm_bootstrap$Bootstrap_Grid$Column(
-			{options: options, children: children});
-	});
-
 var _aYuMatsuzawa$yubot$Polls_View$editPollButton = F3(
 	function (poll, options, string) {
 		return A3(
@@ -26194,14 +26083,20 @@ var _aYuMatsuzawa$yubot$Poller_View$authList = function (model) {
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _rundis$elm_bootstrap$Bootstrap_Grid$simpleRow(
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('row'),
+					_1: {ctor: '[]'}
+				},
 				{
 					ctor: '::',
 					_0: A2(
-						_rundis$elm_bootstrap$Bootstrap_Grid$col,
+						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$md12,
+							_0: _elm_lang$html$Html_Attributes$class('col-md-12'),
 							_1: {ctor: '[]'}
 						},
 						{
@@ -26223,14 +26118,20 @@ var _aYuMatsuzawa$yubot$Poller_View$actionList = function (model) {
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _rundis$elm_bootstrap$Bootstrap_Grid$simpleRow(
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('row'),
+					_1: {ctor: '[]'}
+				},
 				{
 					ctor: '::',
 					_0: A2(
-						_rundis$elm_bootstrap$Bootstrap_Grid$col,
+						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$md12,
+							_0: _elm_lang$html$Html_Attributes$class('col-md-12'),
 							_1: {ctor: '[]'}
 						},
 						{
@@ -26269,14 +26170,20 @@ var _aYuMatsuzawa$yubot$Poller_View$pollList = function (model) {
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _rundis$elm_bootstrap$Bootstrap_Grid$simpleRow(
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('row'),
+					_1: {ctor: '[]'}
+				},
 				{
 					ctor: '::',
 					_0: A2(
-						_rundis$elm_bootstrap$Bootstrap_Grid$col,
+						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Grid_Col$md12,
+							_0: _elm_lang$html$Html_Attributes$class('col-md-12'),
 							_1: {ctor: '[]'}
 						},
 						{
@@ -26420,8 +26327,12 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 };
 var _aYuMatsuzawa$yubot$Poller_View$mainContent = function (model) {
 	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Grid$col,
-		{ctor: '[]'},
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('col-md-12'),
+			_1: {ctor: '[]'}
+		},
 		{
 			ctor: '::',
 			_0: _aYuMatsuzawa$yubot$Poller_View$mainTabs(model),
@@ -26503,15 +26414,21 @@ var _aYuMatsuzawa$yubot$Poller_View$view = function (model) {
 			_1: {
 				ctor: '::',
 				_0: A2(
-					_rundis$elm_bootstrap$Bootstrap_Grid$containerFluid,
+					_elm_lang$html$Html$div,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('mt-4'),
+						_0: _elm_lang$html$Html_Attributes$class('container-fluid mt-4'),
 						_1: {ctor: '[]'}
 					},
 					{
 						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Grid$simpleRow(
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('row'),
+								_1: {ctor: '[]'}
+							},
 							{
 								ctor: '::',
 								_0: _aYuMatsuzawa$yubot$Poller_View$mainContent(model),

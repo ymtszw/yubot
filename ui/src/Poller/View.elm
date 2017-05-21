@@ -1,10 +1,8 @@
 module Poller.View exposing (view)
 
-import Html exposing (Html, h1, p, text, strong)
+import Html exposing (Html, text)
 import Html.Attributes exposing (class, src, href)
-import Html.Utils exposing (atext, navigateOnClick)
-import Bootstrap.Grid as Grid exposing (Column)
-import Bootstrap.Grid.Col exposing (..)
+import Html.Utils exposing (navigateOnClick)
 import Bootstrap.Navbar as Navbar
 import Routing
 import Polls
@@ -22,7 +20,7 @@ view : Model -> Html Msg
 view model =
     Html.div []
         [ navbar model
-        , Grid.containerFluid [ class "mt-4" ] [ Grid.simpleRow [ mainContent model ] ]
+        , Html.div [ class "container-fluid mt-4" ] [ Html.div [ class "row" ] [ mainContent model ] ]
         ]
 
 
@@ -50,9 +48,9 @@ logo =
         ]
 
 
-mainContent : Model -> Column Msg
+mainContent : Model -> Html Msg
 mainContent model =
-    Grid.col [] [ mainTabs model ]
+    Html.div [ class "col-md-12" ] [ mainTabs model ]
 
 
 mainTabs : Model -> Html Msg
@@ -100,8 +98,8 @@ mainTabs model =
 pollList : Model -> Html Msg
 pollList model =
     Html.div []
-        [ Grid.simpleRow
-            [ Grid.col [ md12 ]
+        [ Html.div [ class "row" ]
+            [ Html.div [ class "col-md-12" ]
                 [ Html.map PollsMsg (Polls.View.listView model.pollRs)
                 ]
             ]
@@ -113,8 +111,8 @@ pollList model =
 actionList : Model -> Html Msg
 actionList model =
     Html.div []
-        [ Grid.simpleRow
-            [ Grid.col [ md12 ]
+        [ Html.div [ class "row" ]
+            [ Html.div [ class "col-md-12" ]
                 [ Html.map ActionsMsg (Actions.View.listView (Polls.usedActionIds model.pollRs.list) model.actionRs)
                 ]
             ]
@@ -126,8 +124,8 @@ actionList model =
 authList : Model -> Html Msg
 authList model =
     Html.div []
-        [ Grid.simpleRow
-            [ Grid.col [ md12 ]
+        [ Html.div [ class "row" ]
+            [ Html.div [ class "col-md-12" ]
                 [ Html.map AuthMsg (Authentications.View.listView model.authRs)
                 ]
             ]
