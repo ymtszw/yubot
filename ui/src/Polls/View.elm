@@ -17,7 +17,7 @@ cardsView : Resource Poll -> Html (Msg Poll)
 cardsView pollRs =
     let
         card poll =
-            Html.div [ class "card text-center" ]
+            Html.div [ class "card text-center btn-secondary" ]
                 [ Html.div [ class "card-header" ] [ Html.h4 [] [ text (Utils.shortenUrl poll.url) ] ]
                 , Html.div [ class "card-block alert-success" ]
                     [ Html.h4 [ class "card-title" ] [ text "Status: OK" ]
@@ -33,7 +33,19 @@ cardsView pollRs =
     in
         pollRs.list
             |> List.map cardWithWrap
+            |> (::) createPollCard
             |> Html.div [ class "row" ]
+
+
+createPollCard : Html (Msg Poll)
+createPollCard =
+    Html.div [ class "col-lg-3 col-md-4 col-sm-6 my-2" ]
+        [ Html.div [ class "card text-center h-100" ]
+            [ Html.div [ class "card-header" ] [ Html.h4 [] [ text "New Poll" ] ]
+            , Html.div [ class "card-block" ] [ Button.button [ Button.primary ] [ text "Create" ] ]
+            , Html.div [ class "card-footer" ] []
+            ]
+        ]
 
 
 listView : Resource Poll -> Html (Msg Poll)

@@ -23876,13 +23876,91 @@ var _aYuMatsuzawa$yubot$Polls_View$listView = function (pollRs) {
 				_aYuMatsuzawa$yubot$Polls_View$rows(pollRs.list))
 		});
 };
+var _aYuMatsuzawa$yubot$Polls_View$createPollCard = A2(
+	_elm_lang$html$Html$div,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$class('col-lg-3 col-md-4 col-sm-6 my-2'),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('card text-center h-100'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('card-header'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$h4,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('New Poll'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('card-block'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_rundis$elm_bootstrap$Bootstrap_Button$button,
+								{
+									ctor: '::',
+									_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Create'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('card-footer'),
+								_1: {ctor: '[]'}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}),
+		_1: {ctor: '[]'}
+	});
 var _aYuMatsuzawa$yubot$Polls_View$cardsView = function (pollRs) {
 	var card = function (poll) {
 		return A2(
 			_elm_lang$html$Html$div,
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('card text-center'),
+				_0: _elm_lang$html$Html_Attributes$class('card text-center btn-secondary'),
 				_1: {ctor: '[]'}
 			},
 			{
@@ -24022,7 +24100,13 @@ var _aYuMatsuzawa$yubot$Polls_View$cardsView = function (pollRs) {
 			_0: _elm_lang$html$Html_Attributes$class('row'),
 			_1: {ctor: '[]'}
 		},
-		A2(_elm_lang$core$List$map, cardWithWrap, pollRs.list));
+		A2(
+			F2(
+				function (x, y) {
+					return {ctor: '::', _0: x, _1: y};
+				}),
+			_aYuMatsuzawa$yubot$Polls_View$createPollCard,
+			A2(_elm_lang$core$List$map, cardWithWrap, pollRs.list)));
 };
 
 var _rundis$elm_bootstrap$Bootstrap_Internal_Text$textAlignDirOption = function (dir) {
