@@ -1,9 +1,0 @@
-body {
-  background-image: url('img/polar_bear.jpg');
-  background-size: cover;
-  background-attachment: fixed;
-}
-
-select#poll-action option.select-header {
-  display: none;
-}

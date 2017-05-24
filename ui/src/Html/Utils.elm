@@ -3,22 +3,23 @@ module Html.Utils
         ( atext
         , highlightVariables
         , mx2Button
-        , logo
         , errorAlert
         , toggleSortOnClick
+        , navigateOnClick
         )
 
 import Regex exposing (Match, HowMany(AtMost), regex)
-import Html exposing (Html, text, a, img)
-import Html.Attributes exposing (href, src, class)
-import Html.Events exposing (onClick)
+import Html exposing (Html, text, a)
+import Html.Attributes exposing (href, class)
+import Html.Events
 import Bootstrap.Button as Button
 import Bootstrap.Alert as Alert
 import Utils
 import Resource exposing (Sorter, Ord(..))
 import Resource.Messages exposing (Msg(OnSort))
 import StringTemplate
-import Poller.Styles exposing (mx2, my1)
+import Poller.Messages
+import Poller.Styles
 
 
 -- Html helpers
@@ -113,22 +114,11 @@ mx2Button : msg -> List (Button.Option msg) -> String -> Html msg
 mx2Button clickMsg options string =
     Button.button
         (List.append options
-            [ Button.attrs [ mx2, my1 ]
+            [ Button.attrs [ class "mx-2", class "my-1" ]
             , Button.onClick clickMsg
             ]
         )
         [ text string ]
-
-
-logo : Html msg
-logo =
-    img
-        [ class "d-inline-block"
-        , class "align-bottom"
-        , class "mx-1"
-        , src "/static/img/poller/favicon32.png"
-        ]
-        []
 
 
 errorAlert : List Utils.ErrorMessage -> Html msg
@@ -170,4 +160,11 @@ toggleSortOnClick newProperty maybeSorter =
                         Desc ->
                             Asc
     in
-        onClick (OnSort (Sorter newProperty newOrder))
+        Html.Events.onClick (OnSort (Sorter newProperty newOrder))
+
+
+navigateOnClick : Utils.Url -> List (Html.Attribute Poller.Messages.Msg)
+navigateOnClick url =
+    [ Poller.Styles.fakeLink
+    , Html.Events.onClick (Poller.Messages.ChangeLocation url)
+    ]

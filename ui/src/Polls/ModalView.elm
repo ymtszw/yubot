@@ -20,6 +20,7 @@ import Actions exposing (Action)
 import Actions.View
 import Authentications as Auth exposing (Authentication)
 import Authentications.View exposing (authCheck, authSelect)
+import Poller.Styles as Styles
 
 
 deleteModalView : Resource Poll -> Html (Msg Poll)
@@ -148,7 +149,7 @@ actionSelect actionList poll =
                 [ value ""
                 , selected (poll.action == "")
                 , disabled True
-                , class "select-header"
+                , Styles.hidden
                 ]
                 [ text "-- Select Action --" ]
 

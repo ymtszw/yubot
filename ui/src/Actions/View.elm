@@ -11,7 +11,7 @@ import Utils exposing (EntityId, timestampToString)
 import Resource exposing (Resource)
 import Resource.Messages exposing (Msg(..))
 import Actions exposing (Action)
-import Poller.Styles exposing (..)
+import Poller.Styles as Styles
 
 
 listView : Set EntityId -> Resource Action -> Html (Msg Action)
@@ -22,7 +22,7 @@ listView usedActionIds actionRs =
             Table.simpleThead
                 [ th [] [ text "Method" ]
                 , th [] [ text "URL" ]
-                , th (List.map cellAttr [ sorting, toggleSortOnClick .updatedAt actionRs.listSort ]) [ text "Updated At" ]
+                , th (List.map cellAttr [ Styles.sorting, toggleSortOnClick .updatedAt actionRs.listSort ]) [ text "Updated At" ]
                 , th [] [ text "Actions" ]
                 ]
         , tbody =
@@ -87,6 +87,6 @@ preview action =
             [ text "Target: "
             , code [] (atext ((String.toUpper action.method) ++ " " ++ action.url))
             ]
-        , pre [ rounded, greyBack, p3 ] (highlightVariables action.bodyTemplate.body)
+        , pre [ Styles.greyBack, class "rounded", class "p-3" ] (highlightVariables action.bodyTemplate.body)
         , variableList action.bodyTemplate.variables
         ]

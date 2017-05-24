@@ -40,35 +40,21 @@ monospace =
     style [ ( "font-family", "Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace" ) ]
 
 
-
--- Bootstrap styled class wrappers
-
-
-rounded : Attribute msg
-rounded =
-    class "rounded"
+xSmall : Attribute msg
+xSmall =
+    style [ ( "font-size", "x-small" ) ]
 
 
-display1 : Attribute msg
-display1 =
-    class "display-1"
+hidden : Attribute msg
+hidden =
+    style [ ( "display", "none" ) ]
 
 
-py3 : Attribute msg
-py3 =
-    class "py-3"
+shown : Attribute msg
+shown =
+    style [ ( "display", "block" ) ]
 
 
-p3 : Attribute msg
-p3 =
-    class "p-3"
-
-
-mx2 : Attribute msg
-mx2 =
-    class "mx-2"
-
-
-my1 : Attribute msg
-my1 =
-    class "my-1"
+fakeLink : Attribute msg
+fakeLink =
+    style [ ( "cursor", "pointer" ) ]
