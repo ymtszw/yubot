@@ -18,21 +18,23 @@ import Poller.Styles as Styles
 
 listView : Repo Authentication -> Html (Msg Authentication)
 listView authRepo =
-    Table.table
-        { options = [ Table.striped ]
-        , thead =
-            Table.simpleThead
-                [ Table.th [] [ text "Name" ]
-                , Table.th [] [ text "Type" ]
-                , Table.th (List.map Table.cellAttr [ Styles.sorting, toggleSortOnClick .updatedAt authRepo.sort ]) [ text "Updated At" ]
-                , Table.th [] [ text "Actions" ]
-                ]
-        , tbody =
-            authRepo.dict
-                |> Repo.dictToSortedList authRepo.sort
-                |> List.map authRow
-                |> Table.tbody []
-        }
+    Html.div []
+        [ Table.table
+            { options = [ Table.striped ]
+            , thead =
+                Table.simpleThead
+                    [ Table.th [] [ text "Name" ]
+                    , Table.th [] [ text "Type" ]
+                    , Table.th (List.map Table.cellAttr [ Styles.sorting, toggleSortOnClick .updatedAt authRepo.sort ]) [ text "Updated At" ]
+                    , Table.th [] [ text "Actions" ]
+                    ]
+            , tbody =
+                authRepo.dict
+                    |> Repo.dictToSortedList authRepo.sort
+                    |> List.map authRow
+                    |> Table.tbody []
+            }
+        ]
 
 
 authRow : Repo.Entity Authentication -> Table.Row (Msg Authentication)

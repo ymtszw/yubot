@@ -8,7 +8,6 @@ module Utils
         )
 
 import Date
-import Json.Decode as Decode
 
 
 type alias Timestamp =
@@ -32,6 +31,9 @@ type alias ErrorMessage =
 timestampToString : Timestamp -> String
 timestampToString string =
     let
+        toPaddedString =
+            toString >> String.padLeft 2 '0'
+
         toIntMonth date =
             case Date.month date of
                 Date.Jan ->
@@ -73,11 +75,11 @@ timestampToString string =
         case Date.fromString string of
             Ok date ->
                 [ toString (Date.year date) ++ "/"
-                , toString (toIntMonth date) ++ "/"
-                , toString (Date.day date) ++ " "
-                , toString (Date.hour date) ++ ":"
-                , toString (Date.minute date) ++ ":"
-                , toString (Date.second date)
+                , toPaddedString (toIntMonth date) ++ "/"
+                , toPaddedString (Date.day date) ++ " "
+                , toPaddedString (Date.hour date) ++ ":"
+                , toPaddedString (Date.minute date) ++ ":"
+                , toPaddedString (Date.second date)
                 ]
                     |> String.join ""
 

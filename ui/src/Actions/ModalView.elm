@@ -13,7 +13,7 @@ import Repo exposing (Repo)
 import Repo.Messages exposing (Msg(..))
 import StringTemplate exposing (StringTemplate)
 import Actions exposing (Action)
-import Actions.View
+import Actions.ViewParts
 import Authentications exposing (Authentication)
 import Authentications.View exposing (authCheck, authSelect)
 import Poller.Styles as Styles
@@ -32,7 +32,7 @@ deleteModalView actionRepo =
             |> Modal.h4 [] [ text "Deleting Action" ]
             |> Modal.body []
                 [ Html.p [] [ text ("ID: " ++ target.id) ]
-                , Actions.View.preview target
+                , Actions.ViewParts.preview target
                 , Html.p [] [ text "Are you sure?" ]
                 ]
             |> Modal.footer []
@@ -147,7 +147,7 @@ bodyTemplateInput action =
             , Textarea.value action.bodyTemplate.body
             , Textarea.onInput (bodyTemplateOnInput action)
             ]
-        , Actions.View.variableList action.bodyTemplate.variables
+        , Actions.ViewParts.variableList action.bodyTemplate.variables
         ]
 
 
