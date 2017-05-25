@@ -15,8 +15,8 @@ import Html.Events
 import Bootstrap.Button as Button
 import Bootstrap.Alert as Alert
 import Utils
-import Resource exposing (Sorter, Ord(..))
-import Resource.Messages exposing (Msg(OnSort))
+import Repo exposing (Sorter, Ord(..))
+import Repo.Messages exposing (Msg(OnSort))
 import StringTemplate
 import Poller.Messages
 import Poller.Styles
@@ -144,21 +144,11 @@ errorAlert errors =
 -- Event helpers
 
 
-toggleSortOnClick : (resource -> String) -> Maybe (Sorter resource) -> Html.Attribute (Msg resource)
-toggleSortOnClick newProperty maybeSorter =
+toggleSortOnClick : (Repo.Entity x -> String) -> Sorter x -> Html.Attribute (Msg x)
+toggleSortOnClick newProperty sorter =
     let
         newOrder =
-            case maybeSorter of
-                Nothing ->
-                    Asc
-
-                Just { property, order } ->
-                    case order of
-                        Asc ->
-                            Desc
-
-                        Desc ->
-                            Asc
+            Repo.toggleOrder sorter.order
     in
         Html.Events.onClick (OnSort (Sorter newProperty newOrder))
 

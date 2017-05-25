@@ -1,48 +1,54 @@
-module Actions.View exposing (listView, variableList, preview)
+module Actions.View exposing (listView)
 
 import Set exposing (Set)
-import Html exposing (Html, text, div, p, pre, code)
-import Html.Attributes exposing (class)
+import Html exposing (Html, text)
 import Html.Utils exposing (atext, highlightVariables, mx2Button, toggleSortOnClick)
-import Bootstrap.Table as Table exposing (table, th, tr, td, cellAttr)
+import Bootstrap.Table as Table
 import Bootstrap.Modal as Modal
 import Bootstrap.Button as Button
-import Utils exposing (EntityId, timestampToString)
-import Resource exposing (Resource)
-import Resource.Messages exposing (Msg(..))
+import Utils
+import Repo exposing (Repo)
+import Repo.Messages exposing (Msg(..))
 import Actions exposing (Action)
+import Actions.ModalView
 import Poller.Styles as Styles
 
 
-listView : Set EntityId -> Resource Action -> Html (Msg Action)
-listView usedActionIds actionRs =
-    table
-        { options = [ Table.striped ]
-        , thead =
-            Table.simpleThead
-                [ th [] [ text "Method" ]
-                , th [] [ text "URL" ]
-                , th (List.map cellAttr [ Styles.sorting, toggleSortOnClick .updatedAt actionRs.listSort ]) [ text "Updated At" ]
-                , th [] [ text "Actions" ]
-                ]
-        , tbody =
-            actionRs
-                |> rows usedActionIds
-                |> Table.tbody []
-        }
+listView : Set Repo.EntityId -> Repo Action -> Html (Msg Action)
+listView usedActionIds actionRepo =
+    Html.div []
+        [ Table.table
+            { options = [ Table.striped ]
+            , thead =
+                Table.simpleThead
+                    [ Table.th [] [ text "Method" ]
+                    , Table.th [] [ text "URL" ]
+                    , Table.th (List.map Table.cellAttr [ Styles.sorting, toggleSortOnClick .updatedAt actionRepo.sort ]) [ text "Updated At" ]
+                    , Table.th [] [ text "Actions" ]
+                    ]
+            , tbody =
+                actionRepo
+                    |> rows usedActionIds
+                    |> Table.tbody []
+            }
+        , Actions.ModalView.deleteModalView actionRepo
+        ]
 
 
-rows : Set EntityId -> Resource Action -> List (Table.Row (Msg Action))
-rows usedActionIds actionRs =
-    actionRs.list |> List.map (actionRow usedActionIds)
+rows : Set Repo.EntityId -> Repo Action -> List (Table.Row (Msg Action))
+rows usedActionIds actionRepo =
+    actionRepo.dict
+        |> Repo.dictToSortedList actionRepo.sort
+        |> List.map (actionRow usedActionIds)
 
 
-editActionButton : Action -> List (Button.Option (Msg Action)) -> String -> Html (Msg Action)
-editActionButton action options string =
-    mx2Button (OnEditModal Modal.visibleState action) options string
+
+-- editActionButton : Action -> List (Button.Option (Msg Action)) -> String -> Html (Msg Action)
+-- editActionButton action options string =
+--     mx2Button (OnEditModal Modal.visibleState action) options string
 
 
-actionRow : Set EntityId -> Action -> Table.Row (Msg Action)
+actionRow : Set Repo.EntityId -> Repo.Entity Action -> Table.Row (Msg Action)
 actionRow usedActionIds action =
     let
         ( deleteButtonOptions, deleteButtonString ) =
@@ -51,42 +57,11 @@ actionRow usedActionIds action =
             else
                 ( [ Button.danger, Button.small ], "Delete" )
     in
-        tr []
-            [ td [] [ text (String.toUpper action.method) ]
-            , td [] (atext action.url)
-            , td [] [ text (timestampToString action.updatedAt) ]
-            , td []
-                [ editActionButton action [ Button.primary, Button.small ] "Update"
-                , mx2Button (OnDeleteModal Modal.visibleState action) deleteButtonOptions deleteButtonString
+        Table.tr []
+            [ Table.td [] [ text (String.toUpper action.data.method) ]
+            , Table.td [] (atext action.data.url)
+            , Table.td [] [ text (Utils.timestampToString action.updatedAt) ]
+            , Table.td []
+                [ mx2Button (OnDeleteModal Modal.visibleState action) deleteButtonOptions deleteButtonString
                 ]
             ]
-
-
-variableList : List String -> Html (Msg resource)
-variableList variables =
-    let
-        varCodes =
-            variables
-                |> List.map (\var -> code [] [ text var ])
-                |> List.intersperse (text ", ")
-    in
-        case variables of
-            [] ->
-                text ""
-
-            _ ->
-                varCodes
-                    |> (::) (text "Variables: ")
-                    |> p []
-
-
-preview : Action -> Html (Msg resource)
-preview action =
-    div [ class "action-preview" ]
-        [ p []
-            [ text "Target: "
-            , code [] (atext ((String.toUpper action.method) ++ " " ++ action.url))
-            ]
-        , pre [ Styles.greyBack, class "rounded", class "p-3" ] (highlightVariables action.bodyTemplate.body)
-        , variableList action.bodyTemplate.variables
-        ]

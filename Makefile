@@ -42,8 +42,7 @@ poller:
 
 .PHONY: uiwatch
 uiwatch:
-	make ui
-	fswatch -o -l 2 Makefile ui/src elm-package.json | xargs -n1 -x -I{} make ui
+	fswatch -o -l 1 Makefile ui/src elm-package.json | xargs -n1 -x -I{} make ui
 
 .PHONY: clean
 clean:

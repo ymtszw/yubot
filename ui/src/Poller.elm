@@ -3,11 +3,11 @@ module Poller exposing (main)
 import Navigation
 import Bootstrap.Navbar
 import Routing
-import Resource.Command
+import Repo.Command
 import Polls
 import Actions
 import Authentications
-import Poller.Model exposing (Model, initialModel)
+import Poller.Model exposing (Model)
 import Poller.Messages exposing (Msg(..))
 import Poller.Update exposing (update)
 import Poller.View exposing (view)
@@ -22,12 +22,12 @@ init location =
         currentRoute =
             Routing.parseLocation location
     in
-        [ (Cmd.map PollsMsg (Resource.Command.fetchAll Polls.config))
-        , (Cmd.map ActionsMsg (Resource.Command.fetchAll Actions.config))
-        , (Cmd.map AuthMsg (Resource.Command.fetchAll Authentications.config))
+        [ (Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config))
+        , (Cmd.map ActionsMsg (Repo.Command.fetchAll Actions.config))
+        , (Cmd.map AuthMsg (Repo.Command.fetchAll Authentications.config))
         , navbarCmd
         ]
-            |> (!) (initialModel currentRoute navbarState)
+            |> (!) (Poller.Model.initialModel currentRoute navbarState)
 
 
 
