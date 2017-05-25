@@ -19792,6 +19792,9 @@ var _aYuMatsuzawa$yubot$Authentications$update = F2(
 		return A4(_aYuMatsuzawa$yubot$Repo_Update$update, _aYuMatsuzawa$yubot$Authentications$dummyAuthentication, _aYuMatsuzawa$yubot$Authentications$config, msg, resource);
 	});
 
+var _aYuMatsuzawa$yubot$Poller_Messages$OnClientTimeout = function (a) {
+	return {ctor: 'OnClientTimeout', _0: a};
+};
 var _aYuMatsuzawa$yubot$Poller_Messages$OnServerPush = function (a) {
 	return {ctor: 'OnServerPush', _0: a};
 };
@@ -23758,6 +23761,22 @@ var _elm_lang$websocket$WebSocket$onSelfMsg = F3(
 	});
 _elm_lang$core$Native_Platform.effectManagers['WebSocket'] = {pkg: 'elm-lang/websocket', init: _elm_lang$websocket$WebSocket$init, onEffects: _elm_lang$websocket$WebSocket$onEffects, onSelfMsg: _elm_lang$websocket$WebSocket$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$websocket$WebSocket$cmdMap, subMap: _elm_lang$websocket$WebSocket$subMap};
 
+var _aYuMatsuzawa$yubot$LiveReload$devWebsocketUrl = 'ws://yubot.localhost:8080/ws';
+var _aYuMatsuzawa$yubot$LiveReload$set = function (isDev) {
+	return isDev ? {
+		ctor: '::',
+		_0: A2(_elm_lang$websocket$WebSocket$listen, _aYuMatsuzawa$yubot$LiveReload$devWebsocketUrl, _aYuMatsuzawa$yubot$Poller_Messages$OnServerPush),
+		_1: {
+			ctor: '::',
+			_0: A2(_elm_lang$core$Time$every, 30 * _elm_lang$core$Time$second, _aYuMatsuzawa$yubot$Poller_Messages$OnClientTimeout),
+			_1: {ctor: '[]'}
+		}
+	} : {ctor: '[]'};
+};
+var _aYuMatsuzawa$yubot$LiveReload$ping = function (isDev) {
+	return isDev ? A2(_elm_lang$websocket$WebSocket$send, _aYuMatsuzawa$yubot$LiveReload$devWebsocketUrl, 'ping') : _elm_lang$core$Platform_Cmd$none;
+};
+
 var _aYuMatsuzawa$yubot$Routing$isActiveTab = F2(
 	function (route, index) {
 		var _p0 = route;
@@ -23945,7 +23964,7 @@ var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
+			case 'OnServerPush':
 				var _p5 = _p0._0;
 				var _p4 = _p5;
 				if (_p4 === 'reload') {
@@ -23956,6 +23975,12 @@ var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
 						{ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
 						A2(_elm_lang$core$Debug$log, 'Server push', _p5));
 				}
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _aYuMatsuzawa$yubot$LiveReload$ping(model.isDev)
+				};
 		}
 	});
 
@@ -24466,19 +24491,18 @@ var _aYuMatsuzawa$yubot$Poller_View$view = function (model) {
 };
 
 var _aYuMatsuzawa$yubot$Poller$subscriptions = function (model) {
-	var baseSubs = model.isDev ? {
-		ctor: '::',
-		_0: A2(_elm_lang$websocket$WebSocket$listen, 'ws://yubot.localhost:8080/ws', _aYuMatsuzawa$yubot$Poller_Messages$OnServerPush),
-		_1: {ctor: '[]'}
-	} : {ctor: '[]'};
 	return _elm_lang$core$Platform_Sub$batch(
 		A2(
 			F2(
 				function (x, y) {
-					return {ctor: '::', _0: x, _1: y};
+					return A2(_elm_lang$core$Basics_ops['++'], x, y);
 				}),
-			A2(_rundis$elm_bootstrap$Bootstrap_Navbar$subscriptions, model.navbarState, _aYuMatsuzawa$yubot$Poller_Messages$NavbarMsg),
-			baseSubs));
+			_aYuMatsuzawa$yubot$LiveReload$set(model.isDev),
+			{
+				ctor: '::',
+				_0: A2(_rundis$elm_bootstrap$Bootstrap_Navbar$subscriptions, model.navbarState, _aYuMatsuzawa$yubot$Poller_Messages$NavbarMsg),
+				_1: {ctor: '[]'}
+			}));
 };
 var _aYuMatsuzawa$yubot$Poller$init = F2(
 	function (_p0, location) {
@@ -24538,7 +24562,7 @@ var _aYuMatsuzawa$yubot$Poller$Flags = function (a) {
 var Elm = {};
 Elm['Poller'] = Elm['Poller'] || {};
 if (typeof _aYuMatsuzawa$yubot$Poller$main !== 'undefined') {
-    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Repo.Messages.Msg":{"args":["x"],"tags":{"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","Repo.Entity x"],"OnSort":["Repo.Sorter x"],"OnFetchAll":["Result.Result Http.Error (List (Repo.Entity x))"],"ChangeLocation":["Utils.Url"],"OnDeleteConfirmed":["Repo.EntityId"],"OnEditInput":["x","List Utils.ErrorMessage"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Repo.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Actions.Type":{"args":[],"tags":{"Hipchat":[],"Http":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"OnLocationChange":["Navigation.Location"],"OnServerPush":["String"],"NavbarMsg":["Bootstrap.Navbar.State"],"AuthMsg":["Repo.Messages.Msg Authentications.Authentication"],"ActionsMsg":["Repo.Messages.Msg Actions.Action"],"PollsMsg":["Repo.Messages.Msg Polls.Poll"],"ChangeLocation":["Utils.Url"]}}},"aliases":{"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Authentications.AuthType":{"args":[],"type":"String"},"Repo.EntityId":{"args":[],"type":"String"},"Repo.Sorter":{"args":["x"],"type":"{ property : Repo.Entity x -> String, order : Repo.Ord }"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Authentications.DecodedToken":{"args":[],"type":"String"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Label":{"args":[],"type":"String"},"Utils.Url":{"args":[],"type":"String"},"Utils.ErrorMessage":{"args":[],"type":"( Utils.Label, String )"},"Authentications.Authentication":{"args":[],"type":"{ name : String , type_ : Authentications.AuthType , token : Authentications.DecodedToken }"},"Polls.Interval":{"args":[],"type":"String"},"Repo.Entity":{"args":["x"],"type":"{ id : Repo.EntityId, updatedAt : Utils.Timestamp, data : x }"},"Polls.Poll":{"args":[],"type":"{ url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Repo.EntityId , action : Repo.EntityId , filters : List Polls.JqFilter }"},"Actions.Action":{"args":[],"type":"{ label : Maybe.Maybe Actions.Label , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Repo.EntityId , bodyTemplate : StringTemplate.StringTemplate , type_ : Actions.Type }"},"Actions.Label":{"args":[],"type":"String"},"StringTemplate.Body":{"args":[],"type":"String"},"StringTemplate.StringTemplate":{"args":[],"type":"{ body : StringTemplate.Body, variables : List String }"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
+    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Repo.Messages.Msg":{"args":["x"],"tags":{"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","Repo.Entity x"],"OnSort":["Repo.Sorter x"],"OnFetchAll":["Result.Result Http.Error (List (Repo.Entity x))"],"ChangeLocation":["Utils.Url"],"OnDeleteConfirmed":["Repo.EntityId"],"OnEditInput":["x","List Utils.ErrorMessage"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Repo.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Actions.Type":{"args":[],"tags":{"Hipchat":[],"Http":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"OnLocationChange":["Navigation.Location"],"OnServerPush":["String"],"NavbarMsg":["Bootstrap.Navbar.State"],"AuthMsg":["Repo.Messages.Msg Authentications.Authentication"],"ActionsMsg":["Repo.Messages.Msg Actions.Action"],"PollsMsg":["Repo.Messages.Msg Polls.Poll"],"ChangeLocation":["Utils.Url"],"OnClientTimeout":["Time.Time"]}}},"aliases":{"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Authentications.AuthType":{"args":[],"type":"String"},"Repo.EntityId":{"args":[],"type":"String"},"Repo.Sorter":{"args":["x"],"type":"{ property : Repo.Entity x -> String, order : Repo.Ord }"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Authentications.DecodedToken":{"args":[],"type":"String"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Label":{"args":[],"type":"String"},"Utils.Url":{"args":[],"type":"String"},"Utils.ErrorMessage":{"args":[],"type":"( Utils.Label, String )"},"Authentications.Authentication":{"args":[],"type":"{ name : String , type_ : Authentications.AuthType , token : Authentications.DecodedToken }"},"Polls.Interval":{"args":[],"type":"String"},"Repo.Entity":{"args":["x"],"type":"{ id : Repo.EntityId, updatedAt : Utils.Timestamp, data : x }"},"Polls.Poll":{"args":[],"type":"{ url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Repo.EntityId , action : Repo.EntityId , filters : List Polls.JqFilter }"},"Actions.Action":{"args":[],"type":"{ label : Maybe.Maybe Actions.Label , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Repo.EntityId , bodyTemplate : StringTemplate.StringTemplate , type_ : Actions.Type }"},"Actions.Label":{"args":[],"type":"String"},"StringTemplate.Body":{"args":[],"type":"String"},"StringTemplate.StringTemplate":{"args":[],"type":"{ body : StringTemplate.Body, variables : List String }"},"Time.Time":{"args":[],"type":"Float"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

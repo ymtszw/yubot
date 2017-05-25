@@ -1,5 +1,6 @@
 module Poller.Messages exposing (Msg(..), fromRepo)
 
+import Time
 import Navigation
 import Bootstrap.Navbar
 import Utils
@@ -17,6 +18,7 @@ type Msg
     | ChangeLocation Utils.Url
     | OnLocationChange Navigation.Location
     | OnServerPush String
+    | OnClientTimeout Time.Time
 
 
 {-| Map Repo messages into root (Poller) messages, with special treatment for `ChangeLocation` message.

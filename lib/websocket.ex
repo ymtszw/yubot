@@ -10,6 +10,7 @@ defmodule Yubot.Websocket do
 
   def init(_conn) do
     RG.join(@live_reload_group, @default_epool_id)
+    Yubot.Logger.debug("Client connected for live reload!")
     {nil, [{:text, "Live reload enabled!"}]}
   end
 

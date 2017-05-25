@@ -1,6 +1,7 @@
 module Poller.Update exposing (update)
 
 import Navigation
+import LiveReload
 import Routing
 import Polls
 import Actions
@@ -51,3 +52,6 @@ update msg model =
                     text
                         |> Debug.log "Server push"
                         |> always ( model, Cmd.none )
+
+        OnClientTimeout _ ->
+            ( model, LiveReload.ping model.isDev )
