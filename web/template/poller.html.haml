@@ -1,2 +1,2 @@
 %script(type="text/javascript")
-  Elm.Poller.fullscreen({isDev: true})
+  Elm.Poller.fullscreen({isDev: #{Mix.env == :dev}})
