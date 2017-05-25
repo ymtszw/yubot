@@ -23619,6 +23619,25 @@ var _aYuMatsuzawa$yubot$Polls_View$cardsView = function (pollRepo) {
 				A2(_aYuMatsuzawa$yubot$Repo$dictToSortedList, pollRepo.sort, pollRepo.dict))));
 };
 
+var _aYuMatsuzawa$yubot$Poller_View$notFound = A2(
+	_elm_lang$html$Html$div,
+	{ctor: '[]'},
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$h1,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('display-1'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('Not Found.'),
+				_1: {ctor: '[]'}
+			}),
+		_1: {ctor: '[]'}
+	});
 var _aYuMatsuzawa$yubot$Poller_View$authList = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -23699,58 +23718,51 @@ var _aYuMatsuzawa$yubot$Poller_View$actionList = function (model) {
 			}
 		});
 };
-var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
+var _aYuMatsuzawa$yubot$Poller_View$routedContent = function (model) {
 	var htmlMap = function (msgMapper) {
 		return _elm_lang$html$Html$map(
 			_aYuMatsuzawa$yubot$Poller_Messages$fromRepo(msgMapper));
 	};
-	var contentClass = function (index) {
-		return A2(_aYuMatsuzawa$yubot$Routing$isActiveTab, model.route, index) ? _aYuMatsuzawa$yubot$Poller_Styles$shown : _aYuMatsuzawa$yubot$Poller_Styles$hidden;
-	};
-	var content = F2(
-		function (index, html) {
-			return A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('tab-pane p-3'),
-					_1: {
-						ctor: '::',
-						_0: contentClass(index),
-						_1: {ctor: '[]'}
-					}
-				},
-				{
-					ctor: '::',
-					_0: html,
-					_1: {ctor: '[]'}
-				});
-		});
-	var contents = A2(
-		_elm_lang$core$List$indexedMap,
-		content,
+	var content = function () {
+		var _p0 = model.route;
+		switch (_p0.ctor) {
+			case 'PollsRoute':
+				return A2(
+					htmlMap,
+					_aYuMatsuzawa$yubot$Poller_Messages$PollsMsg,
+					_aYuMatsuzawa$yubot$Polls_View$cardsView(model.pollRepo));
+			case 'ActionsRoute':
+				return _aYuMatsuzawa$yubot$Poller_View$actionList(model);
+			case 'AuthsRoute':
+				return _aYuMatsuzawa$yubot$Poller_View$authList(model);
+			default:
+				return _aYuMatsuzawa$yubot$Poller_View$notFound;
+		}
+	}();
+	return A2(
+		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: A2(
-				htmlMap,
-				_aYuMatsuzawa$yubot$Poller_Messages$PollsMsg,
-				_aYuMatsuzawa$yubot$Polls_View$cardsView(model.pollRepo)),
+			_0: _elm_lang$html$Html_Attributes$class('tab-pane p-3'),
 			_1: {
 				ctor: '::',
-				_0: _aYuMatsuzawa$yubot$Poller_View$actionList(model),
-				_1: {
-					ctor: '::',
-					_0: _aYuMatsuzawa$yubot$Poller_View$authList(model),
-					_1: {ctor: '[]'}
-				}
+				_0: _aYuMatsuzawa$yubot$Poller_Styles$shown,
+				_1: {ctor: '[]'}
 			}
+		},
+		{
+			ctor: '::',
+			_0: content,
+			_1: {ctor: '[]'}
 		});
+};
+var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 	var tabClass = function (index) {
 		return A2(_aYuMatsuzawa$yubot$Routing$isActiveTab, model.route, index) ? _elm_lang$html$Html_Attributes$class('nav-link active') : _elm_lang$html$Html_Attributes$class('nav-link');
 	};
 	var tab = F2(
-		function (index, _p0) {
-			var _p1 = _p0;
+		function (index, _p1) {
+			var _p2 = _p1;
 			return A2(
 				_elm_lang$html$Html$li,
 				{
@@ -23765,11 +23777,11 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 						{
 							ctor: '::',
 							_0: tabClass(index),
-							_1: _aYuMatsuzawa$yubot$Html_Utils$navigateOnClick(_p1._0)
+							_1: _aYuMatsuzawa$yubot$Html_Utils$navigateOnClick(_p2._0)
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(_p1._1),
+							_0: _elm_lang$html$Html$text(_p2._1),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
@@ -23813,7 +23825,11 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 						_0: _elm_lang$html$Html_Attributes$class('tab-content'),
 						_1: {ctor: '[]'}
 					},
-					contents),
+					{
+						ctor: '::',
+						_0: _aYuMatsuzawa$yubot$Poller_View$routedContent(model),
+						_1: {ctor: '[]'}
+					}),
 				_1: {ctor: '[]'}
 			}
 		});

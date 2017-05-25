@@ -4,7 +4,7 @@ import Html exposing (Html, text)
 import Html.Attributes exposing (class, src, href)
 import Html.Utils exposing (navigateOnClick)
 import Bootstrap.Navbar as Navbar
-import Routing
+import Routing exposing (Route(..))
 import Polls
 import Polls.View
 import Actions.View
@@ -71,43 +71,34 @@ mainTabs model =
             , ( "/credentials", "Credentials" )
             ]
                 |> List.indexedMap tab
-
-        contentClass index =
-            if Routing.isActiveTab model.route index then
-                Styles.shown
-            else
-                Styles.hidden
-
-        content index html =
-            Html.div [ class "tab-pane p-3", contentClass index ] [ html ]
-
-        htmlMap msgMapper =
-            Html.map (Poller.Messages.fromRepo msgMapper)
-
-        contents =
-            [ htmlMap PollsMsg (Polls.View.cardsView model.pollRepo)
-            , actionList model
-            , authList model
-            ]
-                |> List.indexedMap content
     in
         Html.div []
             [ Html.ul [ class "nav nav-tabs nav-justified" ] tabs
-            , Html.div [ class "tab-content" ] contents
+            , Html.div [ class "tab-content" ] [ routedContent model ]
             ]
 
 
+routedContent : Model -> Html Msg
+routedContent model =
+    let
+        htmlMap msgMapper =
+            Html.map (Poller.Messages.fromRepo msgMapper)
 
--- pollList : Model -> Html Msg
--- pollList model =
---     Html.div []
---         [ Html.div [ class "row" ]
---             [ Html.div [ class "col-md-12" ]
---                 [ Html.map PollsMsg (Polls.View.listView model.pollRepo)
---                 ]
---             ]
---         , Html.map PollsMsg (Polls.ModalView.deleteModalView model.pollRepo)
---         ]
+        content =
+            case model.route of
+                PollsRoute ->
+                    htmlMap PollsMsg (Polls.View.cardsView model.pollRepo)
+
+                ActionsRoute ->
+                    actionList model
+
+                AuthsRoute ->
+                    authList model
+
+                _ ->
+                    notFound
+    in
+        Html.div [ class "tab-pane p-3", Styles.shown ] [ content ]
 
 
 actionList : Model -> Html Msg
@@ -131,3 +122,8 @@ authList model =
                 ]
             ]
         ]
+
+
+notFound : Html Msg
+notFound =
+    Html.div [] [ Html.h1 [ class "display-1" ] [ text "Not Found." ] ]
