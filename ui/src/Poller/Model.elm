@@ -14,14 +14,16 @@ type alias Model =
     , authRepo : Repo.Repo Authentication
     , navbarState : Navbar.State
     , route : Routing.Route
+    , isDev : Bool
     }
 
 
-initialModel : Routing.Route -> Navbar.State -> Model
-initialModel route navbarState =
+initialModel : Bool -> Routing.Route -> Navbar.State -> Model
+initialModel isDev route navbarState =
     { pollRepo = Repo.initialize Polls.dummyPoll
     , actionRepo = Repo.initialize Actions.dummyAction
     , authRepo = Repo.initialize Authentications.dummyAuthentication
     , navbarState = navbarState
     , route = route
+    , isDev = isDev
     }

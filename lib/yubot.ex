@@ -3,10 +3,20 @@ defmodule Yubot do
   alias SolomonLib.{ExecutorPool, Conn}
 
   @spec children :: [Supervisor.Spec.spec]
-  def children do
-    [
+  def children() do
+    dev_only_children() ++ [
       # gear-specific workers/supervisors
     ]
+  end
+
+  if Mix.env == :dev do
+    defp dev_only_children() do
+      [
+        Supervisor.Spec.worker(Yubot.LiveReload, [], restart: :temporary), # Never try to revive; Yubot.LiveReload is not a persistant server
+      ]
+    end
+  else
+    defp dev_only_children(), do: []
   end
 
   @spec executor_pool_for_web_request(Conn.t) :: ExecutorPool.Id.t

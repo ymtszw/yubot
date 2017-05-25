@@ -1,6 +1,7 @@
 module Poller.Update exposing (update)
 
 import Navigation
+import LiveReload
 import Routing
 import Polls
 import Actions
@@ -41,3 +42,16 @@ update msg model =
 
         OnLocationChange location ->
             ( { model | route = Routing.parseLocation location }, Cmd.none )
+
+        OnServerPush text ->
+            case text of
+                "reload" ->
+                    ( model, Navigation.reloadAndSkipCache )
+
+                _ ->
+                    text
+                        |> Debug.log "Server push"
+                        |> always ( model, Cmd.none )
+
+        OnClientTimeout _ ->
+            ( model, LiveReload.ping model.isDev )
