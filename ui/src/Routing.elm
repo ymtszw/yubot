@@ -2,16 +2,16 @@ module Routing exposing (Route(..), parseLocation, isActiveTab)
 
 import Regex
 import Navigation
-import Utils
+import Repo
 
 
 type Route
     = PollsRoute
-    | PollRoute Utils.EntityId
+    | PollRoute Repo.EntityId
     | ActionsRoute
-    | ActionRoute Utils.EntityId
+    | ActionRoute Repo.EntityId
     | AuthsRoute
-    | AuthRoute Utils.EntityId
+    | AuthRoute Repo.EntityId
     | NotFoundRoute
 
 

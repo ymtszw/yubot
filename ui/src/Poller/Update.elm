@@ -14,30 +14,30 @@ update msg model =
     case msg of
         PollsMsg subMsg ->
             let
-                ( updatedPollRs, cmd ) =
-                    Polls.update subMsg model.pollRs
+                ( updatedPollRepo, cmd ) =
+                    Polls.update subMsg model.pollRepo
             in
-                ( { model | pollRs = updatedPollRs }, Cmd.map PollsMsg cmd )
+                ( { model | pollRepo = updatedPollRepo }, Cmd.map PollsMsg cmd )
 
         ActionsMsg subMsg ->
             let
-                ( updatedActionRs, cmd ) =
-                    Actions.update subMsg model.actionRs
+                ( updatedActionRepo, cmd ) =
+                    Actions.update subMsg model.actionRepo
             in
-                ( { model | actionRs = updatedActionRs }, Cmd.map ActionsMsg cmd )
+                ( { model | actionRepo = updatedActionRepo }, Cmd.map ActionsMsg cmd )
 
         AuthMsg subMsg ->
             let
-                ( updatedAuthRs, cmd ) =
-                    Authentications.update subMsg model.authRs
+                ( updatedAuthRepo, cmd ) =
+                    Authentications.update subMsg model.authRepo
             in
-                ( { model | authRs = updatedAuthRs }, Cmd.map AuthMsg cmd )
+                ( { model | authRepo = updatedAuthRepo }, Cmd.map AuthMsg cmd )
 
         NavbarMsg state ->
             ( { model | navbarState = state }, Cmd.none )
 
-        ChangeLocation url ->
-            ( model, Navigation.modifyUrl url )
+        ChangeLocation path ->
+            ( model, Navigation.modifyUrl ("/poller" ++ path) )
 
         OnLocationChange location ->
             ( { model | route = Routing.parseLocation location }, Cmd.none )

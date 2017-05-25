@@ -1,4 +1,4 @@
-module Polls.ModalView exposing (deleteModalView, editModalView)
+module Polls.ModalView exposing (deleteModalView)
 
 import Html exposing (Html, text, div, p, small, pre, code)
 import Html.Attributes exposing (for, value, selected, class, disabled)
@@ -12,9 +12,8 @@ import Bootstrap.Form.InputGroup as InputGroup
 import Bootstrap.Form.Select as Select
 import Bootstrap.Alert as Alert
 import List.Extra as LE
-import Utils
-import Resource exposing (..)
-import Resource.Messages exposing (Msg(..))
+import Repo exposing (Repo)
+import Repo.Messages exposing (Msg(..))
 import Polls exposing (Poll, Interval, dummyPoll, intervalToString)
 import Actions exposing (Action)
 import Actions.View
@@ -23,11 +22,11 @@ import Authentications.View exposing (authCheck, authSelect)
 import Poller.Styles as Styles
 
 
-deleteModalView : Resource Poll -> Html (Msg Poll)
-deleteModalView pollRs =
+deleteModalView : Repo Poll -> Html (Msg Poll)
+deleteModalView pollRepo =
     let
         target =
-            pollRs.deleteModal.target
+            pollRepo.deleteModal.target
 
         stateToMsg state =
             OnDeleteModal state target
@@ -36,64 +35,67 @@ deleteModalView pollRs =
             |> Modal.h4 [] [ text "Deleting Poll" ]
             |> Modal.body []
                 [ p [] [ text ("ID: " ++ target.id) ]
-                , p [] (atext ("URL: " ++ target.url))
+                , p [] (atext ("URL: " ++ target.data.url))
                 , p [] [ text "Are you sure?" ]
                 ]
             |> Modal.footer []
                 [ mx2Button (OnDeleteConfirmed target.id) [ Button.danger ] "Yes, delete"
                 , mx2Button (OnDeleteModal Modal.hiddenState target) [] "Cancel"
                 ]
-            |> Modal.view pollRs.deleteModal.modalState
+            |> Modal.view pollRepo.deleteModal.modalState
 
 
-editModalView : List Action -> List Authentication -> Resource Poll -> Html (Msg Poll)
-editModalView actionList authList pollRs =
-    let
-        target =
-            pollRs.editModal.target
 
-        stateToMsg state =
-            OnEditModal state target
+-- editModalView : List Action -> List Authentication -> Repo Poll -> Html (Msg Poll)
+-- editModalView actionList authList pollRs =
+--     let
+--         target =
+--             pollRs.editModal.target
+--
+--         stateToMsg state =
+--             OnEditModal state target
+--
+--         ( headerText, titleText ) =
+--             if target.id == "" then
+--                 ( text "New poll!", text "Creating Poll" )
+--             else
+--                 ( small [] [ text ("ID: " ++ target.id) ]
+--                 , text "Updating Poll"
+--                 )
+--     in
+--         Modal.config stateToMsg
+--             |> Modal.large
+--             |> Modal.h4 [] [ titleText ]
+--             |> Modal.body []
+--                 [ headerText
+--                 , editForm actionList authList target
+--                 ]
+--             |> Modal.footer []
+--                 [ mx2Button (OnEditModal Modal.hiddenState target) [] "Cancel"
+--                 ]
+--             |> Modal.view pollRs.editModal.modalState
 
-        ( headerText, titleText ) =
-            if target.id == "" then
-                ( text "New poll!", text "Creating Poll" )
-            else
-                ( small [] [ text ("ID: " ++ target.id) ]
-                , text "Updating Poll"
-                )
-    in
-        Modal.config stateToMsg
-            |> Modal.large
-            |> Modal.h4 [] [ titleText ]
-            |> Modal.body []
-                [ headerText
-                , editForm actionList authList target
-                ]
-            |> Modal.footer []
-                [ mx2Button (OnEditModal Modal.hiddenState target) [ Button.primary ] "Submit"
-                , mx2Button (OnEditModal Modal.hiddenState target) [] "Cancel"
-                ]
-            |> Modal.view pollRs.editModal.modalState
 
-
-editForm : List Action -> List Authentication -> Poll -> Html (Msg Poll)
+editForm : List (Repo.Entity Action) -> List (Repo.Entity Authentication) -> Repo.Entity Poll -> Html (Msg Poll)
 editForm actionList authList poll =
     let
+        pollData =
+            poll.data
+
         maybeCurrentAction =
-            LE.find (\action -> action.id == poll.action) actionList
+            LE.find (\action -> action.id == pollData.action) actionList
     in
         Form.form []
             [ Form.group []
                 [ Form.label [ for "poll-url" ] [ text "URL" ]
                 , Input.url
                     [ Input.id "poll-url"
-                    , Input.value poll.url
-                    , Input.onInput (\url -> OnEditInput { poll | url = url })
+                    , Input.value pollData.url
+                    , Input.onInput (\url -> OnEditInput { pollData | url = url } [])
                     ]
-                , authCheck authList poll.auth (authOnCheck poll)
+                , authCheck authList pollData.auth (authOnCheck poll)
                 ]
-            , authSelect (Auth.listForPoll authList) "poll" poll.auth (authOnSelect poll)
+            , authSelect (Auth.listForPoll authList) "poll" pollData.auth (authOnSelect poll)
             , Form.group []
                 [ Form.label [ for "poll-interval" ] [ text "Interval" ]
                 , intervalSelect poll
@@ -109,26 +111,26 @@ editForm actionList authList poll =
             ]
 
 
-authOnCheck : Poll -> Utils.EntityId -> Bool -> Msg Poll
-authOnCheck poll headAuthId checked =
+authOnCheck : Repo.Entity Poll -> Repo.EntityId -> Bool -> Msg Poll
+authOnCheck { data } headAuthId checked =
     case checked of
         False ->
-            OnEditInput { poll | auth = Nothing }
+            OnEditInput { data | auth = Nothing } []
 
         True ->
-            OnEditInput { poll | auth = Just headAuthId }
+            OnEditInput { data | auth = Just headAuthId } []
 
 
-authOnSelect : Poll -> Utils.EntityId -> Msg Poll
-authOnSelect poll authId =
-    OnEditInput { poll | auth = Just authId }
+authOnSelect : Repo.Entity Poll -> Repo.EntityId -> Msg Poll
+authOnSelect { data } authId =
+    OnEditInput { data | auth = Just authId } []
 
 
-intervalSelect : Poll -> Html (Msg Poll)
-intervalSelect poll =
+intervalSelect : Repo.Entity Poll -> Html (Msg Poll)
+intervalSelect { data } =
     let
         item v =
-            if v == poll.interval then
+            if v == data.interval then
                 Select.item [ value v, selected True ] [ text (intervalToString v) ]
             else
                 Select.item [ value v ] [ text (intervalToString v) ]
@@ -137,24 +139,24 @@ intervalSelect poll =
             |> List.map item
             |> Select.select
                 [ Select.id "poll-interval"
-                , Select.onInput (\interval -> OnEditInput { poll | interval = interval })
+                , Select.onInput (\interval -> OnEditInput { data | interval = interval } [])
                 ]
 
 
-actionSelect : List Action -> Poll -> Html (Msg Poll)
-actionSelect actionList poll =
+actionSelect : List (Repo.Entity Action) -> Repo.Entity Poll -> Html (Msg Poll)
+actionSelect actionList { data } =
     let
-        header poll =
+        header =
             Select.item
                 [ value ""
-                , selected (poll.action == "")
+                , selected (data.action == "")
                 , disabled True
                 , Styles.hidden
                 ]
                 [ text "-- Select Action --" ]
 
         itemLabel action =
-            case action.label of
+            case action.data.label of
                 Nothing ->
                     action.id
 
@@ -162,30 +164,30 @@ actionSelect actionList poll =
                     label ++ " (" ++ action.id ++ ")"
 
         item action =
-            Select.item [ value action.id, selected (poll.action == action.id) ] [ text (itemLabel action) ]
+            Select.item [ value action.id, selected (data.action == action.id) ] [ text (itemLabel action) ]
 
         emptyStringList action =
-            List.map (\_ -> "") action.bodyTemplate.variables
+            List.map (\_ -> "") action.data.bodyTemplate.variables
 
         onInputMessage actionId =
             case LE.find (\a -> a.id == actionId) actionList of
                 Just action ->
-                    OnEditInput { poll | action = actionId, filters = (emptyStringList action) }
+                    OnEditInput { data | action = actionId, filters = (emptyStringList action) } []
 
                 Nothing ->
                     -- Should not happen
-                    OnEditInput { poll | action = actionId }
+                    OnEditInput { data | action = actionId } []
     in
         actionList
             |> List.map item
-            |> (::) (header poll)
+            |> (::) header
             |> Select.select
                 [ Select.id "poll-action"
                 , Select.onInput onInputMessage
                 ]
 
 
-actionPreview : Maybe Action -> Poll -> Html (Msg Poll)
+actionPreview : Maybe (Repo.Entity Action) -> Repo.Entity Poll -> Html (Msg Poll)
 actionPreview maybeAction poll =
     let
         previewOrError =
@@ -198,7 +200,7 @@ actionPreview maybeAction poll =
                 Nothing ->
                     Alert.danger [ text "Cannot find action!" ]
     in
-        case poll.action of
+        case poll.data.action of
             "" ->
                 -- dummyPoll
                 text ""
@@ -207,20 +209,20 @@ actionPreview maybeAction poll =
                 previewOrError
 
 
-filterInput : Maybe Action -> Poll -> List (Html (Msg Poll))
-filterInput maybeAction poll =
+filterInput : Maybe (Repo.Entity Action) -> Repo.Entity Poll -> List (Html (Msg Poll))
+filterInput maybeAction { data } =
     let
         variableAndFilterPairs action =
-            LE.zip action.bodyTemplate.variables poll.filters
+            LE.zip action.data.bodyTemplate.variables data.filters
 
         onInputMessage index newFilter =
-            case LE.setAt index newFilter poll.filters of
+            case LE.setAt index newFilter data.filters of
                 Just newFilters ->
-                    OnEditInput { poll | filters = newFilters }
+                    OnEditInput { data | filters = newFilters } []
 
                 Nothing ->
                     -- Should not happen
-                    OnEditInput poll
+                    OnEditInput data []
 
         inputgroup index ( variable, currentFilter ) =
             InputGroup.text
@@ -247,7 +249,7 @@ filterInput maybeAction poll =
                 Nothing ->
                     [ Alert.danger [ text "Cannot find action!" ] ]
     in
-        case poll.action of
+        case data.action of
             "" ->
                 -- dummyPoll
                 [ Alert.info [ text "No variables." ] ]

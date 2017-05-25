@@ -1,7 +1,6 @@
 module Utils
     exposing
-        ( EntityId
-        , Timestamp
+        ( Timestamp
         , Url
         , ErrorMessage
         , timestampToString
@@ -9,10 +8,7 @@ module Utils
         )
 
 import Date
-
-
-type alias EntityId =
-    String
+import Json.Decode as Decode
 
 
 type alias Timestamp =

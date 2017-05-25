@@ -10,12 +10,13 @@ module Polls
         )
 
 import Set exposing (Set)
+import Dict
 import Json.Decode as Decode
-import Utils exposing (..)
-import Resource exposing (Resource)
-import Resource.Command exposing (Config)
-import Resource.Messages exposing (Msg)
-import Resource.Update
+import Utils
+import Repo exposing (Repo)
+import Repo.Command exposing (Config)
+import Repo.Messages exposing (Msg)
+import Repo.Update
 
 
 -- Model
@@ -30,25 +31,24 @@ type alias JqFilter =
 
 
 type alias Poll =
-    { id : EntityId
-    , updatedAt : Timestamp
-    , url : Url
+    { url : Utils.Url
     , interval : Interval
-    , auth : Maybe EntityId
-    , action : EntityId
+    , auth : Maybe Repo.EntityId
+    , action : Repo.EntityId
     , filters : List JqFilter
     }
 
 
 dummyPoll : Poll
 dummyPoll =
-    Poll "" "2015-01-01T00:00:00Z" "https://example.com" "10" Nothing "" []
+    Poll "https://example.com" "10" Nothing "" []
 
 
-usedActionIds : List Poll -> Set EntityId
+usedActionIds : Repo.EntityDict Poll -> Set Repo.EntityId
 usedActionIds polls =
     polls
-        |> List.map .action
+        |> Dict.values
+        |> List.map (.data >> .action)
         |> Set.fromList
 
 
@@ -68,25 +68,23 @@ intervalToString interval =
 
 config : Config Poll
 config =
-    Config "/api/poll" fetchDecoder
+    Config "/api/poll" dataDecoder
 
 
-fetchDecoder : Decode.Decoder Poll
-fetchDecoder =
-    Decode.map7 Poll
-        (Decode.field "_id" Decode.string)
-        (Decode.field "updated_at" Decode.string)
-        (Decode.at [ "data", "url" ] Decode.string)
-        (Decode.at [ "data", "interval" ] Decode.string)
-        (Decode.at [ "data", "auth" ] (Decode.maybe Decode.string))
-        (Decode.at [ "data", "action" ] Decode.string)
-        (Decode.at [ "data", "filters" ] (Decode.list Decode.string))
+dataDecoder : Decode.Decoder Poll
+dataDecoder =
+    Decode.map5 Poll
+        (Decode.field "url" Decode.string)
+        (Decode.field "interval" Decode.string)
+        (Decode.field "auth" (Decode.maybe Decode.string))
+        (Decode.field "action" Decode.string)
+        (Decode.field "filters" (Decode.list Decode.string))
 
 
 
 -- Update
 
 
-update : Msg Poll -> Resource Poll -> ( Resource Poll, Cmd (Msg Poll) )
-update msg resource =
-    Resource.Update.update dummyPoll config msg resource
+update : Msg Poll -> Repo Poll -> ( Repo Poll, Cmd (Msg Poll) )
+update =
+    Repo.Update.update dummyPoll config

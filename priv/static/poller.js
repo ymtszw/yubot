@@ -14221,10 +14221,11 @@ var _rundis$elm_bootstrap$Bootstrap_Modal$footer = F3(
 				}));
 	});
 
-var _aYuMatsuzawa$yubot$Resource$sortList = F2(
-	function (_p0, list) {
+var _aYuMatsuzawa$yubot$Repo$dictToSortedList = F2(
+	function (_p0, dict) {
 		var _p1 = _p0;
 		var _p3 = _p1.property;
+		var list = _elm_lang$core$Dict$values(dict);
 		var _p2 = _p1.order;
 		if (_p2.ctor === 'Asc') {
 			return A2(_elm_lang$core$List$sortBy, _p3, list);
@@ -14233,36 +14234,64 @@ var _aYuMatsuzawa$yubot$Resource$sortList = F2(
 				A2(_elm_lang$core$List$sortBy, _p3, list));
 		}
 	});
-var _aYuMatsuzawa$yubot$Resource$Resource = F4(
-	function (a, b, c, d) {
-		return {list: a, listSort: b, deleteModal: c, editModal: d};
+var _aYuMatsuzawa$yubot$Repo$listToDict = function (entities) {
+	return _elm_lang$core$Dict$fromList(
+		A2(
+			_elm_lang$core$List$map,
+			function (e) {
+				return {ctor: '_Tuple2', _0: e.id, _1: e};
+			},
+			entities));
+};
+var _aYuMatsuzawa$yubot$Repo$Repo = F5(
+	function (a, b, c, d, e) {
+		return {dict: a, sort: b, deleteModal: c, dirty: d, errorMessages: e};
 	});
-var _aYuMatsuzawa$yubot$Resource$Sorter = F2(
+var _aYuMatsuzawa$yubot$Repo$Entity = F3(
+	function (a, b, c) {
+		return {id: a, updatedAt: b, data: c};
+	});
+var _aYuMatsuzawa$yubot$Repo$dummyEntity = function (data) {
+	return A3(_aYuMatsuzawa$yubot$Repo$Entity, '', '2015-01-01T00:00:00+00:00', data);
+};
+var _aYuMatsuzawa$yubot$Repo$Sorter = F2(
 	function (a, b) {
 		return {property: a, order: b};
 	});
-var _aYuMatsuzawa$yubot$Resource$ModalState = F3(
-	function (a, b, c) {
-		return {modalState: a, target: b, errorMessages: c};
+var _aYuMatsuzawa$yubot$Repo$ModalState = F2(
+	function (a, b) {
+		return {modalState: a, target: b};
 	});
-var _aYuMatsuzawa$yubot$Resource$initialResource = function (dummyResource) {
-	return A4(
-		_aYuMatsuzawa$yubot$Resource$Resource,
-		{ctor: '[]'},
-		_elm_lang$core$Maybe$Nothing,
-		A3(
-			_aYuMatsuzawa$yubot$Resource$ModalState,
-			_rundis$elm_bootstrap$Bootstrap_Modal$hiddenState,
-			dummyResource,
-			{ctor: '[]'}),
-		A3(
-			_aYuMatsuzawa$yubot$Resource$ModalState,
-			_rundis$elm_bootstrap$Bootstrap_Modal$hiddenState,
-			dummyResource,
-			{ctor: '[]'}));
+var _aYuMatsuzawa$yubot$Repo$Desc = {ctor: 'Desc'};
+var _aYuMatsuzawa$yubot$Repo$Asc = {ctor: 'Asc'};
+var _aYuMatsuzawa$yubot$Repo$populate = F2(
+	function (entities, dummyData) {
+		return A5(
+			_aYuMatsuzawa$yubot$Repo$Repo,
+			_aYuMatsuzawa$yubot$Repo$listToDict(entities),
+			A2(
+				_aYuMatsuzawa$yubot$Repo$Sorter,
+				function (_) {
+					return _.id;
+				},
+				_aYuMatsuzawa$yubot$Repo$Asc),
+			A2(
+				_aYuMatsuzawa$yubot$Repo$ModalState,
+				_rundis$elm_bootstrap$Bootstrap_Modal$hiddenState,
+				_aYuMatsuzawa$yubot$Repo$dummyEntity(dummyData)),
+			_aYuMatsuzawa$yubot$Repo$dummyEntity(dummyData),
+			{ctor: '[]'});
+	});
+var _aYuMatsuzawa$yubot$Repo$initialize = _aYuMatsuzawa$yubot$Repo$populate(
+	{ctor: '[]'});
+var _aYuMatsuzawa$yubot$Repo$toggleOrder = function (oldOrder) {
+	var _p4 = oldOrder;
+	if (_p4.ctor === 'Asc') {
+		return _aYuMatsuzawa$yubot$Repo$Desc;
+	} else {
+		return _aYuMatsuzawa$yubot$Repo$Asc;
+	}
 };
-var _aYuMatsuzawa$yubot$Resource$Desc = {ctor: 'Desc'};
-var _aYuMatsuzawa$yubot$Resource$Asc = {ctor: 'Asc'};
 
 var _elm_lang$http$Native_Http = function() {
 
@@ -14825,62 +14854,67 @@ var _lukewestby$elm_http_builder$HttpBuilder$RequestBuilder = F9(
 		return {method: a, headers: b, url: c, body: d, expect: e, timeout: f, withCredentials: g, queryParams: h, cacheBuster: i};
 	});
 
-var _aYuMatsuzawa$yubot$Resource_Messages$OnEditInputWithError = F2(
-	function (a, b) {
-		return {ctor: 'OnEditInputWithError', _0: a, _1: b};
-	});
-var _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput = function (a) {
-	return {ctor: 'OnEditInput', _0: a};
+var _aYuMatsuzawa$yubot$Repo_Messages$ChangeLocation = function (a) {
+	return {ctor: 'ChangeLocation', _0: a};
 };
-var _aYuMatsuzawa$yubot$Resource_Messages$OnEditModal = F2(
+var _aYuMatsuzawa$yubot$Repo_Messages$OnEditInput = F2(
 	function (a, b) {
-		return {ctor: 'OnEditModal', _0: a, _1: b};
+		return {ctor: 'OnEditInput', _0: a, _1: b};
 	});
-var _aYuMatsuzawa$yubot$Resource_Messages$OnDelete = function (a) {
+var _aYuMatsuzawa$yubot$Repo_Messages$OnDelete = function (a) {
 	return {ctor: 'OnDelete', _0: a};
 };
-var _aYuMatsuzawa$yubot$Resource_Messages$OnDeleteConfirmed = function (a) {
+var _aYuMatsuzawa$yubot$Repo_Messages$OnDeleteConfirmed = function (a) {
 	return {ctor: 'OnDeleteConfirmed', _0: a};
 };
-var _aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal = F2(
+var _aYuMatsuzawa$yubot$Repo_Messages$OnDeleteModal = F2(
 	function (a, b) {
 		return {ctor: 'OnDeleteModal', _0: a, _1: b};
 	});
-var _aYuMatsuzawa$yubot$Resource_Messages$OnSort = function (a) {
+var _aYuMatsuzawa$yubot$Repo_Messages$OnSort = function (a) {
 	return {ctor: 'OnSort', _0: a};
 };
-var _aYuMatsuzawa$yubot$Resource_Messages$OnFetchAll = function (a) {
+var _aYuMatsuzawa$yubot$Repo_Messages$OnFetchAll = function (a) {
 	return {ctor: 'OnFetchAll', _0: a};
 };
 
-var _aYuMatsuzawa$yubot$Resource_Command$delete = F2(
+var _aYuMatsuzawa$yubot$Repo_Command$delete = F2(
 	function (config, id) {
 		return A2(
 			_lukewestby$elm_http_builder$HttpBuilder$send,
-			_aYuMatsuzawa$yubot$Resource_Messages$OnDelete,
+			_aYuMatsuzawa$yubot$Repo_Messages$OnDelete,
 			_lukewestby$elm_http_builder$HttpBuilder$delete(
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					config.resourcePath,
+					config.repoPath,
 					A2(_elm_lang$core$Basics_ops['++'], '/', id))));
 	});
-var _aYuMatsuzawa$yubot$Resource_Command$fetchAll = function (config) {
+var _aYuMatsuzawa$yubot$Repo_Command$entityDecoder = function (dataDecoder) {
+	return A4(
+		_elm_lang$core$Json_Decode$map3,
+		_aYuMatsuzawa$yubot$Repo$Entity,
+		A2(_elm_lang$core$Json_Decode$field, '_id', _elm_lang$core$Json_Decode$string),
+		A2(_elm_lang$core$Json_Decode$field, 'updated_at', _elm_lang$core$Json_Decode$string),
+		A2(_elm_lang$core$Json_Decode$field, 'data', dataDecoder));
+};
+var _aYuMatsuzawa$yubot$Repo_Command$fetchAll = function (config) {
 	return A2(
 		_lukewestby$elm_http_builder$HttpBuilder$send,
-		_aYuMatsuzawa$yubot$Resource_Messages$OnFetchAll,
+		_aYuMatsuzawa$yubot$Repo_Messages$OnFetchAll,
 		A2(
 			_lukewestby$elm_http_builder$HttpBuilder$withExpect,
 			_elm_lang$http$Http$expectJson(
-				_elm_lang$core$Json_Decode$list(config.fetchDecoder)),
-			_lukewestby$elm_http_builder$HttpBuilder$get(config.resourcePath)));
+				_elm_lang$core$Json_Decode$list(
+					_aYuMatsuzawa$yubot$Repo_Command$entityDecoder(config.dataDecoder))),
+			_lukewestby$elm_http_builder$HttpBuilder$get(config.repoPath)));
 };
-var _aYuMatsuzawa$yubot$Resource_Command$Config = F2(
+var _aYuMatsuzawa$yubot$Repo_Command$Config = F2(
 	function (a, b) {
-		return {resourcePath: a, fetchDecoder: b};
+		return {repoPath: a, dataDecoder: b};
 	});
 
-var _aYuMatsuzawa$yubot$Resource_Update$update = F4(
-	function (dummyResource, config, msg, rs) {
+var _aYuMatsuzawa$yubot$Repo_Update$update = F4(
+	function (dummyData, config, msg, repo) {
 		var _p0 = msg;
 		switch (_p0.ctor) {
 			case 'OnFetchAll':
@@ -14888,36 +14922,30 @@ var _aYuMatsuzawa$yubot$Resource_Update$update = F4(
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
-							rs,
-							{list: _p0._0._0}),
+							repo,
+							{
+								dict: _aYuMatsuzawa$yubot$Repo$listToDict(_p0._0._0)
+							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
-					return {ctor: '_Tuple2', _0: rs, _1: _elm_lang$core$Platform_Cmd$none};
+					return {ctor: '_Tuple2', _0: repo, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 			case 'OnSort':
-				var _p1 = _p0._0;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						rs,
-						{
-							listSort: _elm_lang$core$Maybe$Just(_p1),
-							list: A2(_aYuMatsuzawa$yubot$Resource$sortList, _p1, rs.list)
-						}),
+						repo,
+						{sort: _p0._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'OnDeleteModal':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						rs,
+						repo,
 						{
-							deleteModal: A3(
-								_aYuMatsuzawa$yubot$Resource$ModalState,
-								_p0._0,
-								_p0._1,
-								{ctor: '[]'})
+							deleteModal: A2(_aYuMatsuzawa$yubot$Repo$ModalState, _p0._0, _p0._1)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -14925,70 +14953,41 @@ var _aYuMatsuzawa$yubot$Resource_Update$update = F4(
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						rs,
+						repo,
 						{
-							deleteModal: A3(
-								_aYuMatsuzawa$yubot$Resource$ModalState,
+							deleteModal: A2(
+								_aYuMatsuzawa$yubot$Repo$ModalState,
 								_rundis$elm_bootstrap$Bootstrap_Modal$hiddenState,
-								dummyResource,
-								{ctor: '[]'})
+								_aYuMatsuzawa$yubot$Repo$dummyEntity(dummyData))
 						}),
-					_1: A2(_aYuMatsuzawa$yubot$Resource_Command$delete, config, _p0._0)
+					_1: A2(_aYuMatsuzawa$yubot$Repo_Command$delete, config, _p0._0)
 				};
 			case 'OnDelete':
 				if (_p0._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
-						_0: rs,
-						_1: _aYuMatsuzawa$yubot$Resource_Command$fetchAll(config)
+						_0: repo,
+						_1: _aYuMatsuzawa$yubot$Repo_Command$fetchAll(config)
 					};
 				} else {
-					return {ctor: '_Tuple2', _0: rs, _1: _elm_lang$core$Platform_Cmd$none};
+					return {ctor: '_Tuple2', _0: repo, _1: _elm_lang$core$Platform_Cmd$none};
 				}
-			case 'OnEditModal':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						rs,
-						{
-							editModal: A3(
-								_aYuMatsuzawa$yubot$Resource$ModalState,
-								_p0._0,
-								_p0._1,
-								{ctor: '[]'})
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
 			case 'OnEditInput':
+				var oldDirty = repo.dirty;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						rs,
+						repo,
 						{
-							editModal: A3(
-								_aYuMatsuzawa$yubot$Resource$ModalState,
-								rs.editModal.modalState,
-								_p0._0,
-								{ctor: '[]'})
+							dirty: _elm_lang$core$Native_Utils.update(
+								oldDirty,
+								{data: _p0._0}),
+							errorMessages: _p0._1
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
-				var oldErrors = rs.editModal.errorMessages;
-				var oldState = rs.editModal.modalState;
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						rs,
-						{
-							editModal: A3(
-								_aYuMatsuzawa$yubot$Resource$ModalState,
-								oldState,
-								_p0._0,
-								{ctor: '::', _0: _p0._1, _1: oldErrors})
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+				return {ctor: '_Tuple2', _0: repo, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
 
@@ -16536,15 +16535,13 @@ var _aYuMatsuzawa$yubot$Actions$bodyTemplateDecoder = A3(
 		_elm_lang$core$Json_Decode$field,
 		'variables',
 		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
-var _aYuMatsuzawa$yubot$Actions$Action = F8(
-	function (a, b, c, d, e, f, g, h) {
-		return {id: a, updatedAt: b, label: c, method: d, url: e, auth: f, bodyTemplate: g, type_: h};
+var _aYuMatsuzawa$yubot$Actions$Action = F6(
+	function (a, b, c, d, e, f) {
+		return {label: a, method: b, url: c, auth: d, bodyTemplate: e, type_: f};
 	});
 var _aYuMatsuzawa$yubot$Actions$Http = {ctor: 'Http'};
-var _aYuMatsuzawa$yubot$Actions$dummyAction = A8(
+var _aYuMatsuzawa$yubot$Actions$dummyAction = A6(
 	_aYuMatsuzawa$yubot$Actions$Action,
-	'',
-	'2015-01-01T00:00:00Z',
 	_elm_lang$core$Maybe$Nothing,
 	'post',
 	'https://example.com',
@@ -16566,87 +16563,25 @@ var _aYuMatsuzawa$yubot$Actions$typeDecoder = function () {
 	};
 	return A2(_elm_lang$core$Json_Decode$map, stringToType, _elm_lang$core$Json_Decode$string);
 }();
-var _aYuMatsuzawa$yubot$Actions$fetchDecoder = A9(
-	_elm_lang$core$Json_Decode$map8,
+var _aYuMatsuzawa$yubot$Actions$dataDecoder = A7(
+	_elm_lang$core$Json_Decode$map6,
 	_aYuMatsuzawa$yubot$Actions$Action,
-	A2(_elm_lang$core$Json_Decode$field, '_id', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'updated_at', _elm_lang$core$Json_Decode$string),
 	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'label',
-				_1: {ctor: '[]'}
-			}
-		},
+		_elm_lang$core$Json_Decode$field,
+		'label',
 		_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$string)),
+	A2(_elm_lang$core$Json_Decode$field, 'method', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'url', _elm_lang$core$Json_Decode$string),
 	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'method',
-				_1: {ctor: '[]'}
-			}
-		},
-		_elm_lang$core$Json_Decode$string),
-	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'url',
-				_1: {ctor: '[]'}
-			}
-		},
-		_elm_lang$core$Json_Decode$string),
-	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'auth',
-				_1: {ctor: '[]'}
-			}
-		},
+		_elm_lang$core$Json_Decode$field,
+		'auth',
 		_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$string)),
-	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'body_template',
-				_1: {ctor: '[]'}
-			}
-		},
-		_aYuMatsuzawa$yubot$Actions$bodyTemplateDecoder),
-	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'type',
-				_1: {ctor: '[]'}
-			}
-		},
-		_aYuMatsuzawa$yubot$Actions$typeDecoder));
-var _aYuMatsuzawa$yubot$Actions$config = A2(_aYuMatsuzawa$yubot$Resource_Command$Config, '/api/action', _aYuMatsuzawa$yubot$Actions$fetchDecoder);
+	A2(_elm_lang$core$Json_Decode$field, 'body_template', _aYuMatsuzawa$yubot$Actions$bodyTemplateDecoder),
+	A2(_elm_lang$core$Json_Decode$field, 'type', _aYuMatsuzawa$yubot$Actions$typeDecoder));
+var _aYuMatsuzawa$yubot$Actions$config = A2(_aYuMatsuzawa$yubot$Repo_Command$Config, '/api/action', _aYuMatsuzawa$yubot$Actions$dataDecoder);
 var _aYuMatsuzawa$yubot$Actions$update = F2(
 	function (msg, resource) {
-		return A4(_aYuMatsuzawa$yubot$Resource_Update$update, _aYuMatsuzawa$yubot$Actions$dummyAction, _aYuMatsuzawa$yubot$Actions$config, msg, resource);
+		return A4(_aYuMatsuzawa$yubot$Repo_Update$update, _aYuMatsuzawa$yubot$Actions$dummyAction, _aYuMatsuzawa$yubot$Actions$config, msg, resource);
 	});
 
 var _rundis$elm_bootstrap$Bootstrap_Internal_Button$roleClass = function (role) {
@@ -19778,100 +19713,49 @@ var _aYuMatsuzawa$yubot$Polls$usedActionIds = function (polls) {
 	return _elm_lang$core$Set$fromList(
 		A2(
 			_elm_lang$core$List$map,
-			function (_) {
-				return _.action;
+			function (_p1) {
+				return function (_) {
+					return _.action;
+				}(
+					function (_) {
+						return _.data;
+					}(_p1));
 			},
-			polls));
+			_elm_lang$core$Dict$values(polls)));
 };
-var _aYuMatsuzawa$yubot$Polls$Poll = F7(
-	function (a, b, c, d, e, f, g) {
-		return {id: a, updatedAt: b, url: c, interval: d, auth: e, action: f, filters: g};
+var _aYuMatsuzawa$yubot$Polls$Poll = F5(
+	function (a, b, c, d, e) {
+		return {url: a, interval: b, auth: c, action: d, filters: e};
 	});
-var _aYuMatsuzawa$yubot$Polls$dummyPoll = A7(
+var _aYuMatsuzawa$yubot$Polls$dummyPoll = A5(
 	_aYuMatsuzawa$yubot$Polls$Poll,
-	'',
-	'2015-01-01T00:00:00Z',
 	'https://example.com',
 	'10',
 	_elm_lang$core$Maybe$Nothing,
 	'',
 	{ctor: '[]'});
-var _aYuMatsuzawa$yubot$Polls$fetchDecoder = A8(
-	_elm_lang$core$Json_Decode$map7,
+var _aYuMatsuzawa$yubot$Polls$dataDecoder = A6(
+	_elm_lang$core$Json_Decode$map5,
 	_aYuMatsuzawa$yubot$Polls$Poll,
-	A2(_elm_lang$core$Json_Decode$field, '_id', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'updated_at', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'url', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'interval', _elm_lang$core$Json_Decode$string),
 	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'url',
-				_1: {ctor: '[]'}
-			}
-		},
-		_elm_lang$core$Json_Decode$string),
-	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'interval',
-				_1: {ctor: '[]'}
-			}
-		},
-		_elm_lang$core$Json_Decode$string),
-	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'auth',
-				_1: {ctor: '[]'}
-			}
-		},
+		_elm_lang$core$Json_Decode$field,
+		'auth',
 		_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$string)),
+	A2(_elm_lang$core$Json_Decode$field, 'action', _elm_lang$core$Json_Decode$string),
 	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'action',
-				_1: {ctor: '[]'}
-			}
-		},
-		_elm_lang$core$Json_Decode$string),
-	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'filters',
-				_1: {ctor: '[]'}
-			}
-		},
+		_elm_lang$core$Json_Decode$field,
+		'filters',
 		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
-var _aYuMatsuzawa$yubot$Polls$config = A2(_aYuMatsuzawa$yubot$Resource_Command$Config, '/api/poll', _aYuMatsuzawa$yubot$Polls$fetchDecoder);
-var _aYuMatsuzawa$yubot$Polls$update = F2(
-	function (msg, resource) {
-		return A4(_aYuMatsuzawa$yubot$Resource_Update$update, _aYuMatsuzawa$yubot$Polls$dummyPoll, _aYuMatsuzawa$yubot$Polls$config, msg, resource);
-	});
+var _aYuMatsuzawa$yubot$Polls$config = A2(_aYuMatsuzawa$yubot$Repo_Command$Config, '/api/poll', _aYuMatsuzawa$yubot$Polls$dataDecoder);
+var _aYuMatsuzawa$yubot$Polls$update = A2(_aYuMatsuzawa$yubot$Repo_Update$update, _aYuMatsuzawa$yubot$Polls$dummyPoll, _aYuMatsuzawa$yubot$Polls$config);
 
 var _aYuMatsuzawa$yubot$Authentications$listForPoll = function (authList) {
 	var filterFun = function (auth) {
 		return A2(
 			_elm_lang$core$List$member,
-			auth.type_,
+			auth.data.type_,
 			{
 				ctor: '::',
 				_0: 'raw',
@@ -19884,56 +19768,21 @@ var _aYuMatsuzawa$yubot$Authentications$listForPoll = function (authList) {
 	};
 	return A2(_elm_lang$core$List$filter, filterFun, authList);
 };
-var _aYuMatsuzawa$yubot$Authentications$Authentication = F5(
-	function (a, b, c, d, e) {
-		return {id: a, updatedAt: b, name: c, type_: d, token: e};
+var _aYuMatsuzawa$yubot$Authentications$Authentication = F3(
+	function (a, b, c) {
+		return {name: a, type_: b, token: c};
 	});
-var _aYuMatsuzawa$yubot$Authentications$dummyAuthentication = A5(_aYuMatsuzawa$yubot$Authentications$Authentication, '', '2015-01-01T00:00:00Z', '', '', '');
-var _aYuMatsuzawa$yubot$Authentications$fetchDecoder = A6(
-	_elm_lang$core$Json_Decode$map5,
+var _aYuMatsuzawa$yubot$Authentications$dummyAuthentication = A3(_aYuMatsuzawa$yubot$Authentications$Authentication, '', '', '');
+var _aYuMatsuzawa$yubot$Authentications$dataDecoder = A4(
+	_elm_lang$core$Json_Decode$map3,
 	_aYuMatsuzawa$yubot$Authentications$Authentication,
-	A2(_elm_lang$core$Json_Decode$field, '_id', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'updated_at', _elm_lang$core$Json_Decode$string),
-	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'name',
-				_1: {ctor: '[]'}
-			}
-		},
-		_elm_lang$core$Json_Decode$string),
-	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'type',
-				_1: {ctor: '[]'}
-			}
-		},
-		_elm_lang$core$Json_Decode$string),
-	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'data',
-			_1: {
-				ctor: '::',
-				_0: 'token',
-				_1: {ctor: '[]'}
-			}
-		},
-		_elm_lang$core$Json_Decode$string));
-var _aYuMatsuzawa$yubot$Authentications$config = A2(_aYuMatsuzawa$yubot$Resource_Command$Config, '/api/authentication', _aYuMatsuzawa$yubot$Authentications$fetchDecoder);
+	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'type', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'token', _elm_lang$core$Json_Decode$string));
+var _aYuMatsuzawa$yubot$Authentications$config = A2(_aYuMatsuzawa$yubot$Repo_Command$Config, '/api/authentication', _aYuMatsuzawa$yubot$Authentications$dataDecoder);
 var _aYuMatsuzawa$yubot$Authentications$update = F2(
 	function (msg, resource) {
-		return A4(_aYuMatsuzawa$yubot$Resource_Update$update, _aYuMatsuzawa$yubot$Authentications$dummyAuthentication, _aYuMatsuzawa$yubot$Authentications$config, msg, resource);
+		return A4(_aYuMatsuzawa$yubot$Repo_Update$update, _aYuMatsuzawa$yubot$Authentications$dummyAuthentication, _aYuMatsuzawa$yubot$Authentications$config, msg, resource);
 	});
 
 var _aYuMatsuzawa$yubot$Poller_Messages$OnLocationChange = function (a) {
@@ -19942,6 +19791,15 @@ var _aYuMatsuzawa$yubot$Poller_Messages$OnLocationChange = function (a) {
 var _aYuMatsuzawa$yubot$Poller_Messages$ChangeLocation = function (a) {
 	return {ctor: 'ChangeLocation', _0: a};
 };
+var _aYuMatsuzawa$yubot$Poller_Messages$fromRepo = F2(
+	function (fallbackMapper, subMsg) {
+		var _p0 = subMsg;
+		if (_p0.ctor === 'ChangeLocation') {
+			return _aYuMatsuzawa$yubot$Poller_Messages$ChangeLocation(_p0._0);
+		} else {
+			return fallbackMapper(_p0);
+		}
+	});
 var _aYuMatsuzawa$yubot$Poller_Messages$NavbarMsg = function (a) {
 	return {ctor: 'NavbarMsg', _0: a};
 };
@@ -20051,27 +19909,15 @@ var _aYuMatsuzawa$yubot$Html_Utils$navigateOnClick = function (url) {
 	};
 };
 var _aYuMatsuzawa$yubot$Html_Utils$toggleSortOnClick = F2(
-	function (newProperty, maybeSorter) {
-		var newOrder = function () {
-			var _p0 = maybeSorter;
-			if (_p0.ctor === 'Nothing') {
-				return _aYuMatsuzawa$yubot$Resource$Asc;
-			} else {
-				var _p1 = _p0._0.order;
-				if (_p1.ctor === 'Asc') {
-					return _aYuMatsuzawa$yubot$Resource$Desc;
-				} else {
-					return _aYuMatsuzawa$yubot$Resource$Asc;
-				}
-			}
-		}();
+	function (newProperty, sorter) {
+		var newOrder = _aYuMatsuzawa$yubot$Repo$toggleOrder(sorter.order);
 		return _elm_lang$html$Html_Events$onClick(
-			_aYuMatsuzawa$yubot$Resource_Messages$OnSort(
-				A2(_aYuMatsuzawa$yubot$Resource$Sorter, newProperty, newOrder)));
+			_aYuMatsuzawa$yubot$Repo_Messages$OnSort(
+				A2(_aYuMatsuzawa$yubot$Repo$Sorter, newProperty, newOrder)));
 	});
 var _aYuMatsuzawa$yubot$Html_Utils$errorAlert = function (errors) {
-	var alert = function (_p2) {
-		var _p3 = _p2;
+	var alert = function (_p0) {
+		var _p1 = _p0;
 		return _rundis$elm_bootstrap$Bootstrap_Alert$danger(
 			{
 				ctor: '::',
@@ -20084,18 +19930,18 @@ var _aYuMatsuzawa$yubot$Html_Utils$errorAlert = function (errors) {
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								'[',
-								A2(_elm_lang$core$Basics_ops['++'], _p3._0, '] '))),
+								A2(_elm_lang$core$Basics_ops['++'], _p1._0, '] '))),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(_p3._1),
+					_0: _elm_lang$html$Html$text(_p1._1),
 					_1: {ctor: '[]'}
 				}
 			});
 	};
-	var _p4 = errors;
-	if (_p4.ctor === '[]') {
+	var _p2 = errors;
+	if (_p2.ctor === '[]') {
 		return _elm_lang$html$Html$text('');
 	} else {
 		return A2(
@@ -20141,8 +19987,8 @@ var _aYuMatsuzawa$yubot$Html_Utils$highlightVariablesImpl = F2(
 		while (true) {
 			var leftToHtml = F3(
 				function (string, matchedVar, index) {
-					var _p5 = index;
-					if (_p5 === 0) {
+					var _p3 = index;
+					if (_p3 === 0) {
 						return {
 							ctor: '_Tuple2',
 							_0: {
@@ -20201,12 +20047,12 @@ var _aYuMatsuzawa$yubot$Html_Utils$highlightVariablesImpl = F2(
 				_elm_lang$core$Regex$find,
 				_elm_lang$core$Regex$AtMost(1),
 				_elm_lang$core$Regex$regex('#\\{(.*?)\\}'));
-			var _p6 = bodyTail;
-			if (_p6 === '') {
+			var _p4 = bodyTail;
+			if (_p4 === '') {
 				return htmls;
 			} else {
-				var _p7 = findFirst(bodyTail);
-				if (_p7.ctor === '[]') {
+				var _p5 = findFirst(bodyTail);
+				if (_p5.ctor === '[]') {
 					return A2(
 						_elm_lang$core$Basics_ops['++'],
 						htmls,
@@ -20216,13 +20062,13 @@ var _aYuMatsuzawa$yubot$Html_Utils$highlightVariablesImpl = F2(
 							_1: {ctor: '[]'}
 						});
 				} else {
-					var _p8 = A3(leftToHtml, bodyTail, _p7._0.match, _p7._0.index);
-					var newHtmls = _p8._0;
-					var newTail = _p8._1;
-					var _v7 = newTail,
-						_v8 = A2(_elm_lang$core$Basics_ops['++'], htmls, newHtmls);
-					bodyTail = _v7;
-					htmls = _v8;
+					var _p6 = A3(leftToHtml, bodyTail, _p5._0.match, _p5._0.index);
+					var newHtmls = _p6._0;
+					var newTail = _p6._1;
+					var _v5 = newTail,
+						_v6 = A2(_elm_lang$core$Basics_ops['++'], htmls, newHtmls);
+					bodyTail = _v5;
+					htmls = _v6;
 					continue highlightVariablesImpl;
 				}
 			}
@@ -20240,8 +20086,8 @@ var _aYuMatsuzawa$yubot$Html_Utils$atextImpl = F2(
 		while (true) {
 			var leftToHtml = F3(
 				function (string, matchedUrl, index) {
-					var _p9 = index;
-					if (_p9 === 0) {
+					var _p7 = index;
+					if (_p7 === 0) {
 						return {
 							ctor: '_Tuple2',
 							_0: {
@@ -20300,12 +20146,12 @@ var _aYuMatsuzawa$yubot$Html_Utils$atextImpl = F2(
 				_elm_lang$core$Regex$find,
 				_elm_lang$core$Regex$AtMost(1),
 				_elm_lang$core$Regex$regex('http(s)?://[a-zA-Z0-9_./#?&%=~+-]+'));
-			var _p10 = string;
-			if (_p10 === '') {
+			var _p8 = string;
+			if (_p8 === '') {
 				return htmls;
 			} else {
-				var _p11 = findFirst(string);
-				if (_p11.ctor === '[]') {
+				var _p9 = findFirst(string);
+				if (_p9.ctor === '[]') {
 					return A2(
 						_elm_lang$core$Basics_ops['++'],
 						htmls,
@@ -20315,13 +20161,13 @@ var _aYuMatsuzawa$yubot$Html_Utils$atextImpl = F2(
 							_1: {ctor: '[]'}
 						});
 				} else {
-					var _p12 = A3(leftToHtml, string, _p11._0.match, _p11._0.index);
-					var newHtmls = _p12._0;
-					var tailString = _p12._1;
-					var _v12 = tailString,
-						_v13 = A2(_elm_lang$core$Basics_ops['++'], htmls, newHtmls);
-					string = _v12;
-					htmls = _v13;
+					var _p10 = A3(leftToHtml, string, _p9._0.match, _p9._0.index);
+					var newHtmls = _p10._0;
+					var tailString = _p10._1;
+					var _v10 = tailString,
+						_v11 = A2(_elm_lang$core$Basics_ops['++'], htmls, newHtmls);
+					string = _v10;
+					htmls = _v11;
 					continue atextImpl;
 				}
 			}
@@ -22176,8 +22022,8 @@ var _aYuMatsuzawa$yubot$Actions_View$preview = function (action) {
 							_aYuMatsuzawa$yubot$Html_Utils$atext(
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$String$toUpper(action.method),
-									A2(_elm_lang$core$Basics_ops['++'], ' ', action.url)))),
+									_elm_lang$core$String$toUpper(action.data.method),
+									A2(_elm_lang$core$Basics_ops['++'], ' ', action.data.url)))),
 						_1: {ctor: '[]'}
 					}
 				}),
@@ -22198,23 +22044,15 @@ var _aYuMatsuzawa$yubot$Actions_View$preview = function (action) {
 							}
 						}
 					},
-					_aYuMatsuzawa$yubot$Html_Utils$highlightVariables(action.bodyTemplate.body)),
+					_aYuMatsuzawa$yubot$Html_Utils$highlightVariables(action.data.bodyTemplate.body)),
 				_1: {
 					ctor: '::',
-					_0: _aYuMatsuzawa$yubot$Actions_View$variableList(action.bodyTemplate.variables),
+					_0: _aYuMatsuzawa$yubot$Actions_View$variableList(action.data.bodyTemplate.variables),
 					_1: {ctor: '[]'}
 				}
 			}
 		});
 };
-var _aYuMatsuzawa$yubot$Actions_View$editActionButton = F3(
-	function (action, options, string) {
-		return A3(
-			_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-			A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, action),
-			options,
-			string);
-	});
 var _aYuMatsuzawa$yubot$Actions_View$actionRow = F2(
 	function (usedActionIds, action) {
 		var _p1 = A2(_elm_lang$core$Set$member, action.id, usedActionIds) ? {
@@ -22255,7 +22093,7 @@ var _aYuMatsuzawa$yubot$Actions_View$actionRow = F2(
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html$text(
-							_elm_lang$core$String$toUpper(action.method)),
+							_elm_lang$core$String$toUpper(action.data.method)),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
@@ -22263,7 +22101,7 @@ var _aYuMatsuzawa$yubot$Actions_View$actionRow = F2(
 					_0: A2(
 						_rundis$elm_bootstrap$Bootstrap_Table$td,
 						{ctor: '[]'},
-						_aYuMatsuzawa$yubot$Html_Utils$atext(action.url)),
+						_aYuMatsuzawa$yubot$Html_Utils$atext(action.data.url)),
 					_1: {
 						ctor: '::',
 						_0: A2(
@@ -22283,27 +22121,11 @@ var _aYuMatsuzawa$yubot$Actions_View$actionRow = F2(
 								{
 									ctor: '::',
 									_0: A3(
-										_aYuMatsuzawa$yubot$Actions_View$editActionButton,
-										action,
-										{
-											ctor: '::',
-											_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
-											_1: {
-												ctor: '::',
-												_0: _rundis$elm_bootstrap$Bootstrap_Button$small,
-												_1: {ctor: '[]'}
-											}
-										},
-										'Update'),
-									_1: {
-										ctor: '::',
-										_0: A3(
-											_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-											A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, action),
-											deleteButtonOptions,
-											deleteButtonString),
-										_1: {ctor: '[]'}
-									}
+										_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+										A2(_aYuMatsuzawa$yubot$Repo_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, action),
+										deleteButtonOptions,
+										deleteButtonString),
+									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}
 						}
@@ -22312,14 +22134,14 @@ var _aYuMatsuzawa$yubot$Actions_View$actionRow = F2(
 			});
 	});
 var _aYuMatsuzawa$yubot$Actions_View$rows = F2(
-	function (usedActionIds, actionRs) {
+	function (usedActionIds, actionRepo) {
 		return A2(
 			_elm_lang$core$List$map,
 			_aYuMatsuzawa$yubot$Actions_View$actionRow(usedActionIds),
-			actionRs.list);
+			A2(_aYuMatsuzawa$yubot$Repo$dictToSortedList, actionRepo.sort, actionRepo.dict));
 	});
 var _aYuMatsuzawa$yubot$Actions_View$listView = F2(
-	function (usedActionIds, actionRs) {
+	function (usedActionIds, actionRepo) {
 		return _rundis$elm_bootstrap$Bootstrap_Table$table(
 			{
 				options: {
@@ -22365,7 +22187,7 @@ var _aYuMatsuzawa$yubot$Actions_View$listView = F2(
 													function (_) {
 														return _.updatedAt;
 													},
-													actionRs.listSort),
+													actionRepo.sort),
 												_1: {ctor: '[]'}
 											}
 										}),
@@ -22392,7 +22214,7 @@ var _aYuMatsuzawa$yubot$Actions_View$listView = F2(
 				tbody: A2(
 					_rundis$elm_bootstrap$Bootstrap_Table$tbody,
 					{ctor: '[]'},
-					A2(_aYuMatsuzawa$yubot$Actions_View$rows, usedActionIds, actionRs))
+					A2(_aYuMatsuzawa$yubot$Actions_View$rows, usedActionIds, actionRepo))
 			});
 	});
 
@@ -22690,7 +22512,7 @@ var _aYuMatsuzawa$yubot$Authentications_View$authSelect = F4(
 			return _elm_lang$html$Html$text(
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					auth.name,
+					auth.data.name,
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						' (',
@@ -22826,7 +22648,7 @@ var _aYuMatsuzawa$yubot$Authentications_View$authRow = function (authentication)
 				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(authentication.name),
+					_0: _elm_lang$html$Html$text(authentication.data.name),
 					_1: {ctor: '[]'}
 				}),
 			_1: {
@@ -22836,7 +22658,7 @@ var _aYuMatsuzawa$yubot$Authentications_View$authRow = function (authentication)
 					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text(authentication.type_),
+						_0: _elm_lang$html$Html$text(authentication.data.type_),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
@@ -22859,7 +22681,7 @@ var _aYuMatsuzawa$yubot$Authentications_View$authRow = function (authentication)
 								ctor: '::',
 								_0: A3(
 									_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-									A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, authentication),
+									A2(_aYuMatsuzawa$yubot$Repo_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, authentication),
 									{
 										ctor: '::',
 										_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(true),
@@ -22869,24 +22691,8 @@ var _aYuMatsuzawa$yubot$Authentications_View$authRow = function (authentication)
 											_1: {ctor: '[]'}
 										}
 									},
-									'Update'),
-								_1: {
-									ctor: '::',
-									_0: A3(
-										_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-										A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, authentication),
-										{
-											ctor: '::',
-											_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(true),
-											_1: {
-												ctor: '::',
-												_0: _rundis$elm_bootstrap$Bootstrap_Button$small,
-												_1: {ctor: '[]'}
-											}
-										},
-										'Delete'),
-									_1: {ctor: '[]'}
-								}
+									'Delete'),
+								_1: {ctor: '[]'}
 							}),
 						_1: {ctor: '[]'}
 					}
@@ -22894,7 +22700,7 @@ var _aYuMatsuzawa$yubot$Authentications_View$authRow = function (authentication)
 			}
 		});
 };
-var _aYuMatsuzawa$yubot$Authentications_View$listView = function (authRs) {
+var _aYuMatsuzawa$yubot$Authentications_View$listView = function (authRepo) {
 	return _rundis$elm_bootstrap$Bootstrap_Table$table(
 		{
 			options: {
@@ -22940,7 +22746,7 @@ var _aYuMatsuzawa$yubot$Authentications_View$listView = function (authRs) {
 												function (_) {
 													return _.updatedAt;
 												},
-												authRs.listSort),
+												authRepo.sort),
 											_1: {ctor: '[]'}
 										}
 									}),
@@ -22967,30 +22773,43 @@ var _aYuMatsuzawa$yubot$Authentications_View$listView = function (authRs) {
 			tbody: A2(
 				_rundis$elm_bootstrap$Bootstrap_Table$tbody,
 				{ctor: '[]'},
-				A2(_elm_lang$core$List$map, _aYuMatsuzawa$yubot$Authentications_View$authRow, authRs.list))
+				A2(
+					_elm_lang$core$List$map,
+					_aYuMatsuzawa$yubot$Authentications_View$authRow,
+					A2(_aYuMatsuzawa$yubot$Repo$dictToSortedList, authRepo.sort, authRepo.dict)))
 		});
 };
 
 var _aYuMatsuzawa$yubot$Actions_ModalView$bodyTemplateOnInput = F2(
 	function (action, body) {
-		var _p0 = _aYuMatsuzawa$yubot$StringTemplate$validate(body);
-		if (_p0.ctor === 'Ok') {
-			return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
-				_elm_lang$core$Native_Utils.update(
-					action,
-					{
-						bodyTemplate: A2(_aYuMatsuzawa$yubot$StringTemplate$StringTemplate, body, _p0._0)
-					}));
-		} else {
-			return A2(
-				_aYuMatsuzawa$yubot$Resource_Messages$OnEditInputWithError,
-				_elm_lang$core$Native_Utils.update(
-					action,
-					{
-						bodyTemplate: A2(_aYuMatsuzawa$yubot$StringTemplate$StringTemplate, body, action.bodyTemplate.variables)
-					}),
-				_p0._0);
-		}
+		var _p0 = function () {
+			var _p1 = _aYuMatsuzawa$yubot$StringTemplate$validate(body);
+			if (_p1.ctor === 'Ok') {
+				return {
+					ctor: '_Tuple2',
+					_0: A2(_aYuMatsuzawa$yubot$StringTemplate$StringTemplate, body, _p1._0),
+					_1: {ctor: '[]'}
+				};
+			} else {
+				return {
+					ctor: '_Tuple2',
+					_0: action.bodyTemplate,
+					_1: {
+						ctor: '::',
+						_0: _p1._0,
+						_1: {ctor: '[]'}
+					}
+				};
+			}
+		}();
+		var newBodyTemplate = _p0._0;
+		var errorMessages = _p0._1;
+		return A2(
+			_aYuMatsuzawa$yubot$Repo_Messages$OnEditInput,
+			_elm_lang$core$Native_Utils.update(
+				action,
+				{bodyTemplate: newBodyTemplate}),
+			errorMessages);
 	});
 var _aYuMatsuzawa$yubot$Actions_ModalView$bodyTemplateInput = function (action) {
 	return A2(
@@ -23050,28 +22869,34 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$bodyTemplateInput = function (action) 
 };
 var _aYuMatsuzawa$yubot$Actions_ModalView$authOnSelect = F2(
 	function (action, authId) {
-		return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+		return A2(
+			_aYuMatsuzawa$yubot$Repo_Messages$OnEditInput,
 			_elm_lang$core$Native_Utils.update(
 				action,
 				{
 					auth: _elm_lang$core$Maybe$Just(authId)
-				}));
+				}),
+			{ctor: '[]'});
 	});
 var _aYuMatsuzawa$yubot$Actions_ModalView$authOnCheck = F3(
 	function (action, authId, checked) {
-		var _p1 = checked;
-		if (_p1 === false) {
-			return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+		var _p2 = checked;
+		if (_p2 === false) {
+			return A2(
+				_aYuMatsuzawa$yubot$Repo_Messages$OnEditInput,
 				_elm_lang$core$Native_Utils.update(
 					action,
-					{auth: _elm_lang$core$Maybe$Nothing}));
+					{auth: _elm_lang$core$Maybe$Nothing}),
+				{ctor: '[]'});
 		} else {
-			return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+			return A2(
+				_aYuMatsuzawa$yubot$Repo_Messages$OnEditInput,
 				_elm_lang$core$Native_Utils.update(
 					action,
 					{
 						auth: _elm_lang$core$Maybe$Just(authId)
-					}));
+					}),
+				{ctor: '[]'});
 		}
 	});
 var _aYuMatsuzawa$yubot$Actions_ModalView$methodSelect = function (action) {
@@ -23115,10 +22940,12 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$methodSelect = function (action) {
 				ctor: '::',
 				_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$onInput(
 					function (method) {
-						return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+						return A2(
+							_aYuMatsuzawa$yubot$Repo_Messages$OnEditInput,
 							_elm_lang$core$Native_Utils.update(
 								action,
-								{method: method}));
+								{method: method}),
+							{ctor: '[]'});
 					}),
 				_1: {ctor: '[]'}
 			}
@@ -23141,7 +22968,9 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$methodSelect = function (action) {
 			}));
 };
 var _aYuMatsuzawa$yubot$Actions_ModalView$editForm = F2(
-	function (authList, action) {
+	function (authList, _p3) {
+		var _p4 = _p3;
+		var _p5 = _p4.data;
 		return A2(
 			_rundis$elm_bootstrap$Bootstrap_Form$form,
 			{ctor: '[]'},
@@ -23173,17 +23002,19 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$editForm = F2(
 									_1: {
 										ctor: '::',
 										_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$value(
-											A2(_elm_lang$core$Maybe$withDefault, '', action.label)),
+											A2(_elm_lang$core$Maybe$withDefault, '', _p5.label)),
 										_1: {
 											ctor: '::',
 											_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput(
 												function (label) {
-													return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+													return A2(
+														_aYuMatsuzawa$yubot$Repo_Messages$OnEditInput,
 														_elm_lang$core$Native_Utils.update(
-															action,
+															_p5,
 															{
 																label: _elm_lang$core$Maybe$Just(label)
-															}));
+															}),
+														{ctor: '[]'});
 												}),
 											_1: {ctor: '[]'}
 										}
@@ -23213,7 +23044,7 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$editForm = F2(
 								}),
 							_1: {
 								ctor: '::',
-								_0: _aYuMatsuzawa$yubot$Actions_ModalView$methodSelect(action),
+								_0: _aYuMatsuzawa$yubot$Actions_ModalView$methodSelect(_p5),
 								_1: {ctor: '[]'}
 							}
 						}),
@@ -23244,15 +23075,17 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$editForm = F2(
 											_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$id('action-url'),
 											_1: {
 												ctor: '::',
-												_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$value(action.url),
+												_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$value(_p5.url),
 												_1: {
 													ctor: '::',
 													_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput(
 														function (url) {
-															return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
+															return A2(
+																_aYuMatsuzawa$yubot$Repo_Messages$OnEditInput,
 																_elm_lang$core$Native_Utils.update(
-																	action,
-																	{url: url}));
+																	_p5,
+																	{url: url}),
+																{ctor: '[]'});
 														}),
 													_1: {ctor: '[]'}
 												}
@@ -23263,8 +23096,8 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$editForm = F2(
 										_0: A3(
 											_aYuMatsuzawa$yubot$Authentications_View$authCheck,
 											authList,
-											action.auth,
-											_aYuMatsuzawa$yubot$Actions_ModalView$authOnCheck(action)),
+											_p5.auth,
+											_aYuMatsuzawa$yubot$Actions_ModalView$authOnCheck(_p5)),
 										_1: {ctor: '[]'}
 									}
 								}
@@ -23275,11 +23108,11 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$editForm = F2(
 								_aYuMatsuzawa$yubot$Authentications_View$authSelect,
 								authList,
 								'action',
-								action.auth,
-								_aYuMatsuzawa$yubot$Actions_ModalView$authOnSelect(action)),
+								_p5.auth,
+								_aYuMatsuzawa$yubot$Actions_ModalView$authOnSelect(_p5)),
 							_1: {
 								ctor: '::',
-								_0: _aYuMatsuzawa$yubot$Actions_ModalView$bodyTemplateInput(action),
+								_0: _aYuMatsuzawa$yubot$Actions_ModalView$bodyTemplateInput(_p5),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -23287,93 +23120,14 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$editForm = F2(
 				}
 			});
 	});
-var _aYuMatsuzawa$yubot$Actions_ModalView$editModalView = F2(
-	function (authList, actionRs) {
-		var target = actionRs.editModal.target;
-		var stateToMsg = function (state) {
-			return A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, state, target);
-		};
-		var _p2 = _elm_lang$core$Native_Utils.eq(target.id, '') ? {
-			ctor: '_Tuple2',
-			_0: _elm_lang$html$Html$text('New action!'),
-			_1: _elm_lang$html$Html$text('Creating Action')
-		} : {
-			ctor: '_Tuple2',
-			_0: A2(
-				_elm_lang$html$Html$small,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						A2(_elm_lang$core$Basics_ops['++'], 'ID: ', target.id)),
-					_1: {ctor: '[]'}
-				}),
-			_1: _elm_lang$html$Html$text('Updating Action')
-		};
-		var headerText = _p2._0;
-		var titleText = _p2._1;
-		return A2(
-			_rundis$elm_bootstrap$Bootstrap_Modal$view,
-			actionRs.editModal.modalState,
-			A3(
-				_rundis$elm_bootstrap$Bootstrap_Modal$footer,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A3(
-						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-						A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-						{
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
-							_1: {ctor: '[]'}
-						},
-						'Submit'),
-					_1: {
-						ctor: '::',
-						_0: A3(
-							_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-							A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-							{ctor: '[]'},
-							'Cancel'),
-						_1: {ctor: '[]'}
-					}
-				},
-				A3(
-					_rundis$elm_bootstrap$Bootstrap_Modal$body,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: headerText,
-						_1: {
-							ctor: '::',
-							_0: A2(_aYuMatsuzawa$yubot$Actions_ModalView$editForm, authList, target),
-							_1: {
-								ctor: '::',
-								_0: _aYuMatsuzawa$yubot$Html_Utils$errorAlert(actionRs.editModal.errorMessages),
-								_1: {ctor: '[]'}
-							}
-						}
-					},
-					A3(
-						_rundis$elm_bootstrap$Bootstrap_Modal$h4,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: titleText,
-							_1: {ctor: '[]'}
-						},
-						_rundis$elm_bootstrap$Bootstrap_Modal$large(
-							_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg))))));
-	});
-var _aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView = function (actionRs) {
-	var target = actionRs.deleteModal.target;
+var _aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView = function (actionRepo) {
+	var target = actionRepo.deleteModal.target;
 	var stateToMsg = function (state) {
-		return A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, state, target);
+		return A2(_aYuMatsuzawa$yubot$Repo_Messages$OnDeleteModal, state, target);
 	};
 	return A2(
 		_rundis$elm_bootstrap$Bootstrap_Modal$view,
-		actionRs.deleteModal.modalState,
+		actionRepo.deleteModal.modalState,
 		A3(
 			_rundis$elm_bootstrap$Bootstrap_Modal$footer,
 			{ctor: '[]'},
@@ -23381,7 +23135,7 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView = function (actionRs) 
 				ctor: '::',
 				_0: A3(
 					_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-					_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteConfirmed(target.id),
+					_aYuMatsuzawa$yubot$Repo_Messages$OnDeleteConfirmed(target.id),
 					{
 						ctor: '::',
 						_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
@@ -23392,7 +23146,7 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView = function (actionRs) 
 					ctor: '::',
 					_0: A3(
 						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-						A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
+						A2(_aYuMatsuzawa$yubot$Repo_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
 						{ctor: '[]'},
 						'Cancel'),
 					_1: {ctor: '[]'}
@@ -23552,16 +23306,16 @@ var _aYuMatsuzawa$yubot$Routing$parseLocation = function (_p5) {
 var _aYuMatsuzawa$yubot$Poller_Model$initialModel = F2(
 	function (route, navbarState) {
 		return {
-			pollRs: _aYuMatsuzawa$yubot$Resource$initialResource(_aYuMatsuzawa$yubot$Polls$dummyPoll),
-			actionRs: _aYuMatsuzawa$yubot$Resource$initialResource(_aYuMatsuzawa$yubot$Actions$dummyAction),
-			authRs: _aYuMatsuzawa$yubot$Resource$initialResource(_aYuMatsuzawa$yubot$Authentications$dummyAuthentication),
+			pollRepo: _aYuMatsuzawa$yubot$Repo$initialize(_aYuMatsuzawa$yubot$Polls$dummyPoll),
+			actionRepo: _aYuMatsuzawa$yubot$Repo$initialize(_aYuMatsuzawa$yubot$Actions$dummyAction),
+			authRepo: _aYuMatsuzawa$yubot$Repo$initialize(_aYuMatsuzawa$yubot$Authentications$dummyAuthentication),
 			navbarState: navbarState,
 			route: route
 		};
 	});
 var _aYuMatsuzawa$yubot$Poller_Model$Model = F5(
 	function (a, b, c, d, e) {
-		return {pollRs: a, actionRs: b, authRs: c, navbarState: d, route: e};
+		return {pollRepo: a, actionRepo: b, authRepo: c, navbarState: d, route: e};
 	});
 
 var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
@@ -23569,36 +23323,36 @@ var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
 		var _p0 = msg;
 		switch (_p0.ctor) {
 			case 'PollsMsg':
-				var _p1 = A2(_aYuMatsuzawa$yubot$Polls$update, _p0._0, model.pollRs);
-				var updatedPollRs = _p1._0;
+				var _p1 = A2(_aYuMatsuzawa$yubot$Polls$update, _p0._0, model.pollRepo);
+				var updatedPollRepo = _p1._0;
 				var cmd = _p1._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{pollRs: updatedPollRs}),
+						{pollRepo: updatedPollRepo}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _aYuMatsuzawa$yubot$Poller_Messages$PollsMsg, cmd)
 				};
 			case 'ActionsMsg':
-				var _p2 = A2(_aYuMatsuzawa$yubot$Actions$update, _p0._0, model.actionRs);
-				var updatedActionRs = _p2._0;
+				var _p2 = A2(_aYuMatsuzawa$yubot$Actions$update, _p0._0, model.actionRepo);
+				var updatedActionRepo = _p2._0;
 				var cmd = _p2._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{actionRs: updatedActionRs}),
+						{actionRepo: updatedActionRepo}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _aYuMatsuzawa$yubot$Poller_Messages$ActionsMsg, cmd)
 				};
 			case 'AuthMsg':
-				var _p3 = A2(_aYuMatsuzawa$yubot$Authentications$update, _p0._0, model.authRs);
-				var updatedAuthRs = _p3._0;
+				var _p3 = A2(_aYuMatsuzawa$yubot$Authentications$update, _p0._0, model.authRepo);
+				var updatedAuthRepo = _p3._0;
 				var cmd = _p3._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{authRs: updatedAuthRs}),
+						{authRepo: updatedAuthRepo}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _aYuMatsuzawa$yubot$Poller_Messages$AuthMsg, cmd)
 				};
 			case 'NavbarMsg':
@@ -23613,7 +23367,8 @@ var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _elm_lang$navigation$Navigation$modifyUrl(_p0._0)
+					_1: _elm_lang$navigation$Navigation$modifyUrl(
+						A2(_elm_lang$core$Basics_ops['++'], '/poller', _p0._0))
 				};
 			default:
 				return {
@@ -23628,254 +23383,6 @@ var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
 		}
 	});
 
-var _aYuMatsuzawa$yubot$Polls_View$editPollButton = F3(
-	function (poll, options, string) {
-		return A3(
-			_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-			A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, poll),
-			options,
-			string);
-	});
-var _aYuMatsuzawa$yubot$Polls_View$pollRow = function (poll) {
-	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Table$tr,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_rundis$elm_bootstrap$Bootstrap_Table$td,
-				{ctor: '[]'},
-				_aYuMatsuzawa$yubot$Html_Utils$atext(poll.url)),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_rundis$elm_bootstrap$Bootstrap_Table$td,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							_aYuMatsuzawa$yubot$Polls$intervalToString(poll.interval)),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_rundis$elm_bootstrap$Bootstrap_Table$td,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								_aYuMatsuzawa$yubot$Utils$timestampToString(poll.updatedAt)),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_rundis$elm_bootstrap$Bootstrap_Table$td,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: A3(
-									_aYuMatsuzawa$yubot$Polls_View$editPollButton,
-									poll,
-									{
-										ctor: '::',
-										_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
-										_1: {
-											ctor: '::',
-											_0: _rundis$elm_bootstrap$Bootstrap_Button$small,
-											_1: {ctor: '[]'}
-										}
-									},
-									'Update'),
-								_1: {
-									ctor: '::',
-									_0: A3(
-										_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-										A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, poll),
-										{
-											ctor: '::',
-											_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
-											_1: {
-												ctor: '::',
-												_0: _rundis$elm_bootstrap$Bootstrap_Button$small,
-												_1: {ctor: '[]'}
-											}
-										},
-										'Delete'),
-									_1: {ctor: '[]'}
-								}
-							}),
-						_1: {ctor: '[]'}
-					}
-				}
-			}
-		});
-};
-var _aYuMatsuzawa$yubot$Polls_View$createRow = A2(
-	_rundis$elm_bootstrap$Bootstrap_Table$tr,
-	{ctor: '[]'},
-	{
-		ctor: '::',
-		_0: A2(
-			_rundis$elm_bootstrap$Bootstrap_Table$td,
-			A2(
-				_elm_lang$core$List$map,
-				_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$colspan(5),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$align('center'),
-						_1: {ctor: '[]'}
-					}
-				}),
-			{
-				ctor: '::',
-				_0: A3(
-					_aYuMatsuzawa$yubot$Polls_View$editPollButton,
-					_aYuMatsuzawa$yubot$Polls$dummyPoll,
-					{
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
-						_1: {
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Button$small,
-							_1: {ctor: '[]'}
-						}
-					},
-					'Create!'),
-				_1: {ctor: '[]'}
-			}),
-		_1: {ctor: '[]'}
-	});
-var _aYuMatsuzawa$yubot$Polls_View$rows = function (polls) {
-	var _p0 = polls;
-	if (_p0.ctor === '[]') {
-		return {
-			ctor: '::',
-			_0: _aYuMatsuzawa$yubot$Polls_View$createRow,
-			_1: {ctor: '[]'}
-		};
-	} else {
-		return A2(
-			F2(
-				function (x, y) {
-					return {ctor: '::', _0: x, _1: y};
-				}),
-			_aYuMatsuzawa$yubot$Polls_View$createRow,
-			A2(_elm_lang$core$List$map, _aYuMatsuzawa$yubot$Polls_View$pollRow, polls));
-	}
-};
-var _aYuMatsuzawa$yubot$Polls_View$listView = function (pollRs) {
-	return _rundis$elm_bootstrap$Bootstrap_Table$table(
-		{
-			options: {
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Table$striped,
-				_1: {ctor: '[]'}
-			},
-			thead: _rundis$elm_bootstrap$Bootstrap_Table$simpleThead(
-				{
-					ctor: '::',
-					_0: A2(
-						_rundis$elm_bootstrap$Bootstrap_Table$th,
-						A2(
-							_elm_lang$core$List$map,
-							_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
-							{
-								ctor: '::',
-								_0: _aYuMatsuzawa$yubot$Poller_Styles$sorting,
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_aYuMatsuzawa$yubot$Html_Utils$toggleSortOnClick,
-										function (_) {
-											return _.url;
-										},
-										pollRs.listSort),
-									_1: {ctor: '[]'}
-								}
-							}),
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('URL'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_rundis$elm_bootstrap$Bootstrap_Table$th,
-							A2(
-								_elm_lang$core$List$map,
-								_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
-								{
-									ctor: '::',
-									_0: _aYuMatsuzawa$yubot$Poller_Styles$sorting,
-									_1: {
-										ctor: '::',
-										_0: A2(
-											_aYuMatsuzawa$yubot$Html_Utils$toggleSortOnClick,
-											function (_) {
-												return _.interval;
-											},
-											pollRs.listSort),
-										_1: {ctor: '[]'}
-									}
-								}),
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('Interval'),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_rundis$elm_bootstrap$Bootstrap_Table$th,
-								A2(
-									_elm_lang$core$List$map,
-									_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
-									{
-										ctor: '::',
-										_0: _aYuMatsuzawa$yubot$Poller_Styles$sorting,
-										_1: {
-											ctor: '::',
-											_0: A2(
-												_aYuMatsuzawa$yubot$Html_Utils$toggleSortOnClick,
-												function (_) {
-													return _.updatedAt;
-												},
-												pollRs.listSort),
-											_1: {ctor: '[]'}
-										}
-									}),
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Updated At'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_rundis$elm_bootstrap$Bootstrap_Table$th,
-									{ctor: '[]'},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text('Actions'),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}),
-			tbody: A2(
-				_rundis$elm_bootstrap$Bootstrap_Table$tbody,
-				{ctor: '[]'},
-				_aYuMatsuzawa$yubot$Polls_View$rows(pollRs.list))
-		});
-};
 var _aYuMatsuzawa$yubot$Polls_View$createPollCard = A2(
 	_elm_lang$html$Html$div,
 	{
@@ -23954,7 +23461,7 @@ var _aYuMatsuzawa$yubot$Polls_View$createPollCard = A2(
 			}),
 		_1: {ctor: '[]'}
 	});
-var _aYuMatsuzawa$yubot$Polls_View$cardsView = function (pollRs) {
+var _aYuMatsuzawa$yubot$Polls_View$cardsView = function (pollRepo) {
 	var card = function (poll) {
 		return A2(
 			_elm_lang$html$Html$div,
@@ -23980,7 +23487,7 @@ var _aYuMatsuzawa$yubot$Polls_View$cardsView = function (pollRs) {
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html$text(
-									_aYuMatsuzawa$yubot$Utils$shortenUrl(poll.url)),
+									_aYuMatsuzawa$yubot$Utils$shortenUrl(poll.data.url)),
 								_1: {ctor: '[]'}
 							}),
 						_1: {ctor: '[]'}
@@ -24023,7 +23530,7 @@ var _aYuMatsuzawa$yubot$Polls_View$cardsView = function (pollRs) {
 											A2(
 												_elm_lang$core$Basics_ops['++'],
 												'Run: ',
-												_aYuMatsuzawa$yubot$Polls$intervalToString(poll.interval))),
+												_aYuMatsuzawa$yubot$Polls$intervalToString(poll.data.interval))),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
@@ -24038,7 +23545,7 @@ var _aYuMatsuzawa$yubot$Polls_View$cardsView = function (pollRs) {
 										{
 											ctor: '::',
 											_0: _elm_lang$html$Html$text(
-												A2(_elm_lang$core$Basics_ops['++'], 'Action: ', poll.action)),
+												A2(_elm_lang$core$Basics_ops['++'], 'Action: ', poll.data.action)),
 											_1: {ctor: '[]'}
 										}),
 									_1: {ctor: '[]'}
@@ -24106,1856 +23613,10 @@ var _aYuMatsuzawa$yubot$Polls_View$cardsView = function (pollRs) {
 					return {ctor: '::', _0: x, _1: y};
 				}),
 			_aYuMatsuzawa$yubot$Polls_View$createPollCard,
-			A2(_elm_lang$core$List$map, cardWithWrap, pollRs.list)));
-};
-
-var _rundis$elm_bootstrap$Bootstrap_Internal_Text$textAlignDirOption = function (dir) {
-	var _p0 = dir;
-	switch (_p0.ctor) {
-		case 'Center':
-			return 'center';
-		case 'Left':
-			return 'left';
-		default:
-			return 'right';
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Text$textAlignClass = function (_p1) {
-	var _p2 = _p1;
-	return _elm_lang$html$Html_Attributes$class(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'text',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				A2(
-					_elm_lang$core$Maybe$withDefault,
-					'-',
-					A2(
-						_elm_lang$core$Maybe$map,
-						function (s) {
-							return A2(
-								_elm_lang$core$Basics_ops['++'],
-								'-',
-								A2(_elm_lang$core$Basics_ops['++'], s, '-'));
-						},
-						_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(_p2.size))),
-				_rundis$elm_bootstrap$Bootstrap_Internal_Text$textAlignDirOption(_p2.dir))));
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Text$HAlign = F2(
-	function (a, b) {
-		return {dir: a, size: b};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Internal_Text$Right = {ctor: 'Right'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Text$Center = {ctor: 'Center'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Text$Left = {ctor: 'Left'};
-
-var _rundis$elm_bootstrap$Bootstrap_Text$alignXl = function (dir) {
-	return {dir: dir, size: _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XL};
-};
-var _rundis$elm_bootstrap$Bootstrap_Text$alignXlRight = _rundis$elm_bootstrap$Bootstrap_Text$alignXl(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Right);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignXlCenter = _rundis$elm_bootstrap$Bootstrap_Text$alignXl(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Center);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignXlLeft = _rundis$elm_bootstrap$Bootstrap_Text$alignXl(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Left);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignLg = function (dir) {
-	return {dir: dir, size: _rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG};
-};
-var _rundis$elm_bootstrap$Bootstrap_Text$alignLgRight = _rundis$elm_bootstrap$Bootstrap_Text$alignLg(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Right);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignLgCenter = _rundis$elm_bootstrap$Bootstrap_Text$alignLg(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Center);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignLgLeft = _rundis$elm_bootstrap$Bootstrap_Text$alignLg(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Left);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignMd = function (dir) {
-	return {dir: dir, size: _rundis$elm_bootstrap$Bootstrap_Grid_Internal$MD};
-};
-var _rundis$elm_bootstrap$Bootstrap_Text$alignMdRight = _rundis$elm_bootstrap$Bootstrap_Text$alignMd(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Right);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignMdCenter = _rundis$elm_bootstrap$Bootstrap_Text$alignMd(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Center);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignMdLeft = _rundis$elm_bootstrap$Bootstrap_Text$alignMd(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Left);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignSm = function (dir) {
-	return {dir: dir, size: _rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM};
-};
-var _rundis$elm_bootstrap$Bootstrap_Text$alignSmRight = _rundis$elm_bootstrap$Bootstrap_Text$alignSm(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Right);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignSmCenter = _rundis$elm_bootstrap$Bootstrap_Text$alignSm(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Center);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignSmLeft = _rundis$elm_bootstrap$Bootstrap_Text$alignSm(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Left);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignXs = function (dir) {
-	return {dir: dir, size: _rundis$elm_bootstrap$Bootstrap_Grid_Internal$XS};
-};
-var _rundis$elm_bootstrap$Bootstrap_Text$alignXsRight = _rundis$elm_bootstrap$Bootstrap_Text$alignXs(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Right);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignXsCenter = _rundis$elm_bootstrap$Bootstrap_Text$alignXs(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Center);
-var _rundis$elm_bootstrap$Bootstrap_Text$alignXsLeft = _rundis$elm_bootstrap$Bootstrap_Text$alignXs(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Left);
-
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$roleClass = function (role) {
-	return _elm_lang$html$Html_Attributes$class(
-		function () {
-			var _p0 = role;
-			switch (_p0.ctor) {
-				case 'Success':
-					return 'list-group-item-success';
-				case 'Info':
-					return 'list-group-item-info';
-				case 'Warning':
-					return 'list-group-item-warning';
-				default:
-					return 'list-group-item-danger';
-			}
-		}());
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$itemAttributes = function (options) {
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$classList(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'list-group-item', _1: true},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'disabled', _1: options.disabled},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'active', _1: options.active},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'list-group-item-action', _1: options.action},
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}),
-			_1: {ctor: '[]'}
-		},
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$disabled(options.disabled),
-				_1: {ctor: '[]'}
-			},
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				A2(
-					_elm_lang$core$Maybe$withDefault,
-					{ctor: '[]'},
-					A2(
-						_elm_lang$core$Maybe$map,
-						function (r) {
-							return {
-								ctor: '::',
-								_0: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$roleClass(r),
-								_1: {ctor: '[]'}
-							};
-						},
-						options.role)),
-				options.attributes)));
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$preventClick = A2(_elm_lang$html$Html_Attributes$attribute, 'onclick', 'var event = arguments[0] || window.event; event.preventDefault();');
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$applyModifier = F2(
-	function (modifier, options) {
-		var _p1 = modifier;
-		switch (_p1.ctor) {
-			case 'Roled':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						role: _elm_lang$core$Maybe$Just(_p1._0)
-					});
-			case 'Action':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{action: true});
-			case 'Disabled':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{disabled: true});
-			case 'Active':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{active: true});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p1._0)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$defaultOptions = {
-	role: _elm_lang$core$Maybe$Nothing,
-	active: false,
-	disabled: false,
-	action: false,
-	attributes: {ctor: '[]'}
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$renderCustomItem = function (_p2) {
-	var _p3 = _p2;
-	return A2(
-		_p3._0.itemFn,
-		_rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$itemAttributes(
-			A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$applyModifier, _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$defaultOptions, _p3._0.options)),
-		_p3._0.children);
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$renderItem = function (_p4) {
-	var _p5 = _p4;
-	return A2(
-		_p5._0.itemFn,
-		_rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$itemAttributes(
-			A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$applyModifier, _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$defaultOptions, _p5._0.options)),
-		_p5._0.children);
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$ItemOptions = F5(
-	function (a, b, c, d, e) {
-		return {role: a, active: b, disabled: c, action: d, attributes: e};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Attrs = function (a) {
-	return {ctor: 'Attrs', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Action = {ctor: 'Action'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Disabled = {ctor: 'Disabled'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Active = {ctor: 'Active'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled = function (a) {
-	return {ctor: 'Roled', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Danger = {ctor: 'Danger'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Warning = {ctor: 'Warning'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Info = {ctor: 'Info'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Success = {ctor: 'Success'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Item = function (a) {
-	return {ctor: 'Item', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$CustomItem = function (a) {
-	return {ctor: 'CustomItem', _0: a};
-};
-
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$attrs = function (attrs) {
-	return _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Attrs(attrs);
-};
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$disabled = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Disabled;
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$active = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Active;
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$danger = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Danger);
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$warning = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Warning);
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$info = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Info);
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$success = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Success);
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$button = F2(
-	function (options, children) {
-		return _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$CustomItem(
-			{
-				itemFn: _elm_lang$html$Html$button,
-				children: children,
-				options: {
-					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Action,
-					_1: A2(
-						_elm_lang$core$Basics_ops['++'],
-						options,
-						{
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Attrs(
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$type_('button'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						})
-				}
-			});
-	});
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$anchor = F2(
-	function (options, children) {
-		var updOptions = A2(
-			_elm_lang$core$List$any,
-			F2(
-				function (x, y) {
-					return _elm_lang$core$Native_Utils.eq(x, y);
-				})(_rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Disabled),
-			options) ? A2(
-			_elm_lang$core$Basics_ops['++'],
-			options,
-			{
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Attrs(
-					{
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$preventClick,
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}) : options;
-		return _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$CustomItem(
-			{
-				itemFn: _elm_lang$html$Html$a,
-				children: children,
-				options: {ctor: '::', _0: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Action, _1: updOptions}
-			});
-	});
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$keyedCustom = function (items) {
-	return A3(
-		_elm_lang$html$Html_Keyed$node,
-		'div',
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('list-group'),
-			_1: {ctor: '[]'}
-		},
-		A2(
-			_elm_lang$core$List$map,
-			function (_p0) {
-				var _p1 = _p0;
-				return {
-					ctor: '_Tuple2',
-					_0: _p1._0,
-					_1: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$renderCustomItem(_p1._1)
-				};
-			},
-			items));
-};
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$custom = function (items) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('list-group'),
-			_1: {ctor: '[]'}
-		},
-		A2(_elm_lang$core$List$map, _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$renderCustomItem, items));
-};
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$li = F2(
-	function (options, children) {
-		return _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Item(
-			{itemFn: _elm_lang$html$Html$li, children: children, options: options});
-	});
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$keyedUl = function (keyedItems) {
-	return A2(
-		_elm_lang$html$Html_Keyed$ul,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('list-group'),
-			_1: {ctor: '[]'}
-		},
-		A2(
-			_elm_lang$core$List$map,
-			function (_p2) {
-				var _p3 = _p2;
-				return {
-					ctor: '_Tuple2',
-					_0: _p3._0,
-					_1: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$renderItem(_p3._1)
-				};
-			},
-			keyedItems));
-};
-var _rundis$elm_bootstrap$Bootstrap_ListGroup$ul = function (items) {
-	return A2(
-		_elm_lang$html$Html$ul,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('list-group'),
-			_1: {ctor: '[]'}
-		},
-		A2(_elm_lang$core$List$map, _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$renderItem, items));
-};
-
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$toRGBString = function (color) {
-	var _p0 = _elm_lang$core$Color$toRgb(color);
-	var red = _p0.red;
-	var green = _p0.green;
-	var blue = _p0.blue;
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		'RGB(',
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			_elm_lang$core$Basics$toString(red),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				',',
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					_elm_lang$core$Basics$toString(green),
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						',',
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(blue),
-							')'))))));
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$roleOption = function (role) {
-	var _p1 = role;
-	switch (_p1.ctor) {
-		case 'Primary':
-			return 'primary';
-		case 'Success':
-			return 'success';
-		case 'Info':
-			return 'info';
-		case 'Warning':
-			return 'warning';
-		default:
-			return 'danger';
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$applyModifier = F2(
-	function (option, options) {
-		var _p2 = option;
-		switch (_p2.ctor) {
-			case 'Aligned':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						aligned: _elm_lang$core$Maybe$Just(_p2._0)
-					});
-			case 'Coloring':
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						coloring: _elm_lang$core$Maybe$Just(_p2._0)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					options,
-					{
-						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p2._0)
-					});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$defaultOptions = {
-	aligned: _elm_lang$core$Maybe$Nothing,
-	coloring: _elm_lang$core$Maybe$Nothing,
-	attributes: {ctor: '[]'}
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$cardAttributes = function (modifiers) {
-	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Internal_Card$applyModifier, _rundis$elm_bootstrap$Bootstrap_Internal_Card$defaultOptions, modifiers);
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('card'),
-			_1: {ctor: '[]'}
-		},
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			function () {
-				var _p3 = options.coloring;
-				if (_p3.ctor === 'Just') {
-					switch (_p3._0.ctor) {
-						case 'Roled':
-							return {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class(
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										'card-inverse card-',
-										_rundis$elm_bootstrap$Bootstrap_Internal_Card$roleOption(_p3._0._0))),
-								_1: {ctor: '[]'}
-							};
-						case 'Outlined':
-							return {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class(
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										'card-outline-',
-										_rundis$elm_bootstrap$Bootstrap_Internal_Card$roleOption(_p3._0._0))),
-								_1: {ctor: '[]'}
-							};
-						default:
-							var _p4 = _p3._0._0;
-							return {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('card-inverse'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$style(
-										{
-											ctor: '::',
-											_0: {
-												ctor: '_Tuple2',
-												_0: 'background-color',
-												_1: _rundis$elm_bootstrap$Bootstrap_Internal_Card$toRGBString(_p4)
-											},
-											_1: {
-												ctor: '::',
-												_0: {
-													ctor: '_Tuple2',
-													_0: 'border-color',
-													_1: _rundis$elm_bootstrap$Bootstrap_Internal_Card$toRGBString(_p4)
-												},
-												_1: {ctor: '[]'}
-											}
-										}),
-									_1: {ctor: '[]'}
-								}
-							};
-					}
-				} else {
-					return {ctor: '[]'};
-				}
-			}(),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				function () {
-					var _p5 = options.aligned;
-					if (_p5.ctor === 'Just') {
-						return {
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Internal_Text$textAlignClass(_p5._0),
-							_1: {ctor: '[]'}
-						};
-					} else {
-						return {ctor: '[]'};
-					}
-				}(),
-				options.attributes)));
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$applyBlockModifier = F2(
-	function (option, options) {
-		var _p6 = option;
-		if (_p6.ctor === 'AlignedBlock') {
-			return _elm_lang$core$Native_Utils.update(
-				options,
-				{
-					aligned: _elm_lang$core$Maybe$Just(_p6._0)
-				});
-		} else {
-			return _elm_lang$core$Native_Utils.update(
-				options,
-				{
-					attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p6._0)
-				});
-		}
-	});
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$defaultBlockOptions = {
-	aligned: _elm_lang$core$Maybe$Nothing,
-	attributes: {ctor: '[]'}
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$blockAttributes = function (modifiers) {
-	var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Internal_Card$applyBlockModifier, _rundis$elm_bootstrap$Bootstrap_Internal_Card$defaultBlockOptions, modifiers);
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('card-block'),
-			_1: {ctor: '[]'}
-		},
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			function () {
-				var _p7 = options.aligned;
-				if (_p7.ctor === 'Just') {
-					return {
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Internal_Text$textAlignClass(_p7._0),
-						_1: {ctor: '[]'}
-					};
-				} else {
-					return {ctor: '[]'};
-				}
-			}(),
-			options.attributes));
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$renderBlock = function (block) {
-	var _p8 = block;
-	if (_p8.ctor === 'CardBlock') {
-		return _p8._0;
-	} else {
-		return _p8._0;
-	}
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$renderBlocks = function (blocks) {
-	return A2(
-		_elm_lang$core$List$map,
-		function (block) {
-			var _p9 = block;
-			if (_p9.ctor === 'CardBlock') {
-				return _p9._0;
-			} else {
-				return _p9._0;
-			}
-		},
-		blocks);
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$CardOptions = F3(
-	function (a, b, c) {
-		return {aligned: a, coloring: b, attributes: c};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$BlockOptions = F2(
-	function (a, b) {
-		return {aligned: a, attributes: b};
-	});
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$Attrs = function (a) {
-	return {ctor: 'Attrs', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$Coloring = function (a) {
-	return {ctor: 'Coloring', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$Aligned = function (a) {
-	return {ctor: 'Aligned', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$Inverted = function (a) {
-	return {ctor: 'Inverted', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$Outlined = function (a) {
-	return {ctor: 'Outlined', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$Roled = function (a) {
-	return {ctor: 'Roled', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$Danger = {ctor: 'Danger'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$Warning = {ctor: 'Warning'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$Info = {ctor: 'Info'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$Success = {ctor: 'Success'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$Primary = {ctor: 'Primary'};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$BlockAttrs = function (a) {
-	return {ctor: 'BlockAttrs', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$AlignedBlock = function (a) {
-	return {ctor: 'AlignedBlock', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$ListGroup = function (a) {
-	return {ctor: 'ListGroup', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$listGroup = function (items) {
-	return _rundis$elm_bootstrap$Bootstrap_Internal_Card$ListGroup(
-		A2(
-			_elm_lang$html$Html$ul,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('list-group list-group-flush'),
-				_1: {ctor: '[]'}
-			},
-			A2(_elm_lang$core$List$map, _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$renderItem, items)));
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$CardBlock = function (a) {
-	return {ctor: 'CardBlock', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$block = F2(
-	function (options, items) {
-		return _rundis$elm_bootstrap$Bootstrap_Internal_Card$CardBlock(
-			A2(
-				_elm_lang$html$Html$div,
-				_rundis$elm_bootstrap$Bootstrap_Internal_Card$blockAttributes(options),
-				A2(
-					_elm_lang$core$List$map,
-					function (_p10) {
-						var _p11 = _p10;
-						return _p11._0;
-					},
-					items)));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Internal_Card$BlockItem = function (a) {
-	return {ctor: 'BlockItem', _0: a};
-};
-
-var _rundis$elm_bootstrap$Bootstrap_Card$title = F3(
-	function (elemFn, attributes, children) {
-		return _rundis$elm_bootstrap$Bootstrap_Internal_Card$BlockItem(
-			A2(
-				elemFn,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('card-title'),
-					_1: attributes
-				},
-				children));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Card$titleH6 = _rundis$elm_bootstrap$Bootstrap_Card$title(_elm_lang$html$Html$h6);
-var _rundis$elm_bootstrap$Bootstrap_Card$titleH5 = _rundis$elm_bootstrap$Bootstrap_Card$title(_elm_lang$html$Html$h5);
-var _rundis$elm_bootstrap$Bootstrap_Card$titleH4 = _rundis$elm_bootstrap$Bootstrap_Card$title(_elm_lang$html$Html$h4);
-var _rundis$elm_bootstrap$Bootstrap_Card$titleH3 = _rundis$elm_bootstrap$Bootstrap_Card$title(_elm_lang$html$Html$h3);
-var _rundis$elm_bootstrap$Bootstrap_Card$titleH2 = _rundis$elm_bootstrap$Bootstrap_Card$title(_elm_lang$html$Html$h2);
-var _rundis$elm_bootstrap$Bootstrap_Card$titleH1 = _rundis$elm_bootstrap$Bootstrap_Card$title(_elm_lang$html$Html$h1);
-var _rundis$elm_bootstrap$Bootstrap_Card$blockQuote = F2(
-	function (attributes, children) {
-		return _rundis$elm_bootstrap$Bootstrap_Internal_Card$BlockItem(
-			A2(
-				_elm_lang$html$Html$blockquote,
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('card-blockquote'),
-						_1: {ctor: '[]'}
-					},
-					attributes),
-				children));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Card$custom = function (element) {
-	return _rundis$elm_bootstrap$Bootstrap_Internal_Card$BlockItem(element);
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$text = F2(
-	function (attributes, children) {
-		return _rundis$elm_bootstrap$Bootstrap_Internal_Card$BlockItem(
-			A2(
-				_elm_lang$html$Html$p,
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('card-text'),
-						_1: {ctor: '[]'}
-					},
-					attributes),
-				children));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Card$link = F2(
-	function (attributes, children) {
-		return _rundis$elm_bootstrap$Bootstrap_Internal_Card$BlockItem(
-			A2(
-				_elm_lang$html$Html$a,
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('card-link'),
-						_1: {ctor: '[]'}
-					},
-					attributes),
-				children));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Card$blockAttrs = function (attrs) {
-	return _rundis$elm_bootstrap$Bootstrap_Internal_Card$BlockAttrs(attrs);
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$blockAlign = function (align) {
-	return _rundis$elm_bootstrap$Bootstrap_Internal_Card$AlignedBlock(align);
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$view = function (_p0) {
-	var _p1 = _p0;
-	return A2(
-		_elm_lang$html$Html$div,
-		_rundis$elm_bootstrap$Bootstrap_Internal_Card$cardAttributes(_p1._0.options),
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			A2(
-				_elm_lang$core$List$filterMap,
-				_elm_lang$core$Basics$identity,
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$core$Maybe$map,
-						function (_p2) {
-							var _p3 = _p2;
-							return _p3._0;
-						},
-						_p1._0.header),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$core$Maybe$map,
-							function (_p4) {
-								var _p5 = _p4;
-								return _p5._0;
-							},
-							_p1._0.imgTop),
-						_1: {ctor: '[]'}
-					}
-				}),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_rundis$elm_bootstrap$Bootstrap_Internal_Card$renderBlocks(_p1._0.blocks),
-				A2(
-					_elm_lang$core$List$filterMap,
-					_elm_lang$core$Basics$identity,
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$core$Maybe$map,
-							function (_p6) {
-								var _p7 = _p6;
-								return _p7._0;
-							},
-							_p1._0.footer),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$core$Maybe$map,
-								function (_p8) {
-									var _p9 = _p8;
-									return _p9._0;
-								},
-								_p1._0.imgBottom),
-							_1: {ctor: '[]'}
-						}
-					}))));
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$group = function (cards) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('card-group'),
-			_1: {ctor: '[]'}
-		},
-		A2(_elm_lang$core$List$map, _rundis$elm_bootstrap$Bootstrap_Card$view, cards));
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$deck = function (cards) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('card-deck'),
-			_1: {ctor: '[]'}
-		},
-		A2(_elm_lang$core$List$map, _rundis$elm_bootstrap$Bootstrap_Card$view, cards));
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$columns = function (cards) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('card-columns'),
-			_1: {ctor: '[]'}
-		},
-		A2(_elm_lang$core$List$map, _rundis$elm_bootstrap$Bootstrap_Card$view, cards));
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$keyedMulti = F2(
-	function (clazz, keyedCards) {
-		return A3(
-			_elm_lang$html$Html_Keyed$node,
-			'div',
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class(clazz),
-				_1: {ctor: '[]'}
-			},
 			A2(
 				_elm_lang$core$List$map,
-				function (_p10) {
-					var _p11 = _p10;
-					return {
-						ctor: '_Tuple2',
-						_0: _p11._0,
-						_1: _rundis$elm_bootstrap$Bootstrap_Card$view(_p11._1)
-					};
-				},
-				keyedCards));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Card$keyedGroup = _rundis$elm_bootstrap$Bootstrap_Card$keyedMulti('card-group');
-var _rundis$elm_bootstrap$Bootstrap_Card$keyedDeck = _rundis$elm_bootstrap$Bootstrap_Card$keyedMulti('card-deck');
-var _rundis$elm_bootstrap$Bootstrap_Card$keyedColumns = _rundis$elm_bootstrap$Bootstrap_Card$keyedMulti('card-columns');
-var _rundis$elm_bootstrap$Bootstrap_Card$attrs = function (attrs) {
-	return _rundis$elm_bootstrap$Bootstrap_Internal_Card$Attrs(attrs);
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$inverted = function (color) {
-	return _rundis$elm_bootstrap$Bootstrap_Internal_Card$Coloring(
-		_rundis$elm_bootstrap$Bootstrap_Internal_Card$Inverted(color));
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$outlineDanger = _rundis$elm_bootstrap$Bootstrap_Internal_Card$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Card$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Card$Danger));
-var _rundis$elm_bootstrap$Bootstrap_Card$outlineWarning = _rundis$elm_bootstrap$Bootstrap_Internal_Card$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Card$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Card$Warning));
-var _rundis$elm_bootstrap$Bootstrap_Card$outlineInfo = _rundis$elm_bootstrap$Bootstrap_Internal_Card$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Card$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Card$Info));
-var _rundis$elm_bootstrap$Bootstrap_Card$outlineSuccess = _rundis$elm_bootstrap$Bootstrap_Internal_Card$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Card$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Card$Success));
-var _rundis$elm_bootstrap$Bootstrap_Card$outlinePrimary = _rundis$elm_bootstrap$Bootstrap_Internal_Card$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Card$Outlined(_rundis$elm_bootstrap$Bootstrap_Internal_Card$Primary));
-var _rundis$elm_bootstrap$Bootstrap_Card$danger = _rundis$elm_bootstrap$Bootstrap_Internal_Card$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Card$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Card$Danger));
-var _rundis$elm_bootstrap$Bootstrap_Card$warning = _rundis$elm_bootstrap$Bootstrap_Internal_Card$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Card$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Card$Warning));
-var _rundis$elm_bootstrap$Bootstrap_Card$info = _rundis$elm_bootstrap$Bootstrap_Internal_Card$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Card$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Card$Info));
-var _rundis$elm_bootstrap$Bootstrap_Card$success = _rundis$elm_bootstrap$Bootstrap_Internal_Card$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Card$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Card$Success));
-var _rundis$elm_bootstrap$Bootstrap_Card$primary = _rundis$elm_bootstrap$Bootstrap_Internal_Card$Coloring(
-	_rundis$elm_bootstrap$Bootstrap_Internal_Card$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Card$Primary));
-var _rundis$elm_bootstrap$Bootstrap_Card$align = function (align) {
-	return _rundis$elm_bootstrap$Bootstrap_Internal_Card$Aligned(align);
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$Config = function (a) {
-	return {ctor: 'Config', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$config = function (options) {
-	return _rundis$elm_bootstrap$Bootstrap_Card$Config(
-		{
-			options: options,
-			header: _elm_lang$core$Maybe$Nothing,
-			footer: _elm_lang$core$Maybe$Nothing,
-			imgTop: _elm_lang$core$Maybe$Nothing,
-			imgBottom: _elm_lang$core$Maybe$Nothing,
-			blocks: {ctor: '[]'}
-		});
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$block = F3(
-	function (options, items, _p12) {
-		var _p13 = _p12;
-		var _p14 = _p13._0;
-		return _rundis$elm_bootstrap$Bootstrap_Card$Config(
-			_elm_lang$core$Native_Utils.update(
-				_p14,
-				{
-					blocks: A2(
-						_elm_lang$core$Basics_ops['++'],
-						_p14.blocks,
-						{
-							ctor: '::',
-							_0: A2(_rundis$elm_bootstrap$Bootstrap_Internal_Card$block, options, items),
-							_1: {ctor: '[]'}
-						})
-				}));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Card$listGroup = F2(
-	function (items, _p15) {
-		var _p16 = _p15;
-		var _p17 = _p16._0;
-		return _rundis$elm_bootstrap$Bootstrap_Card$Config(
-			_elm_lang$core$Native_Utils.update(
-				_p17,
-				{
-					blocks: A2(
-						_elm_lang$core$Basics_ops['++'],
-						_p17.blocks,
-						{
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Internal_Card$listGroup(items),
-							_1: {ctor: '[]'}
-						})
-				}));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Card$CardHeader = function (a) {
-	return {ctor: 'CardHeader', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$headerPrivate = F4(
-	function (elemFn, attributes, children, _p18) {
-		var _p19 = _p18;
-		return _rundis$elm_bootstrap$Bootstrap_Card$Config(
-			_elm_lang$core$Native_Utils.update(
-				_p19._0,
-				{
-					header: _elm_lang$core$Maybe$Just(
-						_rundis$elm_bootstrap$Bootstrap_Card$CardHeader(
-							A2(
-								elemFn,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('card-header'),
-									_1: attributes
-								},
-								children)))
-				}));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Card$header = _rundis$elm_bootstrap$Bootstrap_Card$headerPrivate(_elm_lang$html$Html$div);
-var _rundis$elm_bootstrap$Bootstrap_Card$headerH1 = _rundis$elm_bootstrap$Bootstrap_Card$headerPrivate(_elm_lang$html$Html$h1);
-var _rundis$elm_bootstrap$Bootstrap_Card$headerH2 = _rundis$elm_bootstrap$Bootstrap_Card$headerPrivate(_elm_lang$html$Html$h2);
-var _rundis$elm_bootstrap$Bootstrap_Card$headerH3 = _rundis$elm_bootstrap$Bootstrap_Card$headerPrivate(_elm_lang$html$Html$h3);
-var _rundis$elm_bootstrap$Bootstrap_Card$headerH4 = _rundis$elm_bootstrap$Bootstrap_Card$headerPrivate(_elm_lang$html$Html$h4);
-var _rundis$elm_bootstrap$Bootstrap_Card$headerH5 = _rundis$elm_bootstrap$Bootstrap_Card$headerPrivate(_elm_lang$html$Html$h5);
-var _rundis$elm_bootstrap$Bootstrap_Card$headerH6 = _rundis$elm_bootstrap$Bootstrap_Card$headerPrivate(_elm_lang$html$Html$h6);
-var _rundis$elm_bootstrap$Bootstrap_Card$CardFooter = function (a) {
-	return {ctor: 'CardFooter', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$footer = F3(
-	function (attributes, children, _p20) {
-		var _p21 = _p20;
-		return _rundis$elm_bootstrap$Bootstrap_Card$Config(
-			_elm_lang$core$Native_Utils.update(
-				_p21._0,
-				{
-					footer: _elm_lang$core$Maybe$Just(
-						_rundis$elm_bootstrap$Bootstrap_Card$CardFooter(
-							A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('card-footer'),
-									_1: attributes
-								},
-								children)))
-				}));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Card$CardImageTop = function (a) {
-	return {ctor: 'CardImageTop', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$imgTop = F3(
-	function (attributes, children, _p22) {
-		var _p23 = _p22;
-		return _rundis$elm_bootstrap$Bootstrap_Card$Config(
-			_elm_lang$core$Native_Utils.update(
-				_p23._0,
-				{
-					imgTop: _elm_lang$core$Maybe$Just(
-						_rundis$elm_bootstrap$Bootstrap_Card$CardImageTop(
-							A2(
-								_elm_lang$html$Html$img,
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('card-img-top'),
-										_1: {ctor: '[]'}
-									},
-									attributes),
-								children)))
-				}));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Card$CardImageBottom = function (a) {
-	return {ctor: 'CardImageBottom', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Card$imgBottom = F3(
-	function (attributes, children, _p24) {
-		var _p25 = _p24;
-		return _rundis$elm_bootstrap$Bootstrap_Card$Config(
-			_elm_lang$core$Native_Utils.update(
-				_p25._0,
-				{
-					imgBottom: _elm_lang$core$Maybe$Just(
-						_rundis$elm_bootstrap$Bootstrap_Card$CardImageBottom(
-							A2(
-								_elm_lang$html$Html$img,
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('card-img-bottom'),
-										_1: {ctor: '[]'}
-									},
-									attributes),
-								children)))
-				}));
-	});
-
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$sizeAttribute = function (size) {
-	return A2(
-		_elm_lang$core$Maybe$map,
-		function (s) {
-			return _elm_lang$html$Html_Attributes$class(
-				A2(_elm_lang$core$Basics_ops['++'], 'input-group-', s));
-		},
-		_rundis$elm_bootstrap$Bootstrap_Grid_Internal$screenSizeOption(size));
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$view = function (_p0) {
-	var _p1 = _p0;
-	var _p7 = _p1._0;
-	var _p2 = _p7.input;
-	var input = _p2._0;
-	return A2(
-		_elm_lang$html$Html$div,
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('input-group'),
-				_1: {ctor: '[]'}
-			},
-			A2(
-				_elm_lang$core$List$filterMap,
-				_elm_lang$core$Basics$identity,
-				{
-					ctor: '::',
-					_0: A2(_elm_lang$core$Maybe$andThen, _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$sizeAttribute, _p7.size),
-					_1: {ctor: '[]'}
-				})),
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			A2(
-				_elm_lang$core$List$map,
-				function (_p3) {
-					var _p4 = _p3;
-					return _p4._0;
-				},
-				_p7.predecessors),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				{
-					ctor: '::',
-					_0: input,
-					_1: {ctor: '[]'}
-				},
-				A2(
-					_elm_lang$core$List$map,
-					function (_p5) {
-						var _p6 = _p5;
-						return _p6._0;
-					},
-					_p7.successors))));
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config = function (a) {
-	return {ctor: 'Config', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$config = function (input) {
-	return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config(
-		{
-			input: input,
-			predecessors: {ctor: '[]'},
-			successors: {ctor: '[]'},
-			size: _elm_lang$core$Maybe$Nothing,
-			attributes: {ctor: '[]'}
-		});
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$predecessors = F2(
-	function (addons, _p8) {
-		var _p9 = _p8;
-		return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config(
-			_elm_lang$core$Native_Utils.update(
-				_p9._0,
-				{predecessors: addons}));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$successors = F2(
-	function (addons, _p10) {
-		var _p11 = _p10;
-		return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config(
-			_elm_lang$core$Native_Utils.update(
-				_p11._0,
-				{successors: addons}));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$large = function (_p12) {
-	var _p13 = _p12;
-	return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config(
-		_elm_lang$core$Native_Utils.update(
-			_p13._0,
-			{
-				size: _elm_lang$core$Maybe$Just(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$LG)
-			}));
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$small = function (_p14) {
-	var _p15 = _p14;
-	return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config(
-		_elm_lang$core$Native_Utils.update(
-			_p15._0,
-			{
-				size: _elm_lang$core$Maybe$Just(_rundis$elm_bootstrap$Bootstrap_Grid_Internal$SM)
-			}));
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$attrs = F2(
-	function (attributes, _p16) {
-		var _p17 = _p16;
-		return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Config(
-			_elm_lang$core$Native_Utils.update(
-				_p17._0,
-				{attributes: attributes}));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Input = function (a) {
-	return {ctor: 'Input', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input = F2(
-	function (inputFn, options) {
-		return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Input(
-			inputFn(options));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$text = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$text);
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$password = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$password);
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$datetimeLocal = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$datetimeLocal);
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$date = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$date);
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$month = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$month);
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$time = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$time);
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$week = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$week);
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$number = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$number);
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$email = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$email);
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$url = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$url);
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$search = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$search);
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$tel = _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$input(_rundis$elm_bootstrap$Bootstrap_Form_Input$tel);
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Addon = function (a) {
-	return {ctor: 'Addon', _0: a};
-};
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$span = F2(
-	function (attributes, children) {
-		return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Addon(
-			A2(
-				_elm_lang$html$Html$span,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('input-group-addon'),
-					_1: attributes
-				},
-				children));
-	});
-var _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$button = F2(
-	function (options, children) {
-		return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$Addon(
-			A2(
-				_elm_lang$html$Html$span,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('input-group-btn'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: A2(_rundis$elm_bootstrap$Bootstrap_Button$button, options, children),
-					_1: {ctor: '[]'}
-				}));
-	});
-
-var _aYuMatsuzawa$yubot$Polls_ModalView$filterInput = F2(
-	function (maybeAction, poll) {
-		var onInputMessage = F2(
-			function (index, newFilter) {
-				var _p0 = A3(_elm_community$list_extra$List_Extra$setAt, index, newFilter, poll.filters);
-				if (_p0.ctor === 'Just') {
-					return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
-						_elm_lang$core$Native_Utils.update(
-							poll,
-							{filters: _p0._0}));
-				} else {
-					return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(poll);
-				}
-			});
-		var inputgroup = F2(
-			function (index, _p1) {
-				var _p2 = _p1;
-				return _rundis$elm_bootstrap$Bootstrap_Form_InputGroup$view(
-					A2(
-						_rundis$elm_bootstrap$Bootstrap_Form_InputGroup$predecessors,
-						{
-							ctor: '::',
-							_0: A2(
-								_rundis$elm_bootstrap$Bootstrap_Form_InputGroup$span,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$code,
-										{ctor: '[]'},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text(_p2._0),
-											_1: {ctor: '[]'}
-										}),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						},
-						_rundis$elm_bootstrap$Bootstrap_Form_InputGroup$config(
-							_rundis$elm_bootstrap$Bootstrap_Form_InputGroup$text(
-								{
-									ctor: '::',
-									_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$id(
-										A2(
-											_elm_lang$core$Basics_ops['++'],
-											'poll-filters-',
-											_elm_lang$core$Basics$toString(index))),
-									_1: {
-										ctor: '::',
-										_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$value(_p2._1),
-										_1: {
-											ctor: '::',
-											_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput(
-												onInputMessage(index)),
-											_1: {ctor: '[]'}
-										}
-									}
-								}))));
-			});
-		var variableAndFilterPairs = function (action) {
-			return A2(_elm_community$list_extra$List_Extra$zip, action.bodyTemplate.variables, poll.filters);
-		};
-		var inputs = function () {
-			var _p3 = maybeAction;
-			if (_p3.ctor === 'Just') {
-				var _p4 = variableAndFilterPairs(_p3._0);
-				if (_p4.ctor === '[]') {
-					return {
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Alert$info(
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('No variables.'),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					};
-				} else {
-					return A2(
-						_elm_lang$core$List$intersperse,
-						A2(
-							_elm_lang$html$Html$br,
-							{ctor: '[]'},
-							{ctor: '[]'}),
-						A2(_elm_lang$core$List$indexedMap, inputgroup, _p4));
-				}
-			} else {
-				return {
-					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Alert$danger(
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Cannot find action!'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				};
-			}
-		}();
-		var _p5 = poll.action;
-		if (_p5 === '') {
-			return {
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Alert$info(
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('No variables.'),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			};
-		} else {
-			return inputs;
-		}
-	});
-var _aYuMatsuzawa$yubot$Polls_ModalView$actionPreview = F2(
-	function (maybeAction, poll) {
-		var previewOrError = function () {
-			var _p6 = maybeAction;
-			if (_p6.ctor === 'Just') {
-				return _rundis$elm_bootstrap$Bootstrap_Card$view(
-					A3(
-						_rundis$elm_bootstrap$Bootstrap_Card$block,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: A2(
-								_rundis$elm_bootstrap$Bootstrap_Card$text,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: _aYuMatsuzawa$yubot$Actions_View$preview(_p6._0),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						},
-						_rundis$elm_bootstrap$Bootstrap_Card$config(
-							{ctor: '[]'})));
-			} else {
-				return _rundis$elm_bootstrap$Bootstrap_Alert$danger(
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Cannot find action!'),
-						_1: {ctor: '[]'}
-					});
-			}
-		}();
-		var _p7 = poll.action;
-		if (_p7 === '') {
-			return _elm_lang$html$Html$text('');
-		} else {
-			return previewOrError;
-		}
-	});
-var _aYuMatsuzawa$yubot$Polls_ModalView$actionSelect = F2(
-	function (actionList, poll) {
-		var emptyStringList = function (action) {
-			return A2(
-				_elm_lang$core$List$map,
-				function (_p8) {
-					return '';
-				},
-				action.bodyTemplate.variables);
-		};
-		var onInputMessage = function (actionId) {
-			var _p9 = A2(
-				_elm_community$list_extra$List_Extra$find,
-				function (a) {
-					return _elm_lang$core$Native_Utils.eq(a.id, actionId);
-				},
-				actionList);
-			if (_p9.ctor === 'Just') {
-				return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
-					_elm_lang$core$Native_Utils.update(
-						poll,
-						{
-							action: actionId,
-							filters: emptyStringList(_p9._0)
-						}));
-			} else {
-				return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
-					_elm_lang$core$Native_Utils.update(
-						poll,
-						{action: actionId}));
-			}
-		};
-		var itemLabel = function (action) {
-			var _p10 = action.label;
-			if (_p10.ctor === 'Nothing') {
-				return action.id;
-			} else {
-				return A2(
-					_elm_lang$core$Basics_ops['++'],
-					_p10._0,
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						' (',
-						A2(_elm_lang$core$Basics_ops['++'], action.id, ')')));
-			}
-		};
-		var item = function (action) {
-			return A2(
-				_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$value(action.id),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$selected(
-							_elm_lang$core$Native_Utils.eq(poll.action, action.id)),
-						_1: {ctor: '[]'}
-					}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						itemLabel(action)),
-					_1: {ctor: '[]'}
-				});
-		};
-		var header = function (poll) {
-			return A2(
-				_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$value(''),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$selected(
-							_elm_lang$core$Native_Utils.eq(poll.action, '')),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$disabled(true),
-							_1: {
-								ctor: '::',
-								_0: _aYuMatsuzawa$yubot$Poller_Styles$hidden,
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('-- Select Action --'),
-					_1: {ctor: '[]'}
-				});
-		};
-		return A2(
-			_rundis$elm_bootstrap$Bootstrap_Form_Select$select,
-			{
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$id('poll-action'),
-				_1: {
-					ctor: '::',
-					_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$onInput(onInputMessage),
-					_1: {ctor: '[]'}
-				}
-			},
-			A2(
-				F2(
-					function (x, y) {
-						return {ctor: '::', _0: x, _1: y};
-					}),
-				header(poll),
-				A2(_elm_lang$core$List$map, item, actionList)));
-	});
-var _aYuMatsuzawa$yubot$Polls_ModalView$intervalSelect = function (poll) {
-	var item = function (v) {
-		return _elm_lang$core$Native_Utils.eq(v, poll.interval) ? A2(
-			_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$value(v),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$selected(true),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					_aYuMatsuzawa$yubot$Polls$intervalToString(v)),
-				_1: {ctor: '[]'}
-			}) : A2(
-			_rundis$elm_bootstrap$Bootstrap_Form_Select$item,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$value(v),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					_aYuMatsuzawa$yubot$Polls$intervalToString(v)),
-				_1: {ctor: '[]'}
-			});
-	};
-	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Form_Select$select,
-		{
-			ctor: '::',
-			_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$id('poll-interval'),
-			_1: {
-				ctor: '::',
-				_0: _rundis$elm_bootstrap$Bootstrap_Form_Select$onInput(
-					function (interval) {
-						return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
-							_elm_lang$core$Native_Utils.update(
-								poll,
-								{interval: interval}));
-					}),
-				_1: {ctor: '[]'}
-			}
-		},
-		A2(
-			_elm_lang$core$List$map,
-			item,
-			{
-				ctor: '::',
-				_0: '1',
-				_1: {
-					ctor: '::',
-					_0: '3',
-					_1: {
-						ctor: '::',
-						_0: '5',
-						_1: {
-							ctor: '::',
-							_0: '10',
-							_1: {
-								ctor: '::',
-								_0: '30',
-								_1: {
-									ctor: '::',
-									_0: 'hourly',
-									_1: {
-										ctor: '::',
-										_0: 'daily',
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					}
-				}
-			}));
-};
-var _aYuMatsuzawa$yubot$Polls_ModalView$authOnSelect = F2(
-	function (poll, authId) {
-		return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
-			_elm_lang$core$Native_Utils.update(
-				poll,
-				{
-					auth: _elm_lang$core$Maybe$Just(authId)
-				}));
-	});
-var _aYuMatsuzawa$yubot$Polls_ModalView$authOnCheck = F3(
-	function (poll, headAuthId, checked) {
-		var _p11 = checked;
-		if (_p11 === false) {
-			return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
-				_elm_lang$core$Native_Utils.update(
-					poll,
-					{auth: _elm_lang$core$Maybe$Nothing}));
-		} else {
-			return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
-				_elm_lang$core$Native_Utils.update(
-					poll,
-					{
-						auth: _elm_lang$core$Maybe$Just(headAuthId)
-					}));
-		}
-	});
-var _aYuMatsuzawa$yubot$Polls_ModalView$editForm = F3(
-	function (actionList, authList, poll) {
-		var maybeCurrentAction = A2(
-			_elm_community$list_extra$List_Extra$find,
-			function (action) {
-				return _elm_lang$core$Native_Utils.eq(action.id, poll.action);
-			},
-			actionList);
-		return A2(
-			_rundis$elm_bootstrap$Bootstrap_Form$form,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: A2(
-					_rundis$elm_bootstrap$Bootstrap_Form$group,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: A2(
-							_rundis$elm_bootstrap$Bootstrap_Form$label,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$for('poll-url'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('URL'),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$url(
-								{
-									ctor: '::',
-									_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$id('poll-url'),
-									_1: {
-										ctor: '::',
-										_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$value(poll.url),
-										_1: {
-											ctor: '::',
-											_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput(
-												function (url) {
-													return _aYuMatsuzawa$yubot$Resource_Messages$OnEditInput(
-														_elm_lang$core$Native_Utils.update(
-															poll,
-															{url: url}));
-												}),
-											_1: {ctor: '[]'}
-										}
-									}
-								}),
-							_1: {
-								ctor: '::',
-								_0: A3(
-									_aYuMatsuzawa$yubot$Authentications_View$authCheck,
-									authList,
-									poll.auth,
-									_aYuMatsuzawa$yubot$Polls_ModalView$authOnCheck(poll)),
-								_1: {ctor: '[]'}
-							}
-						}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A4(
-						_aYuMatsuzawa$yubot$Authentications_View$authSelect,
-						_aYuMatsuzawa$yubot$Authentications$listForPoll(authList),
-						'poll',
-						poll.auth,
-						_aYuMatsuzawa$yubot$Polls_ModalView$authOnSelect(poll)),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_rundis$elm_bootstrap$Bootstrap_Form$group,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: A2(
-									_rundis$elm_bootstrap$Bootstrap_Form$label,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$for('poll-interval'),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text('Interval'),
-										_1: {ctor: '[]'}
-									}),
-								_1: {
-									ctor: '::',
-									_0: _aYuMatsuzawa$yubot$Polls_ModalView$intervalSelect(poll),
-									_1: {ctor: '[]'}
-								}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_rundis$elm_bootstrap$Bootstrap_Form$group,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: A2(
-										_rundis$elm_bootstrap$Bootstrap_Form$label,
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$for('poll-action'),
-											_1: {ctor: '[]'}
-										},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text('Action'),
-											_1: {ctor: '[]'}
-										}),
-									_1: {
-										ctor: '::',
-										_0: A2(_aYuMatsuzawa$yubot$Polls_ModalView$actionSelect, actionList, poll),
-										_1: {ctor: '[]'}
-									}
-								}),
-							_1: {
-								ctor: '::',
-								_0: A2(_aYuMatsuzawa$yubot$Polls_ModalView$actionPreview, maybeCurrentAction, poll),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_rundis$elm_bootstrap$Bootstrap_Form$group,
-										{ctor: '[]'},
-										A2(
-											F2(
-												function (x, y) {
-													return {ctor: '::', _0: x, _1: y};
-												}),
-											A2(
-												_rundis$elm_bootstrap$Bootstrap_Form$label,
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html_Attributes$for('poll-filters-0'),
-													_1: {ctor: '[]'}
-												},
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html$text('Jq Filters'),
-													_1: {ctor: '[]'}
-												}),
-											A2(_aYuMatsuzawa$yubot$Polls_ModalView$filterInput, maybeCurrentAction, poll))),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				}
-			});
-	});
-var _aYuMatsuzawa$yubot$Polls_ModalView$editModalView = F3(
-	function (actionList, authList, pollRs) {
-		var target = pollRs.editModal.target;
-		var stateToMsg = function (state) {
-			return A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, state, target);
-		};
-		var _p12 = _elm_lang$core$Native_Utils.eq(target.id, '') ? {
-			ctor: '_Tuple2',
-			_0: _elm_lang$html$Html$text('New poll!'),
-			_1: _elm_lang$html$Html$text('Creating Poll')
-		} : {
-			ctor: '_Tuple2',
-			_0: A2(
-				_elm_lang$html$Html$small,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						A2(_elm_lang$core$Basics_ops['++'], 'ID: ', target.id)),
-					_1: {ctor: '[]'}
-				}),
-			_1: _elm_lang$html$Html$text('Updating Poll')
-		};
-		var headerText = _p12._0;
-		var titleText = _p12._1;
-		return A2(
-			_rundis$elm_bootstrap$Bootstrap_Modal$view,
-			pollRs.editModal.modalState,
-			A3(
-				_rundis$elm_bootstrap$Bootstrap_Modal$footer,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A3(
-						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-						A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-						{
-							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
-							_1: {ctor: '[]'}
-						},
-						'Submit'),
-					_1: {
-						ctor: '::',
-						_0: A3(
-							_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-							A2(_aYuMatsuzawa$yubot$Resource_Messages$OnEditModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-							{ctor: '[]'},
-							'Cancel'),
-						_1: {ctor: '[]'}
-					}
-				},
-				A3(
-					_rundis$elm_bootstrap$Bootstrap_Modal$body,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: headerText,
-						_1: {
-							ctor: '::',
-							_0: A3(_aYuMatsuzawa$yubot$Polls_ModalView$editForm, actionList, authList, target),
-							_1: {ctor: '[]'}
-						}
-					},
-					A3(
-						_rundis$elm_bootstrap$Bootstrap_Modal$h4,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: titleText,
-							_1: {ctor: '[]'}
-						},
-						_rundis$elm_bootstrap$Bootstrap_Modal$large(
-							_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg))))));
-	});
-var _aYuMatsuzawa$yubot$Polls_ModalView$deleteModalView = function (pollRs) {
-	var target = pollRs.deleteModal.target;
-	var stateToMsg = function (state) {
-		return A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, state, target);
-	};
-	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Modal$view,
-		pollRs.deleteModal.modalState,
-		A3(
-			_rundis$elm_bootstrap$Bootstrap_Modal$footer,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: A3(
-					_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-					_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteConfirmed(target.id),
-					{
-						ctor: '::',
-						_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
-						_1: {ctor: '[]'}
-					},
-					'Yes, delete'),
-				_1: {
-					ctor: '::',
-					_0: A3(
-						_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-						A2(_aYuMatsuzawa$yubot$Resource_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$hiddenState, target),
-						{ctor: '[]'},
-						'Cancel'),
-					_1: {ctor: '[]'}
-				}
-			},
-			A3(
-				_rundis$elm_bootstrap$Bootstrap_Modal$body,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$p,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								A2(_elm_lang$core$Basics_ops['++'], 'ID: ', target.id)),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$p,
-							{ctor: '[]'},
-							_aYuMatsuzawa$yubot$Html_Utils$atext(
-								A2(_elm_lang$core$Basics_ops['++'], 'URL: ', target.url))),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$p,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Are you sure?'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				},
-				A3(
-					_rundis$elm_bootstrap$Bootstrap_Modal$h4,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Deleting Poll'),
-						_1: {ctor: '[]'}
-					},
-					_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg)))));
+				cardWithWrap,
+				A2(_aYuMatsuzawa$yubot$Repo$dictToSortedList, pollRepo.sort, pollRepo.dict))));
 };
 
 var _aYuMatsuzawa$yubot$Poller_View$authList = function (model) {
@@ -25985,7 +23646,7 @@ var _aYuMatsuzawa$yubot$Poller_View$authList = function (model) {
 							_0: A2(
 								_elm_lang$html$Html$map,
 								_aYuMatsuzawa$yubot$Poller_Messages$AuthMsg,
-								_aYuMatsuzawa$yubot$Authentications_View$listView(model.authRs)),
+								_aYuMatsuzawa$yubot$Authentications_View$listView(model.authRepo)),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
@@ -26022,8 +23683,8 @@ var _aYuMatsuzawa$yubot$Poller_View$actionList = function (model) {
 								_aYuMatsuzawa$yubot$Poller_Messages$ActionsMsg,
 								A2(
 									_aYuMatsuzawa$yubot$Actions_View$listView,
-									_aYuMatsuzawa$yubot$Polls$usedActionIds(model.pollRs.list),
-									model.actionRs)),
+									_aYuMatsuzawa$yubot$Polls$usedActionIds(model.pollRepo.dict),
+									model.actionRepo)),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
@@ -26033,68 +23694,16 @@ var _aYuMatsuzawa$yubot$Poller_View$actionList = function (model) {
 				_0: A2(
 					_elm_lang$html$Html$map,
 					_aYuMatsuzawa$yubot$Poller_Messages$ActionsMsg,
-					_aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView(model.actionRs)),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$map,
-						_aYuMatsuzawa$yubot$Poller_Messages$ActionsMsg,
-						A2(_aYuMatsuzawa$yubot$Actions_ModalView$editModalView, model.authRs.list, model.actionRs)),
-					_1: {ctor: '[]'}
-				}
-			}
-		});
-};
-var _aYuMatsuzawa$yubot$Poller_View$pollList = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('row'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('col-md-12'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$map,
-								_aYuMatsuzawa$yubot$Poller_Messages$PollsMsg,
-								_aYuMatsuzawa$yubot$Polls_View$listView(model.pollRs)),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$map,
-					_aYuMatsuzawa$yubot$Poller_Messages$PollsMsg,
-					_aYuMatsuzawa$yubot$Polls_ModalView$deleteModalView(model.pollRs)),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$map,
-						_aYuMatsuzawa$yubot$Poller_Messages$PollsMsg,
-						A3(_aYuMatsuzawa$yubot$Polls_ModalView$editModalView, model.actionRs.list, model.authRs.list, model.pollRs)),
-					_1: {ctor: '[]'}
-				}
+					_aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView(model.actionRepo)),
+				_1: {ctor: '[]'}
 			}
 		});
 };
 var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
+	var htmlMap = function (msgMapper) {
+		return _elm_lang$html$Html$map(
+			_aYuMatsuzawa$yubot$Poller_Messages$fromRepo(msgMapper));
+	};
 	var contentClass = function (index) {
 		return A2(_aYuMatsuzawa$yubot$Routing$isActiveTab, model.route, index) ? _aYuMatsuzawa$yubot$Poller_Styles$shown : _aYuMatsuzawa$yubot$Poller_Styles$hidden;
 	};
@@ -26123,9 +23732,9 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 		{
 			ctor: '::',
 			_0: A2(
-				_elm_lang$html$Html$map,
+				htmlMap,
 				_aYuMatsuzawa$yubot$Poller_Messages$PollsMsg,
-				_aYuMatsuzawa$yubot$Polls_View$cardsView(model.pollRs)),
+				_aYuMatsuzawa$yubot$Polls_View$cardsView(model.pollRepo)),
 			_1: {
 				ctor: '::',
 				_0: _aYuMatsuzawa$yubot$Poller_View$actionList(model),
@@ -26171,13 +23780,13 @@ var _aYuMatsuzawa$yubot$Poller_View$mainTabs = function (model) {
 		tab,
 		{
 			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: '/poller/polls', _1: 'Polls'},
+			_0: {ctor: '_Tuple2', _0: '/polls', _1: 'Polls'},
 			_1: {
 				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: '/poller/actions', _1: 'Actions'},
+				_0: {ctor: '_Tuple2', _0: '/actions', _1: 'Actions'},
 				_1: {
 					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: '/poller/credentials', _1: 'Credentials'},
+					_0: {ctor: '_Tuple2', _0: '/credentials', _1: 'Credentials'},
 					_1: {ctor: '[]'}
 				}
 			}
@@ -26349,19 +23958,19 @@ var _aYuMatsuzawa$yubot$Poller$init = function (location) {
 			_0: A2(
 				_elm_lang$core$Platform_Cmd$map,
 				_aYuMatsuzawa$yubot$Poller_Messages$PollsMsg,
-				_aYuMatsuzawa$yubot$Resource_Command$fetchAll(_aYuMatsuzawa$yubot$Polls$config)),
+				_aYuMatsuzawa$yubot$Repo_Command$fetchAll(_aYuMatsuzawa$yubot$Polls$config)),
 			_1: {
 				ctor: '::',
 				_0: A2(
 					_elm_lang$core$Platform_Cmd$map,
 					_aYuMatsuzawa$yubot$Poller_Messages$ActionsMsg,
-					_aYuMatsuzawa$yubot$Resource_Command$fetchAll(_aYuMatsuzawa$yubot$Actions$config)),
+					_aYuMatsuzawa$yubot$Repo_Command$fetchAll(_aYuMatsuzawa$yubot$Actions$config)),
 				_1: {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$core$Platform_Cmd$map,
 						_aYuMatsuzawa$yubot$Poller_Messages$AuthMsg,
-						_aYuMatsuzawa$yubot$Resource_Command$fetchAll(_aYuMatsuzawa$yubot$Authentications$config)),
+						_aYuMatsuzawa$yubot$Repo_Command$fetchAll(_aYuMatsuzawa$yubot$Authentications$config)),
 					_1: {
 						ctor: '::',
 						_0: navbarCmd,
@@ -26379,7 +23988,7 @@ var _aYuMatsuzawa$yubot$Poller$main = A2(
 var Elm = {};
 Elm['Poller'] = Elm['Poller'] || {};
 if (typeof _aYuMatsuzawa$yubot$Poller$main !== 'undefined') {
-    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Resource.Messages.Msg":{"args":["resource"],"tags":{"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","resource"],"OnSort":["Resource.Sorter resource"],"OnEditInputWithError":["resource","Utils.ErrorMessage"],"OnFetchAll":["Result.Result Http.Error (List resource)"],"OnDeleteConfirmed":["Utils.EntityId"],"OnEditInput":["resource"],"OnEditModal":["Bootstrap.Modal.State","resource"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Resource.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Actions.Type":{"args":[],"tags":{"Hipchat":[],"Http":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"OnLocationChange":["Navigation.Location"],"NavbarMsg":["Bootstrap.Navbar.State"],"AuthMsg":["Resource.Messages.Msg Authentications.Authentication"],"ActionsMsg":["Resource.Messages.Msg Actions.Action"],"PollsMsg":["Resource.Messages.Msg Polls.Poll"],"ChangeLocation":["Utils.Url"]}}},"aliases":{"Utils.EntityId":{"args":[],"type":"String"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Authentications.AuthType":{"args":[],"type":"String"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Authentications.DecodedToken":{"args":[],"type":"String"},"Resource.Sorter":{"args":["resource"],"type":"{ property : resource -> String, order : Resource.Ord }"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Label":{"args":[],"type":"String"},"Utils.Url":{"args":[],"type":"String"},"Utils.ErrorMessage":{"args":[],"type":"( Utils.Label, String )"},"Authentications.Authentication":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , name : String , type_ : Authentications.AuthType , token : Authentications.DecodedToken }"},"Polls.Interval":{"args":[],"type":"String"},"Polls.Poll":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Utils.EntityId , action : Utils.EntityId , filters : List Polls.JqFilter }"},"Actions.Action":{"args":[],"type":"{ id : Utils.EntityId , updatedAt : Utils.Timestamp , label : Maybe.Maybe Actions.Label , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Utils.EntityId , bodyTemplate : StringTemplate.StringTemplate , type_ : Actions.Type }"},"Actions.Label":{"args":[],"type":"String"},"StringTemplate.Body":{"args":[],"type":"String"},"StringTemplate.StringTemplate":{"args":[],"type":"{ body : StringTemplate.Body, variables : List String }"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
+    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Repo.Messages.Msg":{"args":["x"],"tags":{"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","Repo.Entity x"],"OnSort":["Repo.Sorter x"],"OnFetchAll":["Result.Result Http.Error (List (Repo.Entity x))"],"ChangeLocation":["Utils.Url"],"OnDeleteConfirmed":["Repo.EntityId"],"OnEditInput":["x","List Utils.ErrorMessage"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Repo.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Actions.Type":{"args":[],"tags":{"Hipchat":[],"Http":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"OnLocationChange":["Navigation.Location"],"NavbarMsg":["Bootstrap.Navbar.State"],"AuthMsg":["Repo.Messages.Msg Authentications.Authentication"],"ActionsMsg":["Repo.Messages.Msg Actions.Action"],"PollsMsg":["Repo.Messages.Msg Polls.Poll"],"ChangeLocation":["Utils.Url"]}}},"aliases":{"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Authentications.AuthType":{"args":[],"type":"String"},"Repo.EntityId":{"args":[],"type":"String"},"Repo.Sorter":{"args":["x"],"type":"{ property : Repo.Entity x -> String, order : Repo.Ord }"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Authentications.DecodedToken":{"args":[],"type":"String"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Label":{"args":[],"type":"String"},"Utils.Url":{"args":[],"type":"String"},"Utils.ErrorMessage":{"args":[],"type":"( Utils.Label, String )"},"Authentications.Authentication":{"args":[],"type":"{ name : String , type_ : Authentications.AuthType , token : Authentications.DecodedToken }"},"Polls.Interval":{"args":[],"type":"String"},"Repo.Entity":{"args":["x"],"type":"{ id : Repo.EntityId, updatedAt : Utils.Timestamp, data : x }"},"Polls.Poll":{"args":[],"type":"{ url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Repo.EntityId , action : Repo.EntityId , filters : List Polls.JqFilter }"},"Actions.Action":{"args":[],"type":"{ label : Maybe.Maybe Actions.Label , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Repo.EntityId , bodyTemplate : StringTemplate.StringTemplate , type_ : Actions.Type }"},"Actions.Label":{"args":[],"type":"String"},"StringTemplate.Body":{"args":[],"type":"String"},"StringTemplate.StringTemplate":{"args":[],"type":"{ body : StringTemplate.Body, variables : List String }"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

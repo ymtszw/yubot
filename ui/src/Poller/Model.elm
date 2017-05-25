@@ -2,16 +2,16 @@ module Poller.Model exposing (Model, initialModel)
 
 import Bootstrap.Navbar as Navbar
 import Routing
-import Resource exposing (Resource, initialResource)
-import Polls exposing (Poll, dummyPoll)
-import Actions exposing (Action, dummyAction)
-import Authentications exposing (Authentication, dummyAuthentication)
+import Repo
+import Polls exposing (Poll)
+import Actions exposing (Action)
+import Authentications exposing (Authentication)
 
 
 type alias Model =
-    { pollRs : Resource Poll
-    , actionRs : Resource Action
-    , authRs : Resource Authentication
+    { pollRepo : Repo.Repo Poll
+    , actionRepo : Repo.Repo Action
+    , authRepo : Repo.Repo Authentication
     , navbarState : Navbar.State
     , route : Routing.Route
     }
@@ -19,9 +19,9 @@ type alias Model =
 
 initialModel : Routing.Route -> Navbar.State -> Model
 initialModel route navbarState =
-    { pollRs = initialResource dummyPoll
-    , actionRs = initialResource dummyAction
-    , authRs = initialResource dummyAuthentication
+    { pollRepo = Repo.initialize Polls.dummyPoll
+    , actionRepo = Repo.initialize Actions.dummyAction
+    , authRepo = Repo.initialize Authentications.dummyAuthentication
     , navbarState = navbarState
     , route = route
     }

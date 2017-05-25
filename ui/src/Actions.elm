@@ -9,11 +9,11 @@ module Actions
         )
 
 import Json.Decode as Decode
-import Utils exposing (EntityId, Timestamp, Url)
-import Resource exposing (Resource)
-import Resource.Command exposing (Config)
-import Resource.Messages exposing (Msg)
-import Resource.Update
+import Utils
+import Repo exposing (Repo)
+import Repo.Command exposing (Config)
+import Repo.Messages exposing (Msg)
+import Repo.Update
 import StringTemplate exposing (StringTemplate)
 
 
@@ -34,12 +34,10 @@ type Type
 
 
 type alias Action =
-    { id : EntityId
-    , updatedAt : Timestamp
-    , label : Maybe Label
+    { label : Maybe Label
     , method : Method
-    , url : Url
-    , auth : Maybe EntityId
+    , url : Utils.Url
+    , auth : Maybe Repo.EntityId
     , bodyTemplate : StringTemplate
     , type_ : Type
     }
@@ -47,7 +45,7 @@ type alias Action =
 
 dummyAction : Action
 dummyAction =
-    Action "" "2015-01-01T00:00:00Z" Nothing "post" "https://example.com" Nothing (StringTemplate "{}" []) Http
+    Action Nothing "post" "https://example.com" Nothing (StringTemplate "{}" []) Http
 
 
 
@@ -56,20 +54,18 @@ dummyAction =
 
 config : Config Action
 config =
-    Config "/api/action" fetchDecoder
+    Config "/api/action" dataDecoder
 
 
-fetchDecoder : Decode.Decoder Action
-fetchDecoder =
-    Decode.map8 Action
-        (Decode.field "_id" Decode.string)
-        (Decode.field "updated_at" Decode.string)
-        (Decode.at [ "data", "label" ] (Decode.maybe Decode.string))
-        (Decode.at [ "data", "method" ] Decode.string)
-        (Decode.at [ "data", "url" ] Decode.string)
-        (Decode.at [ "data", "auth" ] (Decode.maybe Decode.string))
-        (Decode.at [ "data", "body_template" ] bodyTemplateDecoder)
-        (Decode.at [ "data", "type" ] (typeDecoder))
+dataDecoder : Decode.Decoder Action
+dataDecoder =
+    Decode.map6 Action
+        (Decode.field "label" (Decode.maybe Decode.string))
+        (Decode.field "method" Decode.string)
+        (Decode.field "url" Decode.string)
+        (Decode.field "auth" (Decode.maybe Decode.string))
+        (Decode.field "body_template" bodyTemplateDecoder)
+        (Decode.field "type" (typeDecoder))
 
 
 bodyTemplateDecoder : Decode.Decoder StringTemplate
@@ -98,6 +94,6 @@ typeDecoder =
 -- Update
 
 
-update : Msg Action -> Resource Action -> ( Resource Action, Cmd (Msg Action) )
+update : Msg Action -> Repo Action -> ( Repo Action, Cmd (Msg Action) )
 update msg resource =
-    Resource.Update.update dummyAction config msg resource
+    Repo.Update.update dummyAction config msg resource
