@@ -23,4 +23,10 @@ defmodule Yubot.Router do
   get    "/api/authentication/:id", Authentication, :retrieve
   get    "/api/authentication"    , Authentication, :retrieve_list
   delete "/api/authentication/:id", Authentication, :delete
+
+  # Live Reloader
+
+  if Mix.env == :dev do
+    websocket "/ws"
+  end
 end
