@@ -23904,47 +23904,53 @@ var _aYuMatsuzawa$yubot$Poller_Model$Model = F6(
 
 var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
+		var mapUpdate = F3(
+			function (repoToModel, msg, _p0) {
+				var _p1 = _p0;
+				return {
+					ctor: '_Tuple2',
+					_0: repoToModel(_p1._0),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, msg, _p1._1)
+				};
+			});
+		var _p2 = msg;
+		switch (_p2.ctor) {
 			case 'PollsMsg':
-				var _p1 = A2(_aYuMatsuzawa$yubot$Polls$update, _p0._0, model.pollRepo);
-				var updatedPollRepo = _p1._0;
-				var cmd = _p1._1;
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{pollRepo: updatedPollRepo}),
-					_1: A2(_elm_lang$core$Platform_Cmd$map, _aYuMatsuzawa$yubot$Poller_Messages$PollsMsg, cmd)
-				};
+				return A3(
+					mapUpdate,
+					function (x) {
+						return _elm_lang$core$Native_Utils.update(
+							model,
+							{pollRepo: x});
+					},
+					_aYuMatsuzawa$yubot$Poller_Messages$PollsMsg,
+					A2(_aYuMatsuzawa$yubot$Polls$update, _p2._0, model.pollRepo));
 			case 'ActionsMsg':
-				var _p2 = A2(_aYuMatsuzawa$yubot$Actions$update, _p0._0, model.actionRepo);
-				var updatedActionRepo = _p2._0;
-				var cmd = _p2._1;
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{actionRepo: updatedActionRepo}),
-					_1: A2(_elm_lang$core$Platform_Cmd$map, _aYuMatsuzawa$yubot$Poller_Messages$ActionsMsg, cmd)
-				};
+				return A3(
+					mapUpdate,
+					function (x) {
+						return _elm_lang$core$Native_Utils.update(
+							model,
+							{actionRepo: x});
+					},
+					_aYuMatsuzawa$yubot$Poller_Messages$ActionsMsg,
+					A2(_aYuMatsuzawa$yubot$Actions$update, _p2._0, model.actionRepo));
 			case 'AuthMsg':
-				var _p3 = A2(_aYuMatsuzawa$yubot$Authentications$update, _p0._0, model.authRepo);
-				var updatedAuthRepo = _p3._0;
-				var cmd = _p3._1;
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{authRepo: updatedAuthRepo}),
-					_1: A2(_elm_lang$core$Platform_Cmd$map, _aYuMatsuzawa$yubot$Poller_Messages$AuthMsg, cmd)
-				};
+				return A3(
+					mapUpdate,
+					function (x) {
+						return _elm_lang$core$Native_Utils.update(
+							model,
+							{authRepo: x});
+					},
+					_aYuMatsuzawa$yubot$Poller_Messages$AuthMsg,
+					A2(_aYuMatsuzawa$yubot$Authentications$update, _p2._0, model.authRepo));
 			case 'NavbarMsg':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{navbarState: _p0._0}),
+						{navbarState: _p2._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'ChangeLocation':
@@ -23952,7 +23958,7 @@ var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
 					ctor: '_Tuple2',
 					_0: model,
 					_1: _elm_lang$navigation$Navigation$modifyUrl(
-						A2(_elm_lang$core$Basics_ops['++'], '/poller', _p0._0))
+						A2(_elm_lang$core$Basics_ops['++'], '/poller', _p2._0))
 				};
 			case 'OnLocationChange':
 				return {
@@ -23960,20 +23966,18 @@ var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							route: _aYuMatsuzawa$yubot$Routing$parseLocation(_p0._0)
+							route: _aYuMatsuzawa$yubot$Routing$parseLocation(_p2._0)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'OnServerPush':
-				var _p5 = _p0._0;
-				var _p4 = _p5;
-				if (_p4 === 'reload') {
+				if (_p2._0 === 'reload') {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$navigation$Navigation$reloadAndSkipCache};
 				} else {
 					return A2(
 						_elm_lang$core$Basics$always,
 						{ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
-						A2(_elm_lang$core$Debug$log, 'Server push', _p5));
+						A2(_elm_lang$core$Debug$log, 'Server push', _p2._0));
 				}
 			default:
 				return {
@@ -24443,7 +24447,7 @@ var _aYuMatsuzawa$yubot$Poller_View$navbar = function (model) {
 			{ctor: '[]'},
 			A3(
 				_rundis$elm_bootstrap$Bootstrap_Navbar$brand,
-				_aYuMatsuzawa$yubot$Html_Utils$navigateOnClick('/poller'),
+				_aYuMatsuzawa$yubot$Html_Utils$navigateOnClick(''),
 				{
 					ctor: '::',
 					_0: logo,

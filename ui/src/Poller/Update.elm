@@ -12,46 +12,37 @@ import Poller.Messages exposing (Msg(..))
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        PollsMsg subMsg ->
-            let
-                ( updatedPollRepo, cmd ) =
-                    Polls.update subMsg model.pollRepo
-            in
-                ( { model | pollRepo = updatedPollRepo }, Cmd.map PollsMsg cmd )
+    let
+        mapUpdate repoToModel msg ( repo, cmd ) =
+            ( repoToModel repo, Cmd.map msg cmd )
+    in
+        case msg of
+            PollsMsg subMsg ->
+                Polls.update subMsg model.pollRepo
+                    |> mapUpdate (\x -> { model | pollRepo = x }) PollsMsg
 
-        ActionsMsg subMsg ->
-            let
-                ( updatedActionRepo, cmd ) =
-                    Actions.update subMsg model.actionRepo
-            in
-                ( { model | actionRepo = updatedActionRepo }, Cmd.map ActionsMsg cmd )
+            ActionsMsg subMsg ->
+                Actions.update subMsg model.actionRepo
+                    |> mapUpdate (\x -> { model | actionRepo = x }) ActionsMsg
 
-        AuthMsg subMsg ->
-            let
-                ( updatedAuthRepo, cmd ) =
-                    Authentications.update subMsg model.authRepo
-            in
-                ( { model | authRepo = updatedAuthRepo }, Cmd.map AuthMsg cmd )
+            AuthMsg subMsg ->
+                Authentications.update subMsg model.authRepo
+                    |> mapUpdate (\x -> { model | authRepo = x }) AuthMsg
 
-        NavbarMsg state ->
-            ( { model | navbarState = state }, Cmd.none )
+            NavbarMsg state ->
+                ( { model | navbarState = state }, Cmd.none )
 
-        ChangeLocation path ->
-            ( model, Navigation.modifyUrl ("/poller" ++ path) )
+            ChangeLocation path ->
+                ( model, Navigation.modifyUrl ("/poller" ++ path) )
 
-        OnLocationChange location ->
-            ( { model | route = Routing.parseLocation location }, Cmd.none )
+            OnLocationChange location ->
+                ( { model | route = Routing.parseLocation location }, Cmd.none )
 
-        OnServerPush text ->
-            case text of
-                "reload" ->
-                    ( model, Navigation.reloadAndSkipCache )
+            OnServerPush "reload" ->
+                ( model, Navigation.reloadAndSkipCache )
 
-                _ ->
-                    text
-                        |> Debug.log "Server push"
-                        |> always ( model, Cmd.none )
+            OnServerPush text ->
+                Debug.log "Server push" text |> always ( model, Cmd.none )
 
-        OnClientTimeout _ ->
-            ( model, LiveReload.cmd model.isDev )
+            OnClientTimeout _ ->
+                ( model, LiveReload.cmd model.isDev )

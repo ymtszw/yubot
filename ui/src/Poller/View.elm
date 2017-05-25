@@ -43,7 +43,7 @@ navbar model =
         Navbar.config NavbarMsg
             |> Navbar.withAnimation
             |> Navbar.collapseSmall
-            |> Navbar.brand (navigateOnClick "/poller") [ logo ]
+            |> Navbar.brand (navigateOnClick "") [ logo ]
             |> Navbar.customItems []
             |> Navbar.view model.navbarState
 
