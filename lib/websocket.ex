@@ -9,7 +9,6 @@ defmodule Yubot.Websocket do
   # Callbacks
 
   def init(_conn) do
-    Yubot.Logger.debug("A client connected with websocket to live reloader.")
     RG.join(@live_reload_group, @default_epool_id)
     {nil, []}
   end
@@ -19,8 +18,11 @@ defmodule Yubot.Websocket do
   end
 
   def handle_server_message(state, _conn, @reload_frame) do
-    Yubot.Logger.debug("Reload is triggered by file change.")
+    Yubot.Logger.debug("Live reload is triggered by file change.")
     {state, [@reload_frame]}
+  end
+  def handle_server_message(state, _conn, {:text, _} = text_frame) do
+    {state, [text_frame]}
   end
   def handle_server_message(state, _conn, _frame) do
     {state, []}
@@ -29,6 +31,10 @@ defmodule Yubot.Websocket do
   # APIs
 
   def broadcast_reload() do
-    RG.publish(@live_reload_group, @default_epool_id, @reload_frame)
+    broadcast(@reload_frame)
+  end
+
+  def broadcast(frame) do
+    RG.publish(@live_reload_group, @default_epool_id, frame)
   end
 end
