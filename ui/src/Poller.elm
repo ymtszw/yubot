@@ -1,6 +1,7 @@
 module Poller exposing (main)
 
 import Navigation
+import WebSocket
 import Bootstrap.Navbar
 import Routing
 import Repo.Command
@@ -40,9 +41,16 @@ init { isDev } location =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch
-        [ Bootstrap.Navbar.subscriptions model.navbarState NavbarMsg
-        ]
+    let
+        baseSubs =
+            if model.isDev then
+                [ WebSocket.listen "ws://yubot.localhost:8080/ws" OnServerPush ]
+            else
+                []
+    in
+        baseSubs
+            |> (::) (Bootstrap.Navbar.subscriptions model.navbarState NavbarMsg)
+            |> Sub.batch
 
 
 

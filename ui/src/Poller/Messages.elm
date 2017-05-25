@@ -16,6 +16,7 @@ type Msg
     | NavbarMsg Bootstrap.Navbar.State
     | ChangeLocation Utils.Url
     | OnLocationChange Navigation.Location
+    | OnServerPush String
 
 
 {-| Map Repo messages into root (Poller) messages, with special treatment for `ChangeLocation` message.
