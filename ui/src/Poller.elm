@@ -13,8 +13,12 @@ import Poller.Update exposing (update)
 import Poller.View exposing (view)
 
 
-init : Navigation.Location -> ( Model, Cmd Msg )
-init location =
+type alias Flags =
+    { isDev : Bool }
+
+
+init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
+init { isDev } location =
     let
         ( navbarState, navbarCmd ) =
             Bootstrap.Navbar.initialState NavbarMsg
@@ -27,7 +31,7 @@ init location =
         , (Cmd.map AuthMsg (Repo.Command.fetchAll Authentications.config))
         , navbarCmd
         ]
-            |> (!) (Poller.Model.initialModel currentRoute navbarState)
+            |> (!) (Poller.Model.initialModel isDev currentRoute navbarState)
 
 
 
@@ -45,9 +49,9 @@ subscriptions model =
 -- MAIN
 
 
-main : Program Never Model Msg
+main : Program Flags Model Msg
 main =
-    Navigation.program OnLocationChange
+    Navigation.programWithFlags OnLocationChange
         { init = init
         , view = view
         , update = update
