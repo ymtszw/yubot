@@ -23762,7 +23762,7 @@ var _elm_lang$websocket$WebSocket$onSelfMsg = F3(
 _elm_lang$core$Native_Platform.effectManagers['WebSocket'] = {pkg: 'elm-lang/websocket', init: _elm_lang$websocket$WebSocket$init, onEffects: _elm_lang$websocket$WebSocket$onEffects, onSelfMsg: _elm_lang$websocket$WebSocket$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$websocket$WebSocket$cmdMap, subMap: _elm_lang$websocket$WebSocket$subMap};
 
 var _aYuMatsuzawa$yubot$LiveReload$devWebsocketUrl = 'ws://yubot.localhost:8080/ws';
-var _aYuMatsuzawa$yubot$LiveReload$set = function (isDev) {
+var _aYuMatsuzawa$yubot$LiveReload$sub = function (isDev) {
 	return isDev ? {
 		ctor: '::',
 		_0: A2(_elm_lang$websocket$WebSocket$listen, _aYuMatsuzawa$yubot$LiveReload$devWebsocketUrl, _aYuMatsuzawa$yubot$Poller_Messages$OnServerPush),
@@ -23773,7 +23773,7 @@ var _aYuMatsuzawa$yubot$LiveReload$set = function (isDev) {
 		}
 	} : {ctor: '[]'};
 };
-var _aYuMatsuzawa$yubot$LiveReload$ping = function (isDev) {
+var _aYuMatsuzawa$yubot$LiveReload$cmd = function (isDev) {
 	return isDev ? A2(_elm_lang$websocket$WebSocket$send, _aYuMatsuzawa$yubot$LiveReload$devWebsocketUrl, 'ping') : _elm_lang$core$Platform_Cmd$none;
 };
 
@@ -23979,7 +23979,7 @@ var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _aYuMatsuzawa$yubot$LiveReload$ping(model.isDev)
+					_1: _aYuMatsuzawa$yubot$LiveReload$cmd(model.isDev)
 				};
 		}
 	});
@@ -24497,7 +24497,7 @@ var _aYuMatsuzawa$yubot$Poller$subscriptions = function (model) {
 				function (x, y) {
 					return A2(_elm_lang$core$Basics_ops['++'], x, y);
 				}),
-			_aYuMatsuzawa$yubot$LiveReload$set(model.isDev),
+			_aYuMatsuzawa$yubot$LiveReload$sub(model.isDev),
 			{
 				ctor: '::',
 				_0: A2(_rundis$elm_bootstrap$Bootstrap_Navbar$subscriptions, model.navbarState, _aYuMatsuzawa$yubot$Poller_Messages$NavbarMsg),

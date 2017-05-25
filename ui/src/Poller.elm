@@ -42,7 +42,7 @@ init { isDev } location =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     [ Bootstrap.Navbar.subscriptions model.navbarState NavbarMsg ]
-        |> (++) (LiveReload.set model.isDev)
+        |> (++) (LiveReload.sub model.isDev)
         |> Sub.batch
 
 

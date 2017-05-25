@@ -1,4 +1,4 @@
-module LiveReload exposing (set, ping)
+module LiveReload exposing (sub, cmd)
 
 import Time
 import WebSocket
@@ -10,8 +10,8 @@ devWebsocketUrl =
     "ws://yubot.localhost:8080/ws"
 
 
-set : Bool -> List (Sub Msg)
-set isDev =
+sub : Bool -> List (Sub Msg)
+sub isDev =
     if isDev then
         [ WebSocket.listen devWebsocketUrl OnServerPush
         , Time.every (30 * Time.second) OnClientTimeout
@@ -20,8 +20,8 @@ set isDev =
         []
 
 
-ping : Bool -> Cmd Msg
-ping isDev =
+cmd : Bool -> Cmd Msg
+cmd isDev =
     if isDev then
         WebSocket.send devWebsocketUrl "ping"
     else

@@ -54,4 +54,4 @@ update msg model =
                         |> always ( model, Cmd.none )
 
         OnClientTimeout _ ->
-            ( model, LiveReload.ping model.isDev )
+            ( model, LiveReload.cmd model.isDev )
