@@ -6254,7 +6254,7 @@ var _aYuMatsuzawa$yubot$Utils$shortenUrl = function (url) {
 	} while(false);
 	return url;
 };
-var _aYuMatsuzawa$yubot$Utils$timestampToString = function (string) {
+var _aYuMatsuzawa$yubot$Utils$dateToString = function (date) {
 	var toIntMonth = function (date) {
 		var _p1 = _elm_lang$core$Date$month(date);
 		switch (_p1.ctor) {
@@ -6291,60 +6291,82 @@ var _aYuMatsuzawa$yubot$Utils$timestampToString = function (string) {
 			_elm_lang$core$Native_Utils.chr('0'),
 			_elm_lang$core$Basics$toString(_p2));
 	};
-	var _p3 = _elm_lang$core$Date$fromString(string);
-	if (_p3.ctor === 'Ok') {
-		var _p4 = _p3._0;
-		return A2(
-			_elm_lang$core$String$join,
-			'',
-			{
+	return A2(
+		_elm_lang$core$String$join,
+		'',
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$core$Basics_ops['++'],
+				_elm_lang$core$Basics$toString(
+					_elm_lang$core$Date$year(date)),
+				'/'),
+			_1: {
 				ctor: '::',
 				_0: A2(
 					_elm_lang$core$Basics_ops['++'],
-					_elm_lang$core$Basics$toString(
-						_elm_lang$core$Date$year(_p4)),
+					toPaddedString(
+						toIntMonth(date)),
 					'/'),
 				_1: {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$core$Basics_ops['++'],
 						toPaddedString(
-							toIntMonth(_p4)),
-						'/'),
+							_elm_lang$core$Date$day(date)),
+						' '),
 					_1: {
 						ctor: '::',
 						_0: A2(
 							_elm_lang$core$Basics_ops['++'],
 							toPaddedString(
-								_elm_lang$core$Date$day(_p4)),
-							' '),
+								_elm_lang$core$Date$hour(date)),
+							':'),
 						_1: {
 							ctor: '::',
 							_0: A2(
 								_elm_lang$core$Basics_ops['++'],
 								toPaddedString(
-									_elm_lang$core$Date$hour(_p4)),
+									_elm_lang$core$Date$minute(date)),
 								':'),
 							_1: {
 								ctor: '::',
-								_0: A2(
-									_elm_lang$core$Basics_ops['++'],
-									toPaddedString(
-										_elm_lang$core$Date$minute(_p4)),
-									':'),
-								_1: {
-									ctor: '::',
-									_0: toPaddedString(
-										_elm_lang$core$Date$second(_p4)),
-									_1: {ctor: '[]'}
-								}
+								_0: toPaddedString(
+									_elm_lang$core$Date$second(date)),
+								_1: {ctor: '[]'}
 							}
 						}
 					}
 				}
-			});
+			}
+		});
+};
+var _aYuMatsuzawa$yubot$Utils$dateToFineString = function (date) {
+	var milliseconds = A3(
+		_elm_lang$core$String$padLeft,
+		3,
+		_elm_lang$core$Native_Utils.chr('0'),
+		_elm_lang$core$Basics$toString(
+			_elm_lang$core$Date$millisecond(date)));
+	return A2(
+		_elm_lang$core$String$join,
+		'.',
+		{
+			ctor: '::',
+			_0: _aYuMatsuzawa$yubot$Utils$dateToString(date),
+			_1: {
+				ctor: '::',
+				_0: milliseconds,
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _aYuMatsuzawa$yubot$Utils$timestampToString = function (string) {
+	var _p3 = _elm_lang$core$Date$fromString(string);
+	if (_p3.ctor === 'Ok') {
+		return _aYuMatsuzawa$yubot$Utils$dateToString(_p3._0);
 	} else {
-		return 'Invalid updatedAt!';
+		return 'Invalid timestamp!';
 	}
 };
 
@@ -19792,6 +19814,10 @@ var _aYuMatsuzawa$yubot$Authentications$update = F2(
 		return A4(_aYuMatsuzawa$yubot$Repo_Update$update, _aYuMatsuzawa$yubot$Authentications$dummyAuthentication, _aYuMatsuzawa$yubot$Authentications$config, msg, resource);
 	});
 
+var _aYuMatsuzawa$yubot$Poller_Messages$DatedLog = F3(
+	function (a, b, c) {
+		return {ctor: 'DatedLog', _0: a, _1: b, _2: c};
+	});
 var _aYuMatsuzawa$yubot$Poller_Messages$OnClientTimeout = function (a) {
 	return {ctor: 'OnClientTimeout', _0: a};
 };
@@ -23902,6 +23928,13 @@ var _aYuMatsuzawa$yubot$Poller_Model$Model = F6(
 		return {pollRepo: a, actionRepo: b, authRepo: c, navbarState: d, route: e, isDev: f};
 	});
 
+var _aYuMatsuzawa$yubot$Poller_Update$log = F2(
+	function (label, text) {
+		return A2(
+			_elm_lang$core$Task$perform,
+			A2(_aYuMatsuzawa$yubot$Poller_Messages$DatedLog, label, text),
+			_elm_lang$core$Date$now);
+	});
 var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
 	function (msg, model) {
 		var mapUpdate = F3(
@@ -23974,17 +24007,32 @@ var _aYuMatsuzawa$yubot$Poller_Update$update = F2(
 				if (_p2._0 === 'reload') {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$navigation$Navigation$reloadAndSkipCache};
 				} else {
-					return A2(
-						_elm_lang$core$Basics$always,
-						{ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
-						A2(_elm_lang$core$Debug$log, 'Server push', _p2._0));
+					return {
+						ctor: '_Tuple2',
+						_0: model,
+						_1: A2(_aYuMatsuzawa$yubot$Poller_Update$log, 'Server push', _p2._0)
+					};
 				}
-			default:
+			case 'OnClientTimeout':
 				return {
 					ctor: '_Tuple2',
 					_0: model,
 					_1: _aYuMatsuzawa$yubot$LiveReload$cmd(model.isDev)
 				};
+			default:
+				return A2(
+					_elm_lang$core$Basics$always,
+					{ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none},
+					A2(
+						_elm_lang$core$Debug$log,
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'[',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_aYuMatsuzawa$yubot$Utils$dateToFineString(_p2._2),
+								A2(_elm_lang$core$Basics_ops['++'], '] ', _p2._0))),
+						_p2._1));
 		}
 	});
 
@@ -24566,7 +24614,7 @@ var _aYuMatsuzawa$yubot$Poller$Flags = function (a) {
 var Elm = {};
 Elm['Poller'] = Elm['Poller'] || {};
 if (typeof _aYuMatsuzawa$yubot$Poller$main !== 'undefined') {
-    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Repo.Messages.Msg":{"args":["x"],"tags":{"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","Repo.Entity x"],"OnSort":["Repo.Sorter x"],"OnFetchAll":["Result.Result Http.Error (List (Repo.Entity x))"],"ChangeLocation":["Utils.Url"],"OnDeleteConfirmed":["Repo.EntityId"],"OnEditInput":["x","List Utils.ErrorMessage"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Repo.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Actions.Type":{"args":[],"tags":{"Hipchat":[],"Http":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"OnLocationChange":["Navigation.Location"],"OnServerPush":["String"],"NavbarMsg":["Bootstrap.Navbar.State"],"AuthMsg":["Repo.Messages.Msg Authentications.Authentication"],"ActionsMsg":["Repo.Messages.Msg Actions.Action"],"PollsMsg":["Repo.Messages.Msg Polls.Poll"],"ChangeLocation":["Utils.Url"],"OnClientTimeout":["Time.Time"]}}},"aliases":{"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Authentications.AuthType":{"args":[],"type":"String"},"Repo.EntityId":{"args":[],"type":"String"},"Repo.Sorter":{"args":["x"],"type":"{ property : Repo.Entity x -> String, order : Repo.Ord }"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Authentications.DecodedToken":{"args":[],"type":"String"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Label":{"args":[],"type":"String"},"Utils.Url":{"args":[],"type":"String"},"Utils.ErrorMessage":{"args":[],"type":"( Utils.Label, String )"},"Authentications.Authentication":{"args":[],"type":"{ name : String , type_ : Authentications.AuthType , token : Authentications.DecodedToken }"},"Polls.Interval":{"args":[],"type":"String"},"Repo.Entity":{"args":["x"],"type":"{ id : Repo.EntityId, updatedAt : Utils.Timestamp, data : x }"},"Polls.Poll":{"args":[],"type":"{ url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Repo.EntityId , action : Repo.EntityId , filters : List Polls.JqFilter }"},"Actions.Action":{"args":[],"type":"{ label : Maybe.Maybe Actions.Label , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Repo.EntityId , bodyTemplate : StringTemplate.StringTemplate , type_ : Actions.Type }"},"Actions.Label":{"args":[],"type":"String"},"StringTemplate.Body":{"args":[],"type":"String"},"StringTemplate.StringTemplate":{"args":[],"type":"{ body : StringTemplate.Body, variables : List String }"},"Time.Time":{"args":[],"type":"Float"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
+    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Repo.Messages.Msg":{"args":["x"],"tags":{"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","Repo.Entity x"],"OnSort":["Repo.Sorter x"],"OnFetchAll":["Result.Result Http.Error (List (Repo.Entity x))"],"ChangeLocation":["Utils.Url"],"OnDeleteConfirmed":["Repo.EntityId"],"OnEditInput":["x","List Utils.ErrorMessage"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Repo.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Actions.Type":{"args":[],"tags":{"Hipchat":[],"Http":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"DatedLog":["String","String","Date.Date"],"OnLocationChange":["Navigation.Location"],"OnServerPush":["String"],"NavbarMsg":["Bootstrap.Navbar.State"],"AuthMsg":["Repo.Messages.Msg Authentications.Authentication"],"ActionsMsg":["Repo.Messages.Msg Actions.Action"],"PollsMsg":["Repo.Messages.Msg Polls.Poll"],"ChangeLocation":["Utils.Url"],"OnClientTimeout":["Time.Time"]}}},"aliases":{"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Authentications.AuthType":{"args":[],"type":"String"},"Repo.EntityId":{"args":[],"type":"String"},"Repo.Sorter":{"args":["x"],"type":"{ property : Repo.Entity x -> String, order : Repo.Ord }"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Authentications.DecodedToken":{"args":[],"type":"String"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Label":{"args":[],"type":"String"},"Utils.Url":{"args":[],"type":"String"},"Utils.ErrorMessage":{"args":[],"type":"( Utils.Label, String )"},"Authentications.Authentication":{"args":[],"type":"{ name : String , type_ : Authentications.AuthType , token : Authentications.DecodedToken }"},"Polls.Interval":{"args":[],"type":"String"},"Repo.Entity":{"args":["x"],"type":"{ id : Repo.EntityId, updatedAt : Utils.Timestamp, data : x }"},"Polls.Poll":{"args":[],"type":"{ url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Repo.EntityId , action : Repo.EntityId , filters : List Polls.JqFilter }"},"Actions.Action":{"args":[],"type":"{ label : Maybe.Maybe Actions.Label , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Repo.EntityId , bodyTemplate : StringTemplate.StringTemplate , type_ : Actions.Type }"},"Actions.Label":{"args":[],"type":"String"},"StringTemplate.Body":{"args":[],"type":"String"},"StringTemplate.StringTemplate":{"args":[],"type":"{ body : StringTemplate.Body, variables : List String }"},"Time.Time":{"args":[],"type":"Float"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

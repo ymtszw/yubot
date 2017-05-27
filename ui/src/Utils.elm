@@ -4,6 +4,8 @@ module Utils
         , Url
         , ErrorMessage
         , timestampToString
+        , dateToString
+        , dateToFineString
         , shortenUrl
         )
 
@@ -30,6 +32,16 @@ type alias ErrorMessage =
 -}
 timestampToString : Timestamp -> String
 timestampToString string =
+    case Date.fromString string of
+        Ok date ->
+            dateToString date
+
+        Err _ ->
+            "Invalid timestamp!"
+
+
+dateToString : Date.Date -> String
+dateToString date =
     let
         toPaddedString =
             toString >> String.padLeft 2 '0'
@@ -72,19 +84,29 @@ timestampToString string =
                 Date.Dec ->
                     12
     in
-        case Date.fromString string of
-            Ok date ->
-                [ toString (Date.year date) ++ "/"
-                , toPaddedString (toIntMonth date) ++ "/"
-                , toPaddedString (Date.day date) ++ " "
-                , toPaddedString (Date.hour date) ++ ":"
-                , toPaddedString (Date.minute date) ++ ":"
-                , toPaddedString (Date.second date)
-                ]
-                    |> String.join ""
+        [ toString (Date.year date) ++ "/"
+        , toPaddedString (toIntMonth date) ++ "/"
+        , toPaddedString (Date.day date) ++ " "
+        , toPaddedString (Date.hour date) ++ ":"
+        , toPaddedString (Date.minute date) ++ ":"
+        , toPaddedString (Date.second date)
+        ]
+            |> String.join ""
 
-            Err x ->
-                "Invalid updatedAt!"
+
+dateToFineString : Date.Date -> String
+dateToFineString date =
+    let
+        milliseconds =
+            date
+                |> Date.millisecond
+                |> toString
+                |> String.padLeft 3 '0'
+    in
+        String.join "."
+            [ dateToString date
+            , milliseconds
+            ]
 
 
 shortenUrl : Url -> String

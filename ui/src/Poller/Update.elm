@@ -1,6 +1,9 @@
 module Poller.Update exposing (update)
 
+import Date
+import Task
 import Navigation
+import Utils
 import LiveReload
 import Routing
 import Polls
@@ -42,7 +45,17 @@ update msg model =
                 ( model, Navigation.reloadAndSkipCache )
 
             OnServerPush text ->
-                Debug.log "Server push" text |> always ( model, Cmd.none )
+                ( model, log "Server push" text )
 
             OnClientTimeout _ ->
                 ( model, LiveReload.cmd model.isDev )
+
+            DatedLog label text date ->
+                Debug.log ("[" ++ (Utils.dateToFineString date) ++ "] " ++ label) text |> always ( model, Cmd.none )
+
+
+{-| Log string into console with current datetime.
+-}
+log : String -> String -> Cmd Msg
+log label text =
+    Task.perform (DatedLog label text) Date.now
