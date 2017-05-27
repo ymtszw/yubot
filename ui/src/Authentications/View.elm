@@ -41,7 +41,7 @@ authRow : Repo.Entity Authentication -> Table.Row (Msg Authentication)
 authRow authentication =
     Table.tr []
         [ Table.td [] [ text authentication.data.name ]
-        , Table.td [] [ text authentication.data.type_ ]
+        , Table.td [] [ text (toString authentication.data.type_) ]
         , Table.td [] [ text (Utils.timestampToString authentication.updatedAt) ]
         , Table.td []
             [ mx2Button (OnDeleteModal Modal.visibleState authentication) [ Button.disabled True, Button.small ] "Delete"

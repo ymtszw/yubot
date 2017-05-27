@@ -2,7 +2,7 @@ module Actions
     exposing
         ( Action
         , Method
-        , Type(..)
+        , ActionType(..)
         , dummyAction
         , config
         , update
@@ -28,7 +28,7 @@ type alias Method =
     String
 
 
-type Type
+type ActionType
     = Hipchat
     | Http
 
@@ -39,7 +39,7 @@ type alias Action =
     , url : Utils.Url
     , auth : Maybe Repo.EntityId
     , bodyTemplate : StringTemplate
-    , type_ : Type
+    , type_ : ActionType
     }
 
 
@@ -75,7 +75,7 @@ bodyTemplateDecoder =
         (Decode.field "variables" (Decode.list Decode.string))
 
 
-typeDecoder : Decode.Decoder Type
+typeDecoder : Decode.Decoder ActionType
 typeDecoder =
     let
         stringToType string =
