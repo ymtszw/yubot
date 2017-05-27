@@ -24186,23 +24186,7 @@ var _aYuMatsuzawa$yubot$Polls_View$cardsView = function (pollRepo) {
 												_aYuMatsuzawa$yubot$Polls$intervalToString(poll.data.interval))),
 										_1: {ctor: '[]'}
 									}),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$p,
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$class('card-text'),
-											_1: {ctor: '[]'}
-										},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text(
-												A2(_elm_lang$core$Basics_ops['++'], 'Action: ', poll.data.action)),
-											_1: {ctor: '[]'}
-										}),
-									_1: {ctor: '[]'}
-								}
+								_1: {ctor: '[]'}
 							}
 						}),
 					_1: {

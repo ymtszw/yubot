@@ -19,7 +19,6 @@ cardsView pollRepo =
                 , Html.div [ class "card-block alert-success" ]
                     [ Html.h4 [ class "card-title" ] [ text "Status: OK" ]
                     , Html.p [ class "card-text" ] [ text ("Run: " ++ (Polls.intervalToString poll.data.interval)) ]
-                    , Html.p [ class "card-text" ] [ text ("Action: " ++ poll.data.action) ]
                     ]
                 , Html.div [ class "card-footer" ]
                     [ Html.small [ Styles.xSmall ] [ text ("Last run at: " ++ (Utils.timestampToString poll.updatedAt)) ] ]
