@@ -39,7 +39,9 @@ update msg model =
                 ( model, Navigation.modifyUrl ("/poller" ++ path) )
 
             OnLocationChange location ->
-                ( { model | route = Routing.parseLocation location }, Cmd.none )
+                Routing.parseLocation location
+                    |> Tuple.mapFirst (\x -> { model | route = x })
+                    |> Tuple.mapSecond Cmd.batch
 
             OnServerPush "reload" ->
                 ( model, Navigation.reloadAndSkipCache )

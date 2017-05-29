@@ -1,8 +1,13 @@
-module Routing exposing (Route(..), parseLocation, isActiveTab)
+module Routing exposing (Route(..), parseLocation)
 
 import Regex
 import Navigation
 import Repo
+import Repo.Command
+import Poller.Messages exposing (Msg(..))
+import Polls
+import Actions
+import Authentications
 
 
 type Route
@@ -15,33 +20,42 @@ type Route
     | NotFoundRoute
 
 
-parseLocation : Navigation.Location -> Route
+parseLocation : Navigation.Location -> ( Route, List (Cmd Msg) )
 parseLocation { pathname } =
     case segments pathname of
         [ "poller" ] ->
             -- top
-            PollsRoute
+            ( PollsRoute, [ Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config) ] )
 
         [ "poller", "polls" ] ->
-            PollsRoute
+            ( PollsRoute, [ Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config) ] )
 
         [ "poller", "polls", pollId ] ->
-            PollRoute pollId
+            ( PollRoute pollId, [] )
 
         [ "poller", "actions" ] ->
-            ActionsRoute
+            ( ActionsRoute
+            , [ Cmd.map ActionsMsg (Repo.Command.fetchAll Actions.config)
+              , Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config)
+              ]
+            )
 
         [ "poller", "actions", actionId ] ->
-            ActionRoute actionId
+            ( ActionRoute actionId, [] )
 
         [ "poller", "credentials" ] ->
-            AuthsRoute
+            ( AuthsRoute
+            , [ Cmd.map AuthMsg (Repo.Command.fetchAll Authentications.config)
+              , Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config)
+              , Cmd.map AuthMsg (Repo.Command.fetchAll Authentications.config)
+              ]
+            )
 
         [ "poller", "credentials", authId ] ->
-            AuthRoute authId
+            ( AuthRoute authId, [] )
 
         _ ->
-            NotFoundRoute
+            ( NotFoundRoute, [] )
 
 
 segments : String -> List String
@@ -72,22 +86,3 @@ segments pathname =
             |> List.reverse
             |> trim
             |> List.reverse
-
-
-isActiveTab : Route -> Int -> Bool
-isActiveTab route index =
-    case route of
-        ActionsRoute ->
-            index == 1
-
-        ActionRoute _ ->
-            index == 1
-
-        AuthsRoute ->
-            index == 2
-
-        AuthRoute _ ->
-            index == 2
-
-        _ ->
-            index == 0
