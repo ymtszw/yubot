@@ -7,6 +7,7 @@ module Utils
         , dateToString
         , dateToFineString
         , shortenUrl
+        , stringToBool
         )
 
 import Date
@@ -120,3 +121,13 @@ shortenUrl url =
 
         _ ->
             url
+
+
+stringToBool : String -> Bool
+stringToBool string =
+    case string of
+        "true" ->
+            True
+
+        _ ->
+            False

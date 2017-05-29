@@ -10,8 +10,8 @@ import Actions
 import Authentications
 import Poller.Model exposing (Model)
 import Poller.Messages exposing (Msg(..))
-import Poller.Update exposing (update)
-import Poller.View exposing (view)
+import Poller.Update
+import Poller.View
 
 
 type alias Flags =
@@ -27,12 +27,12 @@ init { isDev } location =
         currentRoute =
             Routing.parseLocation location
     in
-        [ (Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config))
-        , (Cmd.map ActionsMsg (Repo.Command.fetchAll Actions.config))
-        , (Cmd.map AuthMsg (Repo.Command.fetchAll Authentications.config))
-        , navbarCmd
-        ]
-            |> (!) (Poller.Model.initialModel isDev currentRoute navbarState)
+        Poller.Model.initialModel isDev currentRoute navbarState
+            ! [ (Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config))
+              , (Cmd.map ActionsMsg (Repo.Command.fetchAll Actions.config))
+              , (Cmd.map AuthMsg (Repo.Command.fetchAll Authentications.config))
+              , navbarCmd
+              ]
 
 
 
@@ -54,7 +54,7 @@ main : Program Flags Model Msg
 main =
     Navigation.programWithFlags OnLocationChange
         { init = init
-        , view = view
-        , update = update
+        , view = Poller.View.view
+        , update = Poller.Update.update
         , subscriptions = subscriptions
         }

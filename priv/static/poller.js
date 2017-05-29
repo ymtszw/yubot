@@ -6235,29 +6235,37 @@ var _elm_lang$core$Tuple$first = function (_p6) {
 	return _p7._0;
 };
 
+var _aYuMatsuzawa$yubot$Utils$stringToBool = function (string) {
+	var _p0 = string;
+	if (_p0 === 'true') {
+		return true;
+	} else {
+		return false;
+	}
+};
 var _aYuMatsuzawa$yubot$Utils$shortenUrl = function (url) {
-	var _p0 = A2(_elm_lang$core$String$split, '://', url);
-	_v0_2:
+	var _p1 = A2(_elm_lang$core$String$split, '://', url);
+	_v1_2:
 	do {
-		if (((_p0.ctor === '::') && (_p0._1.ctor === '::')) && (_p0._1._1.ctor === '[]')) {
-			switch (_p0._0) {
+		if (((_p1.ctor === '::') && (_p1._1.ctor === '::')) && (_p1._1._1.ctor === '[]')) {
+			switch (_p1._0) {
 				case 'http':
-					return _p0._1._0;
+					return _p1._1._0;
 				case 'https':
-					return _p0._1._0;
+					return _p1._1._0;
 				default:
-					break _v0_2;
+					break _v1_2;
 			}
 		} else {
-			break _v0_2;
+			break _v1_2;
 		}
 	} while(false);
 	return url;
 };
 var _aYuMatsuzawa$yubot$Utils$dateToString = function (date) {
 	var toIntMonth = function (date) {
-		var _p1 = _elm_lang$core$Date$month(date);
-		switch (_p1.ctor) {
+		var _p2 = _elm_lang$core$Date$month(date);
+		switch (_p2.ctor) {
 			case 'Jan':
 				return 1;
 			case 'Feb':
@@ -6284,12 +6292,12 @@ var _aYuMatsuzawa$yubot$Utils$dateToString = function (date) {
 				return 12;
 		}
 	};
-	var toPaddedString = function (_p2) {
+	var toPaddedString = function (_p3) {
 		return A3(
 			_elm_lang$core$String$padLeft,
 			2,
 			_elm_lang$core$Native_Utils.chr('0'),
-			_elm_lang$core$Basics$toString(_p2));
+			_elm_lang$core$Basics$toString(_p3));
 	};
 	return A2(
 		_elm_lang$core$String$join,
@@ -6362,9 +6370,9 @@ var _aYuMatsuzawa$yubot$Utils$dateToFineString = function (date) {
 		});
 };
 var _aYuMatsuzawa$yubot$Utils$timestampToString = function (string) {
-	var _p3 = _elm_lang$core$Date$fromString(string);
-	if (_p3.ctor === 'Ok') {
-		return _aYuMatsuzawa$yubot$Utils$dateToString(_p3._0);
+	var _p4 = _elm_lang$core$Date$fromString(string);
+	if (_p4.ctor === 'Ok') {
+		return _aYuMatsuzawa$yubot$Utils$dateToString(_p4._0);
 	} else {
 		return 'Invalid timestamp!';
 	}
@@ -16496,42 +16504,57 @@ var _elm_community$list_extra$List_Extra$init = function () {
 var _elm_community$list_extra$List_Extra$last = _elm_community$list_extra$List_Extra$foldl1(
 	_elm_lang$core$Basics$flip(_elm_lang$core$Basics$always));
 
+var _aYuMatsuzawa$yubot$StringTemplate$render = F3(
+	function (variable, value, body) {
+		var patternToFill = A2(
+			_elm_lang$core$Basics_ops['++'],
+			'#{',
+			A2(_elm_lang$core$Basics_ops['++'], variable, '}'));
+		return A4(
+			_elm_lang$core$Regex$replace,
+			_elm_lang$core$Regex$All,
+			_elm_lang$core$Regex$regex(patternToFill),
+			function (_p0) {
+				return value;
+			},
+			body);
+	});
 var _aYuMatsuzawa$yubot$StringTemplate$validate = function (body) {
 	var dedup = function (validateResult) {
-		var _p0 = validateResult;
-		if (_p0.ctor === 'Ok') {
+		var _p1 = validateResult;
+		if (_p1.ctor === 'Ok') {
 			return _elm_lang$core$Result$Ok(
-				_elm_community$list_extra$List_Extra$unique(_p0._0));
+				_elm_community$list_extra$List_Extra$unique(_p1._0));
 		} else {
 			return validateResult;
 		}
 	};
 	var folder = F2(
 		function (validateResult, acc) {
-			var _p1 = acc;
-			if (_p1.ctor === 'Err') {
+			var _p2 = acc;
+			if (_p2.ctor === 'Err') {
 				return acc;
 			} else {
-				var _p2 = validateResult;
-				if (_p2.ctor === 'Ok') {
+				var _p3 = validateResult;
+				if (_p3.ctor === 'Ok') {
 					return _elm_lang$core$Result$Ok(
-						{ctor: '::', _0: _p2._0, _1: _p1._0});
+						{ctor: '::', _0: _p3._0, _1: _p2._0});
 				} else {
-					return _elm_lang$core$Result$Err(_p2._0);
+					return _elm_lang$core$Result$Err(_p3._0);
 				}
 			}
 		});
 	var variablePattern = _elm_lang$core$Regex$regex('^[a-z0-9_]+$');
-	var validateMatch = function (_p3) {
-		var _p4 = _p3;
-		var _p5 = _p4.submatches;
-		if (((_p5.ctor === '::') && (_p5._0.ctor === 'Just')) && (_p5._1.ctor === '[]')) {
-			if (_p5._0._0 === '') {
+	var validateMatch = function (_p4) {
+		var _p5 = _p4;
+		var _p6 = _p5.submatches;
+		if (((_p6.ctor === '::') && (_p6._0.ctor === 'Just')) && (_p6._1.ctor === '[]')) {
+			if (_p6._0._0 === '') {
 				return _elm_lang$core$Result$Err(
 					{ctor: '_Tuple2', _0: 'StringTemplate', _1: 'Variable name must not be empty'});
 			} else {
-				var _p6 = _p5._0._0;
-				return A2(_elm_lang$core$Regex$contains, variablePattern, _p6) ? _elm_lang$core$Result$Ok(_p6) : _elm_lang$core$Result$Err(
+				var _p7 = _p6._0._0;
+				return A2(_elm_lang$core$Regex$contains, variablePattern, _p7) ? _elm_lang$core$Result$Ok(_p7) : _elm_lang$core$Result$Err(
 					{ctor: '_Tuple2', _0: 'StringTemplate', _1: 'Variable name may only contain a-z, 0-9 and underscore `_`'});
 			}
 		} else {
@@ -16612,6 +16635,171 @@ var _aYuMatsuzawa$yubot$Actions$update = F2(
 	function (msg, resource) {
 		return A4(_aYuMatsuzawa$yubot$Repo_Update$update, _aYuMatsuzawa$yubot$Actions$dummyAction, _aYuMatsuzawa$yubot$Actions$config, msg, resource);
 	});
+
+var _aYuMatsuzawa$yubot$Actions_Hipchat$bodyBase = '\n    {\n        \"message\":\"#{message}\",\n        \"color\":\"#{color}\",\n        \"notify\":#{notify},\n        \"message_format\":\"text\"\n    }\n    ';
+var _aYuMatsuzawa$yubot$Actions_Hipchat$roomIdToUrl = function (roomId) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'https://api.hipchat.com/v2/room/',
+		A2(_elm_lang$core$Basics_ops['++'], roomId, '/notification'));
+};
+var _aYuMatsuzawa$yubot$Actions_Hipchat$fetchValueFromBody = F3(
+	function (stringToValue, pattern, body) {
+		var _p0 = A3(
+			_elm_lang$core$Regex$find,
+			_elm_lang$core$Regex$AtMost(1),
+			pattern,
+			body);
+		if ((_p0.ctor === '::') && (_p0._1.ctor === '[]')) {
+			var _p1 = _p0._0.submatches;
+			if (((_p1.ctor === '::') && (_p1._0.ctor === 'Just')) && (_p1._1.ctor === '[]')) {
+				return stringToValue(_p1._0._0);
+			} else {
+				return stringToValue('');
+			}
+		} else {
+			return stringToValue('');
+		}
+	});
+var _aYuMatsuzawa$yubot$Actions_Hipchat$default = function () {
+	var body = A3(
+		_aYuMatsuzawa$yubot$StringTemplate$render,
+		'notify',
+		'false',
+		A3(_aYuMatsuzawa$yubot$StringTemplate$render, 'color', 'yellow', _aYuMatsuzawa$yubot$Actions_Hipchat$bodyBase));
+	return A6(
+		_aYuMatsuzawa$yubot$Actions$Action,
+		_elm_lang$core$Maybe$Nothing,
+		'post',
+		'',
+		_elm_lang$core$Maybe$Nothing,
+		A2(
+			_aYuMatsuzawa$yubot$StringTemplate$StringTemplate,
+			body,
+			{
+				ctor: '::',
+				_0: 'message',
+				_1: {ctor: '[]'}
+			}),
+		_aYuMatsuzawa$yubot$Actions$Hipchat);
+}();
+var _aYuMatsuzawa$yubot$Actions_Hipchat$validateMessageTemplate = function (string) {
+	return A2(_elm_lang$core$String$contains, '\"', string) ? _elm_lang$core$Result$Err(
+		{ctor: '_Tuple2', _0: 'Hipchat message template', _1: 'Double quotations are not allowed.'}) : _elm_lang$core$Result$Ok(string);
+};
+var _aYuMatsuzawa$yubot$Actions_Hipchat$fromParams = function (_p2) {
+	var _p3 = _p2;
+	var _p6 = _p3.roomId;
+	var action = function (bodyTemplate) {
+		return A6(
+			_aYuMatsuzawa$yubot$Actions$Action,
+			_elm_lang$core$Maybe$Just(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'Hipchat [RoomID: ',
+					A2(_elm_lang$core$Basics_ops['++'], _p6, ']'))),
+			'post',
+			_aYuMatsuzawa$yubot$Actions_Hipchat$roomIdToUrl(_p6),
+			_elm_lang$core$Maybe$Just(_p3.authId),
+			bodyTemplate,
+			_aYuMatsuzawa$yubot$Actions$Hipchat);
+	};
+	var body = A3(
+		_aYuMatsuzawa$yubot$StringTemplate$render,
+		'notify',
+		_elm_lang$core$String$toLower(
+			_elm_lang$core$Basics$toString(_p3.notify)),
+		A3(
+			_aYuMatsuzawa$yubot$StringTemplate$render,
+			'color',
+			_elm_lang$core$String$toLower(
+				_elm_lang$core$Basics$toString(_p3.color)),
+			_aYuMatsuzawa$yubot$Actions_Hipchat$bodyBase));
+	var _p4 = _p3.messageTemplate;
+	if (_p4 === '') {
+		return _elm_lang$core$Result$Ok(
+			action(
+				A2(
+					_aYuMatsuzawa$yubot$StringTemplate$StringTemplate,
+					body,
+					{
+						ctor: '::',
+						_0: 'message',
+						_1: {ctor: '[]'}
+					})));
+	} else {
+		return A2(
+			_elm_lang$core$Result$andThen,
+			function (bt) {
+				return A2(
+					_elm_lang$core$Result$map,
+					function (_p5) {
+						return action(
+							A2(_aYuMatsuzawa$yubot$StringTemplate$StringTemplate, bt, _p5));
+					},
+					_aYuMatsuzawa$yubot$StringTemplate$validate(bt));
+			},
+			A2(
+				_elm_lang$core$Result$map,
+				function (mt1) {
+					return A3(_aYuMatsuzawa$yubot$StringTemplate$render, 'message', mt1, body);
+				},
+				_aYuMatsuzawa$yubot$Actions_Hipchat$validateMessageTemplate(_p4)));
+	}
+};
+var _aYuMatsuzawa$yubot$Actions_Hipchat$UserParams = F5(
+	function (a, b, c, d, e) {
+		return {roomId: a, authId: b, color: c, notify: d, messageTemplate: e};
+	});
+var _aYuMatsuzawa$yubot$Actions_Hipchat$Gray = {ctor: 'Gray'};
+var _aYuMatsuzawa$yubot$Actions_Hipchat$Purple = {ctor: 'Purple'};
+var _aYuMatsuzawa$yubot$Actions_Hipchat$Red = {ctor: 'Red'};
+var _aYuMatsuzawa$yubot$Actions_Hipchat$Green = {ctor: 'Green'};
+var _aYuMatsuzawa$yubot$Actions_Hipchat$Yellow = {ctor: 'Yellow'};
+var _aYuMatsuzawa$yubot$Actions_Hipchat$defaultParams = A5(_aYuMatsuzawa$yubot$Actions_Hipchat$UserParams, '', '', _aYuMatsuzawa$yubot$Actions_Hipchat$Yellow, false, '');
+var _aYuMatsuzawa$yubot$Actions_Hipchat$stringToColor = function (string) {
+	var _p7 = string;
+	switch (_p7) {
+		case 'green':
+			return _aYuMatsuzawa$yubot$Actions_Hipchat$Green;
+		case 'red':
+			return _aYuMatsuzawa$yubot$Actions_Hipchat$Red;
+		case 'purple':
+			return _aYuMatsuzawa$yubot$Actions_Hipchat$Purple;
+		case 'gray':
+			return _aYuMatsuzawa$yubot$Actions_Hipchat$Gray;
+		default:
+			return _aYuMatsuzawa$yubot$Actions_Hipchat$Yellow;
+	}
+};
+var _aYuMatsuzawa$yubot$Actions_Hipchat$fetchParams = function (action) {
+	var messageTemplate = A3(
+		_aYuMatsuzawa$yubot$Actions_Hipchat$fetchValueFromBody,
+		_elm_lang$core$Basics$identity,
+		_elm_lang$core$Regex$regex('\"message\":\"(.+)\"'),
+		action.bodyTemplate.body);
+	var notify = A3(
+		_aYuMatsuzawa$yubot$Actions_Hipchat$fetchValueFromBody,
+		_aYuMatsuzawa$yubot$Utils$stringToBool,
+		_elm_lang$core$Regex$regex('\"notify\":\"(true|false)\"'),
+		action.bodyTemplate.body);
+	var color = A3(
+		_aYuMatsuzawa$yubot$Actions_Hipchat$fetchValueFromBody,
+		_aYuMatsuzawa$yubot$Actions_Hipchat$stringToColor,
+		_elm_lang$core$Regex$regex('\"color\":\"(yellow|green|red|purple|gray)\"'),
+		action.bodyTemplate.body);
+	var roomId = A2(
+		_elm_lang$core$String$dropRight,
+		13,
+		A2(_elm_lang$core$String$dropLeft, 32, action.url));
+	return A5(
+		_aYuMatsuzawa$yubot$Actions_Hipchat$UserParams,
+		roomId,
+		A2(_elm_lang$core$Maybe$withDefault, '', action.auth),
+		color,
+		notify,
+		messageTemplate);
+};
 
 var _rundis$elm_bootstrap$Bootstrap_Internal_Button$roleClass = function (role) {
 	var _p0 = role;
@@ -19785,6 +19973,19 @@ var _aYuMatsuzawa$yubot$Authentications$Authentication = F3(
 		return {name: a, type_: b, token: c};
 	});
 var _aYuMatsuzawa$yubot$Authentications$Hipchat = {ctor: 'Hipchat'};
+var _aYuMatsuzawa$yubot$Authentications$hipchatToken = function (token) {
+	return A3(
+		_aYuMatsuzawa$yubot$Authentications$Authentication,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'Hipchat Notification Token: ',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(_elm_lang$core$String$left, 5, token),
+				'***')),
+		_aYuMatsuzawa$yubot$Authentications$Hipchat,
+		token);
+};
 var _aYuMatsuzawa$yubot$Authentications$Bearer = {ctor: 'Bearer'};
 var _aYuMatsuzawa$yubot$Authentications$Raw = {ctor: 'Raw'};
 var _aYuMatsuzawa$yubot$Authentications$dummyAuthentication = A3(_aYuMatsuzawa$yubot$Authentications$Authentication, '', _aYuMatsuzawa$yubot$Authentications$Raw, '');
@@ -21438,6 +21639,27 @@ var _rundis$elm_bootstrap$Bootstrap_Form_Textarea$id = function (id) {
 	return _rundis$elm_bootstrap$Bootstrap_Form_Textarea$Id(id);
 };
 
+var _aYuMatsuzawa$yubot$Actions_ViewParts$target = function (action) {
+	return A2(
+		_elm_lang$html$Html$p,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('Target: '),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$code,
+					{ctor: '[]'},
+					_aYuMatsuzawa$yubot$Html_Utils$atext(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$String$toUpper(action.data.method),
+							A2(_elm_lang$core$Basics_ops['++'], ' ', action.data.url)))),
+				_1: {ctor: '[]'}
+			}
+		});
+};
 var _aYuMatsuzawa$yubot$Actions_ViewParts$variableList = function (variables) {
 	var varCodes = A2(
 		_elm_lang$core$List$intersperse,
@@ -21481,25 +21703,7 @@ var _aYuMatsuzawa$yubot$Actions_ViewParts$preview = function (action) {
 		},
 		{
 			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$p,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Target: '),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$code,
-							{ctor: '[]'},
-							_aYuMatsuzawa$yubot$Html_Utils$atext(
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$String$toUpper(action.data.method),
-									A2(_elm_lang$core$Basics_ops['++'], ' ', action.data.url)))),
-						_1: {ctor: '[]'}
-					}
-				}),
+			_0: _aYuMatsuzawa$yubot$Actions_ViewParts$target(action),
 			_1: {
 				ctor: '::',
 				_0: A2(
@@ -23094,9 +23298,56 @@ var _aYuMatsuzawa$yubot$Actions_ModalView$deleteModalView = function (actionRepo
 					_rundis$elm_bootstrap$Bootstrap_Modal$config(stateToMsg)))));
 };
 
+var _aYuMatsuzawa$yubot$Actions_View$actionSummary = function (action) {
+	var hipchatSummary = function () {
+		var _p0 = _aYuMatsuzawa$yubot$Actions_Hipchat$fetchParams(action.data);
+		var color = _p0.color;
+		var notify = _p0.notify;
+		var messageTemplate = _p0.messageTemplate;
+		var notifyText = notify ? 'On' : 'Off';
+		var messageTemplateText = function () {
+			var _p1 = messageTemplate;
+			if (_p1 === '') {
+				return '#{message}';
+			} else {
+				return _p1;
+			}
+		}();
+		return A2(
+			_elm_lang$html$Html$p,
+			{ctor: '[]'},
+			_elm_lang$core$List$singleton(
+				_elm_lang$html$Html$text(
+					A2(
+						_elm_lang$core$String$join,
+						', ',
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$core$Basics_ops['++'],
+								'Color: ',
+								_elm_lang$core$Basics$toString(color)),
+							_1: {
+								ctor: '::',
+								_0: A2(_elm_lang$core$Basics_ops['++'], 'Notify: ', notifyText),
+								_1: {
+									ctor: '::',
+									_0: A2(_elm_lang$core$Basics_ops['++'], 'Message: ', messageTemplateText),
+									_1: {ctor: '[]'}
+								}
+							}
+						}))));
+	}();
+	var _p2 = action.data.type_;
+	if (_p2.ctor === 'Hipchat') {
+		return hipchatSummary;
+	} else {
+		return _aYuMatsuzawa$yubot$Actions_ViewParts$target(action);
+	}
+};
 var _aYuMatsuzawa$yubot$Actions_View$actionRow = F2(
 	function (usedActionIds, action) {
-		var _p0 = A2(_elm_lang$core$Set$member, action.id, usedActionIds) ? {
+		var _p3 = A2(_elm_lang$core$Set$member, action.id, usedActionIds) ? {
 			ctor: '_Tuple2',
 			_0: {
 				ctor: '::',
@@ -23121,8 +23372,8 @@ var _aYuMatsuzawa$yubot$Actions_View$actionRow = F2(
 			},
 			_1: 'Delete'
 		};
-		var deleteButtonOptions = _p0._0;
-		var deleteButtonString = _p0._1;
+		var deleteButtonOptions = _p3._0;
+		var deleteButtonString = _p3._1;
 		return A2(
 			_rundis$elm_bootstrap$Bootstrap_Table$tr,
 			{ctor: '[]'},
@@ -23134,7 +23385,7 @@ var _aYuMatsuzawa$yubot$Actions_View$actionRow = F2(
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html$text(
-							_elm_lang$core$String$toUpper(action.data.method)),
+							A2(_elm_lang$core$Maybe$withDefault, '(no label)', action.data.label)),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
@@ -23142,7 +23393,11 @@ var _aYuMatsuzawa$yubot$Actions_View$actionRow = F2(
 					_0: A2(
 						_rundis$elm_bootstrap$Bootstrap_Table$td,
 						{ctor: '[]'},
-						_aYuMatsuzawa$yubot$Html_Utils$atext(action.data.url)),
+						{
+							ctor: '::',
+							_0: _aYuMatsuzawa$yubot$Actions_View$actionSummary(action),
+							_1: {ctor: '[]'}
+						}),
 					_1: {
 						ctor: '::',
 						_0: A2(
@@ -23150,26 +23405,14 @@ var _aYuMatsuzawa$yubot$Actions_View$actionRow = F2(
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									_aYuMatsuzawa$yubot$Utils$timestampToString(action.updatedAt)),
+								_0: A3(
+									_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
+									A2(_aYuMatsuzawa$yubot$Repo_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, action),
+									deleteButtonOptions,
+									deleteButtonString),
 								_1: {ctor: '[]'}
 							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_rundis$elm_bootstrap$Bootstrap_Table$td,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: A3(
-										_aYuMatsuzawa$yubot$Html_Utils$mx2Button,
-										A2(_aYuMatsuzawa$yubot$Repo_Messages$OnDeleteModal, _rundis$elm_bootstrap$Bootstrap_Modal$visibleState, action),
-										deleteButtonOptions,
-										deleteButtonString),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
+						_1: {ctor: '[]'}
 					}
 				}
 			});
@@ -23203,7 +23446,7 @@ var _aYuMatsuzawa$yubot$Actions_View$listView = F2(
 									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Method'),
+										_0: _elm_lang$html$Html$text('Label'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
@@ -23213,47 +23456,20 @@ var _aYuMatsuzawa$yubot$Actions_View$listView = F2(
 										{ctor: '[]'},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('URL'),
+											_0: _elm_lang$html$Html$text('Summary'),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
 										ctor: '::',
 										_0: A2(
 											_rundis$elm_bootstrap$Bootstrap_Table$th,
-											A2(
-												_elm_lang$core$List$map,
-												_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
-												{
-													ctor: '::',
-													_0: _aYuMatsuzawa$yubot$Poller_Styles$sorting,
-													_1: {
-														ctor: '::',
-														_0: A2(
-															_aYuMatsuzawa$yubot$Html_Utils$toggleSortOnClick,
-															function (_) {
-																return _.updatedAt;
-															},
-															actionRepo.sort),
-														_1: {ctor: '[]'}
-													}
-												}),
+											{ctor: '[]'},
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html$text('Updated At'),
+												_0: _elm_lang$html$Html$text('Actions'),
 												_1: {ctor: '[]'}
 											}),
-										_1: {
-											ctor: '::',
-											_0: A2(
-												_rundis$elm_bootstrap$Bootstrap_Table$th,
-												{ctor: '[]'},
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html$text('Actions'),
-													_1: {ctor: '[]'}
-												}),
-											_1: {ctor: '[]'}
-										}
+										_1: {ctor: '[]'}
 									}
 								}
 							}),
@@ -24567,10 +24783,7 @@ var _aYuMatsuzawa$yubot$Poller$init = F2(
 		var navbarState = _p2._0;
 		var navbarCmd = _p2._1;
 		return A2(
-			F2(
-				function (x, y) {
-					return A2(_elm_lang$core$Platform_Cmd_ops['!'], x, y);
-				}),
+			_elm_lang$core$Platform_Cmd_ops['!'],
 			A3(_aYuMatsuzawa$yubot$Poller_Model$initialModel, _p1.isDev, currentRoute, navbarState),
 			{
 				ctor: '::',

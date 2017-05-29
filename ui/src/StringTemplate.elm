@@ -68,8 +68,8 @@ validate body =
             |> dedup
 
 
-render : Body -> String -> String -> Body
-render body variable value =
+render : String -> String -> Body -> Body
+render variable value body =
     let
         patternToFill =
             "#{" ++ variable ++ "}"

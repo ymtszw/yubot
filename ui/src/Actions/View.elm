@@ -6,12 +6,12 @@ import Html.Utils exposing (atext, highlightVariables, mx2Button, toggleSortOnCl
 import Bootstrap.Table as Table
 import Bootstrap.Modal as Modal
 import Bootstrap.Button as Button
-import Utils
 import Repo exposing (Repo)
 import Repo.Messages exposing (Msg(..))
 import Actions exposing (Action)
+import Actions.Hipchat
 import Actions.ModalView
-import Poller.Styles as Styles
+import Actions.ViewParts
 
 
 listView : Set Repo.EntityId -> Repo Action -> Html (Msg Action)
@@ -21,9 +21,8 @@ listView usedActionIds actionRepo =
             { options = [ Table.striped ]
             , thead =
                 Table.simpleThead
-                    [ Table.th [] [ text "Method" ]
-                    , Table.th [] [ text "URL" ]
-                    , Table.th (List.map Table.cellAttr [ Styles.sorting, toggleSortOnClick .updatedAt actionRepo.sort ]) [ text "Updated At" ]
+                    [ Table.th [] [ text "Label" ]
+                    , Table.th [] [ text "Summary" ]
                     , Table.th [] [ text "Actions" ]
                     ]
             , tbody =
@@ -58,10 +57,48 @@ actionRow usedActionIds action =
                 ( [ Button.danger, Button.small ], "Delete" )
     in
         Table.tr []
-            [ Table.td [] [ text (String.toUpper action.data.method) ]
-            , Table.td [] (atext action.data.url)
-            , Table.td [] [ text (Utils.timestampToString action.updatedAt) ]
+            [ Table.td [] [ text (Maybe.withDefault "(no label)" action.data.label) ]
+            , Table.td [] [ actionSummary action ]
             , Table.td []
                 [ mx2Button (OnDeleteModal Modal.visibleState action) deleteButtonOptions deleteButtonString
                 ]
             ]
+
+
+actionSummary : Repo.Entity Action -> Html (Msg Action)
+actionSummary action =
+    let
+        hipchatSummary =
+            let
+                { color, notify, messageTemplate } =
+                    Actions.Hipchat.fetchParams action.data
+
+                notifyText =
+                    if notify then
+                        "On"
+                    else
+                        "Off"
+
+                messageTemplateText =
+                    case messageTemplate of
+                        "" ->
+                            "#{message}"
+
+                        mt ->
+                            mt
+            in
+                [ ("Color: " ++ (toString color))
+                , ("Notify: " ++ notifyText)
+                , ("Message: " ++ messageTemplateText)
+                ]
+                    |> String.join ", "
+                    |> text
+                    |> List.singleton
+                    |> Html.p []
+    in
+        case action.data.type_ of
+            Actions.Hipchat ->
+                hipchatSummary
+
+            Actions.Http ->
+                Actions.ViewParts.target action

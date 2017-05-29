@@ -41,6 +41,14 @@ listForPoll authList =
         List.filter filterFun authList
 
 
+hipchatToken : String -> Authentication
+hipchatToken token =
+    Authentication
+        ("Hipchat Notification Token: " ++ (String.left 5 token) ++ "***")
+        Hipchat
+        token
+
+
 
 -- Config
 
