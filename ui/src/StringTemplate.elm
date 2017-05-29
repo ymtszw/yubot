@@ -1,4 +1,4 @@
-module StringTemplate exposing (StringTemplate, Body, validate)
+module StringTemplate exposing (StringTemplate, Body, validate, render)
 
 import Result exposing (Result(Ok, Err))
 import Regex
@@ -66,3 +66,12 @@ validate body =
             |> List.map validateMatch
             |> List.foldr folder (Ok [])
             |> dedup
+
+
+render : Body -> String -> String -> Body
+render body variable value =
+    let
+        patternToFill =
+            "#{" ++ variable ++ "}"
+    in
+        Regex.replace Regex.All (Regex.regex patternToFill) (\_ -> value) body
