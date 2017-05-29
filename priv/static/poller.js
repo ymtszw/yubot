@@ -14894,6 +14894,9 @@ var _lukewestby$elm_http_builder$HttpBuilder$RequestBuilder = F9(
 var _aYuMatsuzawa$yubot$Repo_Messages$ChangeLocation = function (a) {
 	return {ctor: 'ChangeLocation', _0: a};
 };
+var _aYuMatsuzawa$yubot$Repo_Messages$OnEditStart = function (a) {
+	return {ctor: 'OnEditStart', _0: a};
+};
 var _aYuMatsuzawa$yubot$Repo_Messages$OnEditInput = F2(
 	function (a, b) {
 		return {ctor: 'OnEditInput', _0: a, _1: b};
@@ -15009,6 +15012,14 @@ var _aYuMatsuzawa$yubot$Repo_Update$update = F4(
 				} else {
 					return {ctor: '_Tuple2', _0: repo, _1: _elm_lang$core$Platform_Cmd$none};
 				}
+			case 'OnEditStart':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						repo,
+						{dirty: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'OnEditInput':
 				var oldDirty = repo.dirty;
 				return {
@@ -23337,6 +23348,14 @@ var _aYuMatsuzawa$yubot$Actions_View$listView = F2(
 	});
 
 var _aYuMatsuzawa$yubot$Authentications_View$authRow = function (authentication) {
+	var maskedToken = _elm_lang$core$String$fromList(
+		A2(
+			_elm_lang$core$List$indexedMap,
+			F2(
+				function (i, x) {
+					return (_elm_lang$core$Native_Utils.cmp(i, 5) < 0) ? x : _elm_lang$core$Native_Utils.chr('*');
+				}),
+			_elm_lang$core$String$toList(authentication.data.token)));
 	return A2(
 		_rundis$elm_bootstrap$Bootstrap_Table$tr,
 		{ctor: '[]'},
@@ -23368,8 +23387,14 @@ var _aYuMatsuzawa$yubot$Authentications_View$authRow = function (authentication)
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								_aYuMatsuzawa$yubot$Utils$timestampToString(authentication.updatedAt)),
+							_0: A2(
+								_elm_lang$html$Html$pre,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(maskedToken),
+									_1: {ctor: '[]'}
+								}),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
@@ -23411,7 +23436,19 @@ var _aYuMatsuzawa$yubot$Authentications_View$listView = function (authRepo) {
 					options: {
 						ctor: '::',
 						_0: _rundis$elm_bootstrap$Bootstrap_Table$striped,
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Table$hover,
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Table$responsive,
+								_1: {
+									ctor: '::',
+									_0: _rundis$elm_bootstrap$Bootstrap_Table$small,
+									_1: {ctor: '[]'}
+								}
+							}
+						}
 					},
 					thead: _rundis$elm_bootstrap$Bootstrap_Table$simpleThead(
 						{
@@ -23421,7 +23458,7 @@ var _aYuMatsuzawa$yubot$Authentications_View$listView = function (authRepo) {
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Name'),
+									_0: _elm_lang$html$Html$text('Label'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
@@ -23438,26 +23475,10 @@ var _aYuMatsuzawa$yubot$Authentications_View$listView = function (authRepo) {
 									ctor: '::',
 									_0: A2(
 										_rundis$elm_bootstrap$Bootstrap_Table$th,
-										A2(
-											_elm_lang$core$List$map,
-											_rundis$elm_bootstrap$Bootstrap_Table$cellAttr,
-											{
-												ctor: '::',
-												_0: _aYuMatsuzawa$yubot$Poller_Styles$sorting,
-												_1: {
-													ctor: '::',
-													_0: A2(
-														_aYuMatsuzawa$yubot$Html_Utils$toggleSortOnClick,
-														function (_) {
-															return _.updatedAt;
-														},
-														authRepo.sort),
-													_1: {ctor: '[]'}
-												}
-											}),
+										{ctor: '[]'},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('Updated At'),
+											_0: _elm_lang$html$Html$text('Token'),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
@@ -24809,7 +24830,7 @@ var _aYuMatsuzawa$yubot$Poller$Flags = function (a) {
 var Elm = {};
 Elm['Poller'] = Elm['Poller'] || {};
 if (typeof _aYuMatsuzawa$yubot$Poller$main !== 'undefined') {
-    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Actions.ActionType":{"args":[],"tags":{"Hipchat":[],"Http":[]}},"Authentications.AuthType":{"args":[],"tags":{"Raw":[],"Hipchat":[],"Bearer":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Repo.Messages.Msg":{"args":["x"],"tags":{"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","Repo.Entity x"],"OnSort":["Repo.Sorter x"],"OnFetchAll":["Result.Result Http.Error (List (Repo.Entity x))"],"ChangeLocation":["Utils.Url"],"OnDeleteConfirmed":["Repo.EntityId"],"OnEditInput":["x","List Utils.ErrorMessage"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Repo.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"DatedLog":["String","String","Date.Date"],"OnLocationChange":["Navigation.Location"],"OnServerPush":["String"],"NavbarMsg":["Bootstrap.Navbar.State"],"AuthMsg":["Repo.Messages.Msg Authentications.Authentication"],"ActionsMsg":["Repo.Messages.Msg Actions.Action"],"PollsMsg":["Repo.Messages.Msg Polls.Poll"],"ChangeLocation":["Utils.Url"],"OnClientTimeout":["Time.Time"]}}},"aliases":{"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Repo.EntityId":{"args":[],"type":"String"},"Repo.Sorter":{"args":["x"],"type":"{ property : Repo.Entity x -> String, order : Repo.Ord }"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Authentications.DecodedToken":{"args":[],"type":"String"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Label":{"args":[],"type":"String"},"Utils.Url":{"args":[],"type":"String"},"Utils.ErrorMessage":{"args":[],"type":"( Utils.Label, String )"},"Authentications.Authentication":{"args":[],"type":"{ name : String , type_ : Authentications.AuthType , token : Authentications.DecodedToken }"},"Polls.Interval":{"args":[],"type":"String"},"Repo.Entity":{"args":["x"],"type":"{ id : Repo.EntityId, updatedAt : Utils.Timestamp, data : x }"},"Polls.Poll":{"args":[],"type":"{ url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Repo.EntityId , action : Repo.EntityId , filters : List Polls.JqFilter }"},"Actions.Action":{"args":[],"type":"{ label : Maybe.Maybe Actions.Label , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Repo.EntityId , bodyTemplate : StringTemplate.StringTemplate , type_ : Actions.ActionType }"},"Actions.Label":{"args":[],"type":"String"},"StringTemplate.Body":{"args":[],"type":"String"},"StringTemplate.StringTemplate":{"args":[],"type":"{ body : StringTemplate.Body, variables : List String }"},"Time.Time":{"args":[],"type":"Float"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
+    _aYuMatsuzawa$yubot$Poller$main(Elm['Poller'], 'Poller', {"types":{"unions":{"Bootstrap.Navbar.Visibility":{"args":[],"tags":{"AnimatingDown":[],"StartDown":[],"StartUp":[],"AnimatingUp":[],"Hidden":[],"Shown":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Actions.ActionType":{"args":[],"tags":{"Hipchat":[],"Http":[]}},"Authentications.AuthType":{"args":[],"tags":{"Raw":[],"Hipchat":[],"Bearer":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Bootstrap.Modal.State":{"args":[],"tags":{"State":["Bool"]}},"Repo.Messages.Msg":{"args":["x"],"tags":{"OnEditStart":["Repo.Entity x"],"OnDelete":["Result.Result Http.Error ()"],"OnDeleteModal":["Bootstrap.Modal.State","Repo.Entity x"],"OnSort":["Repo.Sorter x"],"OnFetchAll":["Result.Result Http.Error (List (Repo.Entity x))"],"ChangeLocation":["Utils.Url"],"OnDeleteConfirmed":["Repo.EntityId"],"OnEditInput":["x","List Utils.ErrorMessage"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Repo.Ord":{"args":[],"tags":{"Asc":[],"Desc":[]}},"Bootstrap.Navbar.DropdownStatus":{"args":[],"tags":{"ListenClicks":[],"Closed":[],"Open":[]}},"Bootstrap.Navbar.State":{"args":[],"tags":{"State":["Bootstrap.Navbar.VisibilityState"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Poller.Messages.Msg":{"args":[],"tags":{"DatedLog":["String","String","Date.Date"],"OnLocationChange":["Navigation.Location"],"OnServerPush":["String"],"NavbarMsg":["Bootstrap.Navbar.State"],"AuthMsg":["Repo.Messages.Msg Authentications.Authentication"],"ActionsMsg":["Repo.Messages.Msg Actions.Action"],"PollsMsg":["Repo.Messages.Msg Polls.Poll"],"ChangeLocation":["Utils.Url"],"OnClientTimeout":["Time.Time"]}}},"aliases":{"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Repo.EntityId":{"args":[],"type":"String"},"Repo.Sorter":{"args":["x"],"type":"{ property : Repo.Entity x -> String, order : Repo.Ord }"},"Bootstrap.Navbar.VisibilityState":{"args":[],"type":"{ visibility : Bootstrap.Navbar.Visibility , height : Maybe.Maybe Float , windowSize : Maybe.Maybe Window.Size , dropdowns : Dict.Dict String Bootstrap.Navbar.DropdownStatus }"},"Authentications.DecodedToken":{"args":[],"type":"String"},"Actions.Method":{"args":[],"type":"String"},"Utils.Timestamp":{"args":[],"type":"String"},"Window.Size":{"args":[],"type":"{ width : Int, height : Int }"},"Utils.Label":{"args":[],"type":"String"},"Utils.Url":{"args":[],"type":"String"},"Utils.ErrorMessage":{"args":[],"type":"( Utils.Label, String )"},"Authentications.Authentication":{"args":[],"type":"{ name : String , type_ : Authentications.AuthType , token : Authentications.DecodedToken }"},"Polls.Interval":{"args":[],"type":"String"},"Repo.Entity":{"args":["x"],"type":"{ id : Repo.EntityId, updatedAt : Utils.Timestamp, data : x }"},"Polls.Poll":{"args":[],"type":"{ url : Utils.Url , interval : Polls.Interval , auth : Maybe.Maybe Repo.EntityId , action : Repo.EntityId , filters : List Polls.JqFilter }"},"Actions.Action":{"args":[],"type":"{ label : Maybe.Maybe Actions.Label , method : Actions.Method , url : Utils.Url , auth : Maybe.Maybe Repo.EntityId , bodyTemplate : StringTemplate.StringTemplate , type_ : Actions.ActionType }"},"Actions.Label":{"args":[],"type":"String"},"StringTemplate.Body":{"args":[],"type":"String"},"StringTemplate.StringTemplate":{"args":[],"type":"{ body : StringTemplate.Body, variables : List String }"},"Time.Time":{"args":[],"type":"Float"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"},"Polls.JqFilter":{"args":[],"type":"String"}},"message":"Poller.Messages.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

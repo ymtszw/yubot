@@ -13,4 +13,5 @@ type Msg x
     | OnDeleteConfirmed Repo.EntityId
     | OnDelete (Result Http.Error ())
     | OnEditInput x (List Utils.ErrorMessage)
+    | OnEditStart (Repo.Entity x)
     | ChangeLocation Utils.Url -- Allow triggering ChangeLocation message from nested component; should be handled by root Update

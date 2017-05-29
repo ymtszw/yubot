@@ -32,6 +32,9 @@ update dummyData config msg repo =
         OnDelete (Err error) ->
             ( repo, Cmd.none )
 
+        OnEditStart dirtyEntity ->
+            ( { repo | dirty = dirtyEntity }, Cmd.none )
+
         OnEditInput dirtyEntityData errorMessages ->
             let
                 oldDirty =
