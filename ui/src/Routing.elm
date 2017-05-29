@@ -47,7 +47,7 @@ parseLocation { pathname } =
             ( AuthsRoute
             , [ Cmd.map AuthMsg (Repo.Command.fetchAll Authentications.config)
               , Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config)
-              , Cmd.map AuthMsg (Repo.Command.fetchAll Authentications.config)
+              , Cmd.map ActionsMsg (Repo.Command.fetchAll Actions.config)
               ]
             )
 

@@ -15,7 +15,7 @@ import StringTemplate exposing (StringTemplate)
 import Actions exposing (Action)
 import Actions.ViewParts
 import Authentications exposing (Authentication)
-import Authentications.View exposing (authCheck, authSelect)
+import Authentications.ViewParts exposing (authCheck, authSelect)
 import Poller.Styles as Styles
 
 
