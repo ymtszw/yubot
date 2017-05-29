@@ -6,12 +6,28 @@ import Html.Utils exposing (atext, highlightVariables, mx2Button, toggleSortOnCl
 import Bootstrap.Table as Table
 import Bootstrap.Modal as Modal
 import Bootstrap.Button as Button
+import Bootstrap.Modal as Modal
 import Repo exposing (Repo)
 import Repo.Messages exposing (Msg(..))
 import Actions exposing (Action)
 import Actions.Hipchat
-import Actions.ModalView
 import Actions.ViewParts
+
+
+deleteModalView : Repo.ModalState Action -> Html (Msg Action)
+deleteModalView { target, modalState } =
+    Modal.config (OnDeleteModal target)
+        |> Modal.h4 [] [ text "Deleting Action" ]
+        |> Modal.body []
+            [ Html.p [] [ text ("ID: " ++ target.id) ]
+            , Actions.ViewParts.preview target
+            , Html.p [] [ text "Are you sure?" ]
+            ]
+        |> Modal.footer []
+            [ mx2Button (OnDeleteConfirmed target.id) [ Button.danger ] "Yes, delete"
+            , mx2Button (OnDeleteModal target Modal.hiddenState) [] "Cancel"
+            ]
+        |> Modal.view modalState
 
 
 listView : Set Repo.EntityId -> Repo Action -> Html (Msg Action)
@@ -30,7 +46,7 @@ listView usedActionIds actionRepo =
                     |> rows usedActionIds
                     |> Table.tbody []
             }
-        , Actions.ModalView.deleteModalView actionRepo
+        , deleteModalView actionRepo.deleteModal
         ]
 
 
@@ -60,7 +76,7 @@ actionRow usedActionIds action =
             [ Table.td [] [ text (Maybe.withDefault "(no label)" action.data.label) ]
             , Table.td [] [ actionSummary action ]
             , Table.td []
-                [ mx2Button (OnDeleteModal Modal.visibleState action) deleteButtonOptions deleteButtonString
+                [ mx2Button (OnDeleteModal action Modal.visibleState) deleteButtonOptions deleteButtonString
                 ]
             ]
 

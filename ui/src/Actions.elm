@@ -4,10 +4,13 @@ module Actions
         , Method
         , ActionType(..)
         , dummyAction
+        , usedAuthIds
         , config
         , update
         )
 
+import Dict
+import Set exposing (Set)
 import Json.Decode as Decode
 import Utils
 import Repo exposing (Repo)
@@ -46,6 +49,14 @@ type alias Action =
 dummyAction : Action
 dummyAction =
     Action Nothing "post" "https://example.com" Nothing (StringTemplate "{}" []) Http
+
+
+usedAuthIds : Repo.EntityDict Action -> Set Repo.EntityId
+usedAuthIds actions =
+    actions
+        |> Dict.values
+        |> List.map (.data >> .auth >> Maybe.withDefault "")
+        |> Set.fromList
 
 
 

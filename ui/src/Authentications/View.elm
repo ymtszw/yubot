@@ -1,5 +1,6 @@
 module Authentications.View exposing (listView)
 
+import Set exposing (Set)
 import Html exposing (Html, text)
 import Html.Utils exposing (toggleSortOnClick, mx2Button)
 import Bootstrap.Table as Table
@@ -10,8 +11,8 @@ import Repo.Messages exposing (Msg(..))
 import Authentications exposing (Authentication)
 
 
-listView : Repo Authentication -> Html (Msg Authentication)
-listView authRepo =
+listView : Set Repo.EntityId -> Repo Authentication -> Html (Msg Authentication)
+listView usedAuthIds authRepo =
     Html.div []
         [ Table.table
             { options =
@@ -30,14 +31,15 @@ listView authRepo =
             , tbody =
                 authRepo.dict
                     |> Repo.dictToSortedList authRepo.sort
-                    |> List.map authRow
+                    |> List.map (authRow usedAuthIds)
                     |> Table.tbody []
             }
+        , deleteModalView authRepo.deleteModal
         ]
 
 
-authRow : Repo.Entity Authentication -> Table.Row (Msg Authentication)
-authRow authentication =
+authRow : Set Repo.EntityId -> Repo.Entity Authentication -> Table.Row (Msg Authentication)
+authRow usedAuthIds authentication =
     let
         maskedToken =
             authentication.data.token
@@ -50,12 +52,34 @@ authRow authentication =
                             '*'
                     )
                 |> String.fromList
+
+        ( deleteButtonOptions, deleteButtonString ) =
+            if Set.member authentication.id usedAuthIds then
+                ( [ Button.disabled True, Button.small ], "Used" )
+            else
+                ( [ Button.danger, Button.small ], "Delete" )
     in
         Table.tr []
             [ Table.td [] [ text authentication.data.name ]
             , Table.td [] [ text (toString authentication.data.type_) ]
             , Table.td [] [ Html.pre [] [ text (maskedToken) ] ]
             , Table.td []
-                [ mx2Button (OnDeleteModal Modal.visibleState authentication) [ Button.disabled True, Button.small ] "Delete"
+                [ mx2Button (OnDeleteModal authentication Modal.visibleState) deleteButtonOptions deleteButtonString
                 ]
             ]
+
+
+deleteModalView : Repo.ModalState Authentication -> Html (Msg Authentication)
+deleteModalView { target, modalState } =
+    Modal.config (OnDeleteModal target)
+        |> Modal.h4 [] [ text "Deleting Credential" ]
+        |> Modal.body []
+            [ Html.p [] [ text ("ID: " ++ target.id) ]
+            , Html.pre [] [ text target.data.token ]
+            , Html.p [] [ text "Are you sure?" ]
+            ]
+        |> Modal.footer []
+            [ mx2Button (OnDeleteConfirmed target.id) [ Button.danger ] "Yes, delete"
+            , mx2Button (OnDeleteModal target Modal.hiddenState) [] "Cancel"
+            ]
+        |> Modal.view modalState

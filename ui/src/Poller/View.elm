@@ -1,11 +1,13 @@
 module Poller.View exposing (view)
 
+import Set
 import Html exposing (Html, text)
 import Html.Attributes exposing (class, src, href)
 import Bootstrap.Navbar as Navbar
 import Routing exposing (Route(..))
 import Polls
 import Polls.View
+import Actions
 import Actions.View
 import Authentications.View
 import Poller.Model exposing (Model)
@@ -63,8 +65,13 @@ mainContent model =
                         |> htmlMap ActionsMsg
 
                 AuthsRoute ->
-                    Authentications.View.listView model.authRepo
-                        |> htmlMap AuthMsg
+                    let
+                        usedAuthIds =
+                            Polls.usedAuthIds model.pollRepo.dict
+                                |> Set.union (Actions.usedAuthIds model.actionRepo.dict)
+                    in
+                        Authentications.View.listView usedAuthIds model.authRepo
+                            |> htmlMap AuthMsg
 
                 _ ->
                     -- Not Found

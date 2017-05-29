@@ -6,6 +6,7 @@ module Polls
         , config
         , update
         , usedActionIds
+        , usedAuthIds
         , intervalToString
         )
 
@@ -49,6 +50,14 @@ usedActionIds polls =
     polls
         |> Dict.values
         |> List.map (.data >> .action)
+        |> Set.fromList
+
+
+usedAuthIds : Repo.EntityDict Poll -> Set Repo.EntityId
+usedAuthIds polls =
+    polls
+        |> Dict.values
+        |> List.map (.data >> .auth >> Maybe.withDefault "")
         |> Set.fromList
 
 
