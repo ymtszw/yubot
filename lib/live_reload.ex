@@ -2,15 +2,7 @@
 if Mix.env == :dev do
   defmodule Yubot.LiveReload do
     @priv_static_dir [__DIR__, "..", "priv", "static"] |> Path.join() |> Path.expand()
-    use ExFSWatch, dirs: [@priv_static_dir] # Injects `start/0`
-
-    @doc """
-    Start ExFSWatch worker, then notify `:ignore` to Gear supervisor so that it wont't be looked back.
-    """
-    def start_link() do
-      {:ok, _pid} = start() # Worker process will be supervised by ExFSWatch.Supervisor; Gear supervisor does not have to care about it.
-      :ignore
-    end
+    use ExFSWatch, dirs: [@priv_static_dir]
 
     def callback(:stop) do
       :ok

@@ -12,7 +12,7 @@ defmodule Yubot do
   if Mix.env == :dev do
     defp dev_only_children() do
       [
-        Supervisor.Spec.worker(Yubot.LiveReload, [], restart: :temporary), # Never try to revive; Yubot.LiveReload is not a persistant server
+        Yubot.LiveReload.child_spec(),
       ]
     end
   else
