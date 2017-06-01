@@ -1,4 +1,4 @@
-module Authentications exposing (Authentication, dummyAuthentication, config, update, listForPoll)
+module Authentications exposing (Authentication, AuthType(..), dummyAuthentication, config, update, listForPoll)
 
 import Json.Decode as Decode
 import Repo exposing (Repo)
@@ -44,7 +44,7 @@ listForPoll authList =
 hipchatToken : String -> Authentication
 hipchatToken token =
     Authentication
-        ("Hipchat Notification Token: " ++ (String.left 5 token) ++ "***")
+        ("Notification Token: " ++ (String.left 5 token) ++ "***")
         Hipchat
         token
 

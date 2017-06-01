@@ -3,6 +3,7 @@ module Utils
         ( Timestamp
         , Url
         , ErrorMessage
+        , ite
         , timestampToString
         , dateToString
         , dateToFineString
@@ -27,6 +28,16 @@ type alias Label =
 
 type alias ErrorMessage =
     ( Label, String )
+
+
+{-| Stands for If-Then-Else, can be written inline.
+-}
+ite : Bool -> x -> x -> x
+ite predicate a b =
+    if predicate then
+        a
+    else
+        b
 
 
 {-| Times are automatically converted to Local time.
