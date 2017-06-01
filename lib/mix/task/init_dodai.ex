@@ -10,11 +10,11 @@ defmodule Mix.Tasks.Yubot.InitDodai do
       |> String.to_existing_atom()
     end)
   )
-  @gear_config Path.join([__DIR__, "..", "..", "..", "gear_config"]) |> File.read!()
+  @gear_config Path.join([__DIR__, "..", "..", "..", "gear_config"])
 
   def run(_) do
     System.put_env("PORT", "12345")
-    System.put_env("YUBOT_GEAR_CONFIG_JSON", @gear_config)
+    System.put_env("YUBOT_GEAR_CONFIG_JSON", File.read!(@gear_config))
     Application.ensure_all_started(:yubot)
     Enum.each(@models, fn model ->
       case model.create_collection() do
