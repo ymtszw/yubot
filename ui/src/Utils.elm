@@ -3,8 +3,13 @@ module Utils
         ( Timestamp
         , Url
         , ErrorMessage
+        , ite
+        , stringIndexedMap
         , timestampToString
+        , dateToString
+        , dateToFineString
         , shortenUrl
+        , stringToBool
         )
 
 import Date
@@ -26,10 +31,35 @@ type alias ErrorMessage =
     ( Label, String )
 
 
+{-| Stands for If-Then-Else, can be written inline.
+-}
+ite : Bool -> x -> x -> x
+ite predicate a b =
+    if predicate then
+        a
+    else
+        b
+
+
+stringIndexedMap : (Int -> Char -> Char) -> String -> String
+stringIndexedMap mapper =
+    String.toList >> (List.indexedMap mapper) >> String.fromList
+
+
 {-| Times are automatically converted to Local time.
 -}
 timestampToString : Timestamp -> String
 timestampToString string =
+    case Date.fromString string of
+        Ok date ->
+            dateToString date
+
+        Err _ ->
+            "Invalid timestamp!"
+
+
+dateToString : Date.Date -> String
+dateToString date =
     let
         toPaddedString =
             toString >> String.padLeft 2 '0'
@@ -72,19 +102,29 @@ timestampToString string =
                 Date.Dec ->
                     12
     in
-        case Date.fromString string of
-            Ok date ->
-                [ toString (Date.year date) ++ "/"
-                , toPaddedString (toIntMonth date) ++ "/"
-                , toPaddedString (Date.day date) ++ " "
-                , toPaddedString (Date.hour date) ++ ":"
-                , toPaddedString (Date.minute date) ++ ":"
-                , toPaddedString (Date.second date)
-                ]
-                    |> String.join ""
+        [ toString (Date.year date) ++ "/"
+        , toPaddedString (toIntMonth date) ++ "/"
+        , toPaddedString (Date.day date) ++ " "
+        , toPaddedString (Date.hour date) ++ ":"
+        , toPaddedString (Date.minute date) ++ ":"
+        , toPaddedString (Date.second date)
+        ]
+            |> String.join ""
 
-            Err x ->
-                "Invalid updatedAt!"
+
+dateToFineString : Date.Date -> String
+dateToFineString date =
+    let
+        milliseconds =
+            date
+                |> Date.millisecond
+                |> toString
+                |> String.padLeft 3 '0'
+    in
+        String.join "."
+            [ dateToString date
+            , milliseconds
+            ]
 
 
 shortenUrl : Url -> String
@@ -98,3 +138,13 @@ shortenUrl url =
 
         _ ->
             url
+
+
+stringToBool : String -> Bool
+stringToBool string =
+    case string of
+        "true" ->
+            True
+
+        _ ->
+            False

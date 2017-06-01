@@ -18,7 +18,7 @@ update dummyData config msg repo =
         OnSort sorter ->
             ( { repo | sort = sorter }, Cmd.none )
 
-        OnDeleteModal newState newTarget ->
+        OnDeleteModal newTarget newState ->
             ( { repo | deleteModal = Repo.ModalState newState newTarget }, Cmd.none )
 
         OnDeleteConfirmed id ->
@@ -31,6 +31,9 @@ update dummyData config msg repo =
 
         OnDelete (Err error) ->
             ( repo, Cmd.none )
+
+        OnEditStart dirtyEntity ->
+            ( { repo | dirty = dirtyEntity }, Cmd.none )
 
         OnEditInput dirtyEntityData errorMessages ->
             let

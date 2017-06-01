@@ -2,12 +2,15 @@ module Actions
     exposing
         ( Action
         , Method
-        , Type(..)
+        , ActionType(..)
         , dummyAction
+        , usedAuthIds
         , config
         , update
         )
 
+import Dict
+import Set exposing (Set)
 import Json.Decode as Decode
 import Utils
 import Repo exposing (Repo)
@@ -28,7 +31,7 @@ type alias Method =
     String
 
 
-type Type
+type ActionType
     = Hipchat
     | Http
 
@@ -39,13 +42,21 @@ type alias Action =
     , url : Utils.Url
     , auth : Maybe Repo.EntityId
     , bodyTemplate : StringTemplate
-    , type_ : Type
+    , type_ : ActionType
     }
 
 
 dummyAction : Action
 dummyAction =
     Action Nothing "post" "https://example.com" Nothing (StringTemplate "{}" []) Http
+
+
+usedAuthIds : Repo.EntityDict Action -> Set Repo.EntityId
+usedAuthIds actions =
+    actions
+        |> Dict.values
+        |> List.map (.data >> .auth >> Maybe.withDefault "")
+        |> Set.fromList
 
 
 
@@ -75,7 +86,7 @@ bodyTemplateDecoder =
         (Decode.field "variables" (Decode.list Decode.string))
 
 
-typeDecoder : Decode.Decoder Type
+typeDecoder : Decode.Decoder ActionType
 typeDecoder =
     let
         stringToType string =

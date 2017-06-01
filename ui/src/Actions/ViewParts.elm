@@ -1,4 +1,4 @@
-module Actions.ViewParts exposing (variableList, preview)
+module Actions.ViewParts exposing (variableList, target, preview)
 
 import Html exposing (Html, text)
 import Html.Attributes exposing (class)
@@ -27,13 +27,18 @@ variableList variables =
                     |> Html.p []
 
 
+target : Repo.Entity Action -> Html (Msg x)
+target action =
+    Html.p []
+        [ text "Target: "
+        , Html.code [] (atext ((String.toUpper action.data.method) ++ " " ++ action.data.url))
+        ]
+
+
 preview : Repo.Entity Action -> Html (Msg x)
 preview action =
     Html.div [ class "action-preview" ]
-        [ Html.p []
-            [ text "Target: "
-            , Html.code [] (atext ((String.toUpper action.data.method) ++ " " ++ action.data.url))
-            ]
+        [ target action
         , Html.pre [ Styles.greyBack, class "rounded", class "p-3" ] (highlightVariables action.data.bodyTemplate.body)
         , variableList action.data.bodyTemplate.variables
         ]

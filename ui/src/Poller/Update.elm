@@ -1,6 +1,9 @@
 module Poller.Update exposing (update)
 
+import Date
+import Task
 import Navigation
+import Utils
 import LiveReload
 import Routing
 import Polls
@@ -12,46 +15,49 @@ import Poller.Messages exposing (Msg(..))
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        PollsMsg subMsg ->
-            let
-                ( updatedPollRepo, cmd ) =
-                    Polls.update subMsg model.pollRepo
-            in
-                ( { model | pollRepo = updatedPollRepo }, Cmd.map PollsMsg cmd )
+    let
+        mapUpdate repoToModel msg ( repo, cmd ) =
+            ( repoToModel repo, Cmd.map msg cmd )
+    in
+        case msg of
+            PollsMsg subMsg ->
+                Polls.update subMsg model.pollRepo
+                    |> mapUpdate (\x -> { model | pollRepo = x }) PollsMsg
 
-        ActionsMsg subMsg ->
-            let
-                ( updatedActionRepo, cmd ) =
-                    Actions.update subMsg model.actionRepo
-            in
-                ( { model | actionRepo = updatedActionRepo }, Cmd.map ActionsMsg cmd )
+            ActionsMsg subMsg ->
+                Actions.update subMsg model.actionRepo
+                    |> mapUpdate (\x -> { model | actionRepo = x }) ActionsMsg
 
-        AuthMsg subMsg ->
-            let
-                ( updatedAuthRepo, cmd ) =
-                    Authentications.update subMsg model.authRepo
-            in
-                ( { model | authRepo = updatedAuthRepo }, Cmd.map AuthMsg cmd )
+            AuthMsg subMsg ->
+                Authentications.update subMsg model.authRepo
+                    |> mapUpdate (\x -> { model | authRepo = x }) AuthMsg
 
-        NavbarMsg state ->
-            ( { model | navbarState = state }, Cmd.none )
+            NavbarMsg state ->
+                ( { model | navbarState = state }, Cmd.none )
 
-        ChangeLocation path ->
-            ( model, Navigation.modifyUrl ("/poller" ++ path) )
+            ChangeLocation path ->
+                ( model, Navigation.modifyUrl ("/poller" ++ path) )
 
-        OnLocationChange location ->
-            ( { model | route = Routing.parseLocation location }, Cmd.none )
+            OnLocationChange location ->
+                Routing.parseLocation location
+                    |> Tuple.mapFirst (\x -> { model | route = x })
+                    |> Tuple.mapSecond Cmd.batch
 
-        OnServerPush text ->
-            case text of
-                "reload" ->
-                    ( model, Navigation.reloadAndSkipCache )
+            OnServerPush "reload" ->
+                ( model, Navigation.reloadAndSkipCache )
 
-                _ ->
-                    text
-                        |> Debug.log "Server push"
-                        |> always ( model, Cmd.none )
+            OnServerPush text ->
+                ( model, log "Server push" text )
 
-        OnClientTimeout _ ->
-            ( model, LiveReload.cmd model.isDev )
+            OnClientTimeout _ ->
+                ( model, LiveReload.cmd model.isDev )
+
+            DatedLog label text date ->
+                Debug.log ("[" ++ (Utils.dateToFineString date) ++ "] " ++ label) text |> always ( model, Cmd.none )
+
+
+{-| Log string into console with current datetime.
+-}
+log : String -> String -> Cmd Msg
+log label text =
+    Task.perform (DatedLog label text) Date.now

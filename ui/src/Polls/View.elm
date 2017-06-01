@@ -19,28 +19,24 @@ cardsView pollRepo =
                 , Html.div [ class "card-block alert-success" ]
                     [ Html.h4 [ class "card-title" ] [ text "Status: OK" ]
                     , Html.p [ class "card-text" ] [ text ("Run: " ++ (Polls.intervalToString poll.data.interval)) ]
-                    , Html.p [ class "card-text" ] [ text ("Action: " ++ poll.data.action) ]
                     ]
                 , Html.div [ class "card-footer" ]
                     [ Html.small [ Styles.xSmall ] [ text ("Last run at: " ++ (Utils.timestampToString poll.updatedAt)) ] ]
                 ]
 
-        cardWithWrap poll =
-            Html.div [ class "col-lg-3 col-md-4 col-sm-6 my-2" ] [ card poll ]
+        createCard =
+            Html.div [ class "card text-center h-100" ]
+                [ Html.div [ class "card-header" ] [ Html.h4 [] [ text "New Poll" ] ]
+                , Html.div [ class "card-block" ] [ Button.button [ Button.primary ] [ text "Create" ] ]
+                , Html.div [ class "card-footer" ] []
+                ]
+
+        wrapCol html =
+            Html.div [ class "col-lg-3 col-md-4 col-sm-6 my-2" ] [ html ]
     in
         pollRepo.dict
             |> Repo.dictToSortedList pollRepo.sort
-            |> List.map cardWithWrap
-            |> (::) createPollCard
+            |> List.map card
+            |> (::) createCard
+            |> List.map wrapCol
             |> Html.div [ class "row" ]
-
-
-createPollCard : Html (Msg Poll)
-createPollCard =
-    Html.div [ class "col-lg-3 col-md-4 col-sm-6 my-2" ]
-        [ Html.div [ class "card text-center h-100" ]
-            [ Html.div [ class "card-header" ] [ Html.h4 [] [ text "New Poll" ] ]
-            , Html.div [ class "card-block" ] [ Button.button [ Button.primary ] [ text "Create" ] ]
-            , Html.div [ class "card-footer" ] []
-            ]
-        ]

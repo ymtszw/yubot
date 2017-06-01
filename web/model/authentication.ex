@@ -43,15 +43,15 @@ defmodule Yubot.Model.Authentication do
     Aes.ctr128_encrypt(raw_token, Yubot.get_env("encryption_key")) |> Base.encode64()
   end
 
-  defun retrieve_and_decrypt_token(id :: v[Id.t], key :: v[String.t], group_id :: v[Dodai.GroupId.t]) :: R.t(String.t) do
-    R.m do
-      %__MODULE__{data: %Data{token: encrypted_token}} = auth <- retrieve(id, key, group_id)
-      raw_token <- decrypt(encrypted_token)
-      pure put_in(auth.data.token, raw_token)
-    end
+  defun decrypt_token(%__MODULE__{data: %Data{token: encrypted_token}} = auth) :: R.t(t) do
+    decrypt(encrypted_token)
+    |> R.map(fn decrypted_token -> put_in(auth.data.token, decrypted_token) end)
   end
 
-  def decrypt(encrypted_token) do
-    Base.decode64(encrypted_token) |> R.bind(&Aes.ctr128_decrypt(&1, Yubot.get_env("encryption_key")))
+  defp decrypt(encrypted_token) do
+    case Base.decode64(encrypted_token) do
+      {:ok, encrypted_binary} -> Aes.ctr128_decrypt(encrypted_binary, Yubot.get_env("encryption_key"))
+      :error                  -> {:ok, encrypted_token} # Fallback for old data; not encrypted
+    end
   end
 end

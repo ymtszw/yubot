@@ -1,4 +1,4 @@
-module Authentications exposing (Authentication, dummyAuthentication, config, update, listForPoll)
+module Authentications exposing (Authentication, AuthType(..), dummyAuthentication, config, update, listForPoll)
 
 import Json.Decode as Decode
 import Repo exposing (Repo)
@@ -17,8 +17,10 @@ type alias Authentication =
     }
 
 
-type alias AuthType =
-    String
+type AuthType
+    = Raw
+    | Bearer
+    | Hipchat
 
 
 type alias DecodedToken =
@@ -27,16 +29,24 @@ type alias DecodedToken =
 
 dummyAuthentication : Authentication
 dummyAuthentication =
-    Authentication "" "" ""
+    Authentication "" Raw ""
 
 
 listForPoll : List (Repo.Entity Authentication) -> List (Repo.Entity Authentication)
 listForPoll authList =
     let
         filterFun auth =
-            List.member auth.data.type_ [ "raw", "bearer" ]
+            List.member auth.data.type_ [ Raw, Bearer ]
     in
         List.filter filterFun authList
+
+
+hipchatToken : String -> Authentication
+hipchatToken token =
+    Authentication
+        ("Notification Token: " ++ (String.left 5 token) ++ "***")
+        Hipchat
+        token
 
 
 
@@ -52,8 +62,25 @@ dataDecoder : Decode.Decoder Authentication
 dataDecoder =
     Decode.map3 Authentication
         (Decode.field "name" Decode.string)
-        (Decode.field "type" Decode.string)
+        (Decode.field "type" typeDecoder)
         (Decode.field "token" Decode.string)
+
+
+typeDecoder : Decode.Decoder AuthType
+typeDecoder =
+    let
+        stringToType string =
+            case string of
+                "hipchat" ->
+                    Hipchat
+
+                "bearer" ->
+                    Bearer
+
+                _ ->
+                    Raw
+    in
+        Decode.map stringToType Decode.string
 
 
 

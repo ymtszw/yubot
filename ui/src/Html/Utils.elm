@@ -6,15 +6,16 @@ module Html.Utils
         , errorAlert
         , toggleSortOnClick
         , navigateOnClick
+        , anchoredText
         )
 
 import Regex exposing (Match, HowMany(AtMost), regex)
-import Html exposing (Html, text, a)
-import Html.Attributes exposing (href, class)
+import Html exposing (Html, text)
+import Html.Attributes as Attr exposing (class)
 import Html.Events
 import Bootstrap.Button as Button
 import Bootstrap.Alert as Alert
-import Utils
+import Utils exposing (ite)
 import Repo exposing (Sorter, Ord(..))
 import Repo.Messages exposing (Msg(OnSort))
 import StringTemplate
@@ -42,12 +43,12 @@ atextImpl string htmls =
         leftToHtml string matchedUrl index =
             case index of
                 0 ->
-                    ( [ a [ href matchedUrl ] [ text matchedUrl ] ]
+                    ( [ Html.a [ Attr.href matchedUrl ] [ text matchedUrl ] ]
                     , String.dropLeft (String.length matchedUrl) string
                     )
 
                 _ ->
-                    ( [ text (String.left index string), a [ href matchedUrl ] [ text matchedUrl ] ]
+                    ( [ text (String.left index string), Html.a [ Attr.href matchedUrl ] [ text matchedUrl ] ]
                     , String.dropLeft (index + String.length matchedUrl) string
                     )
     in
@@ -158,3 +159,14 @@ navigateOnClick url =
     [ Poller.Styles.fakeLink
     , Html.Events.onClick (Poller.Messages.ChangeLocation url)
     ]
+
+
+anchoredText : String -> Html msg
+anchoredText string =
+    let
+        anchorName =
+            string
+                |> String.toLower
+                |> Utils.stringIndexedMap (\_ x -> ite (x == ' ') '-' x)
+    in
+        Html.a [ Attr.name anchorName ] [ text string ]
