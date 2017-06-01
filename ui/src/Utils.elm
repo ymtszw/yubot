@@ -4,6 +4,7 @@ module Utils
         , Url
         , ErrorMessage
         , ite
+        , stringIndexedMap
         , timestampToString
         , dateToString
         , dateToFineString
@@ -38,6 +39,11 @@ ite predicate a b =
         a
     else
         b
+
+
+stringIndexedMap : (Int -> Char -> Char) -> String -> String
+stringIndexedMap mapper =
+    String.toList >> (List.indexedMap mapper) >> String.fromList
 
 
 {-| Times are automatically converted to Local time.

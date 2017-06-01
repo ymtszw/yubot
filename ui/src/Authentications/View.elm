@@ -60,10 +60,7 @@ authRow : Set Repo.EntityId -> Repo.Entity Authentication -> Table.Row (Msg Auth
 authRow usedAuthIds auth =
     let
         maskedToken =
-            auth.data.token
-                |> String.toList
-                |> List.indexedMap (\i x -> ite (i < 5) x '*')
-                |> String.fromList
+            Utils.stringIndexedMap (\i x -> ite (i < 5) x '*') auth.data.token
 
         ( deleteButtonOptions, deleteButtonString ) =
             if Set.member auth.id usedAuthIds then

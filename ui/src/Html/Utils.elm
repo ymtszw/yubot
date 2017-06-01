@@ -167,8 +167,6 @@ anchoredText string =
         anchorName =
             string
                 |> String.toLower
-                |> String.toList
-                |> List.map (\x -> ite (x == ' ') '-' x)
-                |> String.fromList
+                |> Utils.stringIndexedMap (\_ x -> ite (x == ' ') '-' x)
     in
         Html.a [ Attr.name anchorName ] [ text string ]

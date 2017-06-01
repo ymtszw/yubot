@@ -6508,6 +6508,15 @@ var _aYuMatsuzawa$yubot$Utils$timestampToString = function (string) {
 		return 'Invalid timestamp!';
 	}
 };
+var _aYuMatsuzawa$yubot$Utils$stringIndexedMap = function (mapper) {
+	return function (_p5) {
+		return _elm_lang$core$String$fromList(
+			A2(
+				_elm_lang$core$List$indexedMap,
+				mapper,
+				_elm_lang$core$String$toList(_p5)));
+	};
+};
 var _aYuMatsuzawa$yubot$Utils$ite = F3(
 	function (predicate, a, b) {
 		return predicate ? a : b;
@@ -20203,10 +20212,10 @@ var _aYuMatsuzawa$yubot$Poller_Styles$greyBack = _elm_lang$html$Html_Attributes$
 	});
 
 var _aYuMatsuzawa$yubot$Html_Utils$anchoredText = function (string) {
-	var anchorName = _elm_lang$core$String$fromList(
-		A2(
-			_elm_lang$core$List$map,
-			function (x) {
+	var anchorName = A2(
+		_aYuMatsuzawa$yubot$Utils$stringIndexedMap,
+		F2(
+			function (_p0, x) {
 				return A3(
 					_aYuMatsuzawa$yubot$Utils$ite,
 					_elm_lang$core$Native_Utils.eq(
@@ -20214,9 +20223,8 @@ var _aYuMatsuzawa$yubot$Html_Utils$anchoredText = function (string) {
 						_elm_lang$core$Native_Utils.chr(' ')),
 					_elm_lang$core$Native_Utils.chr('-'),
 					x);
-			},
-			_elm_lang$core$String$toList(
-				_elm_lang$core$String$toLower(string))));
+			}),
+		_elm_lang$core$String$toLower(string));
 	return A2(
 		_elm_lang$html$Html$a,
 		{
@@ -20250,8 +20258,8 @@ var _aYuMatsuzawa$yubot$Html_Utils$toggleSortOnClick = F2(
 				A2(_aYuMatsuzawa$yubot$Repo$Sorter, newProperty, newOrder)));
 	});
 var _aYuMatsuzawa$yubot$Html_Utils$errorAlert = function (errors) {
-	var alert = function (_p0) {
-		var _p1 = _p0;
+	var alert = function (_p1) {
+		var _p2 = _p1;
 		return _rundis$elm_bootstrap$Bootstrap_Alert$danger(
 			{
 				ctor: '::',
@@ -20264,18 +20272,18 @@ var _aYuMatsuzawa$yubot$Html_Utils$errorAlert = function (errors) {
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								'[',
-								A2(_elm_lang$core$Basics_ops['++'], _p1._0, '] '))),
+								A2(_elm_lang$core$Basics_ops['++'], _p2._0, '] '))),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(_p1._1),
+					_0: _elm_lang$html$Html$text(_p2._1),
 					_1: {ctor: '[]'}
 				}
 			});
 	};
-	var _p2 = errors;
-	if (_p2.ctor === '[]') {
+	var _p3 = errors;
+	if (_p3.ctor === '[]') {
 		return _elm_lang$html$Html$text('');
 	} else {
 		return A2(
@@ -20321,8 +20329,8 @@ var _aYuMatsuzawa$yubot$Html_Utils$highlightVariablesImpl = F2(
 		while (true) {
 			var leftToHtml = F3(
 				function (string, matchedVar, index) {
-					var _p3 = index;
-					if (_p3 === 0) {
+					var _p4 = index;
+					if (_p4 === 0) {
 						return {
 							ctor: '_Tuple2',
 							_0: {
@@ -20381,12 +20389,12 @@ var _aYuMatsuzawa$yubot$Html_Utils$highlightVariablesImpl = F2(
 				_elm_lang$core$Regex$find,
 				_elm_lang$core$Regex$AtMost(1),
 				_elm_lang$core$Regex$regex('#\\{(.*?)\\}'));
-			var _p4 = bodyTail;
-			if (_p4 === '') {
+			var _p5 = bodyTail;
+			if (_p5 === '') {
 				return htmls;
 			} else {
-				var _p5 = findFirst(bodyTail);
-				if (_p5.ctor === '[]') {
+				var _p6 = findFirst(bodyTail);
+				if (_p6.ctor === '[]') {
 					return A2(
 						_elm_lang$core$Basics_ops['++'],
 						htmls,
@@ -20396,9 +20404,9 @@ var _aYuMatsuzawa$yubot$Html_Utils$highlightVariablesImpl = F2(
 							_1: {ctor: '[]'}
 						});
 				} else {
-					var _p6 = A3(leftToHtml, bodyTail, _p5._0.match, _p5._0.index);
-					var newHtmls = _p6._0;
-					var newTail = _p6._1;
+					var _p7 = A3(leftToHtml, bodyTail, _p6._0.match, _p6._0.index);
+					var newHtmls = _p7._0;
+					var newTail = _p7._1;
 					var _v5 = newTail,
 						_v6 = A2(_elm_lang$core$Basics_ops['++'], htmls, newHtmls);
 					bodyTail = _v5;
@@ -20420,8 +20428,8 @@ var _aYuMatsuzawa$yubot$Html_Utils$atextImpl = F2(
 		while (true) {
 			var leftToHtml = F3(
 				function (string, matchedUrl, index) {
-					var _p7 = index;
-					if (_p7 === 0) {
+					var _p8 = index;
+					if (_p8 === 0) {
 						return {
 							ctor: '_Tuple2',
 							_0: {
@@ -20480,12 +20488,12 @@ var _aYuMatsuzawa$yubot$Html_Utils$atextImpl = F2(
 				_elm_lang$core$Regex$find,
 				_elm_lang$core$Regex$AtMost(1),
 				_elm_lang$core$Regex$regex('http(s)?://[a-zA-Z0-9_./#?&%=~+-]+'));
-			var _p8 = string;
-			if (_p8 === '') {
+			var _p9 = string;
+			if (_p9 === '') {
 				return htmls;
 			} else {
-				var _p9 = findFirst(string);
-				if (_p9.ctor === '[]') {
+				var _p10 = findFirst(string);
+				if (_p10.ctor === '[]') {
 					return A2(
 						_elm_lang$core$Basics_ops['++'],
 						htmls,
@@ -20495,9 +20503,9 @@ var _aYuMatsuzawa$yubot$Html_Utils$atextImpl = F2(
 							_1: {ctor: '[]'}
 						});
 				} else {
-					var _p10 = A3(leftToHtml, string, _p9._0.match, _p9._0.index);
-					var newHtmls = _p10._0;
-					var tailString = _p10._1;
+					var _p11 = A3(leftToHtml, string, _p10._0.match, _p10._0.index);
+					var newHtmls = _p11._0;
+					var tailString = _p11._1;
 					var _v10 = tailString,
 						_v11 = A2(_elm_lang$core$Basics_ops['++'], htmls, newHtmls);
 					string = _v10;
@@ -21697,18 +21705,17 @@ var _aYuMatsuzawa$yubot$Authentications_View$authRow = F2(
 		};
 		var deleteButtonOptions = _p3._0;
 		var deleteButtonString = _p3._1;
-		var maskedToken = _elm_lang$core$String$fromList(
-			A2(
-				_elm_lang$core$List$indexedMap,
-				F2(
-					function (i, x) {
-						return A3(
-							_aYuMatsuzawa$yubot$Utils$ite,
-							_elm_lang$core$Native_Utils.cmp(i, 5) < 0,
-							x,
-							_elm_lang$core$Native_Utils.chr('*'));
-					}),
-				_elm_lang$core$String$toList(auth.data.token)));
+		var maskedToken = A2(
+			_aYuMatsuzawa$yubot$Utils$stringIndexedMap,
+			F2(
+				function (i, x) {
+					return A3(
+						_aYuMatsuzawa$yubot$Utils$ite,
+						_elm_lang$core$Native_Utils.cmp(i, 5) < 0,
+						x,
+						_elm_lang$core$Native_Utils.chr('*'));
+				}),
+			auth.data.token);
 		return A2(
 			_rundis$elm_bootstrap$Bootstrap_Table$tr,
 			{ctor: '[]'},
