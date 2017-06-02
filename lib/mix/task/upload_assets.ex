@@ -1,10 +1,20 @@
 use Croma
 
 defmodule Mix.Tasks.Yubot.UploadAssets do
+  @moduledoc """
+  Upload assets to CDN (via Dodai Filestore API and S3).
+
+  Uploaded assets are recorded to inventory file ("web/static/assets"),
+  which will be used as compile-time resource for `Yubot.Assets` module.
+
+  # Usage
+
+      mix yubot.upload_assets (dev|prod)
+  """
   use Mix.Task
   alias Yubot.Assets
 
-  @shortdoc "Upload assets to S3 (Dodai Filestore), allowing CDN serve"
+  @shortdoc "Upload assets to CDN (via Dodai Filestore API and S3)"
 
   @assets_directory Path.join(["priv", "static", "assets"])
   @assets_inventory Path.join(["web", "static", "assets"])

@@ -4,8 +4,18 @@ defmodule Yubot.Assets do
   @moduledoc """
   Resolver for static assets URL.
 
-  Static assets are served from CloudFront (via Dodai filestore API),
-  though in local development they are served from priv/static/assets directory.
+  In this gear, there are two places where static assets can be placed.
+
+  - Under "priv/static/assets/"
+  - Under "priv/static/" other than "assets" directory
+
+  "priv/static/assets" directory is gitignored, and only used from local server.
+  Assets under "priv/static/assets" directory can be uploaded to CDN using `Mix.Tasks.Yubot.UploadAssets` task.
+
+  Asset paths relative from "priv/static/assets" directory can be resolved to corresponding CDN URL using `url/1` macro.
+  This macro embeds CDN URL (or "/static/assets/*" path, when local) to templates.
+
+  Other files and directories under "priv/static" are served from both local/cloud server, and included in git.
   """
 
   defmodule AssetPath do
