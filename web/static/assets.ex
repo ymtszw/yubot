@@ -12,8 +12,8 @@ defmodule Yubot.Assets do
   "priv/static/assets" directory is gitignored, and only used from local server.
   Assets under "priv/static/assets" directory can be uploaded to CDN using `Mix.Tasks.Yubot.UploadAssets` task.
 
-  Asset paths relative from "priv/static/assets" directory can be resolved to corresponding CDN URL using `url/1` macro.
-  This macro embeds CDN URL (or "/static/assets/*" path, when local) to templates.
+  Asset paths relative from "priv/static/assets" directory can be resolved to corresponding CDN URL using `url/1`.
+  This function embeds CDN URL (or "/static/assets/*" path, when local) to templates.
 
   Other files and directories under "priv/static" are served from both local/cloud server, and included in git.
   """
@@ -47,19 +47,9 @@ defmodule Yubot.Assets do
   #
 
   @doc """
-  Embed resolved `asset_path` at compile time.
-
-  `asset_path` must be compile-time string literal.
+  Resolve `asset_path` at runtime.
   """
-  defmacro url(asset_path) do
-    asset_url = Yubot.Assets.url_impl(asset_path)
-    quote do
-      unquote(asset_url)
-    end
-  end
-
-  @doc false
-  def url_impl(asset_path) when is_binary(asset_path) do
+  defun url(asset_path :: v[AssetPath.t]) :: SolomonLib.Url do
     case SolomonLib.Env.runtime_env() do
       :prod -> raise("not ready!")
       :dev -> cdn_path(asset_path)
