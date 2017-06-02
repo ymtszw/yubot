@@ -1,2 +1,2 @@
 %script(type="text/javascript")
-  Elm.Poller.fullscreen({isDev: #{!SolomonLib.Env.running_in_cloud?}})
+  Elm.Poller.fullscreen({isDev:#{!SolomonLib.Env.running_in_cloud?},assetInventory:#{raw Poison.encode!(Yubot.Assets.inventory())}})

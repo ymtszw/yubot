@@ -13,6 +13,7 @@ import Authentications.View
 import Poller.Model exposing (Model)
 import Poller.Messages exposing (Msg(..))
 import Poller.Styles as Styles
+import Poller.Assets as Assets
 
 
 view : Model -> Html Msg
@@ -31,7 +32,7 @@ navbar model =
     let
         logo =
             Html.h3 [ class "mb-0" ]
-                [ Html.img [ class "align-bottom mx-1", src "/static/img/poller/favicon32.png" ] []
+                [ Html.img [ class "align-bottom mx-1", src (Assets.url model "img/poller/favicon32.png") ] []
                 , text "Poller"
                 , Html.small [ Styles.xSmall ] [ text "the Bear" ]
                 ]

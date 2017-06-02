@@ -52,7 +52,7 @@ defmodule Yubot.Assets do
   defun url(asset_path :: v[AssetPath.t]) :: SolomonLib.Url do
     case SolomonLib.Env.runtime_env() do
       :prod -> raise("not ready!")
-      :dev -> cdn_path(asset_path)
+      :dev -> cdn_url(asset_path)
       _local -> local_path(asset_path)
     end
   end
@@ -62,7 +62,7 @@ defmodule Yubot.Assets do
   end
 
   for {asset_path, public_url} <- @inventory do
-    def cdn_path(unquote(asset_path)), do: unquote(public_url)
+    def cdn_url(unquote(asset_path)), do: unquote(public_url)
   end
 
   #
