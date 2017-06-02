@@ -59,11 +59,11 @@ defmodule Mix.Tasks.Yubot.UploadAssets do
     %_success{body: %{"publicUrl" => "http://" <> noscheme_url}} = Assets.upload_and_notify(asset_full_path, asset_path, upload_url, root_key, env)
     https_url = "https://#{noscheme_url}"
     IO.puts(IO.ANSI.green() <> "#{asset_path} => #{https_url}" <> IO.ANSI.reset())
-    "#{asset_path} #{https_url}"
+    "#{asset_path} #{https_url}\n"
   end
 
   defp write_inventory(lines) do
-    inventory = Enum.join(lines, "\n")
+    inventory = Enum.join(lines)
     File.write!(@assets_inventory, inventory)
   end
 end
