@@ -39,7 +39,7 @@ defmodule Yubot.Assets do
   @collection_name  "Assets"
   @external_resource Path.expand("assets", __DIR__)
 
-  @inventory         File.read!(@external_resource) |> String.split("\n", trim: true) |> Enum.map(&List.to_tuple(String.split(&1, " ")))
+  @inventory         File.read!(@external_resource) |> String.split("\n", trim: true) |> Map.new(&List.to_tuple(String.split(&1, " ")))
   def inventory(), do: @inventory
 
   #
