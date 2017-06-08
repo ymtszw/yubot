@@ -93,6 +93,6 @@ dataEncoder { name, type_, token } =
 -- Update
 
 
-update : Msg Authentication -> Repo Authentication -> ( Repo Authentication, Cmd (Msg Authentication) )
+update : Msg Authentication -> Repo Authentication -> ( Repo Authentication, Cmd (Msg Authentication), Bool )
 update msg resource =
     Repo.Update.update dummyAuthentication config msg resource

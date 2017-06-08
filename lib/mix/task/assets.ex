@@ -13,6 +13,7 @@ defmodule Mix.Tasks.Yubot.Assets do
 
   def run(args) do
     Mix.Tasks.Yubot.UploadAssets.run(args)
+    :timer.sleep(300)
     Mix.Tasks.Yubot.GenElmAssets.run(args)
   end
 end

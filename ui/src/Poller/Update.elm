@@ -16,21 +16,21 @@ import Poller.Messages exposing (Msg(..))
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
-        mapUpdate repoToModel msg ( repo, cmd ) =
-            ( repoToModel repo, Cmd.map msg cmd )
+        mapUpdate repoToModel msg ( x, cmd, isBusy ) =
+            ( repoToModel x isBusy, Cmd.map msg cmd )
     in
         case msg of
             PollsMsg subMsg ->
                 Polls.update subMsg model.pollRepo
-                    |> mapUpdate (\x -> { model | pollRepo = x }) PollsMsg
+                    |> mapUpdate (\x isBusy -> { model | pollRepo = x, isBusy = isBusy }) PollsMsg
 
             ActionsMsg subMsg ->
                 Actions.update subMsg model.actionRepo
-                    |> mapUpdate (\x -> { model | actionRepo = x }) ActionsMsg
+                    |> mapUpdate (\x isBusy -> { model | actionRepo = x, isBusy = isBusy }) ActionsMsg
 
             AuthMsg subMsg ->
                 Authentications.update subMsg model.authRepo
-                    |> mapUpdate (\x -> { model | authRepo = x }) AuthMsg
+                    |> mapUpdate (\x isBusy -> { model | authRepo = x, isBusy = isBusy }) AuthMsg
 
             NavbarMsg state ->
                 ( { model | navbarState = state }, Cmd.none )
@@ -39,9 +39,11 @@ update msg model =
                 ( model, Navigation.modifyUrl ("/poller" ++ path) )
 
             OnLocationChange location ->
-                Routing.parseLocation location
-                    |> Tuple.mapFirst (\x -> { model | route = x })
-                    |> Tuple.mapSecond Cmd.batch
+                let
+                    ( route, cmds, isBusy ) =
+                        Routing.parseLocation location
+                in
+                    ( { model | route = route, isBusy = isBusy }, Cmd.batch cmds )
 
             OnServerPush "reload" ->
                 ( model, Navigation.reloadAndSkipCache )

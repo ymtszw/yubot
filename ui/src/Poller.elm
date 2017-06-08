@@ -20,10 +20,10 @@ init { isDev } location =
         ( navbarState, navbarCmd ) =
             Bootstrap.Navbar.initialState NavbarMsg
 
-        ( currentRoute, initCmds ) =
+        ( currentRoute, initCmds, isBusy ) =
             Routing.parseLocation location
     in
-        Poller.Model.initialModel isDev currentRoute navbarState ! (navbarCmd :: initCmds)
+        Poller.Model.initialModel isDev isBusy currentRoute navbarState ! (navbarCmd :: initCmds)
 
 
 

@@ -2,6 +2,7 @@ module Styles exposing (..)
 
 import Html exposing (Attribute)
 import Html.Attributes exposing (style, class)
+import Utils
 
 
 greyBack : Attribute msg
@@ -22,10 +23,10 @@ introGap =
 toastBlock : Attribute msg
 toastBlock =
     style
-        [ ( "position", "absolute" )
+        [ ( "position", "fixed" )
         , ( "right", "10px" )
         , ( "left", "10px" )
-        , ( "z-index", "100" )
+        , ( "z-index", "1100" )
         ]
 
 
@@ -59,6 +60,12 @@ monospace =
 xSmall : Attribute msg
 xSmall =
     style [ ( "font-size", "x-small" ) ]
+
+
+display : Bool -> Attribute msg
+display isShown =
+    style
+        [ ( "display", Utils.ite isShown "block" "none" ) ]
 
 
 hidden : Attribute msg

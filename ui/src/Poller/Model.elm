@@ -17,11 +17,12 @@ type alias Model =
     , navbarState : Navbar.State
     , route : Routing.Route
     , isDev : Bool
+    , isBusy : Bool
     }
 
 
-initialModel : Bool -> Routing.Route -> Navbar.State -> Model
-initialModel isDev route navbarState =
+initialModel : Bool -> Bool -> Routing.Route -> Navbar.State -> Model
+initialModel isDev isBusy route navbarState =
     { pollRepo = Repo.initialize Polls.dummyPoll
     , actionRepo = Repo.initialize Actions.dummyAction
     , actionFilter = Set.empty
@@ -29,4 +30,5 @@ initialModel isDev route navbarState =
     , navbarState = navbarState
     , route = route
     , isDev = isDev
+    , isBusy = isBusy
     }

@@ -106,6 +106,6 @@ dataEncoder { url, interval, auth, action, filters } =
 -- Update
 
 
-update : Msg Poll -> Repo Poll -> ( Repo Poll, Cmd (Msg Poll) )
+update : Msg Poll -> Repo Poll -> ( Repo Poll, Cmd (Msg Poll), Bool )
 update =
     Repo.Update.update dummyPoll config

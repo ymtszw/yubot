@@ -32,7 +32,7 @@ view model =
 
 
 errorToasts : Model -> Html Msg
-errorToasts { pollRepo, actionRepo, authRepo } =
+errorToasts { pollRepo, actionRepo, authRepo, isDev, isBusy } =
     Html.div [ class "container-fluid mt-2", Styles.toastBlock ]
         [ Html.div [ Attr.id "error-toasts", class "row" ]
             [ Html.div [ class "col-md-10 offset-md-1 col-lg-8 offset-lg-2" ]
@@ -40,6 +40,8 @@ errorToasts { pollRepo, actionRepo, authRepo } =
                 , actionRepo |> errorToast |> htmlMap ActionsMsg
                 , authRepo |> errorToast |> htmlMap AuthMsg
                 ]
+            , Html.div [ class "col-md-1 col-lg-2 pull-right" ]
+                [ Html.img [ Attr.src (Assets.url isDev "img/spinner_50.gif"), Styles.display isBusy ] [] ]
             ]
         ]
 

@@ -16,6 +16,5 @@ defmodule Mix.Tasks.Yubot.GenElmAssets do
 
   def run(_) do
     File.write!(@target, EEx.eval_file(@template, inventory: Assets.inventory()))
-    IO.puts(IO.ANSI.green() <> "Generated #{@target}" <> IO.ANSI.reset())
   end
 end

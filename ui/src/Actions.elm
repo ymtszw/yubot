@@ -123,6 +123,6 @@ bodyTemplateEncoder { body, variables } =
 -- Update
 
 
-update : Msg Action -> Repo Action -> ( Repo Action, Cmd (Msg Action) )
+update : Msg Action -> Repo Action -> ( Repo Action, Cmd (Msg Action), Bool )
 update msg resource =
     Repo.Update.update dummyAction config msg resource

@@ -16,32 +16,32 @@ type Route
     | ActionsRoute
     | ActionRoute Repo.EntityId
     | AuthsRoute
-    | AuthRoute Repo.EntityId
     | NotFoundRoute
 
 
-parseLocation : Navigation.Location -> ( Route, List (Cmd Msg) )
+parseLocation : Navigation.Location -> ( Route, List (Cmd Msg), Bool )
 parseLocation { pathname } =
     case segments pathname of
         [ "poller" ] ->
             -- top
-            ( PollsRoute, [ Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config) ] )
+            ( PollsRoute, [ Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config) ], True )
 
         [ "poller", "polls" ] ->
-            ( PollsRoute, [ Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config) ] )
+            ( PollsRoute, [ Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config) ], True )
 
         [ "poller", "polls", pollId ] ->
-            ( PollRoute pollId, [] )
+            ( PollRoute pollId, [], False )
 
         [ "poller", "actions" ] ->
             ( ActionsRoute
             , [ Cmd.map ActionsMsg (Repo.Command.fetchAll Actions.config)
               , Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config)
               ]
+            , True
             )
 
         [ "poller", "actions", actionId ] ->
-            ( ActionRoute actionId, [] )
+            ( ActionRoute actionId, [], False )
 
         [ "poller", "credentials" ] ->
             ( AuthsRoute
@@ -49,13 +49,11 @@ parseLocation { pathname } =
               , Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config)
               , Cmd.map ActionsMsg (Repo.Command.fetchAll Actions.config)
               ]
+            , True
             )
 
-        [ "poller", "credentials", authId ] ->
-            ( AuthRoute authId, [] )
-
         _ ->
-            ( NotFoundRoute, [] )
+            ( NotFoundRoute, [], False )
 
 
 segments : String -> List String
