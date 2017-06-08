@@ -1,6 +1,5 @@
 module Poller exposing (main)
 
-import Json.Encode
 import Navigation
 import Bootstrap.Navbar
 import LiveReload
@@ -12,13 +11,11 @@ import Poller.View
 
 
 type alias Flags =
-    { isDev : Bool
-    , assetInventory : Json.Encode.Value
-    }
+    { isDev : Bool }
 
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
-init { isDev, assetInventory } location =
+init { isDev } location =
     let
         ( navbarState, navbarCmd ) =
             Bootstrap.Navbar.initialState NavbarMsg
@@ -26,7 +23,7 @@ init { isDev, assetInventory } location =
         ( currentRoute, initCmds ) =
             Routing.parseLocation location
     in
-        Poller.Model.initialModel isDev assetInventory currentRoute navbarState ! (navbarCmd :: initCmds)
+        Poller.Model.initialModel isDev currentRoute navbarState ! (navbarCmd :: initCmds)
 
 
 

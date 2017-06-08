@@ -1,11 +1,7 @@
 module Poller.Model exposing (Model, initialModel)
 
-import Json.Encode
-import Json.Decode as Decode
-import Dict exposing (Dict)
 import Set exposing (Set)
 import Bootstrap.Navbar as Navbar
-import Utils
 import Routing
 import Repo
 import Polls exposing (Poll)
@@ -21,24 +17,16 @@ type alias Model =
     , navbarState : Navbar.State
     , route : Routing.Route
     , isDev : Bool
-    , assetInventory : Dict String Utils.Url
     }
 
 
-initialModel : Bool -> Json.Encode.Value -> Routing.Route -> Navbar.State -> Model
-initialModel isDev assetInventory route navbarState =
-    let
-        decodedInventory =
-            assetInventory
-                |> Decode.decodeValue (Decode.dict Decode.string)
-                |> Result.withDefault Dict.empty
-    in
-        { pollRepo = Repo.initialize Polls.dummyPoll
-        , actionRepo = Repo.initialize Actions.dummyAction
-        , actionFilter = Set.empty
-        , authRepo = Repo.initialize Authentications.dummyAuthentication
-        , navbarState = navbarState
-        , route = route
-        , isDev = isDev
-        , assetInventory = decodedInventory
-        }
+initialModel : Bool -> Routing.Route -> Navbar.State -> Model
+initialModel isDev route navbarState =
+    { pollRepo = Repo.initialize Polls.dummyPoll
+    , actionRepo = Repo.initialize Actions.dummyAction
+    , actionFilter = Set.empty
+    , authRepo = Repo.initialize Authentications.dummyAuthentication
+    , navbarState = navbarState
+    , route = route
+    , isDev = isDev
+    }

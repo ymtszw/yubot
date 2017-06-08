@@ -19,13 +19,16 @@ defmodule Mix.Tasks.Yubot.UploadAssets do
   @assets_directory Path.join(["priv", "static", "assets"])
   @assets_inventory Path.join(["web", "static", "assets"])
 
-  def run([env]) do
+  def run([env]), do: run_impl(env)
+  def run(_), do: run_impl("dev")
+
+  defp run_impl(env) do
     System.put_env("PORT", "12121")
     Application.ensure_all_started(:solomon)
     upload_and_build_inventory(env)
   end
 
-  def upload_and_build_inventory(env) do
+  defp upload_and_build_inventory(env) do
     config_file = if env == "prod", do: raise("not ready!"), else: "gear_config"
     root_key = File.read!(config_file) |> Poison.decode!() |> Map.get("dodai_root_key")
     assets_to_serve()

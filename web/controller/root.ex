@@ -14,7 +14,6 @@ defmodule Yubot.Controller.Root do
       favicon: "img/poller/favicon.ico",
       flags: %{
         isDev: !SolomonLib.Env.running_in_cloud?,
-        assetInventory: Yubot.Assets.inventory(),
       },
     ]
     render(conn, 200, "poller", params, layout: :elm_ui)

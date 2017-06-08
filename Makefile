@@ -38,13 +38,14 @@ ui: poller ;
 
 .PHONY: poller
 poller:
+	mix yubot.gen_elm_assets
 	elm-make --yes --debug --warn --output=priv/static/assets/poller.js ui/src/Poller.elm
 
 .PHONY: uiwatch
 uiwatch:
-	fswatch -o -l 1 Makefile ui/src elm-package.json | xargs -n1 -x -I{} make ui
+	fswatch -o -l 1 -e "Assets.elm" Makefile ui/src elm-package.json | xargs -n1 -x -I{} make ui
 
 .PHONY: clean
 clean:
 	rm -f priv/static/assets/poller.js
-	rm -rf elm-stuff/*
+	rm -rf elm-stuff

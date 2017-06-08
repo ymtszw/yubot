@@ -1,0 +1,17 @@
+module Assets exposing (url)
+
+import Utils
+
+
+url : Bool -> String -> Utils.Url
+url isDev assetPath =
+    let
+        cdnUrl =
+            case assetPath of<%= for {asset_path, cdn_url} <- inventory do %>
+                "<%= asset_path %>" ->
+                    "<%= cdn_url %>"
+<% end %>
+                _ ->
+                    ""
+    in
+        Utils.ite isDev ("/static/assets/" ++ assetPath) cdnUrl

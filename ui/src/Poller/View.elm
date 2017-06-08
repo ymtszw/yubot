@@ -16,7 +16,7 @@ import Authentications.View
 import Poller.Model exposing (Model)
 import Poller.Messages exposing (Msg(..))
 import Styles
-import Poller.Assets as Assets
+import Assets
 
 
 view : Model -> Html Msg
@@ -32,24 +32,24 @@ view model =
 
 
 errorToasts : Model -> Html Msg
-errorToasts model =
+errorToasts { pollRepo, actionRepo, authRepo } =
     Html.div [ class "container-fluid mt-2", Styles.toastBlock ]
         [ Html.div [ Attr.id "error-toasts", class "row" ]
             [ Html.div [ class "col-md-10 offset-md-1 col-lg-8 offset-lg-2" ]
-                [ model.pollRepo |> errorToast |> htmlMap PollsMsg
-                , model.actionRepo |> errorToast |> htmlMap ActionsMsg
-                , model.authRepo |> errorToast |> htmlMap AuthMsg
+                [ pollRepo |> errorToast |> htmlMap PollsMsg
+                , actionRepo |> errorToast |> htmlMap ActionsMsg
+                , authRepo |> errorToast |> htmlMap AuthMsg
                 ]
             ]
         ]
 
 
 navbar : Model -> Html Msg
-navbar model =
+navbar { navbarState, isDev } =
     let
         logo =
             Html.h3 [ class "mb-0" ]
-                [ Html.img [ class "align-bottom mx-1", Attr.src (Assets.url model.isDev model.assetInventory "img/poller/favicon32.png") ] []
+                [ Html.img [ class "align-bottom mx-1", Attr.src (Assets.url isDev "img/poller/favicon32.png") ] []
                 , text "Poller"
                 , Html.small [ Styles.xSmall ] [ text "the Bear" ]
                 ]
@@ -63,29 +63,29 @@ navbar model =
                 , Navbar.itemLink ((class "pb-0") :: navigate ChangeLocation "/actions") [ text "Actions" ]
                 , Navbar.itemLink ((class "pb-0") :: navigate ChangeLocation "/credentials") [ text "Credentials" ]
                 ]
-            |> Navbar.view model.navbarState
+            |> Navbar.view navbarState
 
 
 mainContent : Model -> Html Msg
-mainContent model =
+mainContent { route, pollRepo, actionRepo, authRepo, isDev } =
     let
         content =
-            case model.route of
+            case route of
                 PollsRoute ->
-                    Polls.View.cardsView model.pollRepo
+                    Polls.View.cardsView pollRepo
                         |> htmlMap PollsMsg
 
                 ActionsRoute ->
-                    Actions.View.listView (Polls.usedActionIds model.pollRepo.dict) model.actionRepo
+                    Actions.View.listView (Polls.usedActionIds pollRepo.dict) actionRepo
                         |> htmlMap ActionsMsg
 
                 AuthsRoute ->
                     let
                         usedAuthIds =
-                            Polls.usedAuthIds model.pollRepo.dict
-                                |> Set.union (Actions.usedAuthIds model.actionRepo.dict)
+                            Polls.usedAuthIds pollRepo.dict
+                                |> Set.union (Actions.usedAuthIds actionRepo.dict)
                     in
-                        Authentications.View.listView model.isDev model.assetInventory usedAuthIds model.authRepo
+                        Authentications.View.listView isDev usedAuthIds authRepo
                             |> htmlMap AuthMsg
 
                 _ ->
