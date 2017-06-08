@@ -6,6 +6,7 @@
 ---
 ## Ref
 
+- [WebAssembly.org](http://webassembly.org/)
 - [Can I use webassembly ?](http://caniuse.com/#search=webassembly)
 - [WebAssembly - MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly)
 - [Binaryen](https://github.com/WebAssembly/binaryen)
@@ -19,7 +20,25 @@
 - 試してみたし
 
 ---
-## Prep
+## WebAssembly?
+
+[WebAssembly.org](http://webassembly.org/)
+![webassembly-org.png](./webassembly-org.png)
+
+---
+- 主にシステムプログラミング言語からコンパイルできて、ブラウザ上で実行できる（ようになる予定の）バイナリ形式
+- 現段階では、バイナリをJS APIでmoduleとして読み込み、exportしている関数をJSから使うというインターフェイス
+- 実行自体はJSコードとは全く違う系で行われ、一般にJSより速い
+    - [なぜWebAssemblyは速いか](https://hacks.mozilla.org/2017/02/what-makes-webassembly-fast/)
+    - ざっくりいうと、JSコードの実行に必要なParse/Compile/OptimizeといったフェイズがWebAssemblyでは大規模に省略できるため
+    - サーバサイドでのビルド時にそれらのフェイズを通過済みであり、相当機械語に近い形式になっている
+    - 今のところGCもない
+
+---
+## Let's Try
+
+---
+## Preparation
 
 - llvm/clang
     - ターゲットアーキにWebAssemblyを含む`clang`と`llc`がインストールされる
@@ -39,9 +58,9 @@ $ sudo make install
 
 ---
 - binaryen
-  - `s2wasm`と`wasm-as`がインストールされる
+    - `s2wasm`と`wasm-as`がインストールされる
 - `sexpr-wasm-prototype`を入れないとバイナリをブラウザが読めない、という記事が散見されるが、
-現時点では`wasm-as`が生成するバイナリで（少なくともChromeなら）動く
+  現時点では`wasm-as`が生成するバイナリで（少なくともChromeなら）動く
 
 ```sh
 $ git clone https://github.com/WebAssembly/binaryen.git
@@ -96,7 +115,7 @@ $ cd src/
 $ clang -S -emit-llvm -Oz --target=wasm32 fib.c
 $ llc fib.ll -march=wasm32
 $ s2wasm -s 100000 fib.s > fib.wast
-$ wasm-as fib.wast > ../priv/static/fib.wasm
+$ wasm-as fib.wast > fib.wasm
 ```
 
 - `s2wasm`を単に呼ぶと"memory access out of bounds"例外で止まる。
@@ -139,9 +158,44 @@ https://yubot.solomondev.access-company.com/static/fib.html
     - [Fib100](http://www.suguru.jp/Fibonacci/Fib100.html)
 
 ---
+## Portability
+
+- macOS sierra
+    - Chrome 57 :white_check_mark:
+        - JS: **0.000761ms**, WASM: **0.000073ms**
+    - Firefox 52 :white_check_mark:
+        - JS: 0.003311ms, WASM: 0.000219ms
+    - Opera 43 :x:
+        - JS: 0.001642ms
+        - `#enable-webassembly`を有効にすると、WebAssemblyオブジェクトは使える
+        - `WebAssembly.instantiate()`APIが未実装
+        - `WebAssembly.compile()`APIはあるが、`wasm-as`が吐いたバイナリをデコードできない模様
+    - Safari 10 :x:
+        - JS: 0.003420ms
+
+---
+- Windows 10
+    - Chrome 57 :white_check_mark:
+    - Firefox 52 :no_entry:
+        - 試してない。多分できるのでは
+    - Edge :x:
+        - JS版は実行できはしたが引くほど遅かった
+    - IE 11 :x:
+        - 唯一ES6記法を知らない情けないやつ
+
+---
+- Android
+    - Chrome 57 (Beta) :white_check_mark:
+        - JS: 0.002986ms, WASM: 0.000373ms
+- iOS
+    - Chrome 57 :x:
+        - JS: 0.003792ms
+        - WASMはバージョン的には合っているが動かないようだった
+
+---
 ## Deploy
 
-- 単にローカルでコンパイルしてバイナリをpriv/からサーブ
+- 単にローカルでコンパイルしてバイナリを適当にサーブ
 - wasmの容量は、今回のExample Codeだと最適化しても若干JSソースより大きい
     - JSは350B
     - Wasmは429B
