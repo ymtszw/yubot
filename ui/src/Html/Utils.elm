@@ -3,24 +3,24 @@ module Html.Utils
         ( atext
         , highlightVariables
         , mx2Button
-        , errorAlert
+        , modal
         , toggleSortOnClick
-        , navigateOnClick
+        , navigate
         , anchoredText
+        , onClickNoDefault
         )
 
+import Json.Decode
 import Regex exposing (Match, HowMany(AtMost), regex)
 import Html exposing (Html, text)
 import Html.Attributes as Attr exposing (class)
 import Html.Events
 import Bootstrap.Button as Button
-import Bootstrap.Alert as Alert
 import Utils exposing (ite)
 import Repo exposing (Sorter, Ord(..))
 import Repo.Messages exposing (Msg(OnSort))
 import StringTemplate
-import Poller.Messages
-import Poller.Styles
+import Styles
 
 
 -- Html helpers
@@ -122,27 +122,36 @@ mx2Button clickMsg options string =
         [ text string ]
 
 
-errorAlert : List Utils.ErrorMessage -> Html msg
-errorAlert errors =
+{-| Somewhat straightforward modal generator.
+Can close modal on click-elsewhere.
+-}
+modal : (Bool -> Msg x) -> Bool -> List (Html.Attribute (Msg x)) -> List (Html (Msg x)) -> List (Html (Msg x)) -> List (Html (Msg x)) -> Html (Msg x)
+modal boolToMsg isShown dialogOptions titleContents bodyContents footerContents =
     let
-        alert ( label, message ) =
-            Alert.danger
-                [ Html.strong [] [ text ("[" ++ label ++ "] ") ]
-                , text message
+        closeOnClick =
+            Html.Events.onClick (boolToMsg False)
+
+        content options =
+            Html.div options
+                [ Html.div ([ class "modal-dialog", Styles.pointable ] ++ dialogOptions)
+                    [ Html.div [ class "modal-content" ]
+                        [ Html.div [ class "modal-header" ]
+                            [ Html.h6 [ class "modal-title" ] titleContents
+                            , Html.button [ class "close", closeOnClick ] [ Html.span [] [ text "×" ] ]
+                            ]
+                        , Html.div [ class "modal-body" ] bodyContents
+                        , Html.div [ class "modal-footer" ] footerContents
+                        ]
+                    ]
                 ]
     in
-        case errors of
-            [] ->
-                text ""
-
-            _ ->
-                errors
-                    |> List.map alert
-                    |> Html.div []
-
-
-
--- Event helpers
+        if isShown then
+            Html.div []
+                [ content [ Attr.tabindex -1, class "modal fade show", Styles.shown, Styles.unpointable ]
+                , Html.div [ class "modal-backdrop fade show", closeOnClick ] []
+                ]
+        else
+            Html.div [] [ content [ Attr.tabindex -1, class "modal fade", Styles.hidden, Styles.unpointable ] ]
 
 
 toggleSortOnClick : (Repo.Entity x -> String) -> Sorter x -> Html.Attribute (Msg x)
@@ -154,10 +163,13 @@ toggleSortOnClick newProperty sorter =
         Html.Events.onClick (OnSort (Sorter newProperty newOrder))
 
 
-navigateOnClick : Utils.Url -> List (Html.Attribute Poller.Messages.Msg)
-navigateOnClick url =
-    [ Poller.Styles.fakeLink
-    , Html.Events.onClick (Poller.Messages.ChangeLocation url)
+{-| Pretends to be an ordinary link, but steals click event with preventDefault: True,
+then navigating with Navigation.modifyUrl
+-}
+navigate : (Utils.Url -> msg) -> Utils.Url -> List (Html.Attribute msg)
+navigate changeLocationMsg url =
+    [ Attr.href url
+    , onClickNoDefault (changeLocationMsg url)
     ]
 
 
@@ -170,3 +182,13 @@ anchoredText string =
                 |> Utils.stringIndexedMap (\_ x -> ite (x == ' ') '-' x)
     in
         Html.a [ Attr.name anchorName ] [ text string ]
+
+
+{-| Same as Html.Events.onClick but with `preventDefault: True`
+-}
+onClickNoDefault : msg -> Html.Attribute msg
+onClickNoDefault msg =
+    Html.Events.onWithOptions
+        "click"
+        (Html.Events.Options False True)
+        (Json.Decode.succeed msg)

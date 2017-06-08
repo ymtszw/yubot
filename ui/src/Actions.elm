@@ -5,6 +5,7 @@ module Actions
         , ActionType(..)
         , dummyAction
         , usedAuthIds
+        , stringToType
         , config
         , update
         )
@@ -12,6 +13,7 @@ module Actions
 import Dict
 import Set exposing (Set)
 import Json.Decode as Decode
+import Json.Encode as Encode
 import Utils
 import Repo exposing (Repo)
 import Repo.Command exposing (Config)
@@ -59,13 +61,24 @@ usedAuthIds actions =
         |> Set.fromList
 
 
+stringToType : String -> ActionType
+stringToType string =
+    case string of
+        "hipchat" ->
+            Hipchat
+
+        _ ->
+            -- "http"
+            Http
+
+
 
 -- Config
 
 
 config : Config Action
 config =
-    Config "/api/action" dataDecoder
+    Config "/api/action" dataDecoder dataEncoder (always "/actions")
 
 
 dataDecoder : Decode.Decoder Action
@@ -76,7 +89,7 @@ dataDecoder =
         (Decode.field "url" Decode.string)
         (Decode.field "auth" (Decode.maybe Decode.string))
         (Decode.field "body_template" bodyTemplateDecoder)
-        (Decode.field "type" (typeDecoder))
+        (Decode.field "type" (Decode.map stringToType Decode.string))
 
 
 bodyTemplateDecoder : Decode.Decoder StringTemplate
@@ -86,19 +99,24 @@ bodyTemplateDecoder =
         (Decode.field "variables" (Decode.list Decode.string))
 
 
-typeDecoder : Decode.Decoder ActionType
-typeDecoder =
-    let
-        stringToType string =
-            case string of
-                "hipchat" ->
-                    Hipchat
+dataEncoder : Action -> Encode.Value
+dataEncoder { label, method, url, auth, bodyTemplate, type_ } =
+    Encode.object
+        [ ( "label", Utils.encodeMaybe Encode.string label )
+        , ( "method", Encode.string method )
+        , ( "url", Encode.string url )
+        , ( "auth", Utils.encodeMaybe Encode.string auth )
+        , ( "body_template", bodyTemplateEncoder bodyTemplate )
+        , ( "type", type_ |> toString |> String.toLower |> Encode.string )
+        ]
 
-                _ ->
-                    -- "http"
-                    Http
-    in
-        Decode.map stringToType Decode.string
+
+bodyTemplateEncoder : StringTemplate -> Encode.Value
+bodyTemplateEncoder { body, variables } =
+    Encode.object
+        [ ( "body", Encode.string body )
+        , ( "variables", variables |> List.map Encode.string |> Encode.list )
+        ]
 
 
 

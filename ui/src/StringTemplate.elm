@@ -3,7 +3,7 @@ module StringTemplate exposing (StringTemplate, Body, validate, render)
 import Result exposing (Result(Ok, Err))
 import Regex
 import List.Extra
-import Utils
+import Error
 
 
 type alias StringTemplate =
@@ -16,7 +16,7 @@ type alias Body =
     String
 
 
-validate : String -> Result Utils.ErrorMessage (List String)
+validate : String -> Result Error.Error (List String)
 validate body =
     let
         placeholderPattern =
@@ -28,17 +28,17 @@ validate body =
         validateMatch { submatches } =
             case submatches of
                 [ Just "" ] ->
-                    Err ( "StringTemplate", "Variable name must not be empty" )
+                    Err (Error.one Error.ValidationError "StringTemplate" "Variable name must not be empty")
 
                 [ Just varName ] ->
                     if Regex.contains variablePattern varName then
                         Ok varName
                     else
-                        Err ( "StringTemplate", "Variable name may only contain a-z, 0-9 and underscore `_`" )
+                        Err (Error.one Error.ValidationError "StringTemplate" "Variable name may only contain a-z, 0-9 and underscore `_`")
 
                 _ ->
                     -- Should not happen?
-                    Err ( "StringTemplate", "Variable name must not be empty" )
+                    Err (Error.one Error.ValidationError "StringTemplate" "Variable name must not be empty")
 
         folder validateResult acc =
             case acc of

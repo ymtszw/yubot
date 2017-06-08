@@ -1,19 +1,16 @@
 module Poller.Assets exposing (url)
 
-import Dict
+import Dict exposing (Dict)
 import Utils
-import Poller.Model exposing (Model)
 
 
-url : Model -> String -> Utils.Url
-url { isDev, assetInventory } assetPath =
+url : Bool -> Dict String Utils.Url -> String -> Utils.Url
+url isDev assetInventory assetPath =
     let
         localPath =
             "/static/assets/" ++ assetPath
 
         cdnUrl =
-            assetInventory
-                |> Dict.get assetPath
-                |> Maybe.withDefault ""
+            Utils.dictGetWithDefault assetPath "" assetInventory
     in
         Utils.ite isDev localPath cdnUrl

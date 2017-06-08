@@ -1,8 +1,10 @@
-module Repo.Command exposing (Config, fetchAll, delete)
+module Repo.Command exposing (Config, submitNew, fetchAll, delete)
 
 import Http
 import HttpBuilder
 import Json.Decode as Decode
+import Json.Encode as Encode
+import Utils
 import Repo
 import Repo.Messages exposing (Msg(..))
 
@@ -10,7 +12,17 @@ import Repo.Messages exposing (Msg(..))
 type alias Config t =
     { repoPath : String
     , dataDecoder : Decode.Decoder t
+    , dataEncoder : t -> Encode.Value
+    , navigateOnWrite : Repo.Entity t -> Utils.Url
     }
+
+
+submitNew : Config t -> t -> Cmd (Msg t)
+submitNew config newData =
+    HttpBuilder.post config.repoPath
+        |> HttpBuilder.withJsonBody (config.dataEncoder newData)
+        |> HttpBuilder.withExpect (Http.expectJson (entityDecoder config.dataDecoder))
+        |> HttpBuilder.send OnCreate
 
 
 fetchAll : Config t -> Cmd (Msg t)

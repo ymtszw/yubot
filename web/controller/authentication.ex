@@ -8,6 +8,7 @@ defmodule Yubot.Controller.Authentication do
   # POST /api/authentication
   def create(conn) do
     Authentication.encrypt_token_and_insert(%{data: conn.request.body}, Yubot.Dodai.root_key(), group_id(conn))
+    |> R.bind(&Authentication.decrypt_token/1)
     |> handle_with_201_json(conn)
   end
 

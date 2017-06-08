@@ -6,7 +6,7 @@ import Html.Utils exposing (atext, highlightVariables)
 import Repo
 import Repo.Messages exposing (Msg(..))
 import Actions exposing (Action)
-import Poller.Styles as Styles
+import Styles
 
 
 variableList : List String -> Html (Msg x)

@@ -16,16 +16,16 @@ module Repo
         )
 
 import Dict exposing (Dict)
-import Bootstrap.Modal as Modal
 import Utils
+import Error
 
 
 type alias Repo x =
     { dict : EntityDict x
     , sort : Sorter x
     , deleteModal : ModalState x
-    , dirty : Entity x
-    , errorMessages : List Utils.ErrorMessage
+    , dirtyDict : EntityDict x
+    , errors : List Error.Error
     }
 
 
@@ -36,6 +36,8 @@ type alias Entity x =
     }
 
 
+{-| EntityId can be "new", in cases of creating new objects.
+-}
 type alias EntityId =
     String
 
@@ -56,7 +58,7 @@ type Ord
 
 
 type alias ModalState x =
-    { modalState : Modal.State
+    { isShown : Bool
     , target : Entity x
     }
 
@@ -76,8 +78,8 @@ populate entities dummyData =
     Repo
         (listToDict entities)
         (Sorter .id Asc)
-        (ModalState Modal.hiddenState (dummyEntity dummyData))
-        (dummyEntity dummyData)
+        (ModalState False (dummyEntity dummyData))
+        (Dict.singleton "new" (dummyEntity dummyData))
         []
 
 

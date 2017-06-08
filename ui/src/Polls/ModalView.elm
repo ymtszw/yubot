@@ -19,7 +19,7 @@ import Actions exposing (Action)
 import Actions.View
 import Authentications as Auth exposing (Authentication)
 import Authentications.View exposing (authCheck, authSelect)
-import Poller.Styles as Styles
+import Styles
 
 
 deleteModalView : Repo Poll -> Html (Msg Poll)
@@ -130,10 +130,7 @@ intervalSelect : Repo.Entity Poll -> Html (Msg Poll)
 intervalSelect { data } =
     let
         item v =
-            if v == data.interval then
-                Select.item [ value v, selected True ] [ text (intervalToString v) ]
-            else
-                Select.item [ value v ] [ text (intervalToString v) ]
+            Select.item [ value v, selected (v == data.interva) ] [ text (intervalToString v) ]
     in
         [ "1", "3", "5", "10", "30", "hourly", "daily" ]
             |> List.map item

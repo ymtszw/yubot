@@ -39,7 +39,7 @@ defmodule Yubot.Assets do
   @collection_name  "Assets"
   @external_resource Path.expand("assets", __DIR__)
 
-  @inventory         File.read!(@external_resource) |> String.split("\n", trim: true) |> Map.new(&List.to_tuple(String.split(&1, " ")))
+  @inventory File.read!(@external_resource) |> String.split("\n", trim: true) |> Map.new(&List.to_tuple(String.split(&1, " ")))
   def inventory(), do: @inventory
 
   #
@@ -114,11 +114,7 @@ defmodule Yubot.Assets do
       "content-disposition" => "attachment; filename=#{asset_path}",
       "cache-control" => "max-age=0",
     }
-    body = case headers["content-type"] do
-      "image/" <> _ -> File.read!(asset_full_path)
-      _text_or_app  -> File.read!(asset_full_path)
-    end
-    Httpc.put(upload_url, body, headers, recv_timeout: 60_000)
+    Httpc.put(upload_url, File.read!(asset_full_path), headers, recv_timeout: 60_000)
   end
 
   defp notify_finish(asset_path, root_key, env) do

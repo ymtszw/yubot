@@ -4,9 +4,7 @@ import Set exposing (Set)
 import Html exposing (Html, text)
 import Html.Utils exposing (atext, highlightVariables, mx2Button, toggleSortOnClick)
 import Bootstrap.Table as Table
-import Bootstrap.Modal as Modal
 import Bootstrap.Button as Button
-import Bootstrap.Modal as Modal
 import Repo exposing (Repo)
 import Repo.Messages exposing (Msg(..))
 import Actions exposing (Action)
@@ -15,19 +13,19 @@ import Actions.ViewParts
 
 
 deleteModalView : Repo.ModalState Action -> Html (Msg Action)
-deleteModalView { target, modalState } =
-    Modal.config (OnDeleteModal target)
-        |> Modal.h4 [] [ text "Deleting Action" ]
-        |> Modal.body []
-            [ Html.p [] [ text ("ID: " ++ target.id) ]
-            , Actions.ViewParts.preview target
-            , Html.p [] [ text "Are you sure?" ]
-            ]
-        |> Modal.footer []
-            [ mx2Button (OnDeleteConfirmed target.id) [ Button.danger ] "Yes, delete"
-            , mx2Button (OnDeleteModal target Modal.hiddenState) [] "Cancel"
-            ]
-        |> Modal.view modalState
+deleteModalView { target, isShown } =
+    Html.Utils.modal
+        (OnDeleteModal target)
+        isShown
+        []
+        [ text "Deleting Action" ]
+        [ Html.p [] [ text ("ID: " ++ target.id) ]
+        , Actions.ViewParts.preview target
+        , Html.p [] [ text "Are you sure?" ]
+        ]
+        [ mx2Button (OnDeleteConfirmed target.id) [ Button.danger ] "Yes, delete"
+        , mx2Button (OnDeleteModal target False) [] "Cancel"
+        ]
 
 
 listView : Set Repo.EntityId -> Repo Action -> Html (Msg Action)
@@ -76,7 +74,7 @@ actionRow usedActionIds action =
             [ Table.td [] [ text (Maybe.withDefault "(no label)" action.data.label) ]
             , Table.td [] [ actionSummary action ]
             , Table.td []
-                [ mx2Button (OnDeleteModal action Modal.visibleState) deleteButtonOptions deleteButtonString
+                [ mx2Button (OnDeleteModal action True) deleteButtonOptions deleteButtonString
                 ]
             ]
 

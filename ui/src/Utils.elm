@@ -2,7 +2,9 @@ module Utils
     exposing
         ( Timestamp
         , Url
-        , ErrorMessage
+        , listDeleteAt
+        , encodeMaybe
+        , dictGetWithDefault
         , ite
         , stringIndexedMap
         , timestampToString
@@ -13,6 +15,8 @@ module Utils
         )
 
 import Date
+import Dict exposing (Dict)
+import Json.Encode
 
 
 type alias Timestamp =
@@ -23,12 +27,34 @@ type alias Url =
     String
 
 
-type alias Label =
-    String
+listDeleteAt : Int -> List x -> List x
+listDeleteAt nonNegIndex list =
+    let
+        folder elem ( index, accList ) =
+            if index == nonNegIndex then
+                ( index + 1, accList )
+            else
+                ( index + 1, elem :: accList )
+    in
+        list
+            |> List.foldl folder ( 0, [] )
+            |> Tuple.second
+            |> List.reverse
 
 
-type alias ErrorMessage =
-    ( Label, String )
+encodeMaybe : (x -> Json.Encode.Value) -> Maybe x -> Json.Encode.Value
+encodeMaybe encoder maybeValue =
+    case maybeValue of
+        Nothing ->
+            Json.Encode.null
+
+        Just value ->
+            encoder value
+
+
+dictGetWithDefault : comparable -> v -> Dict comparable v -> v
+dictGetWithDefault key default dict =
+    dict |> Dict.get key |> Maybe.withDefault default
 
 
 {-| Stands for If-Then-Else, can be written inline.

@@ -1,6 +1,7 @@
-module Authentications exposing (Authentication, AuthType(..), dummyAuthentication, config, update, listForPoll)
+module Authentications exposing (Authentication, AuthType(..), dummyAuthentication, stringToType, hipchatToken, config, update, listForPoll)
 
 import Json.Decode as Decode
+import Json.Encode as Encode
 import Repo exposing (Repo)
 import Repo.Update
 import Repo.Messages exposing (Msg(..))
@@ -41,10 +42,23 @@ listForPoll authList =
         List.filter filterFun authList
 
 
+stringToType : String -> AuthType
+stringToType string =
+    case string of
+        "hipchat" ->
+            Hipchat
+
+        "bearer" ->
+            Bearer
+
+        _ ->
+            Raw
+
+
 hipchatToken : String -> Authentication
 hipchatToken token =
     Authentication
-        ("Notification Token: " ++ (String.left 5 token) ++ "***")
+        ("Token: " ++ (String.left 5 token) ++ "***")
         Hipchat
         token
 
@@ -55,32 +69,24 @@ hipchatToken token =
 
 config : Config Authentication
 config =
-    Config "/api/authentication" dataDecoder
+    Config "/api/authentication" dataDecoder dataEncoder (always "/credentials")
 
 
 dataDecoder : Decode.Decoder Authentication
 dataDecoder =
     Decode.map3 Authentication
         (Decode.field "name" Decode.string)
-        (Decode.field "type" typeDecoder)
+        (Decode.field "type" (Decode.map stringToType Decode.string))
         (Decode.field "token" Decode.string)
 
 
-typeDecoder : Decode.Decoder AuthType
-typeDecoder =
-    let
-        stringToType string =
-            case string of
-                "hipchat" ->
-                    Hipchat
-
-                "bearer" ->
-                    Bearer
-
-                _ ->
-                    Raw
-    in
-        Decode.map stringToType Decode.string
+dataEncoder : Authentication -> Encode.Value
+dataEncoder { name, type_, token } =
+    Encode.object
+        [ ( "name", Encode.string name )
+        , ( "type", type_ |> toString |> String.toLower |> Encode.string )
+        , ( "token", Encode.string token )
+        ]
 
 
 

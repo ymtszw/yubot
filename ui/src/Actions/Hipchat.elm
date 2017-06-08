@@ -5,6 +5,7 @@ import Utils
 import StringTemplate exposing (StringTemplate)
 import Repo
 import Actions exposing (Action)
+import Error
 
 
 type Color
@@ -28,10 +29,10 @@ type alias UserParams =
     }
 
 
-validateMessageTemplate : String -> Result Utils.ErrorMessage MessageTemplate
+validateMessageTemplate : String -> Result Error.Error MessageTemplate
 validateMessageTemplate string =
     if String.contains "\"" string then
-        Err ( "Hipchat message template", "Double quotations are not allowed." )
+        Err (Error.one Error.ValidationError "Hipchat message template" "Double quotations are not allowed.")
     else
         Ok string
 
@@ -52,7 +53,7 @@ defaultParams =
     UserParams "" "" Yellow False ""
 
 
-fromParams : UserParams -> Result Utils.ErrorMessage Action
+fromParams : UserParams -> Result Error.Error Action
 fromParams { roomId, authId, color, notify, messageTemplate } =
     let
         body =

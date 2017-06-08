@@ -1,4 +1,4 @@
-module Poller.Styles exposing (..)
+module Styles exposing (..)
 
 import Html exposing (Attribute)
 import Html.Attributes exposing (style, class)
@@ -17,6 +17,22 @@ introGap =
         , ( "margin-top", "20px" )
         , ( "color", "rgb(255, 255, 255)" )
         ]
+
+
+toastBlock : Attribute msg
+toastBlock =
+    style
+        [ ( "position", "absolute" )
+        , ( "right", "10px" )
+        , ( "left", "10px" )
+        , ( "z-index", "100" )
+        ]
+
+
+toast : Attribute msg
+toast =
+    style
+        [ ( "box-shadow", "5px 5px 12px 0px rgba(0, 0, 0, 0.2)" ) ]
 
 
 whiteBack : Attribute msg
@@ -53,6 +69,16 @@ hidden =
 shown : Attribute msg
 shown =
     style [ ( "display", "block" ) ]
+
+
+pointable : Attribute msg
+pointable =
+    style [ ( "pointer-events", "auto" ) ]
+
+
+unpointable : Attribute msg
+unpointable =
+    style [ ( "pointer-events", "none" ) ]
 
 
 fakeLink : Attribute msg

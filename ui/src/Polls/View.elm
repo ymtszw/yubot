@@ -7,7 +7,7 @@ import Utils
 import Repo exposing (Repo)
 import Repo.Messages exposing (Msg(..))
 import Polls exposing (Poll)
-import Poller.Styles as Styles
+import Styles
 
 
 cardsView : Repo Poll -> Html (Msg Poll)

@@ -13,6 +13,7 @@ module Polls
 import Set exposing (Set)
 import Dict
 import Json.Decode as Decode
+import Json.Encode as Encode
 import Utils
 import Repo exposing (Repo)
 import Repo.Command exposing (Config)
@@ -77,7 +78,7 @@ intervalToString interval =
 
 config : Config Poll
 config =
-    Config "/api/poll" dataDecoder
+    Config "/api/poll" dataDecoder dataEncoder (always "/polls")
 
 
 dataDecoder : Decode.Decoder Poll
@@ -88,6 +89,17 @@ dataDecoder =
         (Decode.field "auth" (Decode.maybe Decode.string))
         (Decode.field "action" Decode.string)
         (Decode.field "filters" (Decode.list Decode.string))
+
+
+dataEncoder : Poll -> Encode.Value
+dataEncoder { url, interval, auth, action, filters } =
+    Encode.object
+        [ ( "url", Encode.string url )
+        , ( "interval", Encode.string interval )
+        , ( "auth", Utils.encodeMaybe Encode.string auth )
+        , ( "action", Encode.string action )
+        , ( "filters", filters |> List.map Encode.string |> Encode.list )
+        ]
 
 
 
