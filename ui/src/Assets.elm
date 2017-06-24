@@ -14,28 +14,28 @@ url isDev assetPath =
                     "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
 
                 "img/hipchat_square.png" ->
-                    "https://d2wk7ffla5bh7r.cloudfront.net/4/Eih41ySz/9eTTqdNt/Assets/_root_img-hipchat_square.png-a1218fd_YPNlstru"
+                    "https://d2wk7ffla5bh7r.cloudfront.net/5/Eih41ySz/9eTTqdNt/Assets/_root_img-hipchat_square.png-7507089_wHdHRw1a"
 
                 "img/hipchat_square_40.png" ->
-                    "https://d2wk7ffla5bh7r.cloudfront.net/4/Eih41ySz/9eTTqdNt/Assets/_root_img-hipchat_square_40.png-a1218fd_KN76ANBy"
+                    "https://d2wk7ffla5bh7r.cloudfront.net/5/Eih41ySz/9eTTqdNt/Assets/_root_img-hipchat_square_40.png-7507089_0l0IPhip"
 
                 "img/link_40.png" ->
-                    "https://d2wk7ffla5bh7r.cloudfront.net/4/Eih41ySz/9eTTqdNt/Assets/_root_img-link_40.png-a1218fd_gwL786er"
+                    "https://d2wk7ffla5bh7r.cloudfront.net/5/Eih41ySz/9eTTqdNt/Assets/_root_img-link_40.png-7507089_7p3frkd6"
 
                 "img/polar_bear.jpg" ->
-                    "https://d2wk7ffla5bh7r.cloudfront.net/4/Eih41ySz/9eTTqdNt/Assets/_root_img-polar_bear.jpg-a1218fd_Lq9i9laQ"
+                    "https://d2wk7ffla5bh7r.cloudfront.net/5/Eih41ySz/9eTTqdNt/Assets/_root_img-polar_bear.jpg-7507089_t4RZJ6Io"
 
                 "img/poller/favicon.ico" ->
-                    "https://d2wk7ffla5bh7r.cloudfront.net/4/Eih41ySz/9eTTqdNt/Assets/_root_img-poller-favicon.ico-a1218fd_p6GsphQZ"
+                    "https://d2wk7ffla5bh7r.cloudfront.net/6/Eih41ySz/9eTTqdNt/Assets/_root_img-poller-favicon.ico-7507089_gKuuNXwr"
 
                 "img/poller/favicon32.png" ->
-                    "https://d2wk7ffla5bh7r.cloudfront.net/4/Eih41ySz/9eTTqdNt/Assets/_root_img-poller-favicon32.png-a1218fd_WtTo2zEb"
+                    "https://d2wk7ffla5bh7r.cloudfront.net/6/Eih41ySz/9eTTqdNt/Assets/_root_img-poller-favicon32.png-7507089_pQyMkNpl"
 
                 "img/spinner_50.gif" ->
-                    "https://d2wk7ffla5bh7r.cloudfront.net/4/Eih41ySz/9eTTqdNt/Assets/_root_img-spinner_50.gif-a1218fd_mfB9hMoU"
+                    "https://d2wk7ffla5bh7r.cloudfront.net/6/Eih41ySz/9eTTqdNt/Assets/_root_img-spinner_50.gif-7507089_aFJLVDBr"
 
                 "poller.js" ->
-                    "https://d2wk7ffla5bh7r.cloudfront.net/4/Eih41ySz/9eTTqdNt/Assets/_root_poller.js-a1218fd_F5mcPZ6C"
+                    "https://d2wk7ffla5bh7r.cloudfront.net/6/Eih41ySz/9eTTqdNt/Assets/_root_poller.js-7507089_SRwGB77C"
 
                 _ ->
                     ""

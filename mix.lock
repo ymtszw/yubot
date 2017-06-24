@@ -42,7 +42,7 @@
   "ranch": {:git, "https://github.com/ninenines/ranch.git", "a004ad710eddd0c21aaccc30d5633a76b06164b5", [ref: "a004ad710eddd0c21aaccc30d5633a76b06164b5"]},
   "recon": {:hex, :recon, "2.3.2", "4444c879be323b1b133eec5241cb84bd3821ea194c740d75617e106be4744318", [:rebar3], []},
   "relx": {:hex, :relx, "3.21.1", "f989dc520730efd9075e9f4debcb8ba1d7d1e86b018b0bcf45a2eb80270b4ad6", [:rebar3], [{:bbmustache, "1.0.4", [hex: :bbmustache, optional: false]}, {:cf, "0.2.1", [hex: :cf, optional: false]}, {:erlware_commons, "0.21.0", [hex: :erlware_commons, optional: false]}, {:getopt, "0.8.2", [hex: :getopt, optional: false]}, {:providers, "1.6.0", [hex: :providers, optional: false]}]},
-  "solomon": {:git, "git@github.com:access-company/solomon.git", "e274dfbbdbf4cad6ef4cfb06dafb220236b1421f", []},
+  "solomon": {:git, "git@github.com:access-company/solomon.git", "ccaee352e0a9c60555426c7bb1b619fde5bd7e14", []},
   "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.1", "28a4d65b7f59893bc2c7de786dec1e1555bd742d336043fe644ae956c3497fbe", [:make, :rebar], []},
   "syn": {:hex, :syn, "1.6.1", "728a9c521b3815831259a98fdec9c74875612a4d2854e324dd1ec5ad6df4146e", [:rebar3], []},
   "triq": {:git, "https://github.com/triqng/triq.git", "8dfe582451422839a99efb531dc1f618ced09b33", [ref: "8dfe582451422839a99efb531dc1f618ced09b33"]},
