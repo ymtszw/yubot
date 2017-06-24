@@ -79,7 +79,8 @@ defmodule Yubot.Controller.Action do
   end
 
   defp try_call_limit_reached?(sender) do
-    RateLimiter.push(sender, [{5, 5_000}, {20, 60_000}])
+    # Rather strict limitation, since they are managed per-instance (there are 3 instances normally)
+    RateLimiter.push(sender, [{2, 5_000}, {10, 60_000}])
   end
 
   defp fetch_auth(nil, _conn), do: {:ok, nil}
