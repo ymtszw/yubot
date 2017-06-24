@@ -17,7 +17,9 @@ defmodule Yubot.Router do
   post   "/api/action"    , Action, :create
   get    "/api/action/:id", Action, :retrieve
   get    "/api/action"    , Action, :retrieve_list
+  put    "/api/action/:id", Action, :update
   delete "/api/action/:id", Action, :delete
+  post   "/api/action/try", Action, :try
 
   post   "/api/authentication"    , Authentication, :create
   get    "/api/authentication/:id", Authentication, :retrieve

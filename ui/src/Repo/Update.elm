@@ -1,68 +1,111 @@
-module Repo.Update exposing (update)
+module Repo.Update exposing (StackCmd(..), update, onHttpError)
 
 import Dict
 import Http
 import Navigation
-import Repo
+import Repo exposing (Repo)
 import Repo.Messages exposing (Msg(..))
 import Repo.Command as Command exposing (Config)
 import Error
 
 
-update : t -> Config t -> Msg t -> Repo.Repo t -> ( Repo.Repo t, Cmd (Msg t), Bool )
-update dummyData config msg repo =
+type StackCmd
+    = Push
+    | Keep
+    | Pop
+
+
+update : t -> Config t -> Msg t -> Repo a t -> ( Repo a t, Cmd (Msg t), StackCmd )
+update dummyData config msg ({ dirtyDict } as repo) =
     case msg of
+        OnFetchOne (Ok newEntity) ->
+            ( Repo.put newEntity repo, Cmd.none, Pop )
+
+        OnFetchOne (Err httpError) ->
+            ( onHttpError repo httpError, Cmd.none, Pop )
+
+        OnNavigateAndFetchOne (Ok newEntity) ->
+            ( Repo.put newEntity repo, Cmd.none, Pop )
+
+        OnNavigateAndFetchOne (Err httpError) ->
+            -- Skip error toast since NotFound page will be shown
+            ( repo, Cmd.none, Pop )
+
         OnFetchAll (Ok newEntities) ->
-            ( Repo.populate newEntities dummyData, Cmd.none, False )
+            ( { repo | dict = Repo.listToDict newEntities }, Cmd.none, Pop )
 
         OnFetchAll (Err httpError) ->
-            ( onHttpError repo httpError, Cmd.none, False )
+            ( onHttpError repo httpError, Cmd.none, Pop )
 
-        OnSort sorter ->
-            ( { repo | sort = sorter }, Cmd.none, False )
+        Sort sorter ->
+            ( { repo | sort = sorter }, Cmd.none, Keep )
 
-        OnDeleteModal newTarget isShown ->
-            ( { repo | deleteModal = Repo.ModalState isShown newTarget }, Cmd.none, False )
+        ConfirmDelete newTarget ->
+            ( { repo | deleteModal = Repo.ModalState True newTarget }, Cmd.none, Keep )
 
-        OnDeleteConfirmed id ->
+        CancelDelete ->
+            ( { repo | deleteModal = Repo.ModalState False (Repo.dummyEntity dummyData) }, Cmd.none, Keep )
+
+        Delete id ->
             ( { repo | deleteModal = Repo.ModalState False (Repo.dummyEntity dummyData) }
             , (Command.delete config id)
-            , True
+            , Push
             )
 
         OnDelete (Ok ()) ->
-            ( repo, Command.fetchAll config, False )
+            ( repo, Navigation.newUrl ("/poller" ++ config.indexPath), Pop )
 
         OnDelete (Err httpError) ->
-            ( onHttpError repo httpError, Cmd.none, False )
+            ( onHttpError repo httpError, Cmd.none, Pop )
 
-        OnEdit entityId dirtyEntity errors ->
-            ( { repo | dirtyDict = Dict.insert entityId dirtyEntity repo.dirtyDict, errors = errors }
-            , Cmd.none
-            , False
+        StartEdit entityId dirtyEntity ->
+            ( { repo | dirtyDict = Dict.insert entityId ( dirtyEntity, Dict.empty ) dirtyDict }, Cmd.none, Keep )
+
+        OnEdit entityId ( label, maybeMessage ) dirtyData ->
+            ( { repo | dirtyDict = Repo.onEdit dirtyDict entityId label maybeMessage dirtyData }, Cmd.none, Keep )
+
+        OnValidate entityId ( label, maybeMessage ) ->
+            ( { repo | dirtyDict = Repo.onValidate dirtyDict entityId label maybeMessage }, Cmd.none, Keep )
+
+        OnEditValid entityId dirtyData ->
+            ( { repo | dirtyDict = Repo.onEdit dirtyDict entityId "dummy" Nothing dirtyData }, Cmd.none, Keep )
+
+        CancelEdit entityId ->
+            ( { repo | dirtyDict = Dict.remove entityId dirtyDict }, Cmd.none, Keep )
+
+        Create dirtyId data ->
+            ( repo, Command.create config dirtyId data, Push )
+
+        OnCreate dirtyId (Ok newEntity) ->
+            ( { repo | dirtyDict = Dict.remove dirtyId dirtyDict }
+            , Navigation.newUrl ("/poller" ++ config.navigateOnWrite newEntity)
+            , Pop
             )
 
-        OnEditCancel entityId ->
-            ( { repo | dirtyDict = Dict.remove entityId repo.dirtyDict }, Cmd.none, False )
-
-        OnSubmitNew data ->
-            ( repo, Command.submitNew config data, True )
-
-        OnCreate (Ok newEntity) ->
-            ( repo, Navigation.modifyUrl ("/poller" ++ config.navigateOnWrite newEntity), True )
-
-        OnCreate (Err httpError) ->
-            ( onHttpError repo httpError, Cmd.none, False )
+        OnCreate dirtyId (Err httpError) ->
+            ( onHttpError repo httpError, Cmd.none, Pop )
 
         SetErrors newErrors ->
-            ( { repo | errors = newErrors }, Cmd.none, False )
+            ( { repo | errors = newErrors }, Cmd.none, Keep )
 
-        _ ->
-            -- Other messages won't match inside Repo; handled by root Update
-            ( repo, Cmd.none, False )
+        Update dirtyId data ->
+            ( repo, Command.update config dirtyId data, Push )
+
+        OnUpdate (Ok newEntity) ->
+            ( { repo | dirtyDict = Dict.remove newEntity.id dirtyDict } |> Repo.put newEntity, Cmd.none, Pop )
+
+        OnUpdate (Err httpError) ->
+            ( onHttpError repo httpError, Cmd.none, Pop )
+
+        NoOp ->
+            ( repo, Cmd.none, Keep )
+
+        ChangeLocation _ ->
+            -- Should not happen; stolen by root update
+            ( repo, Cmd.none, Keep )
 
 
-onHttpError : Repo.Repo t -> Http.Error -> Repo.Repo t
+onHttpError : Repo a t -> Http.Error -> Repo a t
 onHttpError ({ errors } as repo) httpError =
     let
         responseToDesc { url, status, body } =
@@ -71,24 +114,21 @@ onHttpError ({ errors } as repo) httpError =
             , ( "Body", body )
             ]
 
-        newErrors =
+        newError =
             case httpError of
                 Http.BadStatus response ->
-                    [ ( Error.APIError, responseToDesc response ) ]
+                    ( Error.APIError, responseToDesc response )
 
                 Http.BadPayload failureMessage response ->
-                    [ ( Error.APIError
-                      , ( "Unable to parse body", failureMessage ) :: responseToDesc response
-                      )
-                    ]
+                    ( Error.APIError, ( "Unable to parse body", failureMessage ) :: responseToDesc response )
 
                 Http.NetworkError ->
-                    [ Error.one Error.NetworkError "Unable to connect" "" ]
+                    Error.one Error.NetworkError "Unable to connect" ""
 
                 Http.Timeout ->
-                    [ Error.one Error.APIError "Server timeout" "" ]
+                    Error.one Error.APIError "Server timeout" ""
 
                 Http.BadUrl url ->
-                    [ Error.one Error.ValidationError "Invalid URL" url ]
+                    Error.one Error.UnexpectedError "Invalid URL" url
     in
-        { repo | errors = newErrors }
+        { repo | errors = newError :: errors }

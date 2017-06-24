@@ -4,8 +4,10 @@ import Date
 import Task
 import Navigation
 import Utils
+import Stack
 import LiveReload
 import Routing
+import Repo.Update exposing (StackCmd(..))
 import Polls
 import Actions
 import Authentications
@@ -14,36 +16,51 @@ import Poller.Messages exposing (Msg(..))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update msg ({ taskStack } as model) =
     let
-        mapUpdate repoToModel msg ( x, cmd, isBusy ) =
-            ( repoToModel x isBusy, Cmd.map msg cmd )
+        resolveTask stackCmd model =
+            let
+                newStack =
+                    case stackCmd of
+                        Push ->
+                            Stack.push () taskStack
+
+                        Keep ->
+                            taskStack
+
+                        Pop ->
+                            taskStack |> Stack.pop |> Tuple.second
+            in
+                { model | taskStack = newStack }
+
+        mapUpdate repoToModel msg ( x, cmd, stackCmd ) =
+            ( x |> repoToModel |> resolveTask stackCmd, Cmd.map msg cmd )
     in
         case msg of
             PollsMsg subMsg ->
                 Polls.update subMsg model.pollRepo
-                    |> mapUpdate (\x isBusy -> { model | pollRepo = x, isBusy = isBusy }) PollsMsg
+                    |> mapUpdate (\x -> { model | pollRepo = x }) PollsMsg
 
             ActionsMsg subMsg ->
                 Actions.update subMsg model.actionRepo
-                    |> mapUpdate (\x isBusy -> { model | actionRepo = x, isBusy = isBusy }) ActionsMsg
+                    |> mapUpdate (\x -> { model | actionRepo = x }) ActionsMsg
 
             AuthMsg subMsg ->
                 Authentications.update subMsg model.authRepo
-                    |> mapUpdate (\x isBusy -> { model | authRepo = x, isBusy = isBusy }) AuthMsg
+                    |> mapUpdate (\x -> { model | authRepo = x }) AuthMsg
 
             NavbarMsg state ->
                 ( { model | navbarState = state }, Cmd.none )
 
             ChangeLocation path ->
-                ( model, Navigation.modifyUrl ("/poller" ++ path) )
+                ( model, Navigation.newUrl ("/poller" ++ path) )
 
             OnLocationChange location ->
                 let
-                    ( route, cmds, isBusy ) =
+                    ( route, cmds ) =
                         Routing.parseLocation location
                 in
-                    ( { model | route = route, isBusy = isBusy }, Cmd.batch cmds )
+                    ( { model | route = route, taskStack = List.map (always ()) cmds }, Cmd.batch cmds )
 
             OnServerPush "reload" ->
                 ( model, Navigation.reloadAndSkipCache )

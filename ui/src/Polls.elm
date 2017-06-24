@@ -78,7 +78,7 @@ intervalToString interval =
 
 config : Config Poll
 config =
-    Config "/api/poll" dataDecoder dataEncoder (always "/polls")
+    Config "/api/poll" "/polls" dataDecoder dataEncoder (always "/polls")
 
 
 dataDecoder : Decode.Decoder Poll
@@ -106,6 +106,6 @@ dataEncoder { url, interval, auth, action, filters } =
 -- Update
 
 
-update : Msg Poll -> Repo Poll -> ( Repo Poll, Cmd (Msg Poll), Bool )
+update : Msg Poll -> Repo {} Poll -> ( Repo {} Poll, Cmd (Msg Poll), Repo.Update.StackCmd )
 update =
     Repo.Update.update dummyPoll config

@@ -1,11 +1,24 @@
-module Actions.Hipchat exposing (Color(..), default, fromParams, fetchParams)
+module Actions.Hipchat
+    exposing
+        ( Color(..)
+        , MessageTemplate
+        , UserParams
+        , colors
+        , stringToColor
+        , validateMessageTemplate
+        , isValid
+        , default
+        , roomIdToUrl
+        , applyParams
+        , fetchParams
+        , fetchMessageTemplateFromBody
+        )
 
 import Regex
 import Utils
 import StringTemplate exposing (StringTemplate)
 import Repo
 import Actions exposing (Action)
-import Error
 
 
 type Color
@@ -20,106 +33,31 @@ type alias MessageTemplate =
     String
 
 
+type alias RoomId =
+    String
+
+
 type alias UserParams =
-    { roomId : String
-    , authId : Repo.EntityId
+    { label : Maybe Actions.Label
+    , auth : Maybe Repo.EntityId
+    , roomId : RoomId
     , color : Color
     , notify : Bool
     , messageTemplate : MessageTemplate
     }
 
 
-validateMessageTemplate : String -> Result Error.Error MessageTemplate
-validateMessageTemplate string =
-    if String.contains "\"" string then
-        Err (Error.one Error.ValidationError "Hipchat message template" "Double quotations are not allowed.")
-    else
-        Ok string
-
-
-default : Action
-default =
-    let
-        body =
-            bodyBase
-                |> StringTemplate.render "color" "yellow"
-                |> StringTemplate.render "notify" "false"
-    in
-        Action Nothing "post" "" Nothing (StringTemplate body [ "message" ]) Actions.Hipchat
-
-
-defaultParams : UserParams
-defaultParams =
-    UserParams "" "" Yellow False ""
-
-
-fromParams : UserParams -> Result Error.Error Action
-fromParams { roomId, authId, color, notify, messageTemplate } =
-    let
-        body =
-            bodyBase
-                |> StringTemplate.render "color" (color |> toString |> String.toLower)
-                |> StringTemplate.render "notify" (notify |> toString |> String.toLower)
-
-        action bodyTemplate =
-            Action
-                (Just ("Hipchat [RoomID: " ++ roomId ++ "]"))
-                "post"
-                (roomIdToUrl roomId)
-                (Just authId)
-                bodyTemplate
-                Actions.Hipchat
-    in
-        case messageTemplate of
-            "" ->
-                Ok (action (StringTemplate body [ "message" ]))
-
-            mt0 ->
-                mt0
-                    |> validateMessageTemplate
-                    |> Result.map (\mt1 -> StringTemplate.render "message" mt1 body)
-                    |> Result.andThen
-                        (\bt ->
-                            StringTemplate.validate bt
-                                |> Result.map (StringTemplate bt >> action)
-                        )
-
-
-fetchParams : Action -> UserParams
-fetchParams action =
-    let
-        roomId =
-            action.url |> String.dropLeft 32 |> String.dropRight 13
-
-        color =
-            fetchValueFromBody
-                stringToColor
-                (Regex.regex "\"color\":\"(yellow|green|red|purple|gray)\"")
-                action.bodyTemplate.body
-
-        notify =
-            fetchValueFromBody
-                Utils.stringToBool
-                (Regex.regex "\"notify\":\"(true|false)\"")
-                action.bodyTemplate.body
-
-        messageTemplate =
-            fetchValueFromBody
-                identity
-                (Regex.regex "\"message\":\"(.+)\"")
-                action.bodyTemplate.body
-    in
-        UserParams
-            roomId
-            (Maybe.withDefault "" action.auth)
-            color
-            notify
-            messageTemplate
+colors : List Color
+colors =
+    [ Yellow, Green, Red, Purple, Gray ]
 
 
 stringToColor : String -> Color
 stringToColor string =
     case string of
+        "yellow" ->
+            Yellow
+
         "green" ->
             Green
 
@@ -129,18 +67,116 @@ stringToColor string =
         "purple" ->
             Purple
 
-        "gray" ->
+        _ ->
             Gray
 
-        _ ->
-            Yellow
+
+validateMessageTemplate : MessageTemplate -> Result String MessageTemplate
+validateMessageTemplate string =
+    let
+        newlineEscapedString =
+            string |> String.lines |> String.join "\\\\\n"
+
+        assertProperlyEscaped =
+            newlineEscapedString
+                |> Regex.replace Regex.All (Regex.regex "\\\\[\\\"\\\\]") (always "R")
+                |> (not << Regex.contains (Regex.regex "[\\\"\\\\]"))
+    in
+        if assertProperlyEscaped then
+            Ok newlineEscapedString
+        else
+            Err "You must properly escape special charactors like \" or \\"
+
+
+isValid : ( Repo.Entity Action, Repo.Audit ) -> Bool
+isValid (( { data }, audit ) as dirtyEntity) =
+    let
+        { auth, roomId } =
+            fetchParams data
+    in
+        Actions.isValid dirtyEntity && Utils.isJust auth && roomId /= ""
+
+
+default : Action
+default =
+    let
+        bodyTemplate =
+            bodyBase
+                |> StringTemplate.render "color" "yellow"
+                |> StringTemplate.render "notify" "false"
+                |> flip StringTemplate [ "message" ]
+    in
+        Action Nothing Utils.POST (roomIdToUrl "") Nothing bodyTemplate Actions.Hipchat
+
+
+{-| Apply new UserParams to `data`, validating MessageTemplate on the way.
+Even if the template is invalidated, it returns new BodyTemplate with invalid `body` inserted.
+-}
+applyParams : Action -> UserParams -> Result ( String, Action ) Action
+applyParams ({ bodyTemplate } as data) { label, auth, roomId, color, notify, messageTemplate } =
+    let
+        body =
+            bodyBase
+                |> StringTemplate.render "color" (Utils.toLowerString color)
+                |> StringTemplate.render "notify" (Utils.toLowerString notify)
+                |> StringTemplate.render "message" messageTemplate
+
+        action newBodyTemplate =
+            { data
+                | label = label
+                , method = Utils.POST
+                , url = roomIdToUrl roomId
+                , auth = auth
+                , bodyTemplate = newBodyTemplate
+                , type_ = Actions.Hipchat
+            }
+    in
+        case validateMessageTemplate messageTemplate of
+            Ok _ ->
+                body
+                    |> StringTemplate.validate
+                    |> Result.map (action << StringTemplate body)
+                    |> Result.mapError (\e -> ( e, action { bodyTemplate | body = body } ))
+
+            Err error ->
+                Err ( error, action { bodyTemplate | body = body } )
+
+
+fetchParams : Action -> UserParams
+fetchParams { label, auth, url, bodyTemplate } =
+    let
+        roomId =
+            url |> String.dropLeft 32 |> String.dropRight 13
+
+        color =
+            fetchValueFromBody
+                stringToColor
+                "\"color\":\"(yellow|green|red|purple|gray)\""
+                bodyTemplate.body
+
+        notify =
+            fetchValueFromBody
+                Utils.stringToBool
+                "\"notify\":(true|false)"
+                bodyTemplate.body
+
+        messageTemplate =
+            fetchMessageTemplateFromBody bodyTemplate.body
+    in
+        UserParams
+            label
+            auth
+            roomId
+            color
+            notify
+            messageTemplate
 
 
 {-| `stringToValue` must take empty string and emit default value.
 -}
-fetchValueFromBody : (String -> x) -> Regex.Regex -> StringTemplate.Body -> x
+fetchValueFromBody : (String -> x) -> String -> StringTemplate.Body -> x
 fetchValueFromBody stringToValue pattern body =
-    case Regex.find (Regex.AtMost 1) pattern body of
+    case Regex.find (Regex.AtMost 1) (Regex.regex pattern) body of
         [ { submatches } ] ->
             case submatches of
                 [ Just string ] ->
@@ -153,6 +189,21 @@ fetchValueFromBody stringToValue pattern body =
             stringToValue ""
 
 
+fetchMessageTemplateFromBody : StringTemplate.Body -> MessageTemplate
+fetchMessageTemplateFromBody body =
+    let
+        takeMessagePart string =
+            case String.indices "\",\n    \"color\":\"" string of
+                i :: _ ->
+                    String.left i string
+
+                _ ->
+                    -- Should not happen
+                    string
+    in
+        body |> String.dropLeft 17 |> takeMessagePart
+
+
 roomIdToUrl : String -> Utils.Url
 roomIdToUrl roomId =
     "https://api.hipchat.com/v2/room/" ++ roomId ++ "/notification"
@@ -160,11 +211,9 @@ roomIdToUrl roomId =
 
 bodyBase : StringTemplate.Body
 bodyBase =
-    """
-    {
-        "message":"#{message}",
-        "color":"#{color}",
-        "notify":#{notify},
-        "message_format":"text"
-    }
-    """
+    """{
+    "message":"#{message}",
+    "color":"#{color}",
+    "notify":#{notify},
+    "message_format":"text"
+}"""

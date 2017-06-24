@@ -20,10 +20,13 @@ init { isDev } location =
         ( navbarState, navbarCmd ) =
             Bootstrap.Navbar.initialState NavbarMsg
 
-        ( currentRoute, initCmds, isBusy ) =
+        ( currentRoute, initCmds ) =
             Routing.parseLocation location
+
+        initTaskStack =
+            List.map (always ()) initCmds
     in
-        Poller.Model.initialModel isDev isBusy currentRoute navbarState ! (navbarCmd :: initCmds)
+        Poller.Model.initialModel isDev initTaskStack currentRoute navbarState ! (navbarCmd :: initCmds)
 
 
 

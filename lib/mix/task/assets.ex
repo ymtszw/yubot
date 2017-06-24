@@ -12,8 +12,8 @@ defmodule Mix.Tasks.Yubot.Assets do
   @shortdoc "Upload assets to CDN and generate Elm Assets module"
 
   def run(args) do
-    Mix.Tasks.Yubot.UploadAssets.run(args)
+    Mix.Tasks.Yubot.Assets.Upload.run(args)
     :timer.sleep(300)
-    Mix.Tasks.Yubot.GenElmAssets.run(args)
+    Mix.Tasks.Yubot.Assets.GenElmModule.run(args)
   end
 end

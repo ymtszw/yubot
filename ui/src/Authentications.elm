@@ -1,7 +1,21 @@
-module Authentications exposing (Authentication, AuthType(..), dummyAuthentication, stringToType, hipchatToken, config, update, listForPoll)
+module Authentications
+    exposing
+        ( Authentication
+        , AuthType(..)
+        , isValid
+        , dummyAuthentication
+        , stringToType
+        , hipchatToken
+        , typeToFa
+        , config
+        , update
+        , listForHttp
+        , listForHipchat
+        )
 
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Utils
 import Repo exposing (Repo)
 import Repo.Update
 import Repo.Messages exposing (Msg(..))
@@ -28,18 +42,29 @@ type alias DecodedToken =
     String
 
 
+isValid : ( Repo.Entity Authentication, Repo.Audit ) -> Bool
+isValid ( { data }, audit ) =
+    Repo.isValid audit && data.name /= "" && data.token /= ""
+
+
 dummyAuthentication : Authentication
 dummyAuthentication =
     Authentication "" Raw ""
 
 
-listForPoll : List (Repo.Entity Authentication) -> List (Repo.Entity Authentication)
-listForPoll authList =
-    let
-        filterFun auth =
-            List.member auth.data.type_ [ Raw, Bearer ]
-    in
-        List.filter filterFun authList
+listForHttp : Repo.EntityDict Authentication -> List (Repo.Entity Authentication)
+listForHttp =
+    filterDict (\a -> List.member a.data.type_ [ Raw, Bearer ])
+
+
+listForHipchat : Repo.EntityDict Authentication -> List (Repo.Entity Authentication)
+listForHipchat =
+    filterDict (\a -> a.data.type_ == Hipchat)
+
+
+filterDict : (Repo.Entity Authentication -> Bool) -> Repo.EntityDict Authentication -> List (Repo.Entity Authentication)
+filterDict filterFun authDict =
+    authDict |> Repo.dictToList |> List.filter filterFun
 
 
 stringToType : String -> AuthType
@@ -63,13 +88,23 @@ hipchatToken token =
         token
 
 
+typeToFa : AuthType -> String
+typeToFa type_ =
+    case type_ of
+        Hipchat ->
+            "fa-weixin"
+
+        _ ->
+            "fa-key"
+
+
 
 -- Config
 
 
 config : Config Authentication
 config =
-    Config "/api/authentication" dataDecoder dataEncoder (always "/credentials")
+    Config "/api/authentication" "/credentials" dataDecoder dataEncoder (always "/credentials")
 
 
 dataDecoder : Decode.Decoder Authentication
@@ -84,7 +119,7 @@ dataEncoder : Authentication -> Encode.Value
 dataEncoder { name, type_, token } =
     Encode.object
         [ ( "name", Encode.string name )
-        , ( "type", type_ |> toString |> String.toLower |> Encode.string )
+        , ( "type", Encode.string (Utils.toLowerString type_) )
         , ( "token", Encode.string token )
         ]
 
@@ -93,6 +128,6 @@ dataEncoder { name, type_, token } =
 -- Update
 
 
-update : Msg Authentication -> Repo Authentication -> ( Repo Authentication, Cmd (Msg Authentication), Bool )
-update msg resource =
-    Repo.Update.update dummyAuthentication config msg resource
+update : Msg Authentication -> Repo {} Authentication -> ( Repo {} Authentication, Cmd (Msg Authentication), Repo.Update.StackCmd )
+update =
+    Repo.Update.update dummyAuthentication config

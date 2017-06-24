@@ -1,69 +1,50 @@
 module Authentications.ViewParts exposing (authCheck, authSelect)
 
 import Html exposing (Html, text)
-import Html.Attributes as Attr
-import Bootstrap.Form as Form
-import Bootstrap.Form.Checkbox as Checkbox
-import Bootstrap.Form.Select as Select
+import Html.Attributes as Attr exposing (class)
+import Html.Events
+import Utils
 import Repo
+import Repo.Messages exposing (Msg(OnEditValid))
+import Repo.ViewParts
 import Authentications exposing (Authentication)
+import ViewParts exposing (none)
 
 
-authCheck : List (Repo.Entity Authentication) -> Maybe Repo.EntityId -> (Repo.EntityId -> Bool -> msg) -> Html msg
-authCheck authList maybeAuthId onCheck =
+type alias Authy x =
+    { x | auth : Maybe Repo.EntityId }
+
+
+authCheck : List (Repo.Entity Authentication) -> Repo.EntityId -> Authy x -> Maybe Repo.EntityId -> Html (Msg (Authy x))
+authCheck authList dirtyId dataToUpdate maybeAuthId =
     let
-        ( disabled, headAuthId ) =
-            case authList of
-                [] ->
-                    ( True, "" )
-
-                hd :: _ ->
-                    ( False, hd.id )
-
-        checked =
-            case maybeAuthId of
-                Nothing ->
-                    False
-
-                Just _ ->
-                    True
+        headAuthId =
+            authList |> List.head |> Maybe.map .id |> Maybe.withDefault ""
     in
-        Html.small []
-            [ Checkbox.checkbox
-                [ Checkbox.checked checked
-                , Checkbox.disabled disabled
-                , Checkbox.onCheck (onCheck headAuthId)
+        Html.div [ class "form-check small" ]
+            [ Html.label [ class "form-check-label", Attr.disabled (List.isEmpty authList) ]
+                [ Html.input
+                    [ Attr.type_ "checkbox"
+                    , class "form-check-input"
+                    , Attr.checked (Utils.isJust maybeAuthId)
+                    , Attr.disabled (List.isEmpty authList)
+                    , Html.Events.onCheck (\checked -> OnEditValid dirtyId { dataToUpdate | auth = Utils.ite checked (Just headAuthId) Nothing })
+                    ]
+                    []
+                , text " Require authentication?"
                 ]
-                "Require authentication?"
             ]
 
 
-authSelect : List (Repo.Entity Authentication) -> String -> Maybe Repo.EntityId -> (Repo.EntityId -> msg) -> Html msg
-authSelect authList label maybeAuthId onSelect =
+authSelect : String -> String -> List (Repo.Entity Authentication) -> Repo.EntityId -> Authy x -> Maybe Repo.EntityId -> Html (Msg (Authy x))
+authSelect formId label authList dirtyId dataToUpdate maybeAuthId =
     let
-        itemText auth =
-            text (auth.data.name ++ " (" ++ auth.id ++ ")")
-
-        item auth =
-            if maybeAuthId == Just auth.id then
-                Select.item [ Attr.value auth.id, Attr.selected True ] [ itemText auth ]
-            else
-                Select.item [ Attr.value auth.id ] [ itemText auth ]
-
         select =
             authList
-                |> List.map item
-                |> Select.select
-                    [ Select.id (label ++ "-auth")
-                    , Select.onInput onSelect
-                    ]
+                |> List.map (\{ id, data } -> ( id, (data.name ++ " (" ++ id ++ ")"), maybeAuthId == Just id ))
+                |> Repo.ViewParts.select formId label False dirtyId (\x -> { dataToUpdate | auth = Just x })
     in
-        case maybeAuthId of
-            Nothing ->
-                text ""
-
-            Just _ ->
-                Form.group []
-                    [ Form.label [ Attr.for (label ++ "-auth") ] [ text "Credential for URL" ]
-                    , select
-                    ]
+        Html.div []
+            [ authCheck authList dirtyId dataToUpdate maybeAuthId
+            , Utils.ite (Utils.isJust maybeAuthId) select none
+            ]

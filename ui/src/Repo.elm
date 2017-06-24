@@ -4,14 +4,24 @@ module Repo
         , Entity
         , EntityId
         , EntityDict
+        , DirtyDict
+        , Audit
         , Sorter
         , Ord(..)
         , ModalState
         , dummyEntity
-        , initialize
         , populate
+        , dummyAudit
+        , put
+        , get
+        , onEdit
+        , onValidate
+        , dirtyGetWithDefault
+        , required
+        , isValid
         , toggleOrder
         , listToDict
+        , dictToList
         , dictToSortedList
         )
 
@@ -20,12 +30,13 @@ import Utils
 import Error
 
 
-type alias Repo x =
-    { dict : EntityDict x
-    , sort : Sorter x
-    , deleteModal : ModalState x
-    , dirtyDict : EntityDict x
-    , errors : List Error.Error
+type alias Repo a x =
+    { a
+        | dict : EntityDict x
+        , sort : Sorter x
+        , deleteModal : ModalState x
+        , dirtyDict : DirtyDict x
+        , errors : List Error.Error
     }
 
 
@@ -44,6 +55,14 @@ type alias EntityId =
 
 type alias EntityDict x =
     Dict EntityId (Entity x)
+
+
+type alias Audit =
+    Dict String String
+
+
+type alias DirtyDict x =
+    Dict EntityId ( Entity x, Audit )
 
 
 type alias Sorter x =
@@ -68,19 +87,81 @@ dummyEntity data =
     Entity "" "2015-01-01T00:00:00+00:00" data
 
 
-initialize : x -> Repo x
+initialize : x -> Repo {} x
 initialize =
     populate []
 
 
-populate : List (Entity x) -> x -> Repo x
+populate : List (Entity x) -> x -> Repo {} x
 populate entities dummyData =
-    Repo
-        (listToDict entities)
-        (Sorter .id Asc)
-        (ModalState False (dummyEntity dummyData))
-        (Dict.singleton "new" (dummyEntity dummyData))
-        []
+    { dict = listToDict entities
+    , sort = Sorter .id Asc
+    , deleteModal = ModalState False (dummyEntity dummyData)
+    , dirtyDict = Dict.empty
+    , errors = []
+    }
+
+
+dummyAudit : Dict x y
+dummyAudit =
+    Dict.empty
+
+
+put : Entity x -> Repo a x -> Repo a x
+put ({ id } as newEntity) ({ dict } as repo) =
+    { repo | dict = (Dict.insert id newEntity dict) }
+
+
+get : EntityId -> Repo a x -> Maybe (Entity x)
+get id { dict } =
+    Dict.get id dict
+
+
+onEdit : DirtyDict x -> EntityId -> String -> Maybe String -> x -> DirtyDict x
+onEdit dirtyDict entityId label maybeMessage dirtyData =
+    let
+        updateFun ( dirtyEntity, audit ) =
+            ( { dirtyEntity | data = dirtyData }, updateAudit label maybeMessage audit )
+
+        new =
+            ( dummyEntity dirtyData, updateAudit label maybeMessage Dict.empty )
+    in
+        Utils.dictUpsert entityId updateFun new dirtyDict
+
+
+updateAudit : String -> Maybe String -> Audit -> Audit
+updateAudit label maybeMessage audit =
+    case maybeMessage of
+        Nothing ->
+            Dict.remove label audit
+
+        Just message ->
+            Dict.insert label message audit
+
+
+{-| Set audit entry for `entityId`. You must first put dirty entity for `entityId` in `dirtyDict`.
+If the entry for `entityId` does not exist, it does nothing.
+-}
+onValidate : DirtyDict x -> EntityId -> String -> Maybe String -> DirtyDict x
+onValidate dirtyDict entityId label maybeMessage =
+    Dict.update entityId (Maybe.map (Tuple.mapSecond (updateAudit label maybeMessage))) dirtyDict
+
+
+dirtyGetWithDefault : EntityId -> x -> DirtyDict x -> ( Entity x, Audit )
+dirtyGetWithDefault dirtyId defaultData dirtyDict =
+    Utils.dictGetWithDefault dirtyId ( dummyEntity defaultData, Dict.empty ) dirtyDict
+
+
+{-| Convenient validator which validates non-emptiness.
+-}
+required : String -> Maybe String
+required =
+    Utils.boolToMaybe "This field is required" << String.isEmpty
+
+
+isValid : Audit -> Bool
+isValid audit =
+    Dict.isEmpty audit
 
 
 toggleOrder : Ord -> Ord
@@ -98,6 +179,11 @@ listToDict entities =
     entities
         |> List.map (\e -> ( e.id, e ))
         |> Dict.fromList
+
+
+dictToList : EntityDict x -> List (Entity x)
+dictToList dict =
+    Dict.values dict
 
 
 dictToSortedList : Sorter x -> EntityDict x -> List (Entity x)

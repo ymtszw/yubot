@@ -1,9 +1,10 @@
-module StringTemplate exposing (StringTemplate, Body, validate, render)
+module StringTemplate exposing (StringTemplate, Body, isValid, validate, render, renderAll)
 
+import Dict exposing (Dict)
 import Result exposing (Result(Ok, Err))
 import Regex
 import List.Extra
-import Error
+import Utils
 
 
 type alias StringTemplate =
@@ -16,7 +17,12 @@ type alias Body =
     String
 
 
-validate : String -> Result Error.Error (List String)
+isValid : StringTemplate -> Bool
+isValid { body, variables } =
+    validate body == Ok variables
+
+
+validate : String -> Result String (List String)
 validate body =
     let
         placeholderPattern =
@@ -28,17 +34,17 @@ validate body =
         validateMatch { submatches } =
             case submatches of
                 [ Just "" ] ->
-                    Err (Error.one Error.ValidationError "StringTemplate" "Variable name must not be empty")
+                    Err "Variable name must not be empty"
 
                 [ Just varName ] ->
                     if Regex.contains variablePattern varName then
                         Ok varName
                     else
-                        Err (Error.one Error.ValidationError "StringTemplate" "Variable name may only contain a-z, 0-9 and underscore `_`")
+                        Err "Variable name may only contain a-z, 0-9 and underscore `_`"
 
                 _ ->
                     -- Should not happen?
-                    Err (Error.one Error.ValidationError "StringTemplate" "Variable name must not be empty")
+                    Err "Variable name must not be empty"
 
         folder validateResult acc =
             case acc of
@@ -75,3 +81,9 @@ render variable value body =
             "#{" ++ variable ++ "}"
     in
         Regex.replace Regex.All (Regex.regex patternToFill) (\_ -> value) body
+
+
+renderAll : Dict String String -> StringTemplate -> Body
+renderAll values { body, variables } =
+    variables
+        |> List.foldl (\x -> render x (Utils.dictGetWithDefault x "" values)) body

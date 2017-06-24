@@ -54,4 +54,14 @@ defmodule Yubot.Model.Authentication do
       :error                  -> {:ok, encrypted_token} # Fallback for old data; not encrypted
     end
   end
+
+  defun header(nil_or_auth :: nil | %__MODULE__{}) :: R.t(%{String.t => String.t}) do
+    (nil) ->
+      {:ok, %{}}
+    (%__MODULE__{data: %Data{type: type, token: encrypted_token}}) ->
+      encrypted_token |> decrypt() |> R.map(&%{"authorization" => header_impl(type, &1)})
+  end
+
+  defp header_impl(:raw, token), do: token
+  defp header_impl(type, token) when type in [:bearer, :hipchat], do: "Bearer #{token}"
 end

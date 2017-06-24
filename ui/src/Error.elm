@@ -1,4 +1,4 @@
-module Error exposing (Error, Kind(..), one)
+module Error exposing (Error, Kind(..), one, singleton)
 
 {-
    Purposefully avoiding "Type" or "Message",
@@ -13,7 +13,6 @@ type alias Error =
 type Kind
     = APIError
     | NetworkError
-    | ValidationError
     | UnexpectedError
 
 
@@ -27,6 +26,13 @@ type alias Desc =
 
 {-| Shorthand for generating one elemet error.
 -}
-one : Kind -> String -> String -> Error
+one : Kind -> Label -> String -> Error
 one kind label1 text1 =
     ( kind, [ ( label1, text1 ) ] )
+
+
+{-| Shorthand for generating one element error wrapped in list.
+-}
+singleton : Kind -> Label -> String -> List Error
+singleton kind label1 text1 =
+    [ one kind label1 text1 ]

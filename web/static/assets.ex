@@ -29,8 +29,8 @@ defmodule Yubot.Assets do
     @doc """
     Converts slashes into hyphens to be used as file entity _id.
     """
-    defun to_file_entity_id(asset_path :: v[t]) :: String.t do
-      String.replace(asset_path, "/", "-")
+    defun to_file_entity_id(asset_path :: v[t], commit_hash :: v[String.t]) :: String.t do
+      String.replace(asset_path, "/", "-") <> "-" <> commit_hash
     end
   end
 
@@ -39,7 +39,9 @@ defmodule Yubot.Assets do
   @collection_name  "Assets"
   @external_resource Path.expand("assets", __DIR__)
 
-  @inventory File.read!(@external_resource) |> String.split("\n", trim: true) |> Map.new(&List.to_tuple(String.split(&1, " ")))
+  @assets_file @external_resource |> File.read!() |> String.split("\n", trim: true)
+  @commit_hash hd(@assets_file)
+  @inventory   @assets_file |> tl() |> Map.new(&List.to_tuple(String.split(&1, " ")))
   def inventory(), do: @inventory
 
   #
@@ -49,7 +51,7 @@ defmodule Yubot.Assets do
   @doc """
   Resolve `asset_path` at runtime.
   """
-  defun url(asset_path :: v[AssetPath.t]) :: SolomonLib.Url do
+  defun url(asset_path :: v[AssetPath.t]) :: SolomonLib.Url.t do
     case SolomonLib.Env.runtime_env() do
       :prod -> raise("not ready!")
       :dev -> cdn_url(asset_path)
@@ -57,25 +59,54 @@ defmodule Yubot.Assets do
     end
   end
 
-  def local_path(asset_path) do
+  defp local_path(asset_path) do
     "/static/assets/#{asset_path}"
   end
 
   for {asset_path, public_url} <- @inventory do
-    def cdn_url(unquote(asset_path)), do: unquote(public_url)
+    defp cdn_url(unquote(asset_path)), do: unquote(public_url)
   end
+
+  def bootstrap4(), do: url("bootstrap.min.css")
 
   #
   # APIs for upload task (runtime APIs)
   #
 
+  def retrieve_list(root_key, env) do
+    req = Dodai.RetrieveDedicatedFileEntityListRequest.new(Yubot.Dodai.group_id(env), @collection_name, root_key)
+    case Dodai.Client.send(dodai_client(env), req) do
+      %Dodai.RetrieveDedicatedFileEntityListSuccess{} = res -> Dodai.Model.FileEntityList.from_response(res)
+      error -> error
+    end
+  end
+
+  @doc """
+  Revoke currently active assets by deleting all file entities of target commit hash.
+
+  Uploaded files in S3 will be cleaned automatically.
+  """
+  def revoke_current(root_key, env) do
+    Enum.each(@inventory, fn {asset_path, _} -> revoke(asset_path, @commit_hash, root_key, env) end)
+  end
+
+  def revoke(id, root_key, env) do
+    query = %Dodai.DeleteDedicatedFileEntityRequestQuery{allVersions: true}
+    req = Dodai.DeleteDedicatedFileEntityRequest.new(Yubot.Dodai.group_id(env), @collection_name, id, root_key, query)
+    Dodai.Client.send(dodai_client(env), req)
+  end
+
+  def revoke(asset_path, commit_hash, root_key, env) do
+    revoke(AssetPath.to_file_entity_id(asset_path, commit_hash), root_key, env)
+  end
+
   @doc """
   Create or Update dedicated file entity for new upload URL.
   """
-  def upsert(asset_path, file_size, root_key, env) do
+  def upsert(asset_path, file_size, root_key, env, commit_hash) do
     group_id = Yubot.Dodai.group_id(env)
     client = dodai_client(env)
-    base_body = upsert_body(asset_path, file_size)
+    base_body = upsert_body(asset_path, file_size, commit_hash)
     body0 = Dodai.CreateDedicatedFileEntityRequestBody.new!(base_body)
     req0 = Dodai.CreateDedicatedFileEntityRequest.new(group_id, @collection_name, root_key, body0)
     case Dodai.Client.send(client, req0) do
@@ -87,11 +118,10 @@ defmodule Yubot.Assets do
     end
   end
 
-  defp upsert_body(asset_path, file_size) do
-    id = AssetPath.to_file_entity_id(asset_path)
+  defp upsert_body(asset_path, file_size, commit_hash) do
     %{
-      _id: id,
-      filename: asset_path,
+      _id: AssetPath.to_file_entity_id(asset_path, commit_hash),
+      filename: Path.basename(asset_path),
       contentType: :mimerl.filename(asset_path),
       public: true,
       size: file_size,
@@ -100,25 +130,27 @@ defmodule Yubot.Assets do
 
   @doc """
   Upload asset file to S3 and notify finish.
+
+  Now that `commit_hash` is attached to files, it creates basically-non-expiring (immutable) cache on CloudFront.
   """
-  def upload_and_notify(asset_full_path, asset_path, upload_url, root_key, env) do
+  def upload_and_notify(asset_full_path, asset_path, upload_url, root_key, env, commit_hash) do
     case upload(asset_full_path, asset_path, upload_url) do
-      {:ok, %Httpc.Response{status: 200}} -> notify_finish(asset_path, root_key, env)
+      {:ok, %Httpc.Response{status: 200}} -> notify_finish(asset_path, root_key, env, commit_hash)
       otherwise -> otherwise
     end
   end
 
-  defp upload(asset_full_path, asset_path, upload_url) do
+  defp upload(asset_full_path, _asset_path, upload_url) do
     headers = %{
       "content-type" => :mimerl.filename(asset_full_path),
-      "content-disposition" => "attachment; filename=#{asset_path}",
-      "cache-control" => "max-age=0",
+      "cache-control" => "public, max-age=300000000, immutable",
     }
     Httpc.put(upload_url, File.read!(asset_full_path), headers, recv_timeout: 60_000)
   end
 
-  defp notify_finish(asset_path, root_key, env) do
-    req = Dodai.NotifyDedicatedFileUploadFinishedRequest.new(Yubot.Dodai.group_id(env), @collection_name, AssetPath.to_file_entity_id(asset_path), root_key)
+  defp notify_finish(asset_path, root_key, env, commit_hash) do
+    id = AssetPath.to_file_entity_id(asset_path, commit_hash)
+    req = Dodai.NotifyDedicatedFileUploadFinishedRequest.new(Yubot.Dodai.group_id(env), @collection_name, id, root_key)
     Dodai.Client.send(dodai_client(env), req)
   end
 

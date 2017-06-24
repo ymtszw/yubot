@@ -14,46 +14,58 @@ type Route
     = PollsRoute
     | PollRoute Repo.EntityId
     | ActionsRoute
+    | NewActionRoute
     | ActionRoute Repo.EntityId
     | AuthsRoute
     | NotFoundRoute
 
 
-parseLocation : Navigation.Location -> ( Route, List (Cmd Msg), Bool )
+parseLocation : Navigation.Location -> ( Route, List (Cmd Msg) )
 parseLocation { pathname } =
     case segments pathname of
         [ "poller" ] ->
             -- top
-            ( PollsRoute, [ Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config) ], True )
+            ( PollsRoute, [ Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config) ] )
 
         [ "poller", "polls" ] ->
-            ( PollsRoute, [ Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config) ], True )
+            ( PollsRoute, [ Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config) ] )
 
         [ "poller", "polls", pollId ] ->
-            ( PollRoute pollId, [], False )
+            ( PollRoute pollId
+            , [ Cmd.map PollsMsg (Repo.Command.navigateAndFetchOne Polls.config pollId)
+              , Cmd.map (ActionsMsg << Actions.RepoMsg) (Repo.Command.fetchAll Actions.config)
+              , Cmd.map AuthMsg (Repo.Command.fetchAll Authentications.config)
+              ]
+            )
 
         [ "poller", "actions" ] ->
-            ( ActionsRoute
-            , [ Cmd.map ActionsMsg (Repo.Command.fetchAll Actions.config)
-              , Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config)
+            ( ActionsRoute, [ Cmd.map (ActionsMsg << Actions.RepoMsg) (Repo.Command.fetchAll Actions.config) ] )
+
+        [ "poller", "actions", "new" ] ->
+            ( NewActionRoute
+            , [ Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config)
+              , Cmd.map AuthMsg (Repo.Command.fetchAll Authentications.config)
               ]
-            , True
             )
 
         [ "poller", "actions", actionId ] ->
-            ( ActionRoute actionId, [], False )
+            ( ActionRoute actionId
+            , [ Cmd.map (ActionsMsg << Actions.RepoMsg) (Repo.Command.navigateAndFetchOne Actions.config actionId)
+              , Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config)
+              , Cmd.map AuthMsg (Repo.Command.fetchAll Authentications.config)
+              ]
+            )
 
         [ "poller", "credentials" ] ->
             ( AuthsRoute
             , [ Cmd.map AuthMsg (Repo.Command.fetchAll Authentications.config)
               , Cmd.map PollsMsg (Repo.Command.fetchAll Polls.config)
-              , Cmd.map ActionsMsg (Repo.Command.fetchAll Actions.config)
+              , Cmd.map (ActionsMsg << Actions.RepoMsg) (Repo.Command.fetchAll Actions.config)
               ]
-            , True
             )
 
         _ ->
-            ( NotFoundRoute, [], False )
+            ( NotFoundRoute, [] )
 
 
 segments : String -> List String

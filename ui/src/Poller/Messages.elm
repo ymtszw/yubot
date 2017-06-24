@@ -1,4 +1,4 @@
-module Poller.Messages exposing (Msg(..), fromRepo)
+module Poller.Messages exposing (Msg(..), fromRepo, fromActions)
 
 import Time
 import Date
@@ -13,7 +13,7 @@ import Authentications
 
 type Msg
     = PollsMsg (Repo.Messages.Msg Polls.Poll)
-    | ActionsMsg (Repo.Messages.Msg Actions.Action)
+    | ActionsMsg Actions.Msg
     | AuthMsg (Repo.Messages.Msg Authentications.Authentication)
     | NavbarMsg Bootstrap.Navbar.State
     | ChangeLocation Utils.Url
@@ -33,3 +33,15 @@ fromRepo fallbackMapper subMsg =
 
         otherMsg ->
             fallbackMapper otherMsg
+
+
+{-| Map Actions messages into root (Poller) messages
+-}
+fromActions : (Actions.Msg -> Msg) -> Actions.Msg -> Msg
+fromActions rootMapper msg =
+    case msg of
+        Actions.RepoMsg (Repo.Messages.ChangeLocation url) ->
+            ChangeLocation url
+
+        otherMsg ->
+            rootMapper otherMsg
