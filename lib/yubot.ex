@@ -5,7 +5,7 @@ defmodule Yubot do
   @spec children :: [Supervisor.Spec.spec]
   def children() do
     dev_only_children() ++ [
-      Supervisor.Spec.worker(Yubot.RateLimiter, [])
+      Yubot.RateLimiter.child_spec(),
     ]
   end
 

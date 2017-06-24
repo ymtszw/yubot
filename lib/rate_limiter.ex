@@ -44,6 +44,10 @@ defmodule Yubot.RateLimiter do
   @type unit_state :: {current_count :: non_neg_integer, reset_at :: Time.t}
   @type state :: %{limit_unit => unit_state}
 
+  def child_spec() do
+    Supervisor.Spec.worker(__MODULE__, [])
+  end
+
   def start_link() do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
@@ -92,13 +96,21 @@ defmodule Yubot.RateLimiter do
     {:noreply, state}
   end
 
+  def call_with_dynamically_start_child(request) do
+    try do
+      GenServer.call(__MODULE__, request)
+    catch
+      :exit, {:noproc, {GenServer, :call, [__MODULE__, ^request, _]}} ->
+        Supervisor.start_child(Yubot.Supervisor, child_spec())
+        GenServer.call(__MODULE__, request)
+    end
+  end
+
   #
   # API
   #
 
-  def get_state() do
-    GenServer.call(__MODULE__, :get_state)
-  end
+  def get_state(), do: call_with_dynamically_start_child(:get_state)
 
   @doc """
   Increment count of `target`, with `limit_units` applied.
@@ -108,6 +120,6 @@ defmodule Yubot.RateLimiter do
   You may apply up to 3 `limit_units` per `target`.
   """
   def push(target, limit_units) when length(limit_units) <= 3 do
-    GenServer.call(__MODULE__, {:push, target, limit_units})
+    call_with_dynamically_start_child({:push, target, limit_units})
   end
 end
