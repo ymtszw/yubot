@@ -8,10 +8,12 @@ defmodule Yubot.Oauth do
 
       defmodule YourGear.Oauth.SomeProvider do
         use #{inspect(__MODULE__)}, env_prefix "some_provider",
-          redirect_url: SolomonLib.Env.default_base_url(:your_gear) <> "/oauth/callback",
+          redirect_path: "/oauth/callback",
           authorize_url: "https://some.provider.com/oauth2/auth",
           token_url: "https://some.provider.com/oauth2/token"
       end
+
+  You may override private `redirect_url/0`. In that case, `:redirect_path` is unnecessary.
 
   Next steps will be:
 
@@ -37,14 +39,13 @@ defmodule Yubot.Oauth do
       @behaviour OAuth2.Strategy
 
       @env_prefix    Keyword.fetch!(opts, :env_prefix)
-      @redirect_url  Keyword.fetch!(opts, :redirect_url)
       @authorize_url Keyword.fetch!(opts, :authorize_url)
       @token_url     Keyword.fetch!(opts, :token_url)
 
       # Public APIs
 
       def client() do
-        Yubot.Oauth.client_impl(__MODULE__, @env_prefix, @redirect_url, @authorize_url, @token_url)
+        Yubot.Oauth.client_impl(__MODULE__, @env_prefix, redirect_url(), @authorize_url, @token_url)
       end
 
       def authorize_url!(params) do
@@ -69,16 +70,22 @@ defmodule Yubot.Oauth do
         |> OAuth2.Client.put_header("accept", "application/json")
         |> OAuth2.Strategy.AuthCode.get_token(p, h)
       end
+
+      @doc false
+      @redirect_path opts[:redirect_path]
+      defp redirect_url(), do: "#{SolomonLib.Env.default_base_url(:yubot)}#{@redirect_path}"
+
+      defoverridable [redirect_url: 0]
     end
   end
 
   @doc false
-  def client_impl(module, env_prefix, redirect_url, authorize_url, token_url) do
+  def client_impl(module, env_prefix, redirect_uri, authorize_url, token_url) do
     OAuth2.Client.new([
       strategy: module,
       client_id: Yubot.get_env("#{env_prefix}_client_id"),
       client_secret: Yubot.get_env("#{env_prefix}_client_secret"),
-      redirect_uri: redirect_url,
+      redirect_uri: redirect_uri,
       authorize_url: authorize_url,
       token_url: token_url,
     ])

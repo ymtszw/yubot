@@ -5,7 +5,7 @@ defmodule Yubot.Oauth.Github do
 
   use Yubot.Oauth,
     env_prefix: "github",
-    redirect_url: SolomonLib.Env.default_base_url(:yubot) <> "/oauth/github/callback",
+    redirect_path: "/oauth/github/callback",
     authorize_url: "https://github.com/login/oauth/authorize",
     token_url: "https://github.com/login/oauth/access_token"
 
