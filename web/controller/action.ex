@@ -2,13 +2,13 @@ use Croma
 
 defmodule Yubot.Controller.Action do
   alias Croma.Result, as: R
-  use Yubot.Controller
+  use Yubot.Controller, auth: :cookie_or_header
   alias Yubot.RateLimiter
   alias Yubot.Model.{Action, Authentication}
 
   # POST /api/action
   def create(conn) do
-    create_impl(conn.request.body, Yubot.Dodai.root_key(), group_id(conn))
+    create_impl(conn.request.body, key(conn), group_id(conn))
     |> handle_with_201_json(conn)
   end
 
@@ -28,20 +28,20 @@ defmodule Yubot.Controller.Action do
 
   # GET /api/action/:id
   def retrieve(conn) do
-    Action.retrieve(conn.request.path_matches.id, Yubot.Dodai.root_key(), group_id(conn))
+    Action.retrieve(conn.request.path_matches.id, key(conn), group_id(conn))
     |> handle_with_200_json(conn)
   end
 
   # GET /api/action
   def retrieve_list(conn) do
-    Action.retrieve_list(%{}, Yubot.Dodai.root_key(), group_id(conn))
+    Action.retrieve_list(%{}, key(conn), group_id(conn))
     |> handle_with_200_json(conn)
   end
 
   # PUT /api/action
   def update(conn) do
     Action.Data.new(conn.request.body)
-    |> R.bind(&update_impl(&1, conn.request.path_matches.id, Yubot.Dodai.root_key(), group_id(conn)))
+    |> R.bind(&update_impl(&1, conn.request.path_matches.id, key(conn), group_id(conn)))
     |> handle_with_200_json(conn)
   end
 
@@ -55,7 +55,7 @@ defmodule Yubot.Controller.Action do
 
   # DELETE /api/action/:id
   def delete(conn) do
-    Action.delete(conn.request.path_matches.id, nil, Yubot.Dodai.root_key(), group_id(conn))
+    Action.delete(conn.request.path_matches.id, nil, key(conn), group_id(conn))
     |> handle_with_204(conn)
   end
 
@@ -84,5 +84,5 @@ defmodule Yubot.Controller.Action do
   end
 
   defp fetch_auth(nil, _conn), do: {:ok, nil}
-  defp fetch_auth(auth_id, conn), do: Authentication.retrieve(auth_id, Yubot.Dodai.root_key(), group_id(conn))
+  defp fetch_auth(auth_id, conn), do: Authentication.retrieve(auth_id, key(conn), group_id(conn))
 end

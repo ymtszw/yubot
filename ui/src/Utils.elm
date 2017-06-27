@@ -25,11 +25,13 @@ module Utils
         , shortenUrl
         , stringToBool
         , toLowerString
+        , emit
         )
 
 import Date
 import Dict exposing (Dict)
 import Json.Encode
+import Task
 
 
 type alias Timestamp =
@@ -307,3 +309,10 @@ Usually applied to Union Types to String conversions.
 toLowerString : x -> String
 toLowerString x =
     x |> toString |> String.toLower
+
+
+{-| Generate Cmd to just emit given `message`
+-}
+emit : msg -> Cmd msg
+emit message =
+    message |> Task.succeed |> Task.perform identity

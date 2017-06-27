@@ -5,13 +5,17 @@ import Set
 import Html exposing (Html, text)
 import Html.Attributes as Attr exposing (class)
 import Html.Lazy as Z
+import Html.Events
+import Http
 import Bootstrap.Navbar as Navbar
 import Utils
 import Stack
 import Routing exposing (Route(..))
+import User
 import Repo
 import Repo.Messages
 import Repo.ViewParts exposing (errorToast)
+import OAuth
 import Polls
 import Polls.View
 import Actions
@@ -25,9 +29,68 @@ import ViewParts exposing (none)
 
 
 view : Model -> Html Msg
-view ({ isDev, navbarState, route } as model) =
+view model =
+    case model.route of
+        LoginRoute ->
+            loginView model
+
+        _ ->
+            mainView model
+
+
+loginView : Model -> Html Msg
+loginView ({ isDev, taskStack } as model) =
+    Html.div [ class "container" ]
+        [ Html.div [ class "row" ]
+            [ Html.div [ class "col-sm-12 col-md-10 col-lg-6 offset-md-1 offset-lg-3" ]
+                [ ViewParts.cardBlock (spinner taskStack :: brand isDev) "" Nothing (loginForm model) ]
+            ]
+        ]
+
+
+loginForm : Model -> Html Msg
+loginForm { routeBeforeLogin } =
     Html.div []
-        [ Z.lazy3 navbar isDev navbarState route
+        [ oauthLoginButton routeBeforeLogin [ class "btn-secondary mt-3" ] "fa-google" Styles.googleBlue OAuth.Google
+        , oauthLoginButton routeBeforeLogin [ class "btn-secondary mt-3" ] "fa-github" Styles.githubBlack OAuth.GitHub
+        ]
+
+
+oauthLoginButton : Maybe Route -> List (Html.Attribute Msg) -> String -> Html.Attribute Msg -> OAuth.Provider -> Html Msg
+oauthLoginButton maybeRoute attrs iconFa iconStyle provider =
+    Html.a
+        ([ class "btn btn-block"
+         , Attr.href (oauthLoginLink maybeRoute provider)
+         , Html.Events.onClick OnLoginButtonClick -- Purely cosmetic; this won't prevent default link behavior
+         ]
+            ++ attrs
+        )
+        [ ViewParts.fa [ iconStyle ] 2 iconFa
+        , text ("Login with " ++ toString provider)
+        ]
+
+
+oauthLoginLink : Maybe Route -> OAuth.Provider -> Utils.Url
+oauthLoginLink maybeRoute provider =
+    let
+        returnPath =
+            maybeRoute |> Maybe.map Routing.routeToPath |> Maybe.withDefault "/poller" |> Http.encodeUri
+    in
+        "/oauth/" ++ Utils.toLowerString provider ++ "/login?return_path=" ++ returnPath
+
+
+brand : Bool -> List (Html msg)
+brand isDev =
+    [ Html.img [ class "align-bottom mx-1", Attr.src (Assets.url isDev "img/poller/favicon32.png") ] []
+    , text "Poller"
+    , Html.small [ Styles.xSmall ] [ text "the Bear" ]
+    ]
+
+
+mainView : Model -> Html Msg
+mainView model =
+    Html.div []
+        [ navbar model
         , errorToasts model
         , Html.div [ class "container-fluid mt-3" ]
             [ Html.div [ class "row" ]
@@ -45,47 +108,34 @@ errorToasts { pollRepo, actionRepo, authRepo, taskStack } =
                 , actionRepo.errors |> Z.lazy errorToast |> Html.map (Poller.Messages.fromActions ActionsMsg << Actions.RepoMsg)
                 , authRepo.errors |> Z.lazy errorToast |> htmlMap AuthMsg
                 ]
-            , Z.lazy spinner taskStack
+            , Html.div [ class "col-md-1 col-lg-2" ] [ Z.lazy spinner taskStack ]
             ]
         ]
 
 
 spinner : Stack.Stack () -> Html msg
 spinner taskStack =
-    Html.div [ class "col-md-1 col-lg-2" ]
-        [ Html.i
-            [ class "float-right fa fa-spinner fa-pulse fa-3x fa-fw"
-            , Styles.display (Stack.nonEmpty taskStack)
-            ]
-            []
-        ]
+    ViewParts.fa [ class "float-right fa-pulse", Styles.display (Stack.nonEmpty taskStack) ] 2 "fa-spinner"
 
 
-navbar : Bool -> Navbar.State -> Route -> Html Msg
-navbar isDev navbarState route =
-    let
-        logo =
-            Html.h3 [ class "mb-0" ]
-                [ Html.img [ class "align-bottom mx-1", Attr.src (Assets.url isDev "img/poller/favicon32.png") ] []
-                , text "Poller"
-                , Html.small [ Styles.xSmall ] [ text "the Bear" ]
-                ]
-    in
-        Navbar.config NavbarMsg
-            |> Navbar.withAnimation
-            |> Navbar.collapseSmall
-            |> Navbar.brand (navigate "/") [ logo ]
-            |> Navbar.items (List.map (navbarItem route) [ "Polls", "Actions", "Credentials" ])
-            |> Navbar.view navbarState
+navbar : Model -> Html Msg
+navbar { isDev, navbarState, route, user, userDropdownVisible } =
+    Navbar.config NavbarMsg
+        |> Navbar.withAnimation
+        |> Navbar.collapseSmall
+        |> Navbar.brand (navigate "/") [ Html.h3 [ class "mb-0" ] (brand isDev) ]
+        |> Navbar.items (List.map (navbarItem route) [ "Polls", "Actions", "Credentials" ])
+        |> Navbar.customItems (userDropdown user userDropdownVisible)
+        |> Navbar.view navbarState
 
 
 navbarItem : Route -> String -> Navbar.Item Msg
 navbarItem route itemLabel =
     let
-        attrs =
-            Utils.ite (isActiveItem route itemLabel) [ class "pb-0 active", Styles.activeNavbarItem ] [ class "pb-0" ]
+        itemFun =
+            Utils.ite (isActiveItem route itemLabel) Navbar.itemLinkActive Navbar.itemLink
     in
-        Navbar.itemLink (attrs ++ navigate ("/" ++ (String.toLower itemLabel))) [ text itemLabel ]
+        itemFun (navigate ("/" ++ (String.toLower itemLabel))) [ text itemLabel ]
 
 
 isActiveItem : Route -> String -> Bool
@@ -111,6 +161,40 @@ isActiveItem route =
 
         _ ->
             always False
+
+
+userDropdown : Maybe User.User -> Bool -> List (Navbar.CustomItem Msg)
+userDropdown maybeUser userDropdownVisible =
+    let
+        hideOnClick =
+            Html.Events.onClick (UserDropdownMsg (not userDropdownVisible))
+
+        dropdown email { displayName } =
+            Navbar.textItem
+                [ class ("dropdown" ++ (Utils.ite userDropdownVisible " show" ""))
+                , hideOnClick
+                , Styles.fakeLink
+                ]
+                [ Html.a [ class "dropdown-toggle" ] [ text displayName ]
+                , Html.div [ class "dropdown-menu dropdown-menu-right" ]
+                    [ Html.h5 [ class "dropdown-header" ] [ text email ]
+                    , Html.div [ class "dropdown-divider" ] []
+                    , Html.a
+                        [ class "dropdown-item"
+                        , Html.Events.onClick Logout
+                        ]
+                        [ ViewParts.fa [] 1 "fa-sign-out"
+                        , text "Logout"
+                        ]
+                    ]
+                ]
+    in
+        case maybeUser of
+            Just { email, data } ->
+                [ dropdown email data ]
+
+            Nothing ->
+                []
 
 
 mainContent : Model -> Html Msg

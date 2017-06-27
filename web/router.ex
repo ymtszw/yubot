@@ -3,11 +3,17 @@ defmodule Yubot.Router do
 
   static_prefix "/static"
 
-  get "/"            , Root, :index
+  get "/", Root, :index
+
+  get "/oauth/:provider/login"   , Oauth, :login
+  get "/oauth/:provider/callback", Oauth, :callback
+
   get "/poller"      , Root, :poller
   get "/poller/*path", Root, :poller
 
-  # Poller APIs
+  # (Not so) RESTful APIs
+
+  post "/api/user/logout", User, :logout
 
   post   "/api/poll"    , Poll, :create
   get    "/api/poll/:id", Poll, :retrieve

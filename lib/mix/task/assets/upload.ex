@@ -23,29 +23,31 @@ defmodule Mix.Tasks.Yubot.Assets.Upload do
   @external_cdn_assets %{
     "bootstrap.min.css" => "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css",
   }
+  @application_js ["poller.js"]
 
-  def run([env]), do: run_impl(env)
-  def run(_), do: run_impl("dev")
+  def run([env, target]), do: run_impl(env, target)
+  def run([target]), do: run_impl("dev", target)
+  def run(_), do: run_impl("dev", "files")
 
-  defp run_impl(env) do
+  defp run_impl(env, target) do
     System.put_env("PORT", "12121")
     Application.ensure_all_started(:solomon)
     config_file = if env == "prod", do: raise("not ready!"), else: "gear_config"
     root_key = File.read!(config_file) |> Poison.decode!() |> Map.get("dodai_root_key")
-    Assets.revoke_current(root_key, env)
-    upload_and_build_inventory(root_key, env)
+    if target == "files", do: Assets.revoke_current(root_key, env)
+    upload_and_build_inventory(root_key, env, target)
   end
 
-  defp upload_and_build_inventory(root_key, env) do
+  defp upload_and_build_inventory(root_key, env, target) do
     {commit_hash0, 0} = System.cmd("git", ["rev-parse", "--short", "HEAD"])
     commit_hash1 = String.trim(commit_hash0)
-    assets_to_serve()
+    assets_to_upload(target)
     |> Enum.map(&request_upload_url(&1, root_key, env, commit_hash1))
     |> Enum.map(&upload_and_notify(&1, root_key, env, commit_hash1))
-    |> write_inventory(commit_hash0)
+    |> write_inventory(commit_hash0, target)
   end
 
-  defp assets_to_serve() do
+  defp assets_to_upload(target) do
     Path.join(@assets_directory, "**")
     |> Path.wildcard()
     |> ignore_external_cdn_assets()
@@ -56,6 +58,10 @@ defmodule Mix.Tasks.Yubot.Assets.Upload do
       end
     end)
     |> Enum.reject(&is_nil/1)
+    |> Enum.filter(fn
+      {_, file_rel_path, _} when file_rel_path in @application_js -> target == "app"
+      _otherwise -> target != "app"
+    end)
   end
 
   defp ignore_external_cdn_assets(file_abs_paths) do
@@ -78,9 +84,16 @@ defmodule Mix.Tasks.Yubot.Assets.Upload do
     "#{asset_rel_path} #{https_url}\n"
   end
 
-  defp write_inventory(lines, commit_hash0) do
-    lines_with_external_assets = lines ++ Enum.map(@external_cdn_assets, fn {asset_rel_path, cdn_url} -> "#{asset_rel_path} #{cdn_url}\n" end)
+  defp write_inventory(lines, _, "app") do
+    File.write!(@assets_inventory, Enum.join(lines), [:append])
+    touch_assets_module()
+  end
+  defp write_inventory(lines, commit_hash0, _) do
+    lines_with_external_assets = Enum.into(@external_cdn_assets, lines, fn {asset_rel_path, cdn_url} -> "#{asset_rel_path} #{cdn_url}\n" end)
     File.write!(@assets_inventory, Enum.join([commit_hash0 | lines_with_external_assets]))
+  end
+
+  defp touch_assets_module() do
     File.touch!(@assets_module)
     IO.puts("Refreshed " <> IO.ANSI.green() <> @assets_module <> IO.ANSI.reset())
   end

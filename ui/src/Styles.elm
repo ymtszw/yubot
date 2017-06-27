@@ -133,27 +133,27 @@ bottomBordered =
 
 hipchatYellow : Attribute msg
 hipchatYellow =
-    style [ ( "background-color", "rgb(254, 247, 228)" ) ]
+    style [ ( "background-color", "rgb(254,247,228)" ) ]
 
 
 hipchatPurple : Attribute msg
 hipchatPurple =
-    style [ ( "background-color", "rgb(233, 229, 237)" ) ]
+    style [ ( "background-color", "rgb(233,229,237)" ) ]
 
 
 hipchatGreen : Attribute msg
 hipchatGreen =
-    style [ ( "background-color", "rgb(233, 243, 229)" ) ]
+    style [ ( "background-color", "rgb(233,243,229)" ) ]
 
 
 hipchatRed : Attribute msg
 hipchatRed =
-    style [ ( "background-color", "rgb(249, 228, 226)" ) ]
+    style [ ( "background-color", "rgb(249,228,226)" ) ]
 
 
 hipchatGray : Attribute msg
 hipchatGray =
-    style [ ( "background-color", "rgb(245, 245, 245)" ) ]
+    style [ ( "background-color", "rgb(245,245,245)" ) ]
 
 
 hipchatColor : Color -> Attribute msg
@@ -232,40 +232,50 @@ textarea =
         ]
 
 
+googleBlue : Attribute msg
+googleBlue =
+    style [ ( "color", "rgb(66,133,244)" ) ]
 
--- Help
+
+githubBlack : Attribute msg
+githubBlack =
+    style [ ( "color", "rgb(51,51,51)" ) ]
+
+
+
+-- Helpers
 
 
 lightGrey : String
 lightGrey =
-    "rgb(234, 234, 234)"
+    "rgb(234,234,234)"
 
 
 transparentLightGrey : String
 transparentLightGrey =
-    "rgba(234, 234, 234, 0.4)"
+    "rgba(234,234,234,0.4)"
 
 
 mediumGrey : String
 mediumGrey =
-    "rgb(185, 185, 185)"
+    "rgb(185,185,185)"
 
 
 darkGrey : String
 darkGrey =
-    "rgb(128, 128, 128)"
+    "rgb(128,128,128)"
 
 
 fullyTransparent : String
 fullyTransparent =
-    "rgba(0, 0, 0, 0)"
+    "rgba(0,0,0,0)"
 
 
 transparentBlack : String
 transparentBlack =
-    "rgba(0, 0, 0, 0.15)"
+    "rgba(0,0,0,0.15)"
 
 
 monospaceFonts : String
 monospaceFonts =
-    "Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace"
+    "Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace"

@@ -2,13 +2,13 @@ use Croma
 
 defmodule Yubot.Controller.Poll do
   alias Croma.Result, as: R
-  use Yubot.Controller
+  use Yubot.Controller, auth: :cookie_or_header
   alias Yubot.StringTemplate, as: ST
   alias Yubot.Model.{Poll, Action, Authentication}
 
   # POST /api/poll
   def create(conn) do
-    create_impl(conn.request.body, Yubot.Dodai.root_key(), group_id(conn))
+    create_impl(conn.request.body, key(conn), group_id(conn))
     |> handle_with_201_json(conn)
   end
 
@@ -56,19 +56,19 @@ defmodule Yubot.Controller.Poll do
 
   # GET /api/poll/:id
   def retrieve(conn) do
-    Poll.retrieve(conn.request.path_matches.id, Yubot.Dodai.root_key(), group_id(conn))
+    Poll.retrieve(conn.request.path_matches.id, key(conn), group_id(conn))
     |> handle_with_200_json(conn)
   end
 
   # GET /api/poll
   def retrieve_list(conn) do
-    Poll.retrieve_list(%{}, Yubot.Dodai.root_key(), group_id(conn))
+    Poll.retrieve_list(%{}, key(conn), group_id(conn))
     |> handle_with_200_json(conn)
   end
 
   # DELETE /api/poll/:id
   def delete(conn) do
-    Poll.delete(conn.request.path_matches.id, nil, Yubot.Dodai.root_key(), group_id(conn))
+    Poll.delete(conn.request.path_matches.id, nil, key(conn), group_id(conn))
     |> handle_with_204(conn)
   end
 end

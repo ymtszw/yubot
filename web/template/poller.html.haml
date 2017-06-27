@@ -1,1 +1,4 @@
-%script(type="text/javascript") Elm.Poller.fullscreen(#{raw Poison.encode!(flags)})
+%script(type="text/javascript")
+  var app = Elm.Poller.fullscreen(#{raw Poison.encode!(flags)})
+  app.ports.set.subscribe(function(title) { app.ports.receive.send(document.title = title); });
+  app.ports.receive.send(document.title);

@@ -16,10 +16,16 @@ type Msg
     | ActionsMsg Actions.Msg
     | AuthMsg (Repo.Messages.Msg Authentications.Authentication)
     | NavbarMsg Bootstrap.Navbar.State
+    | UserDropdownMsg Bool
+    | PromptLogin
+    | OnLoginButtonClick
+    | Logout
+    | OnLogout
     | ChangeLocation Utils.Url
     | OnLocationChange Navigation.Location
     | OnServerPush String
     | OnClientTimeout Time.Time
+    | OnReceiveTitle String
     | DatedLog String String Date.Date
 
 
@@ -30,6 +36,9 @@ fromRepo fallbackMapper subMsg =
     case subMsg of
         Repo.Messages.ChangeLocation url ->
             ChangeLocation url
+
+        Repo.Messages.PromptLogin ->
+            PromptLogin
 
         otherMsg ->
             fallbackMapper otherMsg
@@ -42,6 +51,12 @@ fromActions rootMapper msg =
     case msg of
         Actions.RepoMsg (Repo.Messages.ChangeLocation url) ->
             ChangeLocation url
+
+        Actions.RepoMsg Repo.Messages.PromptLogin ->
+            PromptLogin
+
+        Actions.Trial Actions.PromptLogin ->
+            PromptLogin
 
         otherMsg ->
             rootMapper otherMsg

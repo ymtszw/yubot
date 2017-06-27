@@ -7,16 +7,19 @@ import Utils
 import Stack
 import LiveReload
 import Routing
+import Title
 import Repo.Update exposing (StackCmd(..))
+import Repo.Messages
 import Polls
 import Actions
 import Authentications
 import Poller.Model exposing (Model)
 import Poller.Messages exposing (Msg(..))
+import Poller.Command
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg ({ taskStack } as model) =
+update msg ({ route, taskStack } as model) =
     let
         resolveTask stackCmd model =
             let
@@ -35,15 +38,38 @@ update msg ({ taskStack } as model) =
 
         mapUpdate repoToModel msg ( x, cmd, stackCmd ) =
             ( x |> repoToModel |> resolveTask stackCmd, Cmd.map msg cmd )
+
+        promptLogin =
+            if route == Routing.LoginRoute then
+                ( model, Cmd.none )
+            else
+                ( { model
+                    | route = Routing.LoginRoute -- Somewhat hacky; preemptively setting next route so that duplicate newUrl won't happen
+                    , routeBeforeLogin = Just route
+                  }
+                , Navigation.newUrl "/poller/login"
+                )
     in
         case msg of
+            PollsMsg Repo.Messages.PromptLogin ->
+                promptLogin
+
             PollsMsg subMsg ->
                 Polls.update subMsg model.pollRepo
                     |> mapUpdate (\x -> { model | pollRepo = x }) PollsMsg
 
+            ActionsMsg (Actions.RepoMsg Repo.Messages.PromptLogin) ->
+                promptLogin
+
+            ActionsMsg (Actions.Trial Actions.PromptLogin) ->
+                promptLogin
+
             ActionsMsg subMsg ->
                 Actions.update subMsg model.actionRepo
                     |> mapUpdate (\x -> { model | actionRepo = x }) ActionsMsg
+
+            AuthMsg Repo.Messages.PromptLogin ->
+                promptLogin
 
             AuthMsg subMsg ->
                 Authentications.update subMsg model.authRepo
@@ -52,15 +78,31 @@ update msg ({ taskStack } as model) =
             NavbarMsg state ->
                 ( { model | navbarState = state }, Cmd.none )
 
+            UserDropdownMsg isVisible ->
+                ( { model | userDropdownVisible = isVisible }, Cmd.none )
+
+            PromptLogin ->
+                promptLogin
+
+            OnLoginButtonClick ->
+                -- Purely cosmetic state; will be refreshed by redirect
+                ( { model | taskStack = Stack.push () taskStack }, Cmd.none )
+
+            Logout ->
+                ( model, Poller.Command.logout )
+
+            OnLogout ->
+                ( model, Navigation.load "/poller/login" )
+
             ChangeLocation path ->
                 ( model, Navigation.newUrl ("/poller" ++ path) )
 
             OnLocationChange location ->
                 let
-                    ( route, cmds ) =
+                    ( route, cmds, subTitles ) =
                         Routing.parseLocation location
                 in
-                    ( { model | route = route, taskStack = List.map (always ()) cmds }, Cmd.batch cmds )
+                    ( { model | route = route, taskStack = List.map (always ()) cmds }, Cmd.batch (Title.concat subTitles :: cmds) )
 
             OnServerPush "reload" ->
                 ( model, Navigation.reloadAndSkipCache )
@@ -70,6 +112,9 @@ update msg ({ taskStack } as model) =
 
             OnClientTimeout _ ->
                 ( model, LiveReload.cmd model.isDev )
+
+            OnReceiveTitle title ->
+                ( { model | title = title }, Cmd.none )
 
             DatedLog label text date ->
                 Debug.log ("[" ++ (Utils.dateToFineString date) ++ "] " ++ label) text |> always ( model, Cmd.none )

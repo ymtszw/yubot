@@ -3,9 +3,11 @@ SolomonLib.Test.Config.init
 defmodule Req do
   use SolomonLib.Test.HttpClient
 
-  def bb_post_json(path, body, headers \\ %{}), do: post_json(path, body, Map.put(headers, "x-yubot-blackbox", "true"))
+  @bb_headers %{"x-yubot-blackbox" => "true", "authorization" => "dummy_key"}
 
-  def bb_get(path, headers \\ %{}), do: get(path, Map.put(headers, "x-yubot-blackbox", "true"))
+  def bb_post_json(path, body, headers \\ %{}), do: post_json(path, body, Map.merge(headers, @bb_headers))
+
+  def bb_get(path, headers \\ %{}), do: get(path, Map.merge(headers, @bb_headers))
 end
 
 defmodule Socket do

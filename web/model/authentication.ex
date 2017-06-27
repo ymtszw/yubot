@@ -12,7 +12,6 @@ defmodule Yubot.Model.Authentication do
   """
 
   alias Croma.Result, as: R
-  alias SolomonLib.Crypto.Aes
 
   defmodule Name do
     use Croma.SubtypeOfString, pattern: ~r/\A.+\Z/
@@ -33,33 +32,22 @@ defmodule Yubot.Model.Authentication do
   end
 
   defp encrypt_token(%{"token" => raw_token} = data) do
-    put_in(data["token"], encrypt(raw_token))
+    put_in(data["token"], Yubot.encrypt_base64(raw_token))
   end
   defp encrypt_token(%{token: raw_token} = data) do
-    put_in(data[:token], encrypt(raw_token))
+    put_in(data[:token], Yubot.encrypt_base64(raw_token))
   end
 
-  defp encrypt(raw_token) do
-    Aes.ctr128_encrypt(raw_token, Yubot.get_env("encryption_key")) |> Base.encode64()
-  end
-
-  defun decrypt_token(%__MODULE__{data: %Data{token: encrypted_token}} = auth) :: R.t(t) do
-    decrypt(encrypted_token)
+  defun decrypt_token(%__MODULE__{data: %Data{token: base64_token}} = auth) :: R.t(t) do
+    Yubot.decrypt_base64(base64_token)
     |> R.map(fn decrypted_token -> put_in(auth.data.token, decrypted_token) end)
-  end
-
-  defp decrypt(encrypted_token) do
-    case Base.decode64(encrypted_token) do
-      {:ok, encrypted_binary} -> Aes.ctr128_decrypt(encrypted_binary, Yubot.get_env("encryption_key"))
-      :error                  -> {:ok, encrypted_token} # Fallback for old data; not encrypted
-    end
   end
 
   defun header(nil_or_auth :: nil | %__MODULE__{}) :: R.t(%{String.t => String.t}) do
     (nil) ->
       {:ok, %{}}
-    (%__MODULE__{data: %Data{type: type, token: encrypted_token}}) ->
-      encrypted_token |> decrypt() |> R.map(&%{"authorization" => header_impl(type, &1)})
+    (%__MODULE__{data: %Data{type: type, token: base64_token}}) ->
+      base64_token |> Yubot.decrypt_base64() |> R.map(&%{"authorization" => header_impl(type, &1)})
   end
 
   defp header_impl(:raw, token), do: token

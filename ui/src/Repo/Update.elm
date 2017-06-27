@@ -3,6 +3,7 @@ module Repo.Update exposing (StackCmd(..), update, onHttpError)
 import Dict
 import Http
 import Navigation
+import Utils
 import Repo exposing (Repo)
 import Repo.Messages exposing (Msg(..))
 import Repo.Command as Command exposing (Config)
@@ -22,7 +23,7 @@ update dummyData config msg ({ dirtyDict } as repo) =
             ( Repo.put newEntity repo, Cmd.none, Pop )
 
         OnFetchOne (Err httpError) ->
-            ( onHttpError repo httpError, Cmd.none, Pop )
+            onHttpError PromptLogin repo httpError
 
         OnNavigateAndFetchOne (Ok newEntity) ->
             ( Repo.put newEntity repo, Cmd.none, Pop )
@@ -35,7 +36,7 @@ update dummyData config msg ({ dirtyDict } as repo) =
             ( { repo | dict = Repo.listToDict newEntities }, Cmd.none, Pop )
 
         OnFetchAll (Err httpError) ->
-            ( onHttpError repo httpError, Cmd.none, Pop )
+            onHttpError PromptLogin repo httpError
 
         Sort sorter ->
             ( { repo | sort = sorter }, Cmd.none, Keep )
@@ -56,7 +57,7 @@ update dummyData config msg ({ dirtyDict } as repo) =
             ( repo, Navigation.newUrl ("/poller" ++ config.indexPath), Pop )
 
         OnDelete (Err httpError) ->
-            ( onHttpError repo httpError, Cmd.none, Pop )
+            onHttpError PromptLogin repo httpError
 
         StartEdit entityId dirtyEntity ->
             ( { repo | dirtyDict = Dict.insert entityId ( dirtyEntity, Dict.empty ) dirtyDict }, Cmd.none, Keep )
@@ -83,7 +84,7 @@ update dummyData config msg ({ dirtyDict } as repo) =
             )
 
         OnCreate dirtyId (Err httpError) ->
-            ( onHttpError repo httpError, Cmd.none, Pop )
+            onHttpError PromptLogin repo httpError
 
         SetErrors newErrors ->
             ( { repo | errors = newErrors }, Cmd.none, Keep )
@@ -95,18 +96,15 @@ update dummyData config msg ({ dirtyDict } as repo) =
             ( { repo | dirtyDict = Dict.remove newEntity.id dirtyDict } |> Repo.put newEntity, Cmd.none, Pop )
 
         OnUpdate (Err httpError) ->
-            ( onHttpError repo httpError, Cmd.none, Pop )
+            onHttpError PromptLogin repo httpError
 
-        NoOp ->
-            ( repo, Cmd.none, Keep )
-
-        ChangeLocation _ ->
+        _ ->
             -- Should not happen; stolen by root update
             ( repo, Cmd.none, Keep )
 
 
-onHttpError : Repo a t -> Http.Error -> Repo a t
-onHttpError ({ errors } as repo) httpError =
+handleAuthorized : Repo a t -> Http.Error -> Repo a t
+handleAuthorized ({ errors } as repo) httpError =
     let
         responseToDesc { url, status, body } =
             [ ( "URL", url )
@@ -132,3 +130,16 @@ onHttpError ({ errors } as repo) httpError =
                     Error.one Error.UnexpectedError "Invalid URL" url
     in
         { repo | errors = newError :: errors }
+
+
+onHttpError : msg -> Repo a t -> Http.Error -> ( Repo a t, Cmd msg, StackCmd )
+onHttpError promptLogin repo httpError =
+    case httpError of
+        Http.BadStatus { status } ->
+            if status.code == 401 then
+                ( repo, Utils.emit promptLogin, Pop )
+            else
+                ( handleAuthorized repo httpError, Cmd.none, Pop )
+
+        _ ->
+            ( handleAuthorized repo httpError, Cmd.none, Pop )

@@ -5,6 +5,10 @@ defmodule Yubot.Model.Poll do
   alias Yubot.Jq
   alias Yubot.Model.{Authentication, Action}
 
+  defmodule Capacity do
+    use Croma.SubtypeOfInt, min: 5_000, default: 5_000
+  end
+
   defmodule Interval do
     @type t :: String.t
 

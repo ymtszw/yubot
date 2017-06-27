@@ -26,4 +26,5 @@ type Msg x
     | OnUpdate (Result Http.Error (Repo.Entity x))
     | SetErrors (List Error.Error)
     | NoOp
-    | ChangeLocation Utils.Url -- Should be handled by root Update
+    | PromptLogin -- Handled by root Update
+    | ChangeLocation Utils.Url -- Handled by root Update

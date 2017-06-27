@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.Yubot.Assets do
   @moduledoc """
-  Upload assets to CDN and generate Elm Assets module.
+  Upload assets and compiled Elm application to CDN.
 
   # Usage
 
@@ -9,11 +9,16 @@ defmodule Mix.Tasks.Yubot.Assets do
 
   use Mix.Task
 
-  @shortdoc "Upload assets to CDN and generate Elm Assets module"
+  @shortdoc "Upload assets and compiled Elm application to CDN"
 
-  def run(args) do
-    Mix.Tasks.Yubot.Assets.Upload.run(args)
+  def run([]) do
+    run(["dev"])
+  end
+  def run([env]) do
+    Mix.Tasks.Yubot.Assets.Upload.run([env, "files"])
     :timer.sleep(300)
-    Mix.Tasks.Yubot.Assets.GenElmModule.run(args)
+    Mix.Tasks.Yubot.Assets.CompileElmApp.run([])
+    :timer.sleep(300)
+    Mix.Tasks.Yubot.Assets.Upload.run([env, "app"])
   end
 end

@@ -210,6 +210,7 @@ type TrialMsg
     = OnTrialEdit String String
     | Try Action TrialValues
     | OnResponse (Result Http.Error TrialResponse)
+    | PromptLogin
     | Clear
     | NoOp
 
@@ -252,12 +253,12 @@ updateTrial msg ({ trialValues } as repo) =
             ( { repo | trialResponse = Just response }, Cmd.none, Repo.Update.Pop )
 
         OnResponse (Err httpError) ->
-            ( Repo.Update.onHttpError repo httpError, Cmd.none, Repo.Update.Pop )
+            Repo.Update.onHttpError PromptLogin repo httpError
 
         Clear ->
             ( { repo | trialValues = Dict.empty, trialResponse = Nothing }, Cmd.none, Repo.Update.Keep )
 
-        NoOp ->
+        _ ->
             ( repo, Cmd.none, Repo.Update.Keep )
 
 
