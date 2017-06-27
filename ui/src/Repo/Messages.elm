@@ -24,6 +24,7 @@ type Msg x
     | OnCreate Repo.EntityId (Result Http.Error (Repo.Entity x))
     | Update Repo.EntityId x
     | OnUpdate (Result Http.Error (Repo.Entity x))
+    | DismissError Int
     | SetErrors (List Error.Error)
     | NoOp
     | PromptLogin -- Handled by root Update

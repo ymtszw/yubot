@@ -17,7 +17,7 @@ type StackCmd
 
 
 update : t -> Config t -> Msg t -> Repo a t -> ( Repo a t, Cmd (Msg t), StackCmd )
-update dummyData config msg ({ dirtyDict } as repo) =
+update dummyData config msg ({ dirtyDict, errors } as repo) =
     case msg of
         OnFetchOne (Ok newEntity) ->
             ( Repo.put newEntity repo, Cmd.none, Pop )
@@ -86,6 +86,12 @@ update dummyData config msg ({ dirtyDict } as repo) =
         OnCreate dirtyId (Err httpError) ->
             onHttpError PromptLogin repo httpError
 
+        DismissError errorIndex ->
+            ( { repo | errors = Utils.listUpdateAt errorIndex Error.dismiss errors }
+            , Utils.emitIn 400 (SetErrors (Utils.listDeleteAt errorIndex errors))
+            , Keep
+            )
+
         SetErrors newErrors ->
             ( { repo | errors = newErrors }, Cmd.none, Keep )
 
@@ -115,10 +121,10 @@ handleAuthorized ({ errors } as repo) httpError =
         newError =
             case httpError of
                 Http.BadStatus response ->
-                    ( Error.APIError, responseToDesc response )
+                    ( Error.APIError, responseToDesc response, False )
 
                 Http.BadPayload failureMessage response ->
-                    ( Error.APIError, ( "Unable to parse body", failureMessage ) :: responseToDesc response )
+                    ( Error.APIError, ( "Unable to parse body", failureMessage ) :: responseToDesc response, False )
 
                 Http.NetworkError ->
                     Error.one Error.NetworkError "Unable to connect" ""

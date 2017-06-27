@@ -2,12 +2,15 @@ module Utils
     exposing
         ( Timestamp
         , Url
+        , Milliseconds
+        , DropdownState(..)
         , Method(..)
         , methods
         , stringToMethod
         , isJust
         , isNothing
         , listDeleteAt
+        , listUpdateAt
         , listConsIf
         , listAppendIf
         , encodeMaybe
@@ -26,12 +29,15 @@ module Utils
         , stringToBool
         , toLowerString
         , emit
+        , emitIn
         )
 
 import Date
 import Dict exposing (Dict)
 import Json.Encode
+import Process
 import Task
+import Time
 
 
 type alias Timestamp =
@@ -40,6 +46,16 @@ type alias Timestamp =
 
 type alias Url =
     String
+
+
+type alias Milliseconds =
+    Time.Time
+
+
+type DropdownState
+    = Shown
+    | Fading
+    | Hidden
 
 
 {-| HTTP method available for Polls/Actions.
@@ -109,6 +125,15 @@ listDeleteAt targetIndex list =
             list
                 |> List.foldr (folder (-)) ( -1, [] )
                 |> Tuple.second
+
+
+listUpdateAt : Int -> (x -> x) -> List x -> List x
+listUpdateAt index updateFun list =
+    let
+        updateAtIndex i =
+            ite (i == index) updateFun identity
+    in
+        List.indexedMap updateAtIndex list
 
 
 listConsIf : Bool -> a -> List a -> List a
@@ -316,3 +341,9 @@ toLowerString x =
 emit : msg -> Cmd msg
 emit message =
     message |> Task.succeed |> Task.perform identity
+
+
+emitIn : Milliseconds -> msg -> Cmd msg
+emitIn ms message =
+    Process.sleep ms
+        |> Task.perform (always message)

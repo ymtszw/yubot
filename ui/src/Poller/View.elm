@@ -8,7 +8,7 @@ import Html.Lazy as Z
 import Html.Events
 import Http
 import Bootstrap.Navbar as Navbar
-import Utils
+import Utils exposing (DropdownState(..))
 import Stack
 import Routing exposing (Route(..))
 import User
@@ -119,13 +119,13 @@ spinner taskStack =
 
 
 navbar : Model -> Html Msg
-navbar { isDev, navbarState, route, user, userDropdownVisible } =
+navbar { isDev, navbarState, route, user, userDropdownState } =
     Navbar.config NavbarMsg
         |> Navbar.withAnimation
         |> Navbar.collapseSmall
         |> Navbar.brand (navigate "/") [ Html.h3 [ class "mb-0" ] (brand isDev) ]
         |> Navbar.items (List.map (navbarItem route) [ "Polls", "Actions", "Credentials" ])
-        |> Navbar.customItems (userDropdown user userDropdownVisible)
+        |> Navbar.customItems (userDropdown user userDropdownState)
         |> Navbar.view navbarState
 
 
@@ -163,25 +163,35 @@ isActiveItem route =
             always False
 
 
-userDropdown : Maybe User.User -> Bool -> List (Navbar.CustomItem Msg)
-userDropdown maybeUser userDropdownVisible =
+userDropdown : Maybe User.User -> DropdownState -> List (Navbar.CustomItem Msg)
+userDropdown maybeUser userDropdownState =
     let
-        hideOnClick =
-            Html.Events.onClick (UserDropdownMsg (not userDropdownVisible))
+        ( itemClass, menuClass, nextState ) =
+            case userDropdownState of
+                Shown ->
+                    ( " show", " show", Fading )
+
+                Fading ->
+                    ( " show", " in", Hidden )
+
+                Hidden ->
+                    ( "", "", Shown )
 
         dropdown email { displayName } =
-            Navbar.textItem
-                [ class ("dropdown" ++ (Utils.ite userDropdownVisible " show" ""))
-                , hideOnClick
-                , Styles.fakeLink
-                ]
-                [ Html.a [ class "dropdown-toggle" ] [ text displayName ]
-                , Html.div [ class "dropdown-menu dropdown-menu-right" ]
+            Navbar.textItem [ class ("dropdown" ++ itemClass) ]
+                [ Html.a
+                    [ class "dropdown-toggle"
+                    , Html.Events.onClick (UserDropdownMsg nextState)
+                    , Styles.fakeLink
+                    ]
+                    [ text displayName ]
+                , Html.div [ class ("dropdown-menu dropdown-menu-right fade" ++ menuClass), Styles.toast ]
                     [ Html.h5 [ class "dropdown-header" ] [ text email ]
                     , Html.div [ class "dropdown-divider" ] []
                     , Html.a
                         [ class "dropdown-item"
                         , Html.Events.onClick Logout
+                        , Styles.fakeLink
                         ]
                         [ ViewParts.fa [] 1 "fa-sign-out"
                         , text "Logout"

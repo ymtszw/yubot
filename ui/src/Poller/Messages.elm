@@ -16,7 +16,7 @@ type Msg
     | ActionsMsg Actions.Msg
     | AuthMsg (Repo.Messages.Msg Authentications.Authentication)
     | NavbarMsg Bootstrap.Navbar.State
-    | UserDropdownMsg Bool
+    | UserDropdownMsg Utils.DropdownState
     | PromptLogin
     | OnLoginButtonClick
     | Logout

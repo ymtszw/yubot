@@ -78,8 +78,11 @@ update msg ({ route, taskStack } as model) =
             NavbarMsg state ->
                 ( { model | navbarState = state }, Cmd.none )
 
-            UserDropdownMsg isVisible ->
-                ( { model | userDropdownVisible = isVisible }, Cmd.none )
+            UserDropdownMsg Utils.Fading ->
+                ( { model | userDropdownState = Utils.Fading }, Utils.emitIn 400 (UserDropdownMsg Utils.Hidden) )
+
+            UserDropdownMsg state ->
+                ( { model | userDropdownState = state }, Cmd.none )
 
             PromptLogin ->
                 promptLogin

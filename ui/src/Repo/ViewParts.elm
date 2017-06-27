@@ -30,15 +30,20 @@ import Error
 errorToast : List Error.Error -> Html (Msg x)
 errorToast errors =
     let
-        dismiss index =
-            SetErrors (Utils.listDeleteAt index errors)
+        errorText label string =
+            case string of
+                "" ->
+                    label
 
-        alert index ( kind, desc ) =
-            Html.div [ class "alert alert-danger alert-dismissible", Styles.toast ]
-                [ Html.button [ class "close", Events.onClick (dismiss index) ] [ Html.span [] [ text "×" ] ]
+                _ ->
+                    label ++ ": " ++ string
+
+        alert index ( kind, desc, dismissed ) =
+            Html.div [ class ("alert alert-danger alert-dismissible fade" ++ ite dismissed "" " show"), Styles.toast ]
+                [ Html.a [ class "close", Events.onClick (DismissError index) ] [ Html.span [] [ text "×" ] ]
                 , Html.h6 [ class "alert-heading" ] [ kind |> toString |> text ]
                 , desc
-                    |> List.map (\( label, string ) -> Html.li [] [ text (label ++ ": " ++ string) ])
+                    |> List.map (\( label, string ) -> Html.li [] [ text (errorText label string) ])
                     |> Html.ul []
                 ]
     in
