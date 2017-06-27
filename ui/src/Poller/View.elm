@@ -178,7 +178,7 @@ userDropdown maybeUser userDropdownState =
                     ( "", "", Shown )
 
         dropdown email { displayName } =
-            Navbar.textItem [ class ("dropdown" ++ itemClass) ]
+            Navbar.textItem [ class ("float-right dropdown" ++ itemClass) ]
                 [ Html.a
                     [ class "dropdown-toggle"
                     , Html.Events.onClick (UserDropdownMsg nextState)
