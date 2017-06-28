@@ -27,6 +27,7 @@ type Msg
     | OnClientTimeout Time.Time
     | OnReceiveTitle String
     | DatedLog String String Date.Date
+    | NoOp
 
 
 {-| Map Repo messages into root (Poller) messages, with special treatment for `ChangeLocation` message.

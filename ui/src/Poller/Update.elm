@@ -7,7 +7,7 @@ import Utils
 import Stack
 import LiveReload
 import Routing
-import Title
+import Document
 import Repo.Update exposing (StackCmd(..))
 import Repo.Messages
 import Polls
@@ -78,8 +78,14 @@ update msg ({ route, taskStack } as model) =
             NavbarMsg state ->
                 ( { model | navbarState = state }, Cmd.none )
 
+            UserDropdownMsg Utils.Shown ->
+                ( { model | userDropdownState = Utils.Shown }, Document.setBackgroundClickListener () )
+
             UserDropdownMsg Utils.Fading ->
-                ( { model | userDropdownState = Utils.Fading }, Utils.emitIn 400 (UserDropdownMsg Utils.Hidden) )
+                { model | userDropdownState = Utils.Fading }
+                    ! [ Document.removeBackgroundClickListener ()
+                      , Utils.emitIn 400 (UserDropdownMsg Utils.Hidden)
+                      ]
 
             UserDropdownMsg state ->
                 ( { model | userDropdownState = state }, Cmd.none )
@@ -92,20 +98,20 @@ update msg ({ route, taskStack } as model) =
                 ( { model | taskStack = Stack.push () taskStack }, Cmd.none )
 
             Logout ->
-                ( model, Poller.Command.logout )
+                ( model, Poller.Command.logout ) |> fadeDropdownIfShown
 
             OnLogout ->
                 ( model, Navigation.load "/poller/login" )
 
             ChangeLocation path ->
-                ( model, Navigation.newUrl ("/poller" ++ path) )
+                ( model, Navigation.newUrl ("/poller" ++ path) ) |> fadeDropdownIfShown
 
             OnLocationChange location ->
                 let
                     ( route, cmds, subTitles ) =
                         Routing.parseLocation location
                 in
-                    ( { model | route = route, taskStack = List.map (always ()) cmds }, Cmd.batch (Title.concat subTitles :: cmds) )
+                    { model | route = route, taskStack = List.map (always ()) cmds } ! (Document.concatSubtitles subTitles :: cmds)
 
             OnServerPush "reload" ->
                 ( model, Navigation.reloadAndSkipCache )
@@ -121,6 +127,26 @@ update msg ({ route, taskStack } as model) =
 
             DatedLog label text date ->
                 Debug.log ("[" ++ (Utils.dateToFineString date) ++ "] " ++ label) text |> always ( model, Cmd.none )
+
+            NoOp ->
+                ( model, Cmd.none )
+
+
+andThen : (Model -> ( Model, Cmd Msg )) -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+andThen anotherUpdate ( model, cmd ) =
+    let
+        ( newModel, newCmd ) =
+            anotherUpdate model
+    in
+        newModel ! [ cmd, newCmd ]
+
+
+fadeDropdownIfShown : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+fadeDropdownIfShown (( model, cmd ) as prev) =
+    if model.userDropdownState == Utils.Shown then
+        prev |> andThen (update (UserDropdownMsg Utils.Fading))
+    else
+        prev
 
 
 {-| Log string into console with current datetime.

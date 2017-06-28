@@ -6,7 +6,7 @@ import Bootstrap.Navbar
 import Utils
 import LiveReload
 import Routing
-import Title
+import Document
 import User exposing (User)
 import Poller.Model exposing (Model)
 import Poller.Messages exposing (Msg(..))
@@ -40,7 +40,7 @@ init { isDev, user } location =
             List.map (always ()) initCmds1
     in
         Poller.Model.initialModel isDev decodedUser initTaskStack currentRoute navbarState
-            ! (Title.concat subTitles :: navbarCmd :: (initCmds1 ++ promptLoginCmds))
+            ! (Document.concatSubtitles subTitles :: navbarCmd :: (initCmds1 ++ promptLoginCmds))
 
 
 
@@ -48,11 +48,12 @@ init { isDev, user } location =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
-    [ Bootstrap.Navbar.subscriptions model.navbarState NavbarMsg
-    , Title.receive OnReceiveTitle
+subscriptions { isDev, navbarState, userDropdownState } =
+    [ Bootstrap.Navbar.subscriptions navbarState NavbarMsg
+    , Document.receiveTitle OnReceiveTitle
     ]
-        |> (++) (LiveReload.sub model.isDev)
+        |> (++) (LiveReload.sub isDev)
+        |> (++) (Document.backgroundClickSub userDropdownState)
         |> Sub.batch
 
 

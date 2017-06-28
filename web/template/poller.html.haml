@@ -1,4 +1,7 @@
 %script(type="text/javascript")
   var app = Elm.Poller.fullscreen(#{raw Poison.encode!(flags)})
-  app.ports.set.subscribe(function(title) { app.ports.receive.send(document.title = title); });
-  app.ports.receive.send(document.title);
+  app.ports.setTitle.subscribe(function(title) { app.ports.receiveTitle.send(document.title = title); });
+  app.ports.receiveTitle.send(document.title);
+  function onBackgroundClicked() { app.ports.listenBackgroundClick.send(true); };
+  app.ports.setBackgroundClickListener.subscribe(function(_any_) { document.addEventListener("click", onBackgroundClicked, false); });
+  app.ports.removeBackgroundClickListener.subscribe(function(_any_) { document.removeEventListener("click", onBackgroundClicked, false); });

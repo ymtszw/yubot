@@ -197,8 +197,20 @@ then navigating with Navigation.newUrl
 -}
 navigate : (Utils.Url -> msg) -> Utils.Url -> List (Html.Attribute msg)
 navigate changeLocationMsg url =
-    [ Attr.href url
+    [ Attr.href ("/poller" ++ url)
     , onClickNoDefault (changeLocationMsg url)
+    ]
+
+
+{-| FakeLink styled clickable attributes.
+-}
+onFakeLinkClick : Bool -> Bool -> msg -> List (Html.Attribute msg)
+onFakeLinkClick stopPropagation preventDefault msg =
+    [ Styles.fakeLink
+    , Html.Events.onWithOptions
+        "click"
+        (Html.Events.Options stopPropagation preventDefault)
+        (Json.Decode.succeed msg)
     ]
 
 
@@ -209,6 +221,16 @@ onClickNoDefault msg =
     Html.Events.onWithOptions
         "click"
         (Html.Events.Options False True)
+        (Json.Decode.succeed msg)
+
+
+{-| Same as Html.Events.onClick but with `stopPropagation: True, preventDefault: True`
+-}
+onClickNoPropagate : msg -> Html.Attribute msg
+onClickNoPropagate msg =
+    Html.Events.onWithOptions
+        "click"
+        (Html.Events.Options True True)
         (Json.Decode.succeed msg)
 
 

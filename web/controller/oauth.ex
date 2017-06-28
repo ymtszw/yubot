@@ -14,7 +14,7 @@ defmodule Yubot.Controller.Oauth do
   def login(%Conn{request: %Req{path_matches: pm, query_params: qp}} = conn) do
     conn
     |> delete_session(@key)
-    |> redirect(authorize_url(pm.provider, qp["return_path"]))
+    |> redirect(authorize_url(pm.provider, Yubot.encrypt_base64(qp["return_path"])))
   end
 
   defp authorize_url("google", return_path), do: Oauth.Google.authorize_url_for_user_info!(return_path)
@@ -23,14 +23,16 @@ defmodule Yubot.Controller.Oauth do
   # GET /oauth/:provider/callback
   def callback(%Conn{request: %Req{path_matches: pm, query_params: qp}} = conn) do
     R.m do
+      return_path <- Yubot.decrypt_base64(qp["state"])
       access_token <- code_to_token(pm.provider, qp["code"])
       {email, display_name} <- fetch_email_and_display_name(pm.provider, access_token)
-      login_or_create_user(email, display_name)
+      user <- login_or_create_user(email, display_name)
+      pure {return_path, user}
     end
-    |> handle(conn, fn %User{session: %Yubot.Dodai.Session{key: user_key}}, conn ->
+    |> handle(conn, fn {return_path, %User{session: %Yubot.Dodai.Session{key: user_key}}}, conn ->
       conn
       |> put_session(@key, Yubot.encrypt_base64(user_key))
-      |> redirect(qp["state"])
+      |> redirect(return_path)
     end)
   end
 

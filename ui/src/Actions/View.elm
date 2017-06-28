@@ -200,7 +200,7 @@ mainFormNew authDict (( { data }, audit ) as dirtyEntity) =
     in
         [ submitButton "action" isValid "Create" ]
             |> (++) (mainFormInputs authDict "new" audit data)
-            |> (::) (typeNavNew data)
+            |> (::) (typeNavNew authDict data)
             |> Html.form [ Attr.id "action", Html.Events.onSubmit (ite isValid (Create "new" data) NoOp) ]
             |> ViewParts.cardBlock [] "" Nothing
             |> Html.map Actions.RepoMsg
@@ -216,9 +216,17 @@ mainFormInputs authDict dirtyId audit data =
             hipchatDataInputs authDict dirtyId audit data
 
 
-typeNavNew : Action -> Html (Msg Action)
-typeNavNew data =
+typeNavNew : Repo.EntityDict Authentication -> Action -> Html (Msg Action)
+typeNavNew authDict data =
     let
+        selectAvailable ( type_, _, _ ) =
+            case type_ of
+                Actions.Hipchat ->
+                    authDict |> Authentications.listForHipchat |> List.isEmpty |> not
+
+                Actions.Http ->
+                    True
+
         onTypeSelect type_ =
             case type_ of
                 Actions.Hipchat ->
@@ -228,6 +236,7 @@ typeNavNew data =
                     Actions.dummyAction
     in
         (typeNavItems ((==) data.type_))
+            |> List.filter selectAvailable
             |> ViewParts.pillNav [ Styles.bordered ] (OnEditValid "new" << onTypeSelect) Nothing
 
 
@@ -543,12 +552,9 @@ deleteModalDialog { target, isShown } =
     ViewParts.modal
         (always CancelDelete)
         isShown
-        []
-        [ text "Deleting Action" ]
-        [ Html.p [] [ text ("ID: " ++ target.id) ]
-        , Actions.ViewParts.preview target.data
-        , Html.p [] [ text "Are you sure?" ]
-        ]
+        [ class "modal-sm" ]
+        [ text ("Deleting '" ++ (Maybe.withDefault target.id target.data.label) ++ "'") ]
+        [ text "Are you sure?" ]
         [ stdBtn Button.danger [ Button.onClick (Delete target.id) ] False "Yes, delete"
         , stdBtn Button.secondary [ Button.onClick CancelDelete ] False "Cancel"
         ]

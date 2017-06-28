@@ -124,7 +124,7 @@ navbar { isDev, navbarState, route, user, userDropdownState } =
         |> Navbar.withAnimation
         |> Navbar.collapseSmall
         |> Navbar.brand (navigate "/") [ Html.h3 [ class "mb-0" ] (brand isDev) ]
-        |> Navbar.items (List.map (navbarItem route) [ "Polls", "Actions", "Credentials" ])
+        |> Navbar.items (List.map (navbarItem route) [ "Polls", "Actions" ])
         |> Navbar.customItems (userDropdown user userDropdownState)
         |> Navbar.view navbarState
 
@@ -179,20 +179,15 @@ userDropdown maybeUser userDropdownState =
 
         dropdown email { displayName } =
             Navbar.textItem [ class ("float-right dropdown" ++ itemClass) ]
-                [ Html.a
-                    [ class "dropdown-toggle"
-                    , Html.Events.onClick (UserDropdownMsg nextState)
-                    , Styles.fakeLink
-                    ]
-                    [ text displayName ]
-                , Html.div [ class ("dropdown-menu dropdown-menu-right fade" ++ menuClass), Styles.toast ]
+                [ Html.a (class "dropdown-toggle" :: ViewParts.onFakeLinkClick True True (UserDropdownMsg nextState)) [ text displayName ]
+                , Html.div [ class ("dropdown-menu dropdown-menu-right fade" ++ menuClass), Styles.toast, ViewParts.onClickNoPropagate (NoOp) ]
                     [ Html.h5 [ class "dropdown-header" ] [ text email ]
                     , Html.div [ class "dropdown-divider" ] []
-                    , Html.a
-                        [ class "dropdown-item"
-                        , Html.Events.onClick Logout
-                        , Styles.fakeLink
+                    , Html.a (class "dropdown-item" :: navigate "/credentials")
+                        [ ViewParts.fa [] 1 "fa-key"
+                        , text "Credentials"
                         ]
+                    , Html.a (class "dropdown-item" :: ViewParts.onFakeLinkClick False True Logout)
                         [ ViewParts.fa [] 1 "fa-sign-out"
                         , text "Logout"
                         ]
