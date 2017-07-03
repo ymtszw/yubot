@@ -53,8 +53,16 @@ subscriptions { isDev, navbarState, userDropdownState } =
     , Document.receiveTitle OnReceiveTitle
     ]
         |> (++) (LiveReload.sub isDev)
-        |> (++) (Document.backgroundClickSub userDropdownState)
+        |> (++) (backgroundClickSub userDropdownState)
         |> Sub.batch
+
+
+backgroundClickSub : Utils.DropdownState -> List (Sub Msg)
+backgroundClickSub userDropdownState =
+    if userDropdownState == Utils.Shown then
+        [ Document.listenBackgroundClick (always (UserDropdownMsg Utils.Fading)) ]
+    else
+        []
 
 
 

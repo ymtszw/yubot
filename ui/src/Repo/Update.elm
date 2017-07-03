@@ -4,6 +4,7 @@ import Dict
 import Http
 import Navigation
 import Utils
+import Document
 import Repo exposing (Repo)
 import Repo.Messages exposing (Msg(..))
 import Repo.Command as Command exposing (Config)
@@ -42,14 +43,14 @@ update dummyData config msg ({ dirtyDict, errors } as repo) =
             ( { repo | sort = sorter }, Cmd.none, Keep )
 
         ConfirmDelete newTarget ->
-            ( { repo | deleteModal = Repo.ModalState True newTarget }, Cmd.none, Keep )
+            ( { repo | deleteModal = Repo.ModalState True newTarget }, Document.addBodyClass "modal-open", Keep )
 
         CancelDelete ->
-            ( { repo | deleteModal = Repo.ModalState False (Repo.dummyEntity dummyData) }, Cmd.none, Keep )
+            ( { repo | deleteModal = Repo.ModalState False (Repo.dummyEntity dummyData) }, Document.removeBodyClass "modal-open", Keep )
 
         Delete id ->
             ( { repo | deleteModal = Repo.ModalState False (Repo.dummyEntity dummyData) }
-            , (Command.delete config id)
+            , Cmd.batch [ Document.removeBodyClass "modal-open", Command.delete config id ]
             , Push
             )
 

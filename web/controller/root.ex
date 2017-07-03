@@ -1,7 +1,6 @@
 use Croma
 
 defmodule Yubot.Controller.Root do
-  alias Croma.Result, as: R
   use Yubot.Controller
   alias Yubot.Model.User
 
@@ -31,10 +30,17 @@ defmodule Yubot.Controller.Root do
   defp nil_or_user(conn) do
     case get_session(conn, @key) do
       nil -> nil
-      base64_key ->
-        Yubot.decrypt_base64(base64_key)
-        |> R.bind(&User.retrieve_self(&1, group_id(conn)))
-        |> R.get(nil)
+      base64_key -> retrieve_self_or_log_error(base64_key, conn)
+    end
+  end
+
+  defp retrieve_self_or_log_error(base64_key, conn) do
+    with {:ok, user_key} <- Yubot.decrypt_base64(base64_key),
+      {:ok, user} <- User.retrieve_self(user_key, group_id(conn))
+    do
+      user
+    else
+      {:error, e} -> Yubot.Logger.debug(inspect(e)) && nil
     end
   end
 end

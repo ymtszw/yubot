@@ -38,8 +38,8 @@ type alias RoomId =
 
 
 type alias UserParams =
-    { label : Maybe Actions.Label
-    , auth : Maybe Repo.EntityId
+    { label : Actions.Label
+    , authId : Maybe Repo.EntityId
     , roomId : RoomId
     , color : Color
     , notify : Bool
@@ -91,10 +91,10 @@ validateMessageTemplate string =
 isValid : ( Repo.Entity Action, Repo.Audit ) -> Bool
 isValid (( { data }, audit ) as dirtyEntity) =
     let
-        { auth, roomId } =
+        { authId, roomId } =
             fetchParams data
     in
-        Actions.isValid dirtyEntity && Utils.isJust auth && roomId /= ""
+        Actions.isValid dirtyEntity && Utils.isJust authId && roomId /= ""
 
 
 default : Action
@@ -106,14 +106,14 @@ default =
                 |> StringTemplate.render "notify" "false"
                 |> flip StringTemplate [ "message" ]
     in
-        Action Nothing Utils.POST (roomIdToUrl "") Nothing bodyTemplate Actions.Hipchat
+        Action "hipchat action" Utils.POST (roomIdToUrl "") Nothing bodyTemplate Actions.Hipchat
 
 
 {-| Apply new UserParams to `data`, validating MessageTemplate on the way.
 Even if the template is invalidated, it returns new BodyTemplate with invalid `body` inserted.
 -}
 applyParams : Action -> UserParams -> Result ( String, Action ) Action
-applyParams ({ bodyTemplate } as data) { label, auth, roomId, color, notify, messageTemplate } =
+applyParams ({ bodyTemplate } as data) { label, authId, roomId, color, notify, messageTemplate } =
     let
         body =
             bodyBase
@@ -126,7 +126,7 @@ applyParams ({ bodyTemplate } as data) { label, auth, roomId, color, notify, mes
                 | label = label
                 , method = Utils.POST
                 , url = roomIdToUrl roomId
-                , auth = auth
+                , authId = authId
                 , bodyTemplate = newBodyTemplate
                 , type_ = Actions.Hipchat
             }
@@ -143,7 +143,7 @@ applyParams ({ bodyTemplate } as data) { label, auth, roomId, color, notify, mes
 
 
 fetchParams : Action -> UserParams
-fetchParams { label, auth, url, bodyTemplate } =
+fetchParams { label, authId, url, bodyTemplate } =
     let
         roomId =
             url |> String.dropLeft 32 |> String.dropRight 13
@@ -165,7 +165,7 @@ fetchParams { label, auth, url, bodyTemplate } =
     in
         UserParams
             label
-            auth
+            authId
             roomId
             color
             notify

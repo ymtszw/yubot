@@ -17,10 +17,11 @@ defmodule Yubot.Model.Action do
   end
 
   use SolomonAcs.Dodai.Model.Datastore, data_fields: [
-    label: Croma.TypeGen.nilable(Croma.String),
+    label: Croma.String,
     method: SolomonLib.Http.Method,
     url: SolomonLib.Url,
-    auth: Croma.TypeGen.nilable(Authentication.Id),
+    # auth: Croma.TypeGen.nilable(Authentication.Id), # DEPRECATED; Eliminating since nilable field cannot be distinguished its version by itself
+    auth_id: Croma.TypeGen.nilable(Authentication.Id),
     body_template: ST,
     type: Type,
   ]

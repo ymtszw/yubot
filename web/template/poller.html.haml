@@ -1,7 +1,24 @@
-%script(type="text/javascript")
+:javascript
   var app = Elm.Poller.fullscreen(#{raw Poison.encode!(flags)})
-  app.ports.setTitle.subscribe(function(title) { app.ports.receiveTitle.send(document.title = title); });
+
+  app.ports.setTitle.subscribe(function(title) {
+    app.ports.receiveTitle.send(document.title = title);
+  });
   app.ports.receiveTitle.send(document.title);
-  function onBackgroundClicked() { app.ports.listenBackgroundClick.send(true); };
-  app.ports.setBackgroundClickListener.subscribe(function(_any_) { document.addEventListener("click", onBackgroundClicked, false); });
-  app.ports.removeBackgroundClickListener.subscribe(function(_any_) { document.removeEventListener("click", onBackgroundClicked, false); });
+
+  function onBackgroundClicked() {
+    app.ports.listenBackgroundClick.send(true);
+  };
+  app.ports.setBackgroundClickListener.subscribe(function(_any_) {
+    document.addEventListener("click", onBackgroundClicked, false);
+  });
+  app.ports.removeBackgroundClickListener.subscribe(function(_any_) {
+    document.removeEventListener("click", onBackgroundClicked, false);
+  });
+
+  app.ports.addBodyClass.subscribe(function(classString) {
+    document.body.classList.add(classString);
+  });
+  app.ports.removeBodyClass.subscribe(function(classString) {
+    document.body.classList.remove(classString);
+  });

@@ -50,10 +50,10 @@ type ActionType
 
 
 type alias Action =
-    { label : Maybe Label -- TODO: Strip Maybe later
+    { label : Label
     , method : Method
     , url : Utils.Url
-    , auth : Maybe Repo.EntityId
+    , authId : Maybe Repo.EntityId
     , bodyTemplate : StringTemplate
     , type_ : ActionType
     }
@@ -80,7 +80,7 @@ type alias Aux =
 
 dummyAction : Action
 dummyAction =
-    Action Nothing POST "https://example.com" Nothing (StringTemplate "" []) Http
+    Action "http action" POST "https://example.com" Nothing (StringTemplate "" []) Http
 
 
 populate : List (Repo.Entity Action) -> Repo Aux Action
@@ -98,14 +98,14 @@ populate entities =
 
 isValid : ( Repo.Entity Action, Repo.Audit ) -> Bool
 isValid ( { data }, audit ) =
-    Repo.isValid audit && Utils.isJust data.label && data.url /= "" && StringTemplate.isValid data.bodyTemplate
+    Repo.isValid audit && data.label /= "" && data.url /= "" && StringTemplate.isValid data.bodyTemplate
 
 
 usedAuthIds : Repo.EntityDict Action -> Set Repo.EntityId
 usedAuthIds actions =
     actions
         |> Dict.values
-        |> List.map (.data >> .auth >> Maybe.withDefault "")
+        |> List.map (.data >> .authId >> Maybe.withDefault "")
         |> Set.fromList
 
 
@@ -161,10 +161,10 @@ config =
 dataDecoder : Decode.Decoder Action
 dataDecoder =
     Decode.map6 Action
-        (Decode.field "label" (Decode.maybe Decode.string))
+        (Decode.field "label" Decode.string)
         (Decode.field "method" (Decode.map Utils.stringToMethod Decode.string))
         (Decode.field "url" Decode.string)
-        (Decode.field "auth" (Decode.maybe Decode.string))
+        (Decode.field "auth_id" (Decode.maybe Decode.string))
         (Decode.field "body_template" bodyTemplateDecoder)
         (Decode.field "type" (Decode.map stringToType Decode.string))
 
@@ -177,12 +177,12 @@ bodyTemplateDecoder =
 
 
 dataEncoder : Action -> Encode.Value
-dataEncoder { label, method, url, auth, bodyTemplate, type_ } =
+dataEncoder { label, method, url, authId, bodyTemplate, type_ } =
     Encode.object
-        [ ( "label", Utils.encodeMaybe Encode.string label )
+        [ ( "label", Encode.string label )
         , ( "method", Encode.string (Utils.toLowerString method) )
         , ( "url", Encode.string url )
-        , ( "auth", Utils.encodeMaybe Encode.string auth )
+        , ( "auth_id", Utils.encodeMaybe Encode.string authId )
         , ( "body_template", bodyTemplateEncoder bodyTemplate )
         , ( "type", Encode.string (Utils.toLowerString type_) )
         ]

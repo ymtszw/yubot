@@ -1,5 +1,5 @@
 defmodule Yubot.StringTemplateTest do
-  use Croma.TestCase, alias_as: ST
+  use Croma.TestCase, alias_as: ST, async: true
 
   test "shoud parse string into template struct" do
     assert ST.new(%{"body" => ~S""                          }) == {:ok, %ST{body: ~S""                              , variables: []}}

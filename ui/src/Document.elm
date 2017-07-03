@@ -1,3 +1,8 @@
+{-
+   Port module for communicating with document interface.
+-}
+
+
 port module Document
     exposing
         ( setTitle
@@ -7,15 +12,11 @@ port module Document
         , setBackgroundClickListener
         , removeBackgroundClickListener
         , listenBackgroundClick
-        , backgroundClickSub
+        , addBodyClass
+        , removeBodyClass
         )
 
-{-
-   Port module for communicating with document interface.
--}
-
-import Utils exposing (DropdownState(..))
-import Poller.Messages exposing (Msg(UserDropdownMsg))
+-- Title
 
 
 port setTitle : String -> Cmd msg
@@ -37,6 +38,10 @@ concatSubtitles subTitles =
         |> setTitle
 
 
+
+-- Background (document) Click
+
+
 port setBackgroundClickListener : () -> Cmd msg
 
 
@@ -46,9 +51,14 @@ port removeBackgroundClickListener : () -> Cmd msg
 port listenBackgroundClick : (Bool -> msg) -> Sub msg
 
 
-backgroundClickSub : DropdownState -> List (Sub Msg)
-backgroundClickSub userDropdownState =
-    if userDropdownState == Shown then
-        [ listenBackgroundClick (always (UserDropdownMsg Fading)) ]
-    else
-        []
+
+-- Body Class
+{-
+   Using document.body.classList#add, #remove
+-}
+
+
+port addBodyClass : String -> Cmd msg
+
+
+port removeBodyClass : String -> Cmd msg

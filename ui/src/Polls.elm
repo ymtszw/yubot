@@ -35,7 +35,7 @@ type alias JqFilter =
 type alias Poll =
     { url : Utils.Url
     , interval : Interval
-    , auth : Maybe Repo.EntityId
+    , authId : Maybe Repo.EntityId
     , action : Repo.EntityId
     , filters : List JqFilter
     }
@@ -58,7 +58,7 @@ usedAuthIds : Repo.EntityDict Poll -> Set Repo.EntityId
 usedAuthIds polls =
     polls
         |> Dict.values
-        |> List.map (.data >> .auth >> Maybe.withDefault "")
+        |> List.map (.data >> .authId >> Maybe.withDefault "")
         |> Set.fromList
 
 
@@ -86,17 +86,17 @@ dataDecoder =
     Decode.map5 Poll
         (Decode.field "url" Decode.string)
         (Decode.field "interval" Decode.string)
-        (Decode.field "auth" (Decode.maybe Decode.string))
+        (Decode.field "auth_id" (Decode.maybe Decode.string))
         (Decode.field "action" Decode.string)
         (Decode.field "filters" (Decode.list Decode.string))
 
 
 dataEncoder : Poll -> Encode.Value
-dataEncoder { url, interval, auth, action, filters } =
+dataEncoder { url, interval, authId, action, filters } =
     Encode.object
         [ ( "url", Encode.string url )
         , ( "interval", Encode.string interval )
-        , ( "auth", Utils.encodeMaybe Encode.string auth )
+        , ( "auth_id", Utils.encodeMaybe Encode.string authId )
         , ( "action", Encode.string action )
         , ( "filters", filters |> List.map Encode.string |> Encode.list )
         ]

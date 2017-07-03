@@ -1,5 +1,5 @@
 defmodule Yubot.JqTest do
-  use Croma.TestCase
+  use Croma.TestCase, async: true
 
   test "should run jq filter against map or JSON string" do
     assert Jq.run(%{foo: 1, bar: 2}        , ~S({foo})) == {:ok, ~S({"foo":1})}

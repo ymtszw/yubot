@@ -112,23 +112,13 @@ onelineSummary ({ type_ } as data) =
 
 
 httpSummary : Action -> List (Html (Msg Action))
-httpSummary ({ label, method, url, auth, type_ } as data) =
+httpSummary ({ label, method, url, authId, type_ } as data) =
     [ logo "align-middle" type_
-    , labelHtml label
+    , Html.strong [ class "mx-2" ] [ text label ]
     , Html.code [ class "mx-2" ] (ViewParts.autoLink ((toString method) ++ " " ++ url))
     , text " " -- Inline whitespace for soft-wrapping in small screen
-    , ite (Utils.isJust auth) authBadge none
+    , ite (Utils.isJust authId) authBadge none
     ]
-
-
-labelHtml : Maybe Actions.Label -> Html msg
-labelHtml label =
-    case label of
-        Just l ->
-            Html.strong [ class "mx-2" ] [ text l ]
-
-        Nothing ->
-            Html.span [ class "mx-2" ] [ text "(No Label)" ]
 
 
 authBadge : Html msg
@@ -151,7 +141,7 @@ hipchatSummaryImpl { label, roomId, color, notify } =
             ite notify ( " text-primary", "fa-toggle-on" ) ( "", "fa-toggle-off" )
     in
         List.map (Html.span [ class "mx-2" ])
-            [ [ Html.strong [] [ text (Maybe.withDefault "(no label)" label) ] ]
+            [ [ Html.strong [] [ text label ] ]
             , [ text "Room ID: ", Html.strong [] [ text roomId ] ]
             , [ text "Color: ", Html.span [ Styles.hipchatColor color ] [ text (toString color) ] ]
             , [ text "Notify: ", ViewParts.fa [ class ("fa-lg" ++ notifyClass) ] 1 notifyFa ]
@@ -241,11 +231,11 @@ typeNavNew authDict data =
 
 
 httpDataInputs : Repo.EntityDict Authentication -> Repo.EntityId -> Repo.Audit -> Action -> List (Html (Msg Action))
-httpDataInputs authDict dirtyId audit ({ label, method, url, auth } as data) =
-    [ textInputRequired "Label" audit dirtyId (\x -> { data | label = ite (x == "") Nothing (Just x) }) (Maybe.withDefault "" label)
+httpDataInputs authDict dirtyId audit ({ label, method, url, authId } as data) =
+    [ textInputRequired "Label" audit dirtyId (\x -> { data | label = x }) label
     , Utils.methods |> methodSelectItems method |> select "Method" dirtyId (\x -> { data | method = Utils.stringToMethod x })
     , textInputRequired "URL" audit dirtyId (\x -> { data | url = x }) url
-    , authSelect "action" "Credential" (Authentications.listForHttp authDict) dirtyId data auth
+    , authSelect "action" "Credential" (Authentications.listForHttp authDict) dirtyId data authId
     , httpBodyTemplateInput dirtyId audit data
     ]
 
@@ -290,7 +280,7 @@ hipchatDataInputs authDict dirtyId audit ({ label, bodyTemplate } as data) =
         applyMessageTemplate string =
             Actions.Hipchat.applyParams data { userParams | messageTemplate = string }
     in
-        [ textInputRequired "Label" audit dirtyId (\x -> { data | label = ite (x == "") Nothing (Just x) }) (Maybe.withDefault "" label)
+        [ textInputRequired "Label" audit dirtyId (\x -> { data | label = x }) label
         , textInputRequired "RoomID" audit dirtyId (\x -> { data | url = Actions.Hipchat.roomIdToUrl x }) roomId
         , hipchatAuthSelect (Authentications.listForHipchat authDict) audit dirtyId data
         , hipchatColorSelect audit dirtyId (\x -> applyParamsNeverFail { userParams | color = Actions.Hipchat.stringToColor x }) color
@@ -316,10 +306,10 @@ hipchatColorSelect audit dirtyId applyColorString color =
 
 
 hipchatAuthSelect : List (Repo.Entity Authentication) -> Repo.Audit -> Repo.EntityId -> Action -> Html (Msg Action)
-hipchatAuthSelect authList audit dirtyId ({ auth } as data) =
+hipchatAuthSelect authList audit dirtyId ({ authId } as data) =
     authList
-        |> List.map (\{ id, data } -> ( id, (data.name ++ " (" ++ id ++ ")"), auth == Just id ))
-        |> Repo.ViewParts.selectRequireable True audit "action" "Credential" False dirtyId (\x -> { data | auth = Just x })
+        |> List.map (\{ id, data } -> ( id, (data.name ++ " (" ++ id ++ ")"), authId == Just id ))
+        |> Repo.ViewParts.selectRequireable True audit "action" "Credential" False dirtyId (\x -> { data | authId = Just x })
 
 
 hipchatNotifyCheck : (Bool -> Msg Action) -> Bool -> Html (Msg Action)
@@ -513,7 +503,7 @@ titleShow usedActionIds maybeDirtyEntity ({ id, updatedAt, data } as entity) =
             [ Html.h2 [ class "mb-2" ]
                 [ logo "align-bottom mr-2" data.type_
                 , text (toString data.type_)
-                , text (" Action : " ++ Maybe.withDefault "(no label)" data.label)
+                , text (" Action : " ++ data.label)
                 ]
             , Html.p [ class "text-muted mb-0", Styles.xSmall ]
                 [ text ("ID : " ++ id)
@@ -553,7 +543,7 @@ deleteModalDialog { target, isShown } =
         (always CancelDelete)
         isShown
         [ class "modal-sm" ]
-        [ text ("Deleting '" ++ (Maybe.withDefault target.id target.data.label) ++ "'") ]
+        [ text ("Deleting '" ++ target.data.label ++ "'") ]
         [ text "Are you sure?" ]
         [ stdBtn Button.danger [ Button.onClick (Delete target.id) ] False "Yes, delete"
         , stdBtn Button.secondary [ Button.onClick CancelDelete ] False "Cancel"

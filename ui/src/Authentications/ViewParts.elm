@@ -12,7 +12,7 @@ import ViewParts exposing (none)
 
 
 type alias Authy x =
-    { x | auth : Maybe Repo.EntityId }
+    { x | authId : Maybe Repo.EntityId }
 
 
 authCheck : List (Repo.Entity Authentication) -> Repo.EntityId -> Authy x -> Maybe Repo.EntityId -> Html (Msg (Authy x))
@@ -28,7 +28,7 @@ authCheck authList dirtyId dataToUpdate maybeAuthId =
                     , class "form-check-input"
                     , Attr.checked (Utils.isJust maybeAuthId)
                     , Attr.disabled (List.isEmpty authList)
-                    , Html.Events.onCheck (\checked -> OnEditValid dirtyId { dataToUpdate | auth = Utils.ite checked (Just headAuthId) Nothing })
+                    , Html.Events.onCheck (\checked -> OnEditValid dirtyId { dataToUpdate | authId = Utils.ite checked (Just headAuthId) Nothing })
                     ]
                     []
                 , text " Require authentication?"
@@ -42,7 +42,7 @@ authSelect formId label authList dirtyId dataToUpdate maybeAuthId =
         select =
             authList
                 |> List.map (\{ id, data } -> ( id, (data.name ++ " (" ++ id ++ ")"), maybeAuthId == Just id ))
-                |> Repo.ViewParts.select formId label False dirtyId (\x -> { dataToUpdate | auth = Just x })
+                |> Repo.ViewParts.select formId label False dirtyId (\x -> { dataToUpdate | authId = Just x })
     in
         Html.div []
             [ authCheck authList dirtyId dataToUpdate maybeAuthId
