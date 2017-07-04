@@ -39,6 +39,7 @@ defmodule Yubot.Assets do
   @collection_name "Assets"
 
   @external_resource Path.expand("assets", __DIR__)
+  @remote_inventory_filename "inventory"
 
   @assets_file @external_resource |> File.read!() |> String.split("\n", trim: true)
   @commit_hash hd(@assets_file)
@@ -74,8 +75,9 @@ defmodule Yubot.Assets do
   # APIs for upload task (runtime APIs)
   #
 
-  def retrieve_list(root_key, env) do
-    req = Dodai.RetrieveDedicatedFileEntityListRequest.new(Yubot.Dodai.group_id(env), @collection_name, root_key)
+  def retrieve_list(query \\ %{}, root_key, env) do
+    q = struct(Dodai.RetrieveDedicatedFileEntityListRequestQuery, query)
+    req = Dodai.RetrieveDedicatedFileEntityListRequest.new(Yubot.Dodai.group_id(env), @collection_name, root_key, q)
     case Dodai.Client.send(dodai_client(env), req) do
       %Dodai.RetrieveDedicatedFileEntityListSuccess{} = res -> Dodai.Model.FileEntityList.from_response(res)
       error -> error
@@ -83,12 +85,15 @@ defmodule Yubot.Assets do
   end
 
   @doc """
-  Revoke currently active assets by deleting all file entities of target commit hash.
+  Revoke two generations (or more) older assets by deleting file entities of target commit hash.
 
   Uploaded files in S3 will be cleaned automatically.
   """
-  def revoke_current(root_key, env) do
-    Enum.each(@inventory, fn {asset_path, _} -> revoke(asset_path, @commit_hash, root_key, env) end)
+  def revoke_outdated(root_key, env) do
+    current_asset_ids = Enum.map(@inventory, &AssetPath.to_file_entity_id(elem(&1, 0), @commit_hash))
+    %{query: %{_id: %{"$nin" => [@remote_inventory_filename | current_asset_ids]}}}
+    |> retrieve_list(root_key, env)
+    |> Enum.each(&revoke(&1._id, root_key, env))
   end
 
   def revoke(id, root_key, env) do
@@ -132,8 +137,6 @@ defmodule Yubot.Assets do
       size: file_size,
     }
   end
-
-  @remote_inventory_filename "inventory"
 
   @doc """
   Create or Update dedicated file entity for asset inventory file entity with semi-permanent publicUrl.

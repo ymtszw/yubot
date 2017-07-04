@@ -37,7 +37,7 @@ defmodule Mix.Tasks.Yubot.Assets.Upload do
     Application.ensure_all_started(:solomon)
     config_file = if env == "prod", do: raise("not ready!"), else: "gear_config"
     root_key = File.read!(config_file) |> Poison.decode!() |> Map.get("dodai_root_key")
-    if target == "files", do: Assets.revoke_current(root_key, env)
+    if target == "files", do: Assets.revoke_outdated(root_key, env)
     upload_and_build_inventory(root_key, env, target)
   end
 
