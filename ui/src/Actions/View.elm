@@ -9,6 +9,7 @@ import Html.Lazy as Z
 import Bootstrap.Button as Button
 import ListSet exposing (ListSet)
 import Utils exposing (ite)
+import HttpTrial
 import Repo exposing (Repo)
 import Repo.Messages exposing (Msg(..))
 import Repo.ViewParts exposing (navigate)
@@ -171,7 +172,12 @@ titleNew data =
         [ class "d-flex justify-content-between align-items-center pb-2"
         , Styles.bottomBordered
         ]
-        [ Html.div [] [ Html.h2 [ class "mb-0" ] [ text "New Action" ] ]
+        [ Html.div []
+            [ Html.h2 [ class "mb-2" ]
+                [ ViewParts.fa [ class "align-bottom mr-2" ] 2 "fa-file-text-o"
+                , text "New Action"
+                ]
+            ]
         , Html.div [] [ stdBtn Button.info [ Button.small, Button.onClick (CancelEdit "new") ] (data == Actions.dummyAction) "Reset" ]
         ]
         |> Html.map Actions.RepoMsg
@@ -397,7 +403,7 @@ trialInputs trialValues ({ bodyTemplate, type_ } as data) =
             |> (++) (List.map trialTextInput bodyTemplate.variables)
 
 
-trialResultCard : Maybe Actions.TrialResponse -> Html Actions.Msg
+trialResultCard : Maybe HttpTrial.Response -> Html Actions.Msg
 trialResultCard maybeResponse =
     let
         ( description, resultBody, cleared ) =
@@ -420,7 +426,7 @@ trialResultCard maybeResponse =
             |> Html.map Actions.Trial
 
 
-responseCard : Actions.TrialResponse -> Html msg
+responseCard : HttpTrial.Response -> Html msg
 responseCard { status, headers, body } =
     let
         statusAlert =

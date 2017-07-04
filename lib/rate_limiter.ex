@@ -21,6 +21,7 @@ defmodule Yubot.RateLimiter do
   `target1` is arbitrary target to which rate limits are applied. Such as `{:web, "127.0.0.1"}`.
 
   In the above example, `target1` has two rate limit units: 10 counts per 1 minute AND 50 counts per 10 minutes.
+  They are called "limit units".
 
   - If more than 10 counts are accumulated in 1 minute window, `target1` is considered "limit reached" until the 1-minute window expires
   - If more than 50 counts are accumulated in 10 minutes window, with or without violating "10-per-1-minute" limit on the way,
@@ -34,7 +35,7 @@ defmodule Yubot.RateLimiter do
   Expired (already reset) limit entries will be sweeped at #{@sweep_timeout}ms interval.
   The sweeping will check whole `state` every time, so it can be a bottleneck as the number of targets grows.
 
-  In order not to inflate size of `state`, only up to 3 limit_units per target can be applied.
+  In order not to inflate size of `state`, only up to 3 limit units per target can be applied.
   """
 
   use GenServer

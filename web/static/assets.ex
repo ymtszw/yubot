@@ -10,7 +10,7 @@ defmodule Yubot.Assets do
   - Under "priv/static/" other than "assets" directory
 
   "priv/static/assets" directory is gitignored, and only used from local server.
-  Assets under "priv/static/assets" directory can be uploaded to CDN using `Mix.Tasks.Yubot.UploadAssets` task.
+  Assets under "priv/static/assets" directory can be uploaded to CDN using `Mix.Tasks.Yubot.Assets` task.
 
   Asset paths relative from "priv/static/assets" directory can be resolved to corresponding CDN URL using `url/1`.
   This function embeds CDN URL (or "/static/assets/*" path, when local) to templates.
@@ -36,12 +36,13 @@ defmodule Yubot.Assets do
 
   alias SolomonLib.Httpc
 
-  @collection_name  "Assets"
+  @collection_name "Assets"
+
   @external_resource Path.expand("assets", __DIR__)
 
   @assets_file @external_resource |> File.read!() |> String.split("\n", trim: true)
   @commit_hash hd(@assets_file)
-  @inventory   @assets_file |> tl() |> Map.new(&List.to_tuple(String.split(&1, " ")))
+  @inventory @assets_file |> tl() |> Map.new(&List.to_tuple(String.split(&1, " ")))
   def inventory(), do: @inventory
 
   #
@@ -104,15 +105,19 @@ defmodule Yubot.Assets do
   Create or Update dedicated file entity for new upload URL.
   """
   def upsert(asset_path, file_size, root_key, env, commit_hash) do
+    asset_path
+    |> upsert_body(file_size, commit_hash)
+    |> upsert(root_key, env)
+  end
+  def upsert(upsert_body, root_key, env) when is_map(upsert_body) do
     group_id = Yubot.Dodai.group_id(env)
     client = dodai_client(env)
-    base_body = upsert_body(asset_path, file_size, commit_hash)
-    body0 = Dodai.CreateDedicatedFileEntityRequestBody.new!(base_body)
+    body0 = Dodai.CreateDedicatedFileEntityRequestBody.new!(upsert_body)
     req0 = Dodai.CreateDedicatedFileEntityRequest.new(group_id, @collection_name, root_key, body0)
     case Dodai.Client.send(client, req0) do
       %Dodai.DuplicatedKeyError{} ->
-        body1 = Dodai.UpdateDedicatedFileEntityRequestBody.new!(base_body)
-        req1 = Dodai.UpdateDedicatedFileEntityRequest.new(group_id, @collection_name, base_body[:_id], root_key, body1)
+        body1 = Dodai.UpdateDedicatedFileEntityRequestBody.new!(upsert_body)
+        req1 = Dodai.UpdateDedicatedFileEntityRequest.new(group_id, @collection_name, upsert_body[:_id], root_key, body1)
         Dodai.Client.send(client, req1)
       otherwise -> otherwise
     end
@@ -128,28 +133,48 @@ defmodule Yubot.Assets do
     }
   end
 
+  @remote_inventory_filename "inventory"
+
+  @doc """
+  Create or Update dedicated file entity for asset inventory file entity with semi-permanent publicUrl.
+  """
+  def upsert_inventory(inventory_contents, root_key, env) do
+    %{
+      _id: @remote_inventory_filename,
+      filename: @remote_inventory_filename,
+      contentType: "text/plain",
+      public: true,
+      size: byte_size(inventory_contents),
+    }
+    |> upsert(root_key, env)
+  end
+
   @doc """
   Upload asset file to S3 and notify finish.
 
-  Now that `commit_hash` is attached to files, it creates basically-non-expiring (immutable) cache on CloudFront.
+  Perpetual assets (ones that revoked on deploy) creates basically-non-expiring (immutable) cache on CloudFront.
   """
-  def upload_and_notify(asset_full_path, asset_path, upload_url, root_key, env, commit_hash) do
-    case upload(asset_full_path, asset_path, upload_url) do
-      {:ok, %Httpc.Response{status: 200}} -> notify_finish(asset_path, root_key, env, commit_hash)
+  def upload_and_notify(asset_full_path, id, upload_url, root_key, env) do
+    asset_full_path
+    |> File.read!()
+    |> upload_and_notify(:mimerl.filename(asset_full_path), "public, max-age=300000000, immutable", id, upload_url, root_key, env)
+  end
+  def upload_and_notify(body, content_type, cache_control \\ "max-age=0", id, upload_url, root_key, env) do
+    case upload(body, content_type, upload_url, cache_control) do
+      {:ok, %Httpc.Response{status: 200}} -> notify_finish(id, root_key, env)
       otherwise -> otherwise
     end
   end
 
-  defp upload(asset_full_path, _asset_path, upload_url) do
+  defp upload(body, content_type, upload_url, cache_control) do
     headers = %{
-      "content-type" => :mimerl.filename(asset_full_path),
-      "cache-control" => "public, max-age=300000000, immutable",
+      "content-type" => content_type,
+      "cache-control" => cache_control,
     }
-    Httpc.put(upload_url, File.read!(asset_full_path), headers, recv_timeout: 60_000)
+    Httpc.put(upload_url, body, headers, recv_timeout: 60_000)
   end
 
-  defp notify_finish(asset_path, root_key, env, commit_hash) do
-    id = AssetPath.to_file_entity_id(asset_path, commit_hash)
+  defp notify_finish(id, root_key, env) do
     req = Dodai.NotifyDedicatedFileUploadFinishedRequest.new(Yubot.Dodai.group_id(env), @collection_name, id, root_key)
     Dodai.Client.send(dodai_client(env), req)
   end

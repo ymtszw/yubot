@@ -5,7 +5,6 @@ module Actions
         , ActionType(..)
         , Aux
         , TrialValues
-        , TrialResponse
         , Msg(..)
         , TrialMsg(..)
         , IndexMsg(..)
@@ -29,6 +28,7 @@ import Http
 import HttpBuilder exposing (RequestBuilder)
 import ListSet exposing (ListSet)
 import Utils exposing (Method(..))
+import HttpTrial
 import Repo exposing (Repo)
 import Repo.Command exposing (Config)
 import Repo.Messages
@@ -63,17 +63,9 @@ type alias TrialValues =
     Dict String String
 
 
-type alias TrialResponse =
-    { status : Int
-    , headers : List ( String, String )
-    , body : String
-    , elapsedMs : Float
-    }
-
-
 type alias Aux =
     { trialValues : TrialValues
-    , trialResponse : Maybe TrialResponse
+    , trialResponse : Maybe HttpTrial.Response
     , indexFilter : ListSet ActionType
     }
 
@@ -209,7 +201,7 @@ type Msg
 type TrialMsg
     = OnTrialEdit String String
     | Try Action TrialValues
-    | OnResponse (Result Http.Error TrialResponse)
+    | OnResponse (Result Http.Error HttpTrial.Response)
     | PromptLogin
     | Clear
     | NoOp
@@ -266,7 +258,7 @@ tryAction : Action -> TrialValues -> Cmd TrialMsg
 tryAction data trialValues =
     HttpBuilder.post (config.repoPath ++ "/try")
         |> HttpBuilder.withJsonBody (trialRequestEncoder data trialValues)
-        |> HttpBuilder.withExpect (Http.expectJson trialResponseDecoder)
+        |> HttpBuilder.withExpect (Http.expectJson HttpTrial.responseDecoder)
         |> HttpBuilder.send OnResponse
 
 
@@ -276,15 +268,6 @@ trialRequestEncoder data trialValues =
         [ ( "data", dataEncoder data )
         , ( "trial_values", trialValues |> Dict.toList |> List.map (Tuple.mapSecond Encode.string) |> Encode.object )
         ]
-
-
-trialResponseDecoder : Decode.Decoder TrialResponse
-trialResponseDecoder =
-    Decode.map4 TrialResponse
-        (Decode.field "status" Decode.int)
-        (Decode.field "headers" (Decode.keyValuePairs Decode.string))
-        (Decode.field "body" Decode.string)
-        (Decode.field "elapsed_ms" Decode.float)
 
 
 updateIndex : IndexMsg -> Repo Aux Action -> ( Repo Aux Action, Cmd IndexMsg, Repo.Update.StackCmd )

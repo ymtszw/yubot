@@ -7,13 +7,13 @@ import Routing
 import User exposing (User)
 import Repo exposing (Repo)
 import Polls exposing (Poll)
-import Actions exposing (Action, Aux)
+import Actions exposing (Action)
 import Authentications exposing (Authentication)
 
 
 type alias Model =
-    { pollRepo : Repo {} Poll
-    , actionRepo : Repo Aux Action
+    { pollRepo : Repo Polls.Aux Poll
+    , actionRepo : Repo Actions.Aux Action
     , authRepo : Repo {} Authentication
     , navbarState : Navbar.State
     , userDropdownState : Utils.DropdownState
@@ -28,7 +28,7 @@ type alias Model =
 
 initialModel : Bool -> Maybe User -> Stack () -> Routing.Route -> Navbar.State -> Model
 initialModel isDev maybeUser initTaskStack route navbarState =
-    { pollRepo = Repo.populate [] Polls.dummyPoll
+    { pollRepo = Polls.populate []
     , actionRepo = Actions.populate []
     , authRepo = Repo.populate [] Authentications.dummyAuthentication
     , navbarState = navbarState

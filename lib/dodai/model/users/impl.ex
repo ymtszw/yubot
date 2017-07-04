@@ -112,7 +112,7 @@ defmodule Yubot.Dodai.Model.Users.Impl do
     end
   end
 
-  defp list_action_with_model_module_query(%{query: query_dict} = l_a, model) when is_map(query_dict) or is_list(query_dict) do
+  defp list_action_with_model_module_query(%{query: query_dict} = l_a, model) when is_map(query_dict) do
     {:ok, put_in(l_a[:query]["data._model_module"], inspect(model))}
   end
   defp list_action_with_model_module_query(l_a, model) when is_map(l_a) do

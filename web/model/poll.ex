@@ -93,4 +93,11 @@ defmodule Yubot.Model.Poll do
     triggers: list_of(Trigger),
     # history: list_of(History), # TODO enable
   ]
+
+  defmodule ShallowTrialRequest do
+    use Croma.Struct, fields: [
+      url: SolomonLib.Url,
+      auth_id: nilable(Authentication.Id),
+    ]
+  end
 end

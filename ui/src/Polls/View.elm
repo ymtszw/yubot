@@ -1,4 +1,4 @@
-module Polls.View exposing (index, show)
+module Polls.View exposing (index, new, show)
 
 import Html exposing (Html, text)
 import Html.Attributes as Attr exposing (class)
@@ -8,7 +8,7 @@ import Utils
 import Repo exposing (Repo)
 import Repo.Messages exposing (Msg(..))
 import Repo.ViewParts exposing (navigate)
-import Polls exposing (Poll)
+import Polls exposing (Poll, Aux)
 import Actions exposing (Action)
 import Authentications exposing (Authentication)
 import Styles
@@ -18,7 +18,7 @@ import ViewParts exposing (stdBtn)
 -- Index
 
 
-index : Repo {} Poll -> Html (Msg Poll)
+index : Repo Aux Poll -> Html Polls.Msg
 index { dict, sort } =
     dict
         |> Repo.dictToSortedList sort
@@ -28,7 +28,7 @@ index { dict, sort } =
         |> Html.div [ class "row" ]
 
 
-card : Repo.Entity Poll -> Html (Msg Poll)
+card : Repo.Entity Poll -> Html Polls.Msg
 card { id, updatedAt, data } =
     Html.div
         (List.append
@@ -45,9 +45,10 @@ card { id, updatedAt, data } =
         , Html.div [ class "card-footer" ]
             [ Html.small [ Styles.xSmall ] [ text ("Last run at: " ++ (Utils.timestampToString updatedAt)) ] ]
         ]
+        |> Html.map Polls.RepoMsg
 
 
-createCard : Html (Msg Poll)
+createCard : Html msg
 createCard =
     Html.div [ class "card text-center h-100" ]
         [ Html.div [ class "card-header" ] [ Html.h4 [] [ text "New Poll" ] ]
@@ -57,12 +58,46 @@ createCard =
 
 
 
+-- New
+
+
+new : Repo.EntityDict Action -> Repo.EntityDict Authentication -> Repo Aux Poll -> Html Polls.Msg
+new actionDict authDict ({ dirtyDict } as repo) =
+    let
+        (( { data }, audit ) as dirtyEntity) =
+            Repo.dirtyGetWithDefault "new" Polls.dummyPoll dirtyDict
+    in
+        ViewParts.triPaneView
+            [ Z.lazy titleNew data ]
+            [ text "Main" ]
+            [ text "bottom left" ]
+            [ text "right" ]
+
+
+titleNew : Poll -> Html Polls.Msg
+titleNew data =
+    Html.div
+        [ class "d-flex justify-content-between align-items-center pb-2"
+        , Styles.bottomBordered
+        ]
+        [ Html.div []
+            [ Html.h2 [ class "mb-2" ]
+                [ ViewParts.fa [ class "align-bottom mr-2" ] 2 "fa-calendar"
+                , text "New Poll"
+                ]
+            ]
+        , Html.div [] [ stdBtn Button.info [ Button.small, Button.onClick (CancelEdit "new") ] (data == Polls.dummyPoll) "Reset" ]
+        ]
+        |> Html.map Polls.RepoMsg
+
+
+
 -- Show
 
 
-show : Repo.EntityDict Action -> Repo.EntityDict Authentication -> Repo {} Poll -> Repo.Entity Poll -> Html (Msg Poll)
+show : Repo.EntityDict Action -> Repo.EntityDict Authentication -> Repo Aux Poll -> Repo.Entity Poll -> Html Polls.Msg
 show actionDict authDict pollRepo poll =
-    Z.lazy showImpl poll
+    poll |> Z.lazy showImpl |> Html.map Polls.RepoMsg
 
 
 showImpl : Repo.Entity Poll -> Html msg

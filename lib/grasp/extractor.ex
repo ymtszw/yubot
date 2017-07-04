@@ -13,7 +13,7 @@ defmodule Yubot.Grasp.Extractor do
   """
 
   @type t :: %{
-    engine: atom,
+    engine: atom, # At least currently, we can omit `:engine` specification since there is only a RegexExtractor
     pattern: String.t,
   }
   @type resultant_t :: [[String.t]]
@@ -45,6 +45,8 @@ defmodule Yubot.Grasp.RegexExtractor do
   @spec validate(term) :: R.t(t)
   def validate(%{engine: :regex, pattern: p}), do: validate_as_regex(p) |> R.map(&%__MODULE__{engine: :regex, pattern: &1})
   def validate(%{"engine" => "regex", "pattern" => p}), do: validate_as_regex(p) |> R.map(&%__MODULE__{engine: :regex, pattern: &1})
+  def validate(%{pattern: p}), do: validate(%{engine: :regex, pattern: p})
+  def validate(%{"pattern" => p}), do: validate(%{engine: :regex, pattern: p})
   def validate(_), do: {:error, {:invalid_value, [__MODULE__]}}
 
   defp validate_as_regex(str) when is_binary(str) do

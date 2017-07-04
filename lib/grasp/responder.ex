@@ -17,7 +17,7 @@ defmodule Yubot.Grasp.Responder do
     arguments: list,
   }
   @type t :: %{
-    mode: atom,
+    mode: atom, # Note: omitting this field and resorting to default value (:string or :boolean, w/e) may cause ambiguity someday
     high_order: atom,
     first_order: first_order_t,
   }

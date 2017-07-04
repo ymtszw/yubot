@@ -51,12 +51,21 @@ update msg ({ route, taskStack } as model) =
                 )
     in
         case msg of
-            PollsMsg Repo.Messages.PromptLogin ->
+            PollsMsg (Polls.RepoMsg (Repo.Messages.ChangeLocation path)) ->
+                changeLocation model path
+
+            PollsMsg (Polls.RepoMsg Repo.Messages.PromptLogin) ->
+                promptLogin
+
+            PollsMsg (Polls.Trial Polls.PromptLogin) ->
                 promptLogin
 
             PollsMsg subMsg ->
                 Polls.update subMsg model.pollRepo
                     |> mapUpdate (\x -> { model | pollRepo = x }) PollsMsg
+
+            ActionsMsg (Actions.RepoMsg (Repo.Messages.ChangeLocation path)) ->
+                changeLocation model path
 
             ActionsMsg (Actions.RepoMsg Repo.Messages.PromptLogin) ->
                 promptLogin
@@ -67,6 +76,9 @@ update msg ({ route, taskStack } as model) =
             ActionsMsg subMsg ->
                 Actions.update subMsg model.actionRepo
                     |> mapUpdate (\x -> { model | actionRepo = x }) ActionsMsg
+
+            AuthMsg (Repo.Messages.ChangeLocation path) ->
+                changeLocation model path
 
             AuthMsg Repo.Messages.PromptLogin ->
                 promptLogin
@@ -104,7 +116,7 @@ update msg ({ route, taskStack } as model) =
                 ( model, Navigation.load "/poller/login" )
 
             ChangeLocation path ->
-                ( model, Navigation.newUrl ("/poller" ++ path) ) |> fadeDropdownIfShown
+                changeLocation model path
 
             OnLocationChange location ->
                 let
@@ -139,6 +151,11 @@ andThen anotherUpdate ( model, cmd ) =
             anotherUpdate model
     in
         newModel ! [ cmd, newCmd ]
+
+
+changeLocation : Model -> Utils.Url -> ( Model, Cmd Msg )
+changeLocation model path =
+    ( model, Navigation.newUrl ("/poller" ++ path) ) |> fadeDropdownIfShown
 
 
 fadeDropdownIfShown : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )

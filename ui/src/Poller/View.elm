@@ -13,7 +13,6 @@ import Stack
 import Routing exposing (Route(..))
 import User
 import Repo
-import Repo.Messages
 import Repo.ViewParts exposing (errorToast)
 import OAuth
 import Polls
@@ -104,9 +103,9 @@ errorToasts { pollRepo, actionRepo, authRepo, taskStack } =
     Html.div [ class "container-fluid mt-2", Styles.toastBlock ]
         [ Html.div [ Attr.id "error-toasts", class "row" ]
             [ Html.div [ class "col-md-10 offset-md-1 col-lg-8 offset-lg-2" ]
-                [ pollRepo.errors |> Z.lazy errorToast |> htmlMap PollsMsg
-                , actionRepo.errors |> Z.lazy errorToast |> Html.map (Poller.Messages.fromActions ActionsMsg << Actions.RepoMsg)
-                , authRepo.errors |> Z.lazy errorToast |> htmlMap AuthMsg
+                [ pollRepo.errors |> Z.lazy errorToast |> Html.map (PollsMsg << Polls.RepoMsg)
+                , actionRepo.errors |> Z.lazy errorToast |> Html.map (ActionsMsg << Actions.RepoMsg)
+                , authRepo.errors |> Z.lazy errorToast |> Html.map AuthMsg
                 ]
             , Html.div [ class "col-md-1 col-lg-2" ] [ Z.lazy spinner taskStack ]
             ]
@@ -144,6 +143,9 @@ isActiveItem route =
         PollsRoute ->
             (==) "Polls"
 
+        NewPollRoute ->
+            (==) "Polls"
+
         PollRoute _ ->
             (==) "Polls"
 
@@ -155,9 +157,6 @@ isActiveItem route =
 
         ActionRoute _ ->
             (==) "Actions"
-
-        AuthsRoute ->
-            (==) "Credentials"
 
         _ ->
             always False
@@ -215,25 +214,25 @@ mainContent { route, pollRepo, actionRepo, authRepo, taskStack } =
     in
         case route of
             PollsRoute ->
-                htmlMap PollsMsg (Z.lazy Polls.View.index pollRepo)
+                Html.map PollsMsg (Z.lazy Polls.View.index pollRepo)
+
+            NewPollRoute ->
+                Html.map PollsMsg (Polls.View.new actionRepo.dict authRepo.dict pollRepo)
 
             PollRoute pollId ->
-                showImpl (Poller.Messages.fromRepo PollsMsg) (Polls.View.show actionRepo.dict authRepo.dict) pollRepo pollId
+                showImpl PollsMsg (Polls.View.show actionRepo.dict authRepo.dict) pollRepo pollId
 
             ActionsRoute ->
-                Html.map (Poller.Messages.fromActions ActionsMsg) (Actions.View.index actionRepo)
+                Html.map ActionsMsg (Actions.View.index actionRepo)
 
             NewActionRoute ->
-                Html.map (Poller.Messages.fromActions ActionsMsg) (Actions.View.new authRepo.dict actionRepo)
+                Html.map ActionsMsg (Actions.View.new authRepo.dict actionRepo)
 
             ActionRoute actionId ->
-                showImpl (Poller.Messages.fromActions ActionsMsg)
-                    (Actions.View.show (Polls.usedActionIds pollRepo.dict) authRepo.dict)
-                    actionRepo
-                    actionId
+                showImpl ActionsMsg (Actions.View.show (Polls.usedActionIds pollRepo.dict) authRepo.dict) actionRepo actionId
 
             AuthsRoute ->
-                htmlMap AuthMsg (Authentications.View.index (usedAuthIds pollRepo.dict actionRepo.dict) authRepo)
+                Html.map AuthMsg (Authentications.View.index (usedAuthIds pollRepo.dict actionRepo.dict) authRepo)
 
             _ ->
                 notFoundPage
@@ -242,11 +241,6 @@ mainContent { route, pollRepo, actionRepo, authRepo, taskStack } =
 usedAuthIds : Repo.EntityDict Polls.Poll -> Repo.EntityDict Actions.Action -> Set.Set Repo.EntityId
 usedAuthIds pollDict actionDict =
     Set.union (Actions.usedAuthIds actionDict) (Polls.usedAuthIds pollDict)
-
-
-htmlMap : (Repo.Messages.Msg x -> Msg) -> Html (Repo.Messages.Msg x) -> Html Msg
-htmlMap msgMapper =
-    Html.map (Poller.Messages.fromRepo msgMapper)
 
 
 navigate : Utils.Url -> List (Html.Attribute Msg)

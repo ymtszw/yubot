@@ -3,56 +3,30 @@ use Croma
 defmodule Yubot.Controller.Poll do
   alias Croma.Result, as: R
   use Yubot.Controller, auth: :cookie_or_header
-  alias Yubot.StringTemplate, as: ST
+  alias Yubot.External.Http, as: ExHttp
   alias Yubot.Model.{Poll, Action, Authentication}
+  alias Yubot.Model.Poll.ShallowTrialRequest, as: ShallowReq
 
   # POST /api/poll
   def create(conn) do
-    create_impl(conn.request.body, key(conn), group_id(conn))
+    key = key(conn)
+    group_id = group_id(conn)
+    R.m do
+      %Poll.Data{auth_id: nil_or_auth_id, triggers: triggers} = valid_body <- Poll.Data.new(conn.request.body)
+      _auth_ensured <- ensure_authentication(nil_or_auth_id, key, group_id)
+      _actions_ensured <- ensure_actions(triggers, key, group_id)
+      Poll.insert(valid_body, key, group_id)
+    end
     |> handle_with_201_json(conn)
   end
 
-  defp create_impl(%{"auth" => auth, "action" => action} = body, key, group_id)
-      when (is_map(action) or is_binary(action)) and (is_map(auth) or is_binary(auth)) do
-    R.m do
-      %Authentication{_id: auth_id} <- ensure_authentication(auth, key, group_id)
-      %Action{_id: action_id, data: %Action.Data{body_template: %ST{variables: variables}}} <- ensure_action(action, key, group_id)
-      validate_filter_length_and_insert_poll(variables, %{body | "auth" => auth_id, "action" => action_id}, key, group_id)
-    end
-  end
-  defp create_impl(%{"action" => action} = body, key, group_id)
-      when is_map(action) or is_binary(action) do
-    ensure_action(action, key, group_id)
-    |> R.bind(fn %Action{_id: action_id, data: %Action.Data{body_template: %ST{variables: variables}}} ->
-      validate_filter_length_and_insert_poll(variables, %{body | "action" => action_id}, key, group_id)
-    end)
-  end
+  defp ensure_authentication(nil, _key, _group_id), do: {:ok, nil}
+  defp ensure_authentication(aid, key, group_id), do: Authentication.retrieve(aid, key, group_id)
 
-  defp validate_filter_length_and_insert_poll(variables, %{"filters" => filters} = body, key, group_id)
-      when length(variables) == length(filters) do
-    Poll.insert(%{data: body}, key, group_id)
-  end
-  defp validate_filter_length_and_insert_poll(variables, body, _key, _group_id) do
-    bad_request([variables, body])
-  end
-
-  defp ensure_action(%{"auth" => auth} = body, key, group_id) when is_map(auth) or is_binary(auth) do
-    ensure_authentication(auth, key, group_id)
-    |> R.bind(fn %Authentication{_id: auth_id} -> Action.insert(%{data: %{body | "auth" => auth_id}}, key, group_id) end)
-  end
-  defp ensure_action(action_id, key, group_id) when is_binary(action_id) do
-    Action.retrieve(action_id, key, group_id)
-  end
-  defp ensure_action(body, key, group_id) do
-    Action.insert(%{data: body}, key, group_id)
-  end
-
-  defp ensure_authentication(create_auth_body, key, group_id) when is_map(create_auth_body) do
-    Authentication.encrypt_token_and_insert(%{data: create_auth_body}, key, group_id)
-  end
-  defp ensure_authentication(auth_id, key, group_id) when is_binary(auth_id) do
-    Authentication.retrieve(auth_id, key, group_id)
-  end
+  defp ensure_actions([], _key, _group_id),
+    do: {:ok, nil}
+  defp ensure_actions(ts, key, group_id),
+    do: ts |> Enum.map(&(&1.action_id)) |> Enum.uniq() |> Action.retrieve_list_and_ensure_by_ids(key, group_id)
 
   # GET /api/poll/:id
   def retrieve(conn) do
@@ -71,4 +45,18 @@ defmodule Yubot.Controller.Poll do
     Poll.delete(conn.request.path_matches.id, nil, key(conn), group_id(conn))
     |> handle_with_204(conn)
   end
+
+  # POST /api/poll/shallow_try
+  def shallow_try(conn) do
+    R.m do
+      _conn <- reject_on_rate_limit(conn)
+      %ShallowReq{url: u, auth_id: nil_or_auth_id} <- ShallowReq.new(conn.request.body)
+      nil_or_auth <- fetch_auth(nil_or_auth_id, conn)
+      ExHttp.request(:get, u, "", nil_or_auth)
+    end
+    |> handle_with_200_json(conn)
+  end
+
+  defp fetch_auth(nil, _conn), do: {:ok, nil}
+  defp fetch_auth(auth_id, conn), do: Authentication.retrieve(auth_id, key(conn), group_id(conn))
 end

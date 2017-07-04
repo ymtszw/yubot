@@ -1,4 +1,4 @@
-module Poller.Messages exposing (Msg(..), fromRepo, fromActions)
+module Poller.Messages exposing (Msg(..))
 
 import Time
 import Date
@@ -12,7 +12,7 @@ import Authentications
 
 
 type Msg
-    = PollsMsg (Repo.Messages.Msg Polls.Poll)
+    = PollsMsg Polls.Msg
     | ActionsMsg Actions.Msg
     | AuthMsg (Repo.Messages.Msg Authentications.Authentication)
     | NavbarMsg Bootstrap.Navbar.State
@@ -28,36 +28,3 @@ type Msg
     | OnReceiveTitle String
     | DatedLog String String Date.Date
     | NoOp
-
-
-{-| Map Repo messages into root (Poller) messages, with special treatment for `ChangeLocation` message.
--}
-fromRepo : (Repo.Messages.Msg x -> Msg) -> Repo.Messages.Msg x -> Msg
-fromRepo fallbackMapper subMsg =
-    case subMsg of
-        Repo.Messages.ChangeLocation url ->
-            ChangeLocation url
-
-        Repo.Messages.PromptLogin ->
-            PromptLogin
-
-        otherMsg ->
-            fallbackMapper otherMsg
-
-
-{-| Map Actions messages into root (Poller) messages
--}
-fromActions : (Actions.Msg -> Msg) -> Actions.Msg -> Msg
-fromActions rootMapper msg =
-    case msg of
-        Actions.RepoMsg (Repo.Messages.ChangeLocation url) ->
-            ChangeLocation url
-
-        Actions.RepoMsg Repo.Messages.PromptLogin ->
-            PromptLogin
-
-        Actions.Trial Actions.PromptLogin ->
-            PromptLogin
-
-        otherMsg ->
-            rootMapper otherMsg

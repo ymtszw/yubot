@@ -5,8 +5,8 @@ defmodule Yubot.Model.Action do
   HTTP action object.
   """
 
-  alias SolomonLib.Httpc
   alias Yubot.StringTemplate, as: ST
+  alias Yubot.External.Http, as: ExHttp
   alias Yubot.Model.Authentication
 
   defmodule Type do
@@ -37,15 +37,14 @@ defmodule Yubot.Model.Action do
     ]
   end
 
+  @doc """
+  Actually try an Action execution with `:trial_values` as material.
+
+  It also record elapsed time for the Action.
+  """
   def try(%TrialRequest{data: %Data{method: m, url: u, body_template: b}, trial_values: tv}, nil_or_auth) do
-    Croma.Result.m do
-      rendered_body <- ST.render(b, tv)
-      auth_header <- Authentication.header(nil_or_auth)
-      {elapsed_us, result} = :timer.tc(Httpc, :request, [m, u, httpc_body(rendered_body), auth_header, []])
-      result
-      |> httpc_result_to_map()
-      |> Map.put(:elapsed_ms, elapsed_us / 1_000)
-    end
+    ST.render(b, tv)
+    |> Croma.Result.bind(&ExHttp.request(m, u, httpc_body(&1), nil_or_auth))
   end
 
   defp httpc_body(""), do: ""
@@ -56,8 +55,28 @@ defmodule Yubot.Model.Action do
     end
   end
 
-  defp httpc_result_to_map({:ok, httpc_response}), do: Map.from_struct(httpc_response)
-  defp httpc_result_to_map({:error, error}) do
-    %{body: "Error on action trial: #{inspect(error)}", headers: %{}, status: 500} # Pseudo-Httpc.Response
+  # Convenient APIs
+
+  @doc """
+  Retrieve by `_id`s, and also ensure all of them existed.
+
+  If some of them are not existed, it results in error with list of not found `_id`s.
+
+  Used on both creation and execution.
+  """
+  @spec retrieve_list_and_ensure_by_ids([Id.t], String.t, Dodai.GroupId.t) :: R.t([t])
+  def retrieve_list_and_ensure_by_ids([], _key, _group_id) do
+    {:ok, []}
+  end
+  def retrieve_list_and_ensure_by_ids(ids, key, group_id) do
+    case retrieve_list(%{query: %{_id: %{"$in" => ids}}}, key, group_id) do
+      {:ok, as} when length(as) == length(ids) ->
+        {:ok, as}
+      {:ok, as} ->
+        non_existing_ids = ids -- Enum.map(as, &(&1._id))
+        {:error, {:not_found, "Actions not found: #{Enum.join(non_existing_ids, ", ")}"}}
+      error ->
+        error
+    end
   end
 end

@@ -56,20 +56,13 @@ defmodule Yubot.Grasp.BooleanResponder do
     @type fun_t :: (list -> boolean)
 
     @spec fun(t) :: fun_t
-    def fun(%{operator: :Contains, arguments: [right]}),
-      do: &contains(&1, right)
-    def fun(%{operator: :EqAt, arguments: [index, right]}),
-      do: &eq_at(&1, index, right)
-    def fun(%{operator: :NeAt, arguments: [index, right]}),
-      do: &ne_at(&1, index, right)
-    def fun(%{operator: :LtAt, arguments: [index, right]}),
-      do: &lt_at(&1, index, right)
-    def fun(%{operator: :LteAt, arguments: [index, right]}),
-      do: &lte_at(&1, index, right)
-    def fun(%{operator: :GtAt, arguments: [index, right]}),
-      do: &gt_at(&1, index, right)
-    def fun(%{operator: :GteAt, arguments: [index, right]}),
-      do: &gte_at(&1, index, right)
+    def fun(%{operator: :Contains, arguments: [right]       }), do: &contains(&1, right)
+    def fun(%{operator: :EqAt    , arguments: [index, right]}), do: &eq_at(&1, index, right)
+    def fun(%{operator: :NeAt    , arguments: [index, right]}), do: &ne_at(&1, index, right)
+    def fun(%{operator: :LtAt    , arguments: [index, right]}), do: &lt_at(&1, index, right)
+    def fun(%{operator: :LteAt   , arguments: [index, right]}), do: &lte_at(&1, index, right)
+    def fun(%{operator: :GtAt    , arguments: [index, right]}), do: &gt_at(&1, index, right)
+    def fun(%{operator: :GteAt   , arguments: [index, right]}), do: &gte_at(&1, index, right)
     # Crash for invalid predicate data
 
     defp contains(list, right) when is_list(list), do: right in list

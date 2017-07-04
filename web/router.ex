@@ -15,10 +15,11 @@ defmodule Yubot.Router do
 
   post "/api/user/logout", User, :logout
 
-  post   "/api/poll"    , Poll, :create
-  get    "/api/poll/:id", Poll, :retrieve
-  get    "/api/poll"    , Poll, :retrieve_list
-  delete "/api/poll/:id", Poll, :delete
+  post   "/api/poll"            , Poll, :create
+  get    "/api/poll/:id"        , Poll, :retrieve
+  get    "/api/poll"            , Poll, :retrieve_list
+  delete "/api/poll/:id"        , Poll, :delete
+  post   "/api/poll/shallow_try", Poll, :shallow_try
 
   post   "/api/action"    , Action, :create
   get    "/api/action/:id", Action, :retrieve

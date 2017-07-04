@@ -9,6 +9,7 @@ erl_crash.dump
 /priv/static/css
 /web/static/css
 /web/static/.sass-cache
+/web/static/assets
 *.ll
 *.s
 *.wast
