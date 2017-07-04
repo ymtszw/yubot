@@ -52,3 +52,6 @@ clean:
 .PHONY: asset_inventory
 asset_inventory:
 	@curl -o web/static/assets https://d2wk7ffla5bh7r.cloudfront.net/3/Eih41ySz/9eTTqdNt/Assets/_root_inventory_n3DAe939
+
+web/static/assets:
+	@curl -o web/static/assets https://d2wk7ffla5bh7r.cloudfront.net/3/Eih41ySz/9eTTqdNt/Assets/_root_inventory_n3DAe939
