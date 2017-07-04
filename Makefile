@@ -20,14 +20,14 @@ wasm/_build:
 start: gear_config
 	@YUBOT_CONFIG_JSON='$(shell cat ./gear_config)' LOG_LEVEL=debug iex -S mix
 gear_config:
-	@echo "gear_config file is missing"
-	@exit 1
+	echo "gear_config file is missing"
+	exit 1
 
 .PHONY: test_blackbox_local
 test_blackbox_local: gear_config started
 	@BLACKBOX_TEST_SECRET_JSON='$(shell cat ./gear_config)' TEST_MODE=blackbox_local TEST_PORT=8080 PORT=8081 mix test
 started:
-	@curl -fso /dev/null http://yubot.localhost:8080/
+	curl -fso /dev/null http://yubot.localhost:8080/
 
 .PHONY: test
 test:
@@ -51,7 +51,12 @@ clean:
 
 .PHONY: asset_inventory
 asset_inventory:
-	@curl -o web/static/assets https://d2wk7ffla5bh7r.cloudfront.net/3/Eih41ySz/9eTTqdNt/Assets/_root_inventory_n3DAe939
+	curl -o web/static/assets https://d2wk7ffla5bh7r.cloudfront.net/3/Eih41ySz/9eTTqdNt/Assets/_root_inventory_n3DAe939
 
 web/static/assets:
-	@curl -o web/static/assets https://d2wk7ffla5bh7r.cloudfront.net/3/Eih41ySz/9eTTqdNt/Assets/_root_inventory_n3DAe939
+	curl -o web/static/assets https://d2wk7ffla5bh7r.cloudfront.net/3/Eih41ySz/9eTTqdNt/Assets/_root_inventory_n3DAe939
+
+.PHONY: deploy
+deploy:
+	mix yubot.assets
+	git push solomon master
