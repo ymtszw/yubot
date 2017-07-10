@@ -3,7 +3,7 @@ defmodule Yubot.Grasp.StringResponderTest do
 
   test "StringResponder should validate maps" do
     ho_pairs = [{"First", :First}, {"JoinAll", :JoinAll}]
-    fo_pairs = [{{"Join", [","]}, {:Join, [","]}}, {{"At", [1]}, {:At, [1]}}]
+    fo_pairs = [{{"Join", [","]}, {:Join, [","]}}, {{"At", ["1"]}, {:At, ["1"]}}]
     for {ho, expected_ho} <- ho_pairs,
         {{op, args}, {expected_op, expected_args}} <- fo_pairs do
       assert StringResponder.validate(%{
@@ -63,12 +63,12 @@ defmodule Yubot.Grasp.StringResponderTest do
     assert StringResponder.respond(r1, [["abc", "def"], ["ghi", "jkl"]]) == "abc,def"
     r2 = %StringResponder{mode: :string, high_order: :JoinAll, first_order: %{operator: :Join, arguments: [","]}}
     assert StringResponder.respond(r2, [["abc", "def"], ["ghi", "jkl"]]) == "abc,def\nghi,jkl"
-    r3 = %StringResponder{mode: :string, high_order: :JoinAll, first_order: %{operator: :At, arguments: [1]}}
+    r3 = %StringResponder{mode: :string, high_order: :JoinAll, first_order: %{operator: :At, arguments: ["1"]}}
     assert StringResponder.respond(r3, [["abc", "def"], ["ghi", "jkl"]]) == "def\njkl"
 
     r4 = %StringResponder{mode: :string, high_order: :First, first_order: %{operator: :Join, arguments: [","]}}
     assert StringResponder.respond(r4, []) == StringResponder.HighOrder.fallback_string()
-    r5 = %StringResponder{mode: :string, high_order: :First, first_order: %{operator: :At, arguments: [1]}}
+    r5 = %StringResponder{mode: :string, high_order: :First, first_order: %{operator: :At, arguments: ["1"]}}
     assert StringResponder.respond(r5, [["abc"]]) == StringResponder.StringMaker.fallback_string()
   end
 end

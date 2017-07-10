@@ -15,7 +15,7 @@ defmodule Yubot.Controller.Poll do
       %Poll.Data{auth_id: nil_or_auth_id, triggers: triggers} = valid_body <- Poll.Data.new(conn.request.body)
       _auth_ensured <- ensure_authentication(nil_or_auth_id, key, group_id)
       _actions_ensured <- ensure_actions(triggers, key, group_id)
-      Poll.insert(valid_body, key, group_id)
+      Poll.insert(%{data: valid_body}, key, group_id)
     end
     |> handle_with_201_json(conn)
   end

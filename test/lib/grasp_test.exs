@@ -7,7 +7,7 @@ defmodule Yubot.GraspTest do
       extractor: %RegexExtractor{engine: :regex, pattern: "^(.+)$"},
       responder: %BooleanResponder{
         mode: :boolean, high_order: :All,
-        first_order: %{operator: :EqAt, arguments: [1, "true"]},
+        first_order: %{operator: :EqAt, arguments: ["1", "true"]},
       }
     }
     assert Grasp.run("true", i1) == {:ok, {[["true", "true"]], true}}
@@ -32,7 +32,7 @@ defmodule Yubot.GraspTest do
         pattern: ~S/"updated_at":"(\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\+\d\d:?\d\d)"/},
       responder: %BooleanResponder{
         mode: :boolean, high_order: :Any,
-        first_order: %{operator: :GteAt, arguments: [1, "2017-07-01T00:00:00+00:00"]},
+        first_order: %{operator: :GteAt, arguments: ["1", "2017-07-01T00:00:00+00:00"]},
       }
     }
     assert Grasp.run(

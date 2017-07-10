@@ -6,12 +6,16 @@ module Repo
         , EntityDict
         , DirtyDict
         , Audit
+        , AuditId
+        , AuditEntry(..)
         , Sorter
         , Ord(..)
         , ModalState
         , dummyEntity
         , populate
         , dummyAudit
+        , genAuditId
+        , getAuditIn
         , put
         , get
         , onEdit
@@ -26,6 +30,7 @@ module Repo
         )
 
 import Dict exposing (Dict)
+import Random
 import Utils
 import Error
 
@@ -58,7 +63,20 @@ type alias EntityDict x =
 
 
 type alias Audit =
-    Dict String String
+    Dict AuditId AuditEntry
+
+
+{-| Client-side tracking ID of validatable fields.
+For uniquely identifiable fields, just use field name variants should suffice. (e.g. "Method" in Action)
+For non-unique fields (listed fields; e.g. Polls.trigger), some random yet session-consistent ID is required.
+-}
+type alias AuditId =
+    String
+
+
+type AuditEntry
+    = Complaint String
+    | Nested Audit
 
 
 type alias DirtyDict x =
@@ -107,6 +125,16 @@ dummyAudit =
     Dict.empty
 
 
+{-| Generate random lowercase string as `AuditId`s.
+It generates `count` number of `AuditId` in list.
+-}
+genAuditId : (List AuditId -> msg) -> Int -> Cmd msg
+genAuditId msg count =
+    Utils.randomLowerAlphaGen 12
+        |> Random.list count
+        |> Random.generate msg
+
+
 put : Entity x -> Repo a x -> Repo a x
 put ({ id } as newEntity) ({ dict } as repo) =
     { repo | dict = (Dict.insert id newEntity dict) }
@@ -117,34 +145,100 @@ get id { dict } =
     Dict.get id dict
 
 
-onEdit : DirtyDict x -> EntityId -> String -> Maybe String -> x -> DirtyDict x
-onEdit dirtyDict entityId label maybeMessage dirtyData =
+onEdit : DirtyDict x -> EntityId -> List ( List AuditId, Maybe String ) -> x -> DirtyDict x
+onEdit dirtyDict entityId auditUpdates dirtyData =
     let
+        updateAudit ( auditIdPath, maybeComplaint ) audit =
+            updateAuditIn auditIdPath maybeComplaint audit
+
         updateFun ( dirtyEntity, audit ) =
-            ( { dirtyEntity | data = dirtyData }, updateAudit label maybeMessage audit )
+            ( { dirtyEntity | data = dirtyData }, auditUpdates |> List.foldl updateAudit audit )
 
         new =
-            ( dummyEntity dirtyData, updateAudit label maybeMessage Dict.empty )
+            ( dummyEntity dirtyData, auditUpdates |> List.foldl updateAudit Dict.empty )
     in
         Utils.dictUpsert entityId updateFun new dirtyDict
 
 
-updateAudit : String -> Maybe String -> Audit -> Audit
-updateAudit label maybeMessage audit =
-    case maybeMessage of
+getAuditIn : List AuditId -> Audit -> Maybe AuditEntry
+getAuditIn idPath audit =
+    case idPath of
+        [] ->
+            -- Empty path; meanlingless call
+            Nothing
+
+        [ id ] ->
+            Dict.get id audit
+
+        id :: ids ->
+            case Dict.get id audit of
+                Nothing ->
+                    Nothing
+
+                Just (Complaint _) ->
+                    Nothing
+
+                Just (Nested nestedAudit) ->
+                    getAuditIn ids nestedAudit
+
+
+updateAuditIn : List AuditId -> Maybe String -> Audit -> Audit
+updateAuditIn idPath maybeComplaint audit =
+    updateAuditInImpl idPath maybeComplaint identity audit
+
+
+updateAuditInImpl : List AuditId -> Maybe String -> (Audit -> Audit) -> Audit -> Audit
+updateAuditInImpl idPathTail maybeComplaint updateFun audit =
+    case idPathTail of
+        [] ->
+            -- Empty path; meanlingless call, just returning audit
+            audit
+
+        [ id ] ->
+            updateFun (updateAuditLeaf id maybeComplaint audit)
+
+        id :: ids ->
+            makeNextUpdateFunAndRecurse id ids maybeComplaint updateFun audit
+
+
+updateAuditLeaf : AuditId -> Maybe String -> Audit -> Audit
+updateAuditLeaf id maybeComplaint audit =
+    case maybeComplaint of
         Nothing ->
-            Dict.remove label audit
+            Dict.remove id audit
 
         Just message ->
-            Dict.insert label message audit
+            Dict.insert id (Complaint message) audit
+
+
+makeNextUpdateFunAndRecurse : AuditId -> List AuditId -> Maybe String -> (Audit -> Audit) -> Audit -> Audit
+makeNextUpdateFunAndRecurse id ids maybeComplaint updateFun audit =
+    case Dict.get id audit of
+        Nothing ->
+            updateAuditInImpl ids maybeComplaint (updateFun << updateOrRemoveNestedAudit id audit) Dict.empty
+
+        Just (Complaint _) ->
+            -- idPath stops at leaf; path is somewhat incorrect
+            updateFun audit
+
+        Just (Nested nestedAudit) ->
+            updateAuditInImpl ids maybeComplaint (updateFun << updateOrRemoveNestedAudit id audit) nestedAudit
+
+
+updateOrRemoveNestedAudit : AuditId -> Audit -> Audit -> Audit
+updateOrRemoveNestedAudit id audit nestedAudit =
+    if Dict.isEmpty nestedAudit then
+        Dict.remove id audit
+    else
+        Dict.insert id (Nested nestedAudit) audit
 
 
 {-| Set audit entry for `entityId`. You must first put dirty entity for `entityId` in `dirtyDict`.
 If the entry for `entityId` does not exist, it does nothing.
 -}
-onValidate : DirtyDict x -> EntityId -> String -> Maybe String -> DirtyDict x
-onValidate dirtyDict entityId label maybeMessage =
-    Dict.update entityId (Maybe.map (Tuple.mapSecond (updateAudit label maybeMessage))) dirtyDict
+onValidate : DirtyDict x -> EntityId -> List AuditId -> Maybe String -> DirtyDict x
+onValidate dirtyDict entityId auditIdPath maybeComplaint =
+    Dict.update entityId (Maybe.map (Tuple.mapSecond (updateAuditIn auditIdPath maybeComplaint))) dirtyDict
 
 
 dirtyGetWithDefault : EntityId -> x -> DirtyDict x -> ( Entity x, Audit )

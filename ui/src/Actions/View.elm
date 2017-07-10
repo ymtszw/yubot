@@ -12,7 +12,7 @@ import Utils exposing (ite)
 import HttpTrial
 import Repo exposing (Repo)
 import Repo.Messages exposing (Msg(..))
-import Repo.ViewParts exposing (navigate)
+import Repo.ViewParts exposing (navigate, selectItems, submitButton)
 import Actions exposing (Action, Aux, TrialValues, ActionType)
 import Actions.Hipchat
 import Actions.ViewParts
@@ -238,17 +238,12 @@ typeNavNew authDict data =
 
 httpDataInputs : Repo.EntityDict Authentication -> Repo.EntityId -> Repo.Audit -> Action -> List (Html (Msg Action))
 httpDataInputs authDict dirtyId audit ({ label, method, url, authId } as data) =
-    [ textInputRequired "Label" audit dirtyId (\x -> { data | label = x }) label
-    , Utils.methods |> methodSelectItems method |> select "Method" dirtyId (\x -> { data | method = Utils.stringToMethod x })
-    , textInputRequired "URL" audit dirtyId (\x -> { data | url = x }) url
+    [ textInputRequired "Label" audit dirtyId [ "label" ] (\x -> { data | label = x }) label
+    , Utils.methods |> selectItems method |> select "Method" dirtyId (\x -> { data | method = Utils.stringToMethod x })
+    , textInputRequired "URL" audit dirtyId [ "url" ] (\x -> { data | url = x }) url
     , authSelect "action" "Credential" (Authentications.listForHttp authDict) dirtyId data authId
     , httpBodyTemplateInput dirtyId audit data
     ]
-
-
-methodSelectItems : x -> List x -> List Repo.ViewParts.SelectItem
-methodSelectItems currentValue valueList =
-    List.map (\x -> ( Utils.toLowerString x, toString x, currentValue == x )) valueList
 
 
 httpBodyTemplateInput : Repo.EntityId -> Repo.Audit -> Action -> Html (Msg Action)
@@ -257,10 +252,10 @@ httpBodyTemplateInput dirtyId audit ({ bodyTemplate } as data) =
         onBodyInput body =
             case StringTemplate.validate body of
                 Ok variables ->
-                    OnEdit dirtyId ( "BodyTemplate", Nothing ) { data | bodyTemplate = StringTemplate body variables }
+                    OnEdit dirtyId [ ( [ "BodyTemplate" ], Nothing ) ] { data | bodyTemplate = StringTemplate body variables }
 
                 Err error ->
-                    OnEdit dirtyId ( "BodyTemplate", Just error ) { data | bodyTemplate = { bodyTemplate | body = body } }
+                    OnEdit dirtyId [ ( [ "BodyTemplate" ], Just error ) ] { data | bodyTemplate = { bodyTemplate | body = body } }
     in
         Html.div []
             [ Repo.ViewParts.editorInput "action" "BodyTemplate" audit onBodyInput bodyTemplate.body
@@ -286,8 +281,8 @@ hipchatDataInputs authDict dirtyId audit ({ label, bodyTemplate } as data) =
         applyMessageTemplate string =
             Actions.Hipchat.applyParams data { userParams | messageTemplate = string }
     in
-        [ textInputRequired "Label" audit dirtyId (\x -> { data | label = x }) label
-        , textInputRequired "RoomID" audit dirtyId (\x -> { data | url = Actions.Hipchat.roomIdToUrl x }) roomId
+        [ textInputRequired "Label" audit dirtyId [ "label" ] (\x -> { data | label = x }) label
+        , textInputRequired "RoomID" audit dirtyId [ "roomId" ] (\x -> { data | url = Actions.Hipchat.roomIdToUrl x }) roomId
         , hipchatAuthSelect (Authentications.listForHipchat authDict) audit dirtyId data
         , hipchatColorSelect audit dirtyId (\x -> applyParamsNeverFail { userParams | color = Actions.Hipchat.stringToColor x }) color
         , hipchatNotifyCheck (\checked -> OnEditValid dirtyId (applyParamsNeverFail { userParams | notify = checked })) notify
@@ -307,15 +302,15 @@ hipchatColorSelect audit dirtyId applyColorString color =
                     colorStr |> Actions.Hipchat.stringToColor |> Styles.hipchatColor |> List.singleton
     in
         Actions.Hipchat.colors
-            |> methodSelectItems color
-            |> Repo.ViewParts.selectWithAttrs hipchatColor audit "action" "Color" False dirtyId applyColorString
+            |> selectItems color
+            |> Repo.ViewParts.selectWithAttrs hipchatColor audit [ "color" ] "action" "Color" False dirtyId applyColorString
 
 
 hipchatAuthSelect : List (Repo.Entity Authentication) -> Repo.Audit -> Repo.EntityId -> Action -> Html (Msg Action)
 hipchatAuthSelect authList audit dirtyId ({ authId } as data) =
     authList
         |> List.map (\{ id, data } -> ( id, (data.name ++ " (" ++ id ++ ")"), authId == Just id ))
-        |> Repo.ViewParts.selectRequireable True audit "action" "Credential" False dirtyId (\x -> { data | authId = Just x })
+        |> Repo.ViewParts.selectRequireable True audit "action" "Credential" False dirtyId [ "credential" ] (\x -> { data | authId = Just x })
 
 
 hipchatNotifyCheck : (Bool -> Msg Action) -> Bool -> Html (Msg Action)
@@ -348,10 +343,10 @@ hipchatMessageTemplateEditor dirtyId audit applyMessageTemplate { variables } me
         onMessageTemplateInput string =
             case applyMessageTemplate string of
                 Ok newData ->
-                    OnEdit dirtyId ( "MessageTemplate", Nothing ) newData
+                    OnEdit dirtyId [ ( [ "MessageTemplate" ], Nothing ) ] newData
 
                 Err ( error, newData ) ->
-                    OnEdit dirtyId ( "MessageTemplate", Just error ) newData
+                    OnEdit dirtyId [ ( [ "MessageTemplate" ], Just error ) ] newData
     in
         Html.div []
             [ Repo.ViewParts.editorInput "action" "MessageTemplate" audit onMessageTemplateInput messageTemplate
@@ -384,6 +379,7 @@ trialInputs trialValues ({ bodyTemplate, type_ } as data) =
                 variable
                 False
                 Repo.dummyAudit
+                [ "trial value" ]
                 (Actions.OnTrialEdit variable)
                 (Utils.dictGetWithDefault variable "" trialValues)
 
@@ -453,7 +449,7 @@ responseCard { status, headers, body } =
             ]
 
 
-textInputRequired : String -> Repo.Audit -> Repo.EntityId -> (String -> x) -> String -> Html (Msg x)
+textInputRequired : String -> Repo.Audit -> Repo.EntityId -> List Repo.AuditId -> (String -> x) -> String -> Html (Msg x)
 textInputRequired inputLabel =
     Repo.ViewParts.textInputRequired "action" inputLabel False
 
@@ -461,15 +457,6 @@ textInputRequired inputLabel =
 select : String -> Repo.EntityId -> (String -> x) -> List Repo.ViewParts.SelectItem -> Html (Msg x)
 select inputLabel =
     Repo.ViewParts.select "action" inputLabel False
-
-
-submitButton : String -> Bool -> String -> Html msg
-submitButton formId enabled label =
-    stdBtn
-        Button.primary
-        [ Button.attrs [ Attr.form formId, Attr.type_ "submit", class "float-right" ] ]
-        (not enabled)
-        label
 
 
 

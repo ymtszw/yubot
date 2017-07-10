@@ -241,4 +241,4 @@ htmlIf predicate html =
 
 htmlMaybe : (x -> Html msg) -> Maybe x -> Html msg
 htmlMaybe htmlFun =
-    Maybe.map htmlFun >> Maybe.withDefault none
+    Utils.maybeMapOrElse htmlFun none

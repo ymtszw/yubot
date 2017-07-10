@@ -13,6 +13,8 @@ module Utils
         , listUpdateAt
         , listConsIf
         , listAppendIf
+        , listShuffle
+        , maybeMapOrElse
         , encodeMaybe
         , boolToMaybe
         , dictGetWithDefault
@@ -30,12 +32,17 @@ module Utils
         , toLowerString
         , emit
         , emitIn
+        , randomLowerAlphaGen
+        , isOk
+        , isErr
         )
 
+import Char
 import Date
 import Dict exposing (Dict)
 import Json.Encode
 import Process
+import Random
 import Task
 import Time
 
@@ -150,6 +157,42 @@ listAppendIf shouldAppend toAppend list =
         list ++ toAppend
     else
         list
+
+
+{-| Shuffle an element of list with its neighbor.
+If isAsc, shuffle with neighbor of index-ascending direction.
+Otherwise index-descending direction.
+If either base index or neighbor index are out-of-bound,
+it returns unchanged list
+-}
+listShuffle : Int -> Bool -> List a -> List a
+listShuffle index isAsc list =
+    listShuffleImpl index isAsc ( 0, [] ) list
+
+
+listShuffleImpl : Int -> Bool -> ( Int, List a ) -> List a -> List a
+listShuffleImpl index isAsc ( currentIndex, acc ) tail =
+    case ( tail, acc ) of
+        ( [], _ ) ->
+            List.reverse acc
+
+        ( x :: xs, y :: ys ) ->
+            if (isAsc && currentIndex == index + 1) || (not isAsc && index == currentIndex) then
+                (List.reverse (y :: x :: ys)) ++ xs
+            else
+                listShuffleImpl index isAsc ( currentIndex + 1, x :: acc ) xs
+
+        ( x :: xs, [] ) ->
+            if (not isAsc && index == currentIndex) then
+                -- out-of-bound
+                tail
+            else
+                listShuffleImpl index isAsc ( currentIndex + 1, [ x ] ) xs
+
+
+maybeMapOrElse : (x -> y) -> y -> Maybe x -> y
+maybeMapOrElse mapper default maybe =
+    maybe |> Maybe.map mapper |> Maybe.withDefault default
 
 
 encodeMaybe : (x -> Json.Encode.Value) -> Maybe x -> Json.Encode.Value
@@ -347,3 +390,26 @@ emitIn : Milliseconds -> msg -> Cmd msg
 emitIn ms message =
     Process.sleep ms
         |> Task.perform (always message)
+
+
+randomLowerAlphaGen : Int -> Random.Generator String
+randomLowerAlphaGen length =
+    Random.int 0 25
+        |> Random.map (\n -> Char.fromCode (n + 97))
+        |> Random.list length
+        |> Random.map String.fromList
+
+
+isOk : Result a b -> Bool
+isOk result =
+    case result of
+        Ok _ ->
+            True
+
+        Err _ ->
+            False
+
+
+isErr : Result a b -> Bool
+isErr =
+    not << isOk

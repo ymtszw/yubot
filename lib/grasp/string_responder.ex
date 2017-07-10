@@ -36,12 +36,18 @@ defmodule Yubot.Grasp.StringResponder do
     def validate(_),
       do: {:error, {:invalid_value, [__MODULE__]}}
 
-    defp validate_impl(join, [delimiter] = args) when join in [:Join, "Join"] and is_binary(delimiter),
-      do: {:ok, {:Join, args}}
-    defp validate_impl(at, [index] = args) when at in [:At, "At"] and is_integer(index) and index >= 0,
-      do: {:ok, {:At, args}}
-    defp validate_impl(_, _),
-      do: {:error, {:invalid_value, [__MODULE__]}}
+    defp validate_impl(join, [delimiter] = args) when join in [:Join, "Join"] and is_binary(delimiter) do
+      {:ok, {:Join, args}}
+    end
+    defp validate_impl(at, [index_str] = args) when at in [:At, "At"] and is_binary(index_str) do
+      case Integer.parse(index_str) do
+        {index, ""} when index > 0 -> {:ok, {:At, args}}
+        _otherwise -> {:error, {:invalid_value, [__MODULE__]}}
+      end
+    end
+    defp validate_impl(_, _) do
+      {:error, {:invalid_value, [__MODULE__]}}
+    end
 
     defun new(term :: term) :: R.t(t), do: validate(term)
 
@@ -51,7 +57,7 @@ defmodule Yubot.Grasp.StringResponder do
 
     @spec fun(t) :: fun_t
     def fun(%{operator: :Join, arguments: [delimiter]}), do: &join(&1, delimiter)
-    def fun(%{operator: :At, arguments: [index]}), do: &at(&1, index)
+    def fun(%{operator: :At, arguments: [index_str]}), do: &at(&1, String.to_integer(index_str))
     # Crash for invalid string maker data
 
     defp join(list, delimiter) when is_list(list) and is_binary(delimiter), do: Enum.join(list, delimiter)

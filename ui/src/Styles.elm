@@ -6,6 +6,11 @@ import Utils
 import Actions.Hipchat exposing (Color(..))
 
 
+flex : Int -> Attribute msg
+flex factor =
+    style [ ( "flex", toString factor ) ]
+
+
 greyBack : Attribute msg
 greyBack =
     style

@@ -2,17 +2,25 @@ module Grasp
     exposing
         ( Instruction
         , Responder
+        , Pattern
+        , FirstOrder
+        , regexExtractor
+        , responder
+        , firstOrder
+        , isValidInstruction
         , decodeInstruction
         , encodeInstruction
         )
 
-import Json.Decode as Decode
-import Json.Encode as Encode
+import Json.Decode as JD
+import Json.Encode as JE
 import Utils
+import Repo
 
 
 type alias Instruction r =
-    { extractor : Extractor
+    { auditId : Repo.AuditId -- For action variable material, this field should not be used (use var name instead)
+    , extractor : Extractor
     , responder : r
     }
 
@@ -25,6 +33,11 @@ type alias Extractor =
 
 type Engine
     = Regex
+
+
+regexExtractor : Pattern -> Extractor
+regexExtractor =
+    Extractor Regex
 
 
 {-| Pattern that can be compiled to Elixir's `Regex.t`.
@@ -60,62 +73,73 @@ firstOrder op args =
     { operator = op, arguments = args }
 
 
-decodeInstruction : (String -> ho) -> (String -> op) -> Decode.Decoder (Instruction (Responder ho op))
-decodeInstruction stringToHo stringToOp =
-    Decode.map2 Instruction
-        (Decode.field "extractor" decodeExtractor)
-        (Decode.field "responder" (decodeResponder stringToHo stringToOp))
+isValidInstruction : (Responder ho op -> Bool) -> Instruction (Responder ho op) -> Bool
+isValidInstruction isValidResponder { extractor, responder } =
+    (extractor.pattern /= "")
+        && (List.member responder.mode [ "boolean", "string" ])
+        && isValidResponder responder
 
 
-decodeExtractor : Decode.Decoder Extractor
+
+-- JSON
+
+
+decodeInstruction : (String -> ho) -> (String -> op) -> String -> Int -> JD.Decoder (Instruction (Responder ho op))
+decodeInstruction stringToHo stringToOp prefix index =
+    JD.map2 (Instruction (prefix ++ toString index))
+        (JD.field "extractor" decodeExtractor)
+        (JD.field "responder" (decodeResponder stringToHo stringToOp))
+
+
+decodeExtractor : JD.Decoder Extractor
 decodeExtractor =
-    Decode.map (Extractor Regex)
-        (Decode.field "pattern" Decode.string)
+    JD.map (Extractor Regex)
+        (JD.field "pattern" JD.string)
 
 
-decodeResponder : (String -> ho) -> (String -> op) -> Decode.Decoder (Responder ho op)
+decodeResponder : (String -> ho) -> (String -> op) -> JD.Decoder (Responder ho op)
 decodeResponder stringToHo stringToOp =
-    Decode.map3 responder
-        (Decode.field "mode" Decode.string)
-        (Decode.field "high_order" (Decode.map stringToHo Decode.string))
-        (Decode.field "first_order" (decodeFirstOrder stringToOp))
+    JD.map3 responder
+        (JD.field "mode" JD.string)
+        (JD.field "high_order" (JD.map stringToHo JD.string))
+        (JD.field "first_order" (decodeFirstOrder stringToOp))
 
 
-decodeFirstOrder : (String -> op) -> Decode.Decoder (FirstOrder op)
+decodeFirstOrder : (String -> op) -> JD.Decoder (FirstOrder op)
 decodeFirstOrder stringToOp =
-    Decode.map2 firstOrder
-        (Decode.field "operator" (Decode.map stringToOp Decode.string))
-        (Decode.field "arguments" (Decode.list Decode.string))
+    JD.map2 firstOrder
+        (JD.field "operator" (JD.map stringToOp JD.string))
+        (JD.field "arguments" (JD.list JD.string))
 
 
-encodeInstruction : Instruction (Responder ho op) -> Encode.Value
+encodeInstruction : Instruction (Responder ho op) -> JE.Value
 encodeInstruction { extractor, responder } =
-    Encode.object
+    JE.object
         [ ( "extractor", encodeExtractor extractor )
         , ( "responder", encodeResponder responder )
         ]
 
 
-encodeExtractor : Extractor -> Encode.Value
+encodeExtractor : Extractor -> JE.Value
 encodeExtractor { engine, pattern } =
-    Encode.object
-        [ ( "engine", Encode.string <| Utils.toLowerString <| engine )
-        , ( "pattern", Encode.string pattern ) -- Be extra careful about escaping
+    JE.object
+        [ ( "engine", JE.string <| Utils.toLowerString <| engine )
+        , ( "pattern", JE.string pattern ) -- Be extra careful about escaping
         ]
 
 
-encodeResponder : Responder ho op -> Encode.Value
+encodeResponder : Responder ho op -> JE.Value
 encodeResponder { mode, highOrder, firstOrder } =
-    Encode.object
-        [ ( "mode", Encode.string mode )
-        , ( "highOrder", Encode.string <| toString <| highOrder )
-        , ( "firstOrder", encodeFirstOrder firstOrder )
+    JE.object
+        [ ( "mode", JE.string mode )
+        , ( "high_order", JE.string <| toString <| highOrder )
+        , ( "first_order", encodeFirstOrder firstOrder )
         ]
 
 
-encodeFirstOrder : FirstOrder op -> Encode.Value
+encodeFirstOrder : FirstOrder op -> JE.Value
 encodeFirstOrder { operator, arguments } =
-    Encode.object
-        [ ( "operator", Encode.string <| toString operator )
-        , ( "arguments", Encode.list <| List.map Encode.string <| arguments )
+    JE.object
+        [ ( "operator", JE.string <| toString operator )
+        , ( "arguments", JE.list <| List.map JE.string <| arguments )
         ]

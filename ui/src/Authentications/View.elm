@@ -101,7 +101,7 @@ createHipchatRow { dict, dirtyDict } =
             Auth.isValid dirtyEntity
     in
         [ [ Html.form [ Attr.id "auth-hipchat", Html.Events.onSubmit (ite isValid (Create "newHipchat" data) NoOp) ] []
-          , textInputWithValidation "auth-hipchat" "Token" True audit "newHipchat" validate Auth.hipchatToken data.token
+          , textInputWithValidation "auth-hipchat" "Token" True audit "newHipchat" [ "token" ] validate Auth.hipchatToken data.token
           ]
         , [ registerButton "auth-hipchat" isValid ]
         ]
@@ -124,10 +124,10 @@ createOtherRow dirtyDict =
             Auth.isValid dirtyEntity
     in
         [ [ Html.form [ Attr.id "auth-other", Html.Events.onSubmit (ite isValid (Create "new" data) NoOp) ] []
-          , textInputRequired "auth-other" "Label" True audit "new" (\x -> { data | name = x }) data.name
+          , textInputRequired "auth-other" "Label" True audit "new" [ "label" ] (\x -> { data | name = x }) data.name
           ]
         , [ typeSelect ]
-        , [ textInputRequired "auth-other" "Token" True audit "new" (\x -> { data | token = x }) data.token ]
+        , [ textInputRequired "auth-other" "Token" True audit "new" [ "token" ] (\x -> { data | token = x }) data.token ]
         , [ registerButton "auth-other" isValid ]
         ]
             |> List.map (Table.td [ Table.cellAttr (class "align-middle") ])

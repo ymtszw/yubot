@@ -57,7 +57,7 @@ update msg ({ route, taskStack } as model) =
             PollsMsg (Polls.RepoMsg Repo.Messages.PromptLogin) ->
                 promptLogin
 
-            PollsMsg (Polls.Trial Polls.PromptLogin) ->
+            PollsMsg (Polls.AuxMsg Polls.PromptLogin) ->
                 promptLogin
 
             PollsMsg subMsg ->

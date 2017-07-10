@@ -13,7 +13,7 @@ defmodule Yubot.Grasp.InstructionTest do
         "high_order" => "First",
         "first_order" => %{
           "operator" => "EqAt",
-          "arguments" => [1, "true"]
+          "arguments" => ["1", "true"]
         }
       }
     }) == {:ok, %Instruction{
@@ -26,7 +26,7 @@ defmodule Yubot.Grasp.InstructionTest do
         high_order: :First,
         first_order: %{
           operator: :EqAt,
-          arguments: [1, "true"],
+          arguments: ["1", "true"],
         }
       }
     }}

@@ -73,13 +73,33 @@ defmodule Yubot.Model.Poll do
       """
 
       use Croma.SubtypeOfMap, key_module: Croma.String, value_module: G.Instruction, default: %{}
+
+      def new(term), do: validate(term)
+    end
+
+    defmodule ConditionList do
+      use Croma.SubtypeOfList, elem_module: Condition, max_length: 5, default: []
+
+      defun new(term :: term) :: R.t(t) do
+        (list) when is_list(list) -> Enum.map(list, &Condition.new/1) |> R.sequence()
+        (_non_list) -> {:error, {:invalid_value, [__MODULE__]}}
+      end
     end
 
     use Croma.Struct, recursive_new?: true, fields: [
       action_id: Action.Id,
-      conditions: list_of(Condition),
+      conditions: ConditionList,
       material: Material,
     ]
+  end
+
+  defmodule TriggerList do
+    use Croma.SubtypeOfList, elem_module: Trigger, max_length: 5, default: []
+
+    defun new(term :: term) :: R.t(t) do
+      (list) when is_list(list) -> Enum.map(list, &Trigger.new/1) |> R.sequence()
+      (_non_list) -> {:error, {:invalid_value, [__MODULE__]}}
+    end
   end
 
   use SolomonAcs.Dodai.Model.Datastore, data_fields: [
@@ -87,10 +107,12 @@ defmodule Yubot.Model.Poll do
     url: SolomonLib.Url,
     # auth: Croma.TypeGen.nilable(Authentication.Id), # DEPRECATED; Eliminating since nilable field cannot be distinguished its version by itself
     auth_id: nilable(Authentication.Id),
-    action: Action.Id, # DEPRECATED
-    filters: list_of(Jq.Filter), # DEPRECATED
+    action: nilable(Action.Id), # DEPRECATED
+    filters: nilable(list_of(Jq.Filter)), # DEPRECATED
     is_enabled: nilable(Croma.Boolean), # TODO strip nilable
-    triggers: list_of(Trigger),
+    triggers: TriggerList,
+    last_run_at: nilable(SolomonLib.Time),
+    next_run_at: nilable(SolomonLib.Time),
     # history: list_of(History), # TODO enable
   ]
 

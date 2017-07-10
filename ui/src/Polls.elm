@@ -3,29 +3,39 @@ module Polls
         ( Poll
         , Interval
         , Trigger
+        , Condition
         , Material
         , Aux
         , Msg(..)
-        , TrialMsg(..)
+        , AuxMsg(..)
         , dummyPoll
+        , dummyTrigger
+        , isValid
         , populate
+        , simpleMatchCondition
+        , isSimpleMatch
+        , functionalCondition
+        , sampleFunctionalCondition
+        , functionalMaterialItem
         , config
         , update
         , usedActionIds
         , usedAuthIds
         , intervalToString
+        , intervals
         )
 
 import Set exposing (Set)
 import Dict exposing (Dict)
-import Json.Decode as Decode
-import Json.Encode as Encode
+import Json.Decode as JD
+import Json.Decode.Extra as JDE exposing ((|:))
+import Json.Encode as JE
 import Http
 import HttpBuilder
 import Utils
 import Grasp
-import Grasp.BooleanResponder as GBR exposing (BooleanResponder)
-import Grasp.StringResponder as GSR exposing (StringResponder)
+import Grasp.BooleanResponder as GBR exposing (BooleanResponder, booleanResponder)
+import Grasp.StringResponder as GSR exposing (StringResponder, stringResponder)
 import HttpTrial
 import Repo exposing (Repo)
 import Repo.Command exposing (Config)
@@ -42,6 +52,8 @@ type alias Poll =
     , authId : Maybe Repo.EntityId
     , isEnabled : Bool
     , triggers : List Trigger
+    , lastRunAt : Maybe Utils.Timestamp -- Readonly
+    , nextRunAt : Maybe Utils.Timestamp -- Readonly
     }
 
 
@@ -50,10 +62,16 @@ type alias Interval =
 
 
 type alias Trigger =
-    { actionId : Repo.EntityId
-    , conditions : List (Grasp.Instruction BooleanResponder)
+    { collapsed : Bool -- Client-side only; UI state
+    , auditId : Repo.AuditId -- Client-side only
+    , actionId : Repo.EntityId
+    , conditions : List Condition
     , material : Material
     }
+
+
+type alias Condition =
+    Grasp.Instruction BooleanResponder
 
 
 type alias Material =
@@ -77,8 +95,26 @@ type alias FullTrialResponse =
 
 dummyPoll : Poll
 dummyPoll =
-    -- Make it default isEnabled: True later
-    Poll "https://example.com" "10" Nothing False []
+    Poll "https://example.com" "10" Nothing True [ dummyTrigger "newTrigger" "newCondition" ] Nothing Nothing
+
+
+dummyTrigger : Repo.AuditId -> Repo.AuditId -> Trigger
+dummyTrigger auditId1 auditId2 =
+    Trigger True auditId1 "" [ simpleMatchCondition auditId2 "" ] Dict.empty
+
+
+isValid : ( Repo.Entity Poll, Repo.Audit ) -> Bool
+isValid ( { data }, audit ) =
+    Repo.isValid audit
+        && (data.url /= "")
+        && (List.all isValidTrigger data.triggers)
+
+
+isValidTrigger : Trigger -> Bool
+isValidTrigger { actionId, conditions, material } =
+    (actionId /= "")
+        && (List.all (Grasp.isValidInstruction GBR.isValid) conditions)
+        && (material |> Dict.values |> List.all (Grasp.isValidInstruction GSR.isValid))
 
 
 populate : List (Repo.Entity Poll) -> Repo Aux Poll
@@ -120,6 +156,55 @@ intervalToString interval =
             interval
 
 
+intervals : List Interval
+intervals =
+    [ "1", "3", "10", "30", "hourly", "daily" ]
+
+
+
+-- Grasp templates
+
+
+simpleMatchCondition : Repo.AuditId -> Grasp.Pattern -> Condition
+simpleMatchCondition auditId patternStr =
+    { auditId = auditId
+    , extractor = Grasp.regexExtractor patternStr
+    , responder = booleanResponder GBR.First GBR.Truth []
+    }
+
+
+isSimpleMatch : Grasp.Instruction BooleanResponder -> Bool
+isSimpleMatch { responder } =
+    responder.highOrder == GBR.First && responder.firstOrder.operator == GBR.Truth
+
+
+functionalCondition : Repo.AuditId -> Grasp.Pattern -> GBR.HighOrder -> GBR.Predicate -> List String -> Condition
+functionalCondition auditId patternStr ho op args =
+    { auditId = auditId
+    , extractor = Grasp.regexExtractor patternStr
+    , responder = booleanResponder ho op args
+    }
+
+
+sampleFunctionalCondition : Repo.AuditId -> Grasp.Pattern -> Condition
+sampleFunctionalCondition auditId patternStr =
+    functionalCondition auditId patternStr GBR.First GBR.EqAt [ "1", "true" ]
+
+
+functionalMaterialItem :
+    Repo.AuditId
+    -> Grasp.Pattern
+    -> GSR.HighOrder
+    -> GSR.StringMaker
+    -> List String
+    -> Grasp.Instruction StringResponder
+functionalMaterialItem auditId patternStr ho op args =
+    { auditId = auditId
+    , extractor = Grasp.regexExtractor patternStr
+    , responder = stringResponder ho op args
+    }
+
+
 
 -- Config
 
@@ -129,57 +214,61 @@ config =
     Config "/api/poll" "/polls" dataDecoder dataEncoder (always "/polls")
 
 
-dataDecoder : Decode.Decoder Poll
+dataDecoder : JD.Decoder Poll
 dataDecoder =
-    Decode.map5 Poll
-        (Decode.field "url" Decode.string)
-        (Decode.field "interval" Decode.string)
-        (Decode.field "auth_id" (Decode.maybe Decode.string))
-        (Decode.field "is_enabled" decodeIsEnabled)
-        (Decode.field "triggers" (Decode.list decodeTrigger))
+    JD.succeed Poll
+        |: (JD.field "url" JD.string)
+        |: (JD.field "interval" JD.string)
+        |: (JD.field "auth_id" (JD.maybe JD.string))
+        |: (JD.field "is_enabled" decodeIsEnabled)
+        |: (JD.field "triggers" (JDE.indexedList decodeTrigger))
+        |: (JD.field "last_run_at" (JD.maybe JD.string))
+        |: (JD.field "next_run_at" (JD.maybe JD.string))
 
 
-decodeIsEnabled : Decode.Decoder Bool
+decodeIsEnabled : JD.Decoder Bool
 decodeIsEnabled =
-    Decode.bool
-        |> Decode.maybe
-        |> Decode.map (Maybe.withDefault False)
+    JD.bool
+        |> JD.maybe
+        |> JD.map (Maybe.withDefault False)
 
 
-decodeTrigger : Decode.Decoder Trigger
-decodeTrigger =
-    Decode.map3 Trigger
-        (Decode.field "action_id" Decode.string)
-        (Decode.field "conditions" (Decode.list (Grasp.decodeInstruction GBR.stringToHo GBR.stringToOp)))
-        (Decode.field "material" (Decode.dict (Grasp.decodeInstruction GSR.stringToHo GSR.stringToOp)))
+decodeTrigger : Int -> JD.Decoder Trigger
+decodeTrigger index =
+    JD.succeed (Trigger True ("trigger" ++ toString index))
+        |: (JD.field "action_id" JD.string)
+        |: (JD.field "conditions" (JDE.indexedList (Grasp.decodeInstruction GBR.stringToHo GBR.stringToOp "condition")))
+        |: (JD.field "material" (JD.dict (Grasp.decodeInstruction GSR.stringToHo GSR.stringToOp "material" 0)))
 
 
-dataEncoder : Poll -> Encode.Value
-dataEncoder { url, interval, authId, isEnabled, triggers } =
-    Encode.object
-        [ ( "url", Encode.string url )
-        , ( "interval", Encode.string interval )
-        , ( "auth_id", Utils.encodeMaybe Encode.string authId )
-        , ( "is_enabled", Encode.bool isEnabled )
-        , ( "triggers", Encode.list <| List.map encodeTrigger <| triggers )
+dataEncoder : Poll -> JE.Value
+dataEncoder { url, interval, authId, isEnabled, triggers, lastRunAt, nextRunAt } =
+    JE.object
+        [ ( "url", JE.string url )
+        , ( "interval", JE.string interval )
+        , ( "auth_id", Utils.encodeMaybe JE.string authId )
+        , ( "is_enabled", JE.bool isEnabled )
+        , ( "triggers", JE.list <| List.map encodeTrigger <| triggers )
+        , ( "last_run_at", Utils.encodeMaybe JE.string lastRunAt )
+        , ( "next_run_at", Utils.encodeMaybe JE.string nextRunAt )
         ]
 
 
-encodeTrigger : Trigger -> Encode.Value
+encodeTrigger : Trigger -> JE.Value
 encodeTrigger { actionId, conditions, material } =
-    Encode.object
-        [ ( "action_id", Encode.string actionId )
-        , ( "conditions", Encode.list <| List.map Grasp.encodeInstruction <| conditions )
+    JE.object
+        [ ( "action_id", JE.string actionId )
+        , ( "conditions", JE.list <| List.map Grasp.encodeInstruction <| conditions )
         , ( "material", encodeMaterial material )
         ]
 
 
-encodeMaterial : Material -> Encode.Value
+encodeMaterial : Material -> JE.Value
 encodeMaterial material =
     material
         |> Dict.map (\_ v -> Grasp.encodeInstruction v)
         |> Dict.toList
-        |> Encode.object
+        |> JE.object
 
 
 
@@ -188,10 +277,10 @@ encodeMaterial material =
 
 type Msg
     = RepoMsg (Repo.Messages.Msg Poll)
-    | Trial TrialMsg
+    | AuxMsg AuxMsg
 
 
-type TrialMsg
+type AuxMsg
     = ShallowTry Poll
     | OnShallowTry (Result Http.Error HttpTrial.Response)
     | PromptLogin
@@ -213,11 +302,11 @@ update msg repo =
             RepoMsg repoMsg ->
                 repo |> Repo.Update.update dummyPoll config repoMsg |> map RepoMsg
 
-            Trial trialMsg ->
-                repo |> updateTrial trialMsg |> map Trial
+            AuxMsg trialMsg ->
+                repo |> updateTrial trialMsg |> map AuxMsg
 
 
-updateTrial : TrialMsg -> Repo Aux Poll -> ( Repo Aux Poll, Cmd TrialMsg, Repo.Update.StackCmd )
+updateTrial : AuxMsg -> Repo Aux Poll -> ( Repo Aux Poll, Cmd AuxMsg, Repo.Update.StackCmd )
 updateTrial msg repo =
     case msg of
         ShallowTry data ->
@@ -236,7 +325,7 @@ updateTrial msg repo =
             ( repo, Cmd.none, Repo.Update.Keep )
 
 
-shallowTry : Poll -> Cmd TrialMsg
+shallowTry : Poll -> Cmd AuxMsg
 shallowTry data =
     HttpBuilder.post (config.repoPath ++ "/shallow_try")
         |> HttpBuilder.withJsonBody (shallowTryRequestEncoder data)
@@ -244,9 +333,9 @@ shallowTry data =
         |> HttpBuilder.send OnShallowTry
 
 
-shallowTryRequestEncoder : Poll -> Encode.Value
+shallowTryRequestEncoder : Poll -> JE.Value
 shallowTryRequestEncoder { url, authId } =
-    Encode.object
-        [ ( "url", Encode.string url )
-        , ( "auth_id", Utils.encodeMaybe Encode.string authId )
+    JE.object
+        [ ( "url", JE.string url )
+        , ( "auth_id", Utils.encodeMaybe JE.string authId )
         ]

@@ -14,7 +14,7 @@ sub : Bool -> List (Sub Msg)
 sub isDev =
     if isDev then
         [ WebSocket.listen devWebsocketUrl OnServerPush
-        , Time.every (30 * Time.second) OnClientTimeout
+        , Time.every (55 * Time.second) OnClientTimeout
         ]
     else
         []

@@ -13,14 +13,16 @@ defmodule Yubot.Grasp.BooleanResponder do
     Generator of one-arity functions (predicates) which return `boolean` values from given lists.
 
     Available operators:
+    - `:Truth` - Always `true`.
     - `:Contains` - `true` if an argument is contained in the list.
     - `:**At` - Apply one of basic comparison operators to element at specified index. `false` if the index was out of bound.
+      Indexes have to be stored as `String.t`.
 
     Note that `:**At` operators will use `Enum.at/2` as runtime builing block, which takes linear time.
     """
 
     @indexed_operators [:EqAt, :NeAt, :LtAt, :LteAt, :GtAt, :GteAt]
-    @type operator_t :: :Contains | :EqAt | :NeAt | :LtAt | :LteAt | :GtAt | :GteAt
+    @type operator_t :: :Truth | :Contains | :EqAt | :NeAt | :LtAt | :LteAt | :GtAt | :GteAt
     @type t :: %{
       operator: operator_t,
       arguments: list,
@@ -39,13 +41,19 @@ defmodule Yubot.Grasp.BooleanResponder do
       {:error, {:invalid_value, [__MODULE__]}}
     end
 
+    defp validate_impl(contains, []) when contains in [:Truth, "Truth"],
+      do: {:ok, {:Truth, []}}
     defp validate_impl(contains, [_right] = args) when contains in [:Contains, "Contains"],
       do: {:ok, {:Contains, args}}
     for op_atom <- @indexed_operators do
       @op_atom op_atom
       @op_str Atom.to_string(@op_atom)
-      defp validate_impl(op, [index, _right] = args) when op in [@op_atom, @op_str] and is_integer(index) and index >= 0,
-        do: {:ok, {@op_atom, args}}
+      defp validate_impl(op, [index_str, _right] = args) when op in [@op_atom, @op_str] and is_binary(index_str) do
+        case Integer.parse(index_str) do
+          {index, ""} when index > 0 -> {:ok, {@op_atom, args}}
+          _otherwise -> {:error, {:invalid_value, [__MODULE__]}}
+        end
+      end
     end
     defp validate_impl(_, _), do: {:error, {:invalid_value, [__MODULE__]}}
 
@@ -56,14 +64,15 @@ defmodule Yubot.Grasp.BooleanResponder do
     @type fun_t :: (list -> boolean)
 
     @spec fun(t) :: fun_t
-    def fun(%{operator: :Contains, arguments: [right]       }), do: &contains(&1, right)
-    def fun(%{operator: :EqAt    , arguments: [index, right]}), do: &eq_at(&1, index, right)
-    def fun(%{operator: :NeAt    , arguments: [index, right]}), do: &ne_at(&1, index, right)
-    def fun(%{operator: :LtAt    , arguments: [index, right]}), do: &lt_at(&1, index, right)
-    def fun(%{operator: :LteAt   , arguments: [index, right]}), do: &lte_at(&1, index, right)
-    def fun(%{operator: :GtAt    , arguments: [index, right]}), do: &gt_at(&1, index, right)
-    def fun(%{operator: :GteAt   , arguments: [index, right]}), do: &gte_at(&1, index, right)
-    # Crash for invalid predicate data
+    def fun(%{operator: :Truth   , arguments: []                }), do: fn _ -> true end
+    def fun(%{operator: :Contains, arguments: [right]           }), do: &contains(&1, right)
+    def fun(%{operator: :EqAt    , arguments: [index_str, right]}), do: &eq_at(&1, String.to_integer(index_str), right)
+    def fun(%{operator: :NeAt    , arguments: [index_str, right]}), do: &ne_at(&1, String.to_integer(index_str), right)
+    def fun(%{operator: :LtAt    , arguments: [index_str, right]}), do: &lt_at(&1, String.to_integer(index_str), right)
+    def fun(%{operator: :LteAt   , arguments: [index_str, right]}), do: &lte_at(&1, String.to_integer(index_str), right)
+    def fun(%{operator: :GtAt    , arguments: [index_str, right]}), do: &gt_at(&1, String.to_integer(index_str), right)
+    def fun(%{operator: :GteAt   , arguments: [index_str, right]}), do: &gte_at(&1, String.to_integer(index_str), right)
+    # Crash for invalid predicate data; runtime string => int conversion should not fail for already validated index
 
     defp contains(list, right) when is_list(list), do: right in list
     defp contains(_, _), do: false

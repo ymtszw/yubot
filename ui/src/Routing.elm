@@ -2,8 +2,10 @@ module Routing exposing (Route(..), parseLocation, routeToPath)
 
 import Regex
 import Navigation
+import Utils
 import Repo
 import Repo.Command
+import Repo.Messages
 import Poller.Messages exposing (Msg(..))
 import Polls
 import Actions
@@ -33,6 +35,7 @@ parseLocation { pathname } =
             ( NewPollRoute
             , [ Cmd.map (ActionsMsg << Actions.RepoMsg) (Repo.Command.fetchAll Actions.config)
               , Cmd.map AuthMsg (Repo.Command.fetchAll Authentications.config)
+              , Cmd.map (PollsMsg << Polls.RepoMsg) (Utils.emit (Repo.Messages.InitNew "new" (Repo.dummyEntity Polls.dummyPoll)))
               ]
             , [ "Polls" ]
             )

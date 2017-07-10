@@ -60,17 +60,24 @@ update dummyData config msg ({ dirtyDict, errors } as repo) =
         OnDelete (Err httpError) ->
             onHttpError PromptLogin repo httpError
 
+        InitNew entityId dirtyEntity ->
+            -- Can be used as initCmd in Routing
+            ( { repo | dirtyDict = Dict.insert entityId ( dirtyEntity, Dict.empty ) dirtyDict }, Cmd.none, Pop )
+
         StartEdit entityId dirtyEntity ->
             ( { repo | dirtyDict = Dict.insert entityId ( dirtyEntity, Dict.empty ) dirtyDict }, Cmd.none, Keep )
 
-        OnEdit entityId ( label, maybeMessage ) dirtyData ->
-            ( { repo | dirtyDict = Repo.onEdit dirtyDict entityId label maybeMessage dirtyData }, Cmd.none, Keep )
+        OnEdit entityId auditUpdates dirtyData ->
+            ( { repo | dirtyDict = Repo.onEdit dirtyDict entityId auditUpdates dirtyData }, Cmd.none, Keep )
 
-        OnValidate entityId ( label, maybeMessage ) ->
-            ( { repo | dirtyDict = Repo.onValidate dirtyDict entityId label maybeMessage }, Cmd.none, Keep )
+        OnValidate entityId ( auditIdPath, maybeComplaint ) ->
+            ( { repo | dirtyDict = Repo.onValidate dirtyDict entityId auditIdPath maybeComplaint }, Cmd.none, Keep )
 
         OnEditValid entityId dirtyData ->
-            ( { repo | dirtyDict = Repo.onEdit dirtyDict entityId "dummy" Nothing dirtyData }, Cmd.none, Keep )
+            ( { repo | dirtyDict = Repo.onEdit dirtyDict entityId [] dirtyData }, Cmd.none, Keep )
+
+        OnRemoveNestedItem entityId auditIdPath dirtyData ->
+            ( { repo | dirtyDict = Repo.onEdit dirtyDict entityId [ ( auditIdPath, Nothing ) ] dirtyData }, Cmd.none, Keep )
 
         CancelEdit entityId ->
             ( { repo | dirtyDict = Dict.remove entityId dirtyDict }, Cmd.none, Keep )
@@ -105,8 +112,17 @@ update dummyData config msg ({ dirtyDict, errors } as repo) =
         OnUpdate (Err httpError) ->
             onHttpError PromptLogin repo httpError
 
-        _ ->
-            -- Should not happen; stolen by root update
+        GenAuditIds count mapToNextMsg ->
+            ( repo, Repo.genAuditId mapToNextMsg count, Keep )
+
+        NoOp ->
+            ( repo, Cmd.none, Keep )
+
+        -- Bellows should not happen; handled by root Update
+        PromptLogin ->
+            ( repo, Cmd.none, Keep )
+
+        ChangeLocation _ ->
             ( repo, Cmd.none, Keep )
 
 

@@ -73,7 +73,7 @@ oauthLoginLink : Maybe Route -> OAuth.Provider -> Utils.Url
 oauthLoginLink maybeRoute provider =
     let
         returnPath =
-            maybeRoute |> Maybe.map Routing.routeToPath |> Maybe.withDefault "/poller" |> Http.encodeUri
+            maybeRoute |> Utils.maybeMapOrElse Routing.routeToPath "/poller" |> Http.encodeUri
     in
         "/oauth/" ++ Utils.toLowerString provider ++ "/login?return_path=" ++ returnPath
 

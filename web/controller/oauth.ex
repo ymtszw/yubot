@@ -46,13 +46,21 @@ defmodule Yubot.Controller.Oauth do
   defp fetch_email_and_display_name("google", token), do: External.Google.retrieve_self(token)
   defp fetch_email_and_display_name("github", token), do: External.Github.retrieve_self(token)
 
+  @default_session_life_time_in_sec 14 * 24 * 3_600
+
   defp login_or_create_user(email, display_name) do
     root_key = Yubot.Dodai.root_key()
-    case User.login(%{email: email, password: root_key}, root_key) do
+    case User.login(%{email: email, password: root_key, sessionLifetime: @default_session_life_time_in_sec}, root_key) do
       {:ok, user} ->
         {:ok, user} # TODO: update to latest display_name if necessary
       {:error, %Dodai.AuthenticationError{}} ->
-        User.insert(%{email: email, password: random_password(), data: %{display_name: display_name}}, root_key)
+        %{
+          email: email,
+          password: random_password(),
+          sessionLifetime: @default_session_life_time_in_sec,
+          data: %{display_name: display_name},
+        }
+        |> User.insert(root_key)
     end
   end
 
