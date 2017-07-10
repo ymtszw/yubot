@@ -50,7 +50,7 @@ defmodule Yubot.Grasp.BooleanResponder do
       @op_str Atom.to_string(@op_atom)
       defp validate_impl(op, [index_str, _right] = args) when op in [@op_atom, @op_str] and is_binary(index_str) do
         case Integer.parse(index_str) do
-          {index, ""} when index > 0 -> {:ok, {@op_atom, args}}
+          {index, ""} when index >= 0 -> {:ok, {@op_atom, args}}
           _otherwise -> {:error, {:invalid_value, [__MODULE__]}}
         end
       end

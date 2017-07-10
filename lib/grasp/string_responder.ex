@@ -41,7 +41,7 @@ defmodule Yubot.Grasp.StringResponder do
     end
     defp validate_impl(at, [index_str] = args) when at in [:At, "At"] and is_binary(index_str) do
       case Integer.parse(index_str) do
-        {index, ""} when index > 0 -> {:ok, {:At, args}}
+        {index, ""} when index >= 0 -> {:ok, {:At, args}}
         _otherwise -> {:error, {:invalid_value, [__MODULE__]}}
       end
     end
