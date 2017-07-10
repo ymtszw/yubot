@@ -1,6 +1,7 @@
 module Authentications.ViewParts exposing (authCheck, authSelect)
 
 import Html exposing (Html, text)
+import Maybe.Extra exposing (isJust)
 import Utils
 import Repo
 import Repo.Messages exposing (Msg(OnEditValid))
@@ -27,7 +28,7 @@ authCheck formId authList dirtyId dataToUpdate maybeAuthId =
         dataUpdate checked =
             { dataToUpdate | authId = Utils.ite checked onChecked Nothing }
     in
-        Repo.ViewParts.checkbox formId "Require authentication?" isDisabled dirtyId dataUpdate (Utils.isJust maybeAuthId)
+        Repo.ViewParts.checkbox formId "Require authentication?" isDisabled dirtyId dataUpdate (isJust maybeAuthId)
 
 
 authSelect : String -> String -> List (Repo.Entity Authentication) -> Repo.EntityId -> Authy x -> Maybe Repo.EntityId -> Html (Msg (Authy x))
@@ -40,5 +41,5 @@ authSelect formId label authList dirtyId dataToUpdate maybeAuthId =
     in
         Html.div []
             [ authCheck formId authList dirtyId dataToUpdate maybeAuthId
-            , Utils.ite (Utils.isJust maybeAuthId) select none
+            , Utils.ite (isJust maybeAuthId) select none
             ]

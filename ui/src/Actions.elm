@@ -22,8 +22,10 @@ module Actions
 
 import Dict exposing (Dict)
 import Set exposing (Set)
-import Json.Decode as Decode
-import Json.Encode as Encode
+import Json.Decode as JD
+import Json.Decode.Extra as JDE exposing ((|:))
+import Json.Encode as JE
+import Json.Encode.Extra as JEE
 import Http
 import HttpBuilder exposing (RequestBuilder)
 import ListSet exposing (ListSet)
@@ -150,41 +152,41 @@ config =
     Config "/api/action" "/actions" dataDecoder dataEncoder ((++) "/actions/" << .id)
 
 
-dataDecoder : Decode.Decoder Action
+dataDecoder : JD.Decoder Action
 dataDecoder =
-    Decode.map6 Action
-        (Decode.field "label" Decode.string)
-        (Decode.field "method" (Decode.map Utils.stringToMethod Decode.string))
-        (Decode.field "url" Decode.string)
-        (Decode.field "auth_id" (Decode.maybe Decode.string))
-        (Decode.field "body_template" bodyTemplateDecoder)
-        (Decode.field "type" (Decode.map stringToType Decode.string))
+    JD.succeed Action
+        |: (JD.field "label" JD.string)
+        |: (JD.field "method" (JD.map Utils.stringToMethod JD.string))
+        |: (JD.field "url" JD.string)
+        |: (JD.field "auth_id" (JD.maybe JD.string))
+        |: (JD.field "body_template" bodyTemplateDecoder)
+        |: (JD.field "type" (JD.map stringToType JD.string))
 
 
-bodyTemplateDecoder : Decode.Decoder StringTemplate
+bodyTemplateDecoder : JD.Decoder StringTemplate
 bodyTemplateDecoder =
-    Decode.map2 StringTemplate
-        (Decode.field "body" Decode.string)
-        (Decode.field "variables" (Decode.list Decode.string))
+    JD.map2 StringTemplate
+        (JD.field "body" JD.string)
+        (JD.field "variables" (JD.list JD.string))
 
 
-dataEncoder : Action -> Encode.Value
+dataEncoder : Action -> JE.Value
 dataEncoder { label, method, url, authId, bodyTemplate, type_ } =
-    Encode.object
-        [ ( "label", Encode.string label )
-        , ( "method", Encode.string (Utils.toLowerString method) )
-        , ( "url", Encode.string url )
-        , ( "auth_id", Utils.encodeMaybe Encode.string authId )
+    JE.object
+        [ ( "label", JE.string label )
+        , ( "method", JE.string (Utils.toLowerString method) )
+        , ( "url", JE.string url )
+        , ( "auth_id", JEE.maybe JE.string authId )
         , ( "body_template", bodyTemplateEncoder bodyTemplate )
-        , ( "type", Encode.string (Utils.toLowerString type_) )
+        , ( "type", JE.string (Utils.toLowerString type_) )
         ]
 
 
-bodyTemplateEncoder : StringTemplate -> Encode.Value
+bodyTemplateEncoder : StringTemplate -> JE.Value
 bodyTemplateEncoder { body, variables } =
-    Encode.object
-        [ ( "body", Encode.string body )
-        , ( "variables", variables |> List.map Encode.string |> Encode.list )
+    JE.object
+        [ ( "body", JE.string body )
+        , ( "variables", variables |> List.map JE.string |> JE.list )
         ]
 
 
@@ -262,11 +264,11 @@ tryAction data trialValues =
         |> HttpBuilder.send OnResponse
 
 
-trialRequestEncoder : Action -> TrialValues -> Encode.Value
+trialRequestEncoder : Action -> TrialValues -> JE.Value
 trialRequestEncoder data trialValues =
-    Encode.object
+    JE.object
         [ ( "data", dataEncoder data )
-        , ( "trial_values", trialValues |> Dict.toList |> List.map (Tuple.mapSecond Encode.string) |> Encode.object )
+        , ( "trial_values", trialValues |> Dict.toList |> List.map (Tuple.mapSecond JE.string) |> JE.object )
         ]
 
 

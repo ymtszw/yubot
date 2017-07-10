@@ -6,6 +6,7 @@ import Html exposing (Html, text)
 import Html.Attributes as Attr exposing (class)
 import Html.Events
 import Html.Lazy as Z
+import Maybe.Extra as ME
 import Markdown
 import Bootstrap.Button as Button
 import Utils exposing (ite)
@@ -241,4 +242,4 @@ htmlIf predicate html =
 
 htmlMaybe : (x -> Html msg) -> Maybe x -> Html msg
 htmlMaybe htmlFun =
-    Utils.maybeMapOrElse htmlFun none
+    ME.unwrap none htmlFun

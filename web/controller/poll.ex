@@ -40,6 +40,13 @@ defmodule Yubot.Controller.Poll do
     |> handle_with_200_json(conn)
   end
 
+  # PUT /api/poll/:id
+  def update(conn) do
+    Poll.Data.new(conn.request.body)
+    |> R.bind(&Poll.update(%{data: &1}, conn.request.path_matches.id, key(conn), group_id(conn)))
+    |> handle_with_200_json(conn)
+  end
+
   # DELETE /api/poll/:id
   def delete(conn) do
     Poll.delete(conn.request.path_matches.id, nil, key(conn), group_id(conn))

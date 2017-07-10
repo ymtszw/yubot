@@ -6,6 +6,7 @@ import Html exposing (Html, text)
 import Html.Attributes as Attr exposing (class)
 import Html.Events as Events
 import Bootstrap.Button as Button
+import Maybe.Extra exposing (isNothing)
 import List.Extra
 import Utils exposing (ite)
 import Repo exposing (Repo, AuditEntry(..))
@@ -172,7 +173,7 @@ editorInput : String -> String -> Repo.Audit -> (String -> Msg x) -> String -> H
 editorInput formId label audit onInput currentValue =
     let
         rowNum =
-            (Utils.stringCountChar '\n' currentValue) + 2
+            currentValue |> String.lines |> List.length |> (+) 2
 
         gutter =
             rowNum |> List.range 1 |> List.map (\i -> Html.div [ Styles.gutterItem i ] [ text (toString i) ])
@@ -238,7 +239,7 @@ selectRequireable isRequired audit formId label isInline dirtyId auditIdPath dat
                 (OnValidate dirtyId
                     ( auditIdPath
                     , maybeSelectedValue
-                        |> Utils.isNothing
+                        |> isNothing
                         |> Utils.boolToMaybe "This field is required"
                     )
                 )
@@ -266,7 +267,7 @@ selectWithAttrs attrsFun audit auditIdPath formId label isInline dirtyId dataUpd
         header =
             Html.option
                 [ Attr.value ""
-                , Attr.selected (Utils.isNothing maybeSelectedValue)
+                , Attr.selected (isNothing maybeSelectedValue)
                 , Attr.disabled True -- Not selectable
                 , Styles.hidden -- Not included in dropdown
                 ]

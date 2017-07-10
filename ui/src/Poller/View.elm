@@ -7,6 +7,7 @@ import Html.Attributes as Attr exposing (class)
 import Html.Lazy as Z
 import Html.Events
 import Http
+import Maybe.Extra as ME
 import Bootstrap.Navbar as Navbar
 import Utils exposing (DropdownState(..))
 import Stack
@@ -73,7 +74,7 @@ oauthLoginLink : Maybe Route -> OAuth.Provider -> Utils.Url
 oauthLoginLink maybeRoute provider =
     let
         returnPath =
-            maybeRoute |> Utils.maybeMapOrElse Routing.routeToPath "/poller" |> Http.encodeUri
+            maybeRoute |> ME.unwrap "/poller" Routing.routeToPath |> Http.encodeUri
     in
         "/oauth/" ++ Utils.toLowerString provider ++ "/login?return_path=" ++ returnPath
 

@@ -2,6 +2,7 @@ module Poller exposing (main)
 
 import Json.Decode
 import Navigation
+import Maybe.Extra exposing (isJust)
 import Bootstrap.Navbar
 import Utils
 import LiveReload
@@ -30,7 +31,7 @@ init { isDev, user } location =
             Routing.parseLocation location
 
         ( initCmds1, promptLoginCmds ) =
-            Utils.ite (Utils.isJust user) ( initCmds0, [] ) ( [], [ Utils.emit PromptLogin ] )
+            Utils.ite (isJust user) ( initCmds0, [] ) ( [], [ Utils.emit PromptLogin ] )
 
         decodedUser =
             user

@@ -7,23 +7,13 @@ module Utils
         , Method(..)
         , methods
         , stringToMethod
-        , isJust
-        , isNothing
-        , listDeleteAt
-        , listUpdateAt
-        , listConsIf
-        , listAppendIf
         , listShuffle
-        , maybeMapOrElse
-        , encodeMaybe
         , boolToMaybe
         , dictGetWithDefault
         , dictUpsert
         , ite
         , stringIndexedMap
-        , stringCountChar
         , stringMapWithDefault
-        , stringSplitAt
         , timestampToString
         , dateToString
         , dateToFineString
@@ -40,7 +30,6 @@ module Utils
 import Char
 import Date
 import Dict exposing (Dict)
-import Json.Encode
 import Process
 import Random
 import Task
@@ -95,75 +84,14 @@ stringToMethod methodStr =
             GET
 
 
-isJust : Maybe x -> Bool
-isJust maybe =
-    case maybe of
-        Just _ ->
-            True
-
-        Nothing ->
-            False
-
-
-isNothing : Maybe x -> Bool
-isNothing =
-    not << isJust
-
-
-{-| Produces a new list by removing an element at the targetIndex.
-Negative targetIndex indicates an offset from the end of the list.
-If targetIndex is out of bounds, the original list is returned.
--}
-listDeleteAt : Int -> List x -> List x
-listDeleteAt targetIndex list =
-    let
-        folder proceed elem ( index, accList ) =
-            if index == targetIndex then
-                ( proceed index 1, accList )
-            else
-                ( proceed index 1, elem :: accList )
-    in
-        if targetIndex >= 0 then
-            list
-                |> List.foldl (folder (+)) ( 0, [] )
-                |> Tuple.second
-                |> List.reverse
-        else
-            list
-                |> List.foldr (folder (-)) ( -1, [] )
-                |> Tuple.second
-
-
-listUpdateAt : Int -> (x -> x) -> List x -> List x
-listUpdateAt index updateFun list =
-    let
-        updateAtIndex i =
-            ite (i == index) updateFun identity
-    in
-        List.indexedMap updateAtIndex list
-
-
-listConsIf : Bool -> a -> List a -> List a
-listConsIf shouldCons toCons list =
-    if shouldCons then
-        toCons :: list
-    else
-        list
-
-
-listAppendIf : Bool -> List a -> List a -> List a
-listAppendIf shouldAppend toAppend list =
-    if shouldAppend then
-        list ++ toAppend
-    else
-        list
-
-
 {-| Shuffle an element of list with its neighbor.
 If isAsc, shuffle with neighbor of index-ascending direction.
 Otherwise index-descending direction.
 If either base index or neighbor index are out-of-bound,
-it returns unchanged list
+it returns unchanged list.
+
+Similar to List.Extra.swapAt, but slightly different behavior.
+
 -}
 listShuffle : Int -> Bool -> List a -> List a
 listShuffle index isAsc list =
@@ -190,21 +118,6 @@ listShuffleImpl index isAsc ( currentIndex, acc ) tail =
                 listShuffleImpl index isAsc ( currentIndex + 1, [ x ] ) xs
 
 
-maybeMapOrElse : (x -> y) -> y -> Maybe x -> y
-maybeMapOrElse mapper default maybe =
-    maybe |> Maybe.map mapper |> Maybe.withDefault default
-
-
-encodeMaybe : (x -> Json.Encode.Value) -> Maybe x -> Json.Encode.Value
-encodeMaybe encoder maybeValue =
-    case maybeValue of
-        Nothing ->
-            Json.Encode.null
-
-        Just value ->
-            encoder value
-
-
 boolToMaybe : x -> Bool -> Maybe x
 boolToMaybe something bool =
     ite bool (Just something) Nothing
@@ -215,6 +128,8 @@ dictGetWithDefault key default dict =
     dict |> Dict.get key |> Maybe.withDefault default
 
 
+{-| Mostly similar to Dict.Extra.insertDedupe.
+-}
 dictUpsert : comparable -> (v -> v) -> v -> Dict comparable v -> Dict comparable v
 dictUpsert key mapper default dict =
     let
@@ -244,11 +159,6 @@ stringIndexedMap mapper =
     String.toList >> (List.indexedMap mapper) >> String.fromList
 
 
-stringCountChar : Char -> String -> Int
-stringCountChar char string =
-    String.foldl (\x -> ite (x == char) ((+) 1) identity) 0 string
-
-
 {-| Actually is `stringMapNonemptyWithDefault`, though shorthanded.
 If `string` is nonempty, `mapNonempty` is applied. Otherwise `defaultForEmpty` is used.
 -}
@@ -260,11 +170,6 @@ stringMapWithDefault mapNonempty defaultForEmpty string =
 
         nonempty ->
             mapNonempty nonempty
-
-
-stringSplitAt : Int -> String -> ( String, String )
-stringSplitAt index string =
-    ( String.left index string, String.dropLeft index string )
 
 
 {-| Times are automatically converted to Local time.

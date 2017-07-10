@@ -5,6 +5,8 @@ import Html exposing (Html, text)
 import Html.Attributes as Attr exposing (class)
 import Html.Events
 import Html.Lazy as Z
+import Maybe.Extra as ME exposing (isNothing)
+import List.Extra as LE
 import Bootstrap.Button as Button
 import Utils exposing (ite)
 import Grasp
@@ -57,7 +59,7 @@ card { id, updatedAt, data } =
             , Html.div [ class "card-footer" ]
                 [ Html.small [ Styles.xSmall ]
                     [ text "Last run at: "
-                    , text (data.lastRunAt |> Utils.maybeMapOrElse Utils.timestampToString "(Not yet)")
+                    , text (data.lastRunAt |> ME.unwrap "(Not yet)" Utils.timestampToString)
                     ]
                 ]
             ]
@@ -85,7 +87,7 @@ new actionDict authDict ({ dirtyDict } as repo) =
         ViewParts.triPaneView
             [ Z.lazy titleNew data ]
             [ Z.lazy3 mainFormNew actionDict authDict dirtyEntity ]
-            [ text "bottom left" ]
+            [ none ]
             [ text "right" ]
             |> Html.map Polls.RepoMsg
 
@@ -177,12 +179,12 @@ triggerForm :
 triggerForm actionDict tsLen dirtyId audit tsUpdate index ({ auditId, collapsed, actionId } as trigger) =
     let
         updateTriggerAtIndex updateFun =
-            tsUpdate (Utils.listUpdateAt index updateFun)
+            tsUpdate (LE.updateIfIndex ((==) index) updateFun)
     in
         Html.div [ class "row my-1" ]
             [ Html.div [ class "col-md-2 px-0 text-left" ]
-                [ removeButton False dirtyId [ auditId ] (tsUpdate (Utils.listDeleteAt index))
-                , editToggleButton dirtyId (updateTriggerAtIndex (always { trigger | collapsed = not collapsed })) collapsed
+                [ removeButton False dirtyId [ auditId ] (tsUpdate (LE.removeAt index))
+                , toggleCollapseButton dirtyId (updateTriggerAtIndex (always { trigger | collapsed = not collapsed })) collapsed
                 ]
             , Html.div [ class "col-md-8 px-0" ]
                 [ triggerActionSelect actionDict dirtyId audit auditId updateTriggerAtIndex trigger
@@ -217,7 +219,7 @@ triggerActionSelect actionDict dirtyId audit triggerAuditId tUpdate ({ actionId 
                 (OnValidate dirtyId
                     ( [ triggerAuditId, "action" ]
                     , maybeSelectedValue
-                        |> Utils.isNothing
+                        |> isNothing
                         |> Utils.boolToMaybe "This field is required"
                     )
                 )
@@ -264,8 +266,8 @@ removeButton disabled dirtyId auditIdPath updatedData =
     smInlineFaBtn [ Button.danger ] (OnEdit dirtyId [ ( auditIdPath, Nothing ) ] updatedData) disabled "fa-times"
 
 
-editToggleButton : EntityId -> Poll -> Bool -> Html (Msg Poll)
-editToggleButton dirtyId updatedData collapsed =
+toggleCollapseButton : EntityId -> Poll -> Bool -> Html (Msg Poll)
+toggleCollapseButton dirtyId updatedData collapsed =
     smInlineFaBtn [ Button.secondary, Button.attrs [ class "border-0" ] ]
         (OnEditValid dirtyId updatedData)
         False
@@ -348,7 +350,7 @@ conditionForm audit triggerAuditId dirtyId csUpdate cIndex ({ auditId, extractor
             ]
 
         updateCondition updateFun =
-            csUpdate (Utils.listUpdateAt cIndex updateFun)
+            csUpdate (LE.updateIfIndex ((==) cIndex) updateFun)
 
         onConditionModeSelect val =
             ite (val == "simpleMatch")
@@ -362,7 +364,7 @@ conditionForm audit triggerAuditId dirtyId csUpdate cIndex ({ auditId, extractor
     in
         Html.div [ class "row my-1" ]
             [ Html.div [ class "col-sm-1 px-0 text-left" ]
-                [ removeButton False dirtyId [ triggerAuditId, auditId ] (csUpdate (Utils.listDeleteAt cIndex))
+                [ removeButton False dirtyId [ triggerAuditId, auditId ] (csUpdate (LE.removeAt cIndex))
                 ]
             , Html.div [ class "col-sm-11 px-0" ]
                 [ Html.div [ class "my-1" ]
@@ -531,7 +533,7 @@ twoArgsInput audit op dirtyId auditIdPath foUpdate arguments =
                     ( "1", "true" )
 
         updateArgAt index v =
-            foUpdate (\fo -> { fo | arguments = Utils.listUpdateAt index (always v) arguments })
+            foUpdate (\fo -> { fo | arguments = LE.updateIfIndex ((==) index) (always v) arguments })
 
         ( inputClass, maybeArgsAudit ) =
             case Repo.getAuditIn auditIdPath audit of
@@ -562,8 +564,8 @@ twoArgsInputAddons maybeArgsAudit op dirtyId auditIdPath updateArgAt ( captureIn
                     ( True, True )
 
                 Just argsAudit ->
-                    ( Utils.isNothing <| Dict.get "captureIndex" <| argsAudit
-                    , Utils.isNothing <| Dict.get "rightValue" <| argsAudit
+                    ( isNothing <| Dict.get "captureIndex" <| argsAudit
+                    , isNothing <| Dict.get "rightValue" <| argsAudit
                     )
     in
         [ Html.span [ class "input-group-addon px-0", Styles.flex 2 ] [ text "Match at position" ]
@@ -628,7 +630,7 @@ rightValueInput label isValid dirtyId auditIdPath updateRightValue rightValue =
         onInput v =
             OnEdit dirtyId [ ( auditIdPath, Repo.required v ) ] <| updateRightValue <| v
     in
-        Repo.ViewParts.rawInput (Utils.listConsIf (not isValid) (class " form-control-danger") [ Styles.flex 5 ])
+        Repo.ViewParts.rawInput ((ite isValid [] [ class " form-control-danger" ]) ++ [ Styles.flex 5 ])
             "text"
             "poll"
             (Repo.ViewParts.makeInputId "poll" label)
@@ -780,7 +782,7 @@ stringMakerArgsForm audit dirtyId auditIdPath0 rUpdate ({ operator, arguments } 
                 Join ->
                     ( "Join matches with"
                     , rightValueInput "Delimiter"
-                        (audit |> Repo.getAuditIn (auditIdPath1 ++ [ "delimiter" ]) |> Utils.isNothing)
+                        (audit |> Repo.getAuditIn (auditIdPath1 ++ [ "delimiter" ]) |> isNothing)
                         dirtyId
                         (auditIdPath1 ++ [ "delimiter" ])
                         updateSingleArg
@@ -790,7 +792,7 @@ stringMakerArgsForm audit dirtyId auditIdPath0 rUpdate ({ operator, arguments } 
                 At ->
                     ( "Use match at position"
                     , indexNumericInput "Capture Index"
-                        (audit |> Repo.getAuditIn (auditIdPath1 ++ [ "captureIndex" ]) |> Utils.isNothing)
+                        (audit |> Repo.getAuditIn (auditIdPath1 ++ [ "captureIndex" ]) |> isNothing)
                         dirtyId
                         (auditIdPath1 ++ [ "captureIndex" ])
                         updateSingleArg
@@ -849,14 +851,96 @@ smInlineBtn styles msg disabled html =
 
 
 show : EntityDict Action -> EntityDict Authentication -> Repo Aux Poll -> Entity Poll -> Html Polls.Msg
-show actionDict authDict pollRepo poll =
-    poll |> Z.lazy showImpl |> Html.map Polls.RepoMsg
+show actionDict authDict ({ dirtyDict, deleteModal } as pollRepo) ({ id } as entity) =
+    let
+        maybeDirtyEntity =
+            Dict.get id dirtyDict
+    in
+        ViewParts.triPaneView
+            [ Z.lazy2 titleShow maybeDirtyEntity entity
+            , Z.lazy deleteModalDialog deleteModal
+            ]
+            [ mainFormShow actionDict authDict entity maybeDirtyEntity ]
+            [ text "Poll History" ]
+            [ text "right" ]
 
 
-showImpl : Entity Poll -> Html msg
-showImpl { id } =
-    ViewParts.triPaneView
-        [ Html.h2 [] [ text id ] ]
-        [ text "Main Form" ]
-        [ text "Trial Form" ]
-        [ text "Trial result" ]
+titleShow : Maybe ( Entity Poll, Audit ) -> Entity Poll -> Html Polls.Msg
+titleShow maybeDirtyEntity ({ id, updatedAt, data } as entity) =
+    Html.div
+        [ class "d-flex justify-content-between align-items-center pb-2"
+        , Styles.bottomBordered
+        ]
+        [ Html.div []
+            [ Html.h2 [ class "mb-2" ]
+                ([ ViewParts.fa [ class "align-bottom mr-2" ] 2 "fa-calendar"
+                 , text "Poll to "
+                 ]
+                    ++ ViewParts.autoLink data.url
+                )
+            , Html.p [ class "text-muted mb-0", Styles.xSmall ]
+                [ text ("ID : " ++ id)
+                , text (", Last updated at : " ++ (Utils.timestampToString updatedAt))
+                ]
+            , Html.p [ class "text-muted mb-0", Styles.xSmall ]
+                [ text ("Last run at : " ++ (data.lastRunAt |> ME.unwrap "(Not yet)" Utils.timestampToString))
+                , text (", Next run at : " ++ (data.nextRunAt |> ME.unwrap "(Not scheduled)" Utils.timestampToString))
+                ]
+            ]
+        , Html.div []
+            [ Z.lazy2 toggleEditButton maybeDirtyEntity entity
+            , Z.lazy deleteButton entity
+            ]
+        ]
+        |> Html.map Polls.RepoMsg
+
+
+toggleEditButton : Maybe ( Entity Poll, Audit ) -> Entity Poll -> Html (Msg Poll)
+toggleEditButton maybeDirtyEntity ({ id } as entity) =
+    case maybeDirtyEntity of
+        Just dirtyEntity ->
+            stdBtn Button.info [ Button.small, Button.onClick (CancelEdit id) ] False "Reset"
+
+        Nothing ->
+            stdBtn Button.primary [ Button.small, Button.onClick (StartEdit id entity) ] False "Edit"
+
+
+deleteButton : Entity Poll -> Html (Msg Poll)
+deleteButton entity =
+    stdBtn Button.danger [ Button.small, Button.onClick (ConfirmDelete entity) ] False "Delete"
+
+
+deleteModalDialog : Repo.ModalState Poll -> Html Polls.Msg
+deleteModalDialog { target, isShown } =
+    ViewParts.modal
+        (always CancelDelete)
+        isShown
+        [ class "modal-sm" ]
+        (text "Deleting Poll to " :: ViewParts.autoLink target.data.url)
+        [ text "Are you sure?" ]
+        [ stdBtn Button.danger [ Button.onClick (Delete target.id) ] False "Yes, delete"
+        , stdBtn Button.secondary [ Button.onClick CancelDelete ] False "Cancel"
+        ]
+        |> Html.map Polls.RepoMsg
+
+
+mainFormShow : EntityDict Action -> EntityDict Authentication -> Entity Poll -> Maybe ( Entity Poll, Audit ) -> Html Polls.Msg
+mainFormShow actionDict authDict entity maybeDirtyEntity =
+    let
+        ( notEditing, ( { id, data }, audit ) as dirtyEntity ) =
+            case maybeDirtyEntity of
+                Just de ->
+                    ( False, de )
+
+                Nothing ->
+                    ( True, ( entity, Repo.dummyAudit ) )
+
+        readyToUpdate =
+            Polls.hasDiff entity.data data && Polls.isValid dirtyEntity
+    in
+        [ submitButton "poll" readyToUpdate "Update" ]
+            |> (++) (mainFormInputs actionDict authDict id audit data)
+            |> (List.singleton << Html.fieldset [ Attr.disabled notEditing ])
+            |> Html.form [ Attr.id "poll", Html.Events.onSubmit (ite readyToUpdate (Update id data) NoOp) ]
+            |> ViewParts.cardBlock [] "" Nothing
+            |> Html.map Polls.RepoMsg

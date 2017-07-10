@@ -20,7 +20,6 @@ type Msg x
     | OnEdit Repo.EntityId (List ( List Repo.AuditId, Maybe String )) x
     | OnValidate Repo.EntityId ( List Repo.AuditId, Maybe String ) -- Shorthand to set audit entry
     | OnEditValid Repo.EntityId x -- Shorthand used for fields without validations
-    | OnRemoveNestedItem Repo.EntityId (List Repo.AuditId) x
     | CancelEdit Repo.EntityId
     | Create Repo.EntityId x -- Takes ID in order to accept both "new" and "newHipchat" in Authentication
     | OnCreate Repo.EntityId (Result Http.Error (Repo.Entity x))

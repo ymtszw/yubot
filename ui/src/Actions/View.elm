@@ -6,6 +6,7 @@ import Html exposing (Html, text)
 import Html.Attributes as Attr exposing (class)
 import Html.Events
 import Html.Lazy as Z
+import Maybe.Extra exposing (isJust)
 import Bootstrap.Button as Button
 import ListSet exposing (ListSet)
 import Utils exposing (ite)
@@ -118,7 +119,7 @@ httpSummary ({ label, method, url, authId, type_ } as data) =
     , Html.strong [ class "mx-2" ] [ text label ]
     , Html.code [ class "mx-2" ] (ViewParts.autoLink ((toString method) ++ " " ++ url))
     , text " " -- Inline whitespace for soft-wrapping in small screen
-    , ite (Utils.isJust authId) authBadge none
+    , ite (isJust authId) authBadge none
     ]
 
 
@@ -547,7 +548,7 @@ deleteModalDialog { target, isShown } =
 mainFormShow : Repo.EntityDict Authentication -> Repo.Entity Action -> Maybe ( Repo.Entity Action, Repo.Audit ) -> Html Actions.Msg
 mainFormShow authDict entity maybeDirtyEntity =
     let
-        ( notEdited, ( { id, data }, audit ) as dirtyEntity ) =
+        ( notEditing, ( { id, data }, audit ) as dirtyEntity ) =
             case maybeDirtyEntity of
                 Just de ->
                     ( False, de )
@@ -566,8 +567,7 @@ mainFormShow authDict entity maybeDirtyEntity =
     in
         [ submitButton "action" readyToUpdate "Update" ]
             |> (++) (mainFormInputs authDict id audit data)
-            |> List.singleton
-            << Html.fieldset [ Attr.disabled notEdited ]
-            |> Html.form [ Attr.id "action", Html.Events.onSubmit (ite readyToUpdate (Update entity.id data) NoOp) ]
+            |> (List.singleton << Html.fieldset [ Attr.disabled notEditing ])
+            |> Html.form [ Attr.id "action", Html.Events.onSubmit (ite readyToUpdate (Update id data) NoOp) ]
             |> ViewParts.cardBlock [] "" Nothing
             |> Html.map Actions.RepoMsg

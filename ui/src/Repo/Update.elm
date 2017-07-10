@@ -3,6 +3,7 @@ module Repo.Update exposing (StackCmd(..), update, onHttpError)
 import Dict
 import Http
 import Navigation
+import List.Extra as LE
 import Utils
 import Document
 import Repo exposing (Repo)
@@ -76,9 +77,6 @@ update dummyData config msg ({ dirtyDict, errors } as repo) =
         OnEditValid entityId dirtyData ->
             ( { repo | dirtyDict = Repo.onEdit dirtyDict entityId [] dirtyData }, Cmd.none, Keep )
 
-        OnRemoveNestedItem entityId auditIdPath dirtyData ->
-            ( { repo | dirtyDict = Repo.onEdit dirtyDict entityId [ ( auditIdPath, Nothing ) ] dirtyData }, Cmd.none, Keep )
-
         CancelEdit entityId ->
             ( { repo | dirtyDict = Dict.remove entityId dirtyDict }, Cmd.none, Keep )
 
@@ -95,8 +93,8 @@ update dummyData config msg ({ dirtyDict, errors } as repo) =
             onHttpError PromptLogin repo httpError
 
         DismissError errorIndex ->
-            ( { repo | errors = Utils.listUpdateAt errorIndex Error.dismiss errors }
-            , Utils.emitIn 400 (SetErrors (Utils.listDeleteAt errorIndex errors))
+            ( { repo | errors = LE.updateIfIndex ((==) errorIndex) Error.dismiss errors }
+            , Utils.emitIn 400 (SetErrors (LE.removeAt errorIndex errors))
             , Keep
             )
 

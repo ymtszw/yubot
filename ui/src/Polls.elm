@@ -11,6 +11,7 @@ module Polls
         , dummyPoll
         , dummyTrigger
         , isValid
+        , hasDiff
         , populate
         , simpleMatchCondition
         , isSimpleMatch
@@ -30,6 +31,7 @@ import Dict exposing (Dict)
 import Json.Decode as JD
 import Json.Decode.Extra as JDE exposing ((|:))
 import Json.Encode as JE
+import Json.Encode.Extra as JEE
 import Http
 import HttpBuilder
 import Utils
@@ -115,6 +117,37 @@ isValidTrigger { actionId, conditions, material } =
     (actionId /= "")
         && (List.all (Grasp.isValidInstruction GBR.isValid) conditions)
         && (material |> Dict.values |> List.all (Grasp.isValidInstruction GSR.isValid))
+
+
+hasDiff : Poll -> Poll -> Bool
+hasDiff poll1 poll2 =
+    (editableRootFields poll1 /= editableRootFields poll2)
+        || (List.length poll1.triggers /= List.length poll2.triggers)
+        || (List.any identity (List.map2 triggerHasDiff poll1.triggers poll2.triggers))
+
+
+editableRootFields :
+    Poll
+    ->
+        { url : Utils.Url
+        , interval : Interval
+        , authId : Maybe Repo.EntityId
+        , isEnabled : Bool
+        }
+editableRootFields { url, interval, authId, isEnabled } =
+    { url = url, interval = interval, authId = authId, isEnabled = isEnabled }
+
+
+triggerHasDiff : Trigger -> Trigger -> Bool
+triggerHasDiff t1 t2 =
+    (editableTriggerFields t1 /= editableTriggerFields t2)
+        || (List.length t1.conditions /= List.length t2.conditions)
+        || (List.any identity (List.map2 (/=) t1.conditions t2.conditions))
+
+
+editableTriggerFields : Trigger -> { actionId : Repo.EntityId, material : Material }
+editableTriggerFields { actionId, material } =
+    { actionId = actionId, material = material }
 
 
 populate : List (Repo.Entity Poll) -> Repo Aux Poll
@@ -246,11 +279,11 @@ dataEncoder { url, interval, authId, isEnabled, triggers, lastRunAt, nextRunAt }
     JE.object
         [ ( "url", JE.string url )
         , ( "interval", JE.string interval )
-        , ( "auth_id", Utils.encodeMaybe JE.string authId )
+        , ( "auth_id", JEE.maybe JE.string authId )
         , ( "is_enabled", JE.bool isEnabled )
         , ( "triggers", JE.list <| List.map encodeTrigger <| triggers )
-        , ( "last_run_at", Utils.encodeMaybe JE.string lastRunAt )
-        , ( "next_run_at", Utils.encodeMaybe JE.string nextRunAt )
+        , ( "last_run_at", JEE.maybe JE.string lastRunAt )
+        , ( "next_run_at", JEE.maybe JE.string nextRunAt )
         ]
 
 
@@ -337,5 +370,5 @@ shallowTryRequestEncoder : Poll -> JE.Value
 shallowTryRequestEncoder { url, authId } =
     JE.object
         [ ( "url", JE.string url )
-        , ( "auth_id", Utils.encodeMaybe JE.string authId )
+        , ( "auth_id", JEE.maybe JE.string authId )
         ]

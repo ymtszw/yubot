@@ -18,6 +18,7 @@ defmodule Yubot.Router do
   post   "/api/poll"            , Poll, :create
   get    "/api/poll/:id"        , Poll, :retrieve
   get    "/api/poll"            , Poll, :retrieve_list
+  put    "/api/poll/:id"        , Poll, :update
   delete "/api/poll/:id"        , Poll, :delete
   post   "/api/poll/shallow_try", Poll, :shallow_try
 

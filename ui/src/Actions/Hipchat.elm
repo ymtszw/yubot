@@ -15,6 +15,7 @@ module Actions.Hipchat
         )
 
 import Regex
+import Maybe.Extra exposing (isJust)
 import Utils
 import StringTemplate exposing (StringTemplate)
 import Repo
@@ -94,7 +95,7 @@ isValid (( { data }, audit ) as dirtyEntity) =
         { authId, roomId } =
             fetchParams data
     in
-        Actions.isValid dirtyEntity && Utils.isJust authId && roomId /= ""
+        Actions.isValid dirtyEntity && isJust authId && roomId /= ""
 
 
 default : Action
