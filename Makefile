@@ -60,3 +60,4 @@ web/static/assets:
 deploy:
 	mix yubot.assets
 	git push solomon master
+	git push origin master
