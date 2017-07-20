@@ -5,6 +5,7 @@ import Regex
 import Html exposing (Html, text)
 import Html.Attributes as Attr exposing (class)
 import Html.Events as Events
+import Html.Lazy as Z
 import Bootstrap.Button as Button
 import Maybe.Extra exposing (isNothing)
 import List.Extra
@@ -60,11 +61,11 @@ toggleSortOnClick newProperty sorter =
         Events.onClick (Sort (Repo.Sorter newProperty newOrder))
 
 
-inputGroup : String -> String -> Bool -> Repo.Audit -> List Repo.AuditId -> (String -> Html msg) -> Html msg
-inputGroup formId label isInline audit auditIdPath inputHtmlFun =
+formGroup : String -> String -> Bool -> Repo.Audit -> List Repo.AuditId -> (String -> Html msg) -> Html msg
+formGroup formId label isInline audit auditIdPath inputHtmlFun =
     let
         inputId =
-            makeInputId formId label
+            makeInputId formId <| String.join " " <| (::) label <| auditIdPath
 
         labelOptions =
             [ Attr.for inputId, class ("form-control-label" ++ (ite isInline " sr-only" "")) ]
@@ -146,7 +147,7 @@ textInputImpl =
 
 inputImpl : String -> String -> String -> Bool -> Repo.Audit -> List Repo.AuditId -> (String -> msg) -> String -> Html msg
 inputImpl type_ formId label isInline audit auditIdPath onInput currntValue =
-    inputGroup formId label isInline audit auditIdPath (\inputId -> rawInput [] type_ formId inputId label onInput currntValue)
+    formGroup formId label isInline audit auditIdPath (\inputId -> rawInput [] type_ formId inputId label onInput currntValue)
 
 
 rawInput : List (Html.Attribute msg) -> String -> String -> String -> String -> (String -> msg) -> String -> Html msg
@@ -195,7 +196,7 @@ editorInput formId label audit onInput currentValue =
                     []
                 ]
         )
-            |> inputGroup formId label False audit [ label ]
+            |> formGroup formId label False audit [ label ]
 
 
 {-| ( value, optionLabel, isSelected )
@@ -260,40 +261,45 @@ selectWithAttrs :
     -> List SelectItem
     -> Html (Msg x)
 selectWithAttrs attrsFun audit auditIdPath formId label isInline dirtyId dataUpdate selectItems =
+    (\inputId ->
+        rawSelect formId inputId label attrsFun (OnEdit dirtyId [ ( auditIdPath, Nothing ) ] << dataUpdate) selectItems
+    )
+        |> formGroup formId label isInline audit auditIdPath
+
+
+rawSelect : String -> String -> String -> (Maybe String -> List (Html.Attribute msg)) -> (String -> msg) -> List SelectItem -> Html msg
+rawSelect formId inputId label attrsFun onInput selectItems =
     let
         maybeSelectedValue =
             selectItems |> List.Extra.find (\( _, _, selected ) -> selected) |> Maybe.map (\( value, _, _ ) -> value)
-
-        header =
-            Html.option
-                [ Attr.value ""
-                , Attr.selected (isNothing maybeSelectedValue)
-                , Attr.disabled True -- Not selectable
-                , Styles.hidden -- Not included in dropdown
-                ]
-                [ text ("-- " ++ label ++ " --") ]
-
-        option ( value, optionLabel, isSelected ) =
-            Html.option
-                [ Attr.value value
-                , Attr.selected isSelected
-                ]
-                [ text optionLabel ]
     in
-        (\inputId ->
-            selectItems
-                |> List.map option
-                |> (::) header
-                |> Html.select
-                    ([ class "form-control form-control-sm"
-                     , Attr.id inputId
-                     , Attr.form formId
-                     , Events.onInput (OnEdit dirtyId [ ( auditIdPath, Nothing ) ] << dataUpdate)
-                     ]
-                        ++ attrsFun maybeSelectedValue
-                    )
-        )
-            |> inputGroup formId label isInline audit auditIdPath
+        selectItems
+            |> List.map (Z.lazy selectOption)
+            |> (::) (Z.lazy2 selectOptionHeader (isNothing maybeSelectedValue) label)
+            |> Html.select
+                (attrsFun maybeSelectedValue
+                    ++ [ class "form-control form-control-sm", Attr.id inputId, Attr.form formId, Events.onInput onInput ]
+                )
+
+
+selectOption : SelectItem -> Html msg
+selectOption ( value, optionLabel, isSelected ) =
+    Html.option
+        [ Attr.value value
+        , Attr.selected isSelected
+        ]
+        [ text optionLabel ]
+
+
+selectOptionHeader : Bool -> String -> Html msg
+selectOptionHeader nothingSelected label =
+    Html.option
+        [ Attr.value ""
+        , Attr.selected nothingSelected
+        , Attr.disabled True -- Not selectable; some browsers do not support this
+        , Styles.hidden -- Not included in dropdown; some browsers do not support this
+        ]
+        [ text ("-- " ++ label ++ " --") ]
 
 
 submitButton : String -> Bool -> String -> Html msg

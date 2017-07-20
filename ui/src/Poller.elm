@@ -4,7 +4,7 @@ import Json.Decode
 import Navigation
 import Maybe.Extra exposing (isJust)
 import Bootstrap.Navbar
-import Utils
+import Utils exposing ((>>=))
 import LiveReload
 import Routing
 import Document
@@ -34,8 +34,7 @@ init { isDev, user } location =
             Utils.ite (isJust user) ( initCmds0, [] ) ( [], [ Utils.emit PromptLogin ] )
 
         decodedUser =
-            user
-                |> Maybe.andThen (Json.Decode.decodeValue User.decoder >> Result.toMaybe)
+            user >>= (Json.Decode.decodeValue User.decoder >> Result.toMaybe)
 
         initTaskStack =
             List.map (always ()) initCmds1

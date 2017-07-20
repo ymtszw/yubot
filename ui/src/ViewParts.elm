@@ -13,6 +13,46 @@ import Utils exposing (ite)
 import Styles
 
 
+type BreakPoint
+    = XS
+    | SM
+    | MD
+    | LG
+    | XL
+
+
+prevBreakPoints : BreakPoint -> BreakPoint
+prevBreakPoints bp =
+    case bp of
+        XS ->
+            XS
+
+        SM ->
+            XS
+
+        MD ->
+            SM
+
+        LG ->
+            MD
+
+        XL ->
+            LG
+
+
+responsiveBlock : BreakPoint -> Maybe (List (Html msg)) -> List (Html msg) -> Html msg
+responsiveBlock breakpoint maybeHtmlsForSmall htmlsForLarge =
+    Html.div []
+        [ maybeHtmlsForSmall |> ME.unwrap none (Html.div [ class ("hidden-" ++ Utils.toLowerString breakpoint ++ "-up") ])
+        , Html.div [ class ("hidden-" ++ (breakpoint |> prevBreakPoints |> Utils.toLowerString) ++ "-down") ] htmlsForLarge
+        ]
+
+
+httpRequest : Utils.Method -> Utils.Url -> Html msg
+httpRequest method url =
+    Html.code [] (autoLink ((toString method) ++ " " ++ url))
+
+
 none : Html msg
 none =
     Z.lazy text ""
@@ -72,7 +112,7 @@ stdBtn : Button.Option msg -> List (Button.Option msg) -> Bool -> String -> Html
 stdBtn activatedStyle baseOptions0 isDisabled label =
     let
         baseOptions1 =
-            [ Button.attrs [ class "mx-2 my-1" ] ] ++ baseOptions0
+            [ Button.attrs [ class "mx-2 my-1", Attr.type_ "button" ] ] ++ baseOptions0
 
         options =
             if isDisabled then

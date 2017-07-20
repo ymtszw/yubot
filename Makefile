@@ -61,3 +61,10 @@ deploy:
 	mix yubot.assets
 	git push solomon master
 	git push origin master
+
+tags:
+	ctags -R lib/ web/ test/ ui/
+
+.PHONY: ctags
+ctags:
+	ctags -R lib/ web/ test/ ui/

@@ -1,27 +1,28 @@
 module Polls.View exposing (index, new, show)
 
-import Dict
+import Dict exposing (Dict)
 import Html exposing (Html, text)
 import Html.Attributes as Attr exposing (class)
-import Html.Events
+import Html.Events as Events
 import Html.Lazy as Z
 import Maybe.Extra as ME exposing (isNothing)
 import List.Extra as LE
 import Bootstrap.Button as Button
-import Utils exposing (ite)
+import Utils exposing (ite, (>>=))
 import Grasp
 import Grasp.BooleanResponder as GBR exposing (BooleanResponder, Predicate(..))
 import Grasp.StringResponder as GSR exposing (StringResponder, StringMaker(..))
 import Repo exposing (Repo, Entity, EntityId, EntityDict, Audit, AuditId, AuditEntry(..))
 import Repo.Messages exposing (Msg(..))
-import Repo.ViewParts exposing (navigate, submitButton, textInputRequired)
+import Repo.ViewParts as RVP exposing (navigate, submitButton, textInputRequired)
 import Polls exposing (Poll, Aux, Condition, Material)
 import Actions exposing (Action)
+import Actions.View exposing (trialResultCard)
 import Actions.ViewParts
 import Authentications exposing (Authentication)
 import Authentications.ViewParts exposing (authSelect)
 import Styles
-import ViewParts exposing (none, stdBtn)
+import ViewParts as VP exposing (none, stdBtn)
 
 
 -- Index
@@ -79,20 +80,20 @@ createCard =
 
 
 new : EntityDict Action -> EntityDict Authentication -> Repo Aux Poll -> Html Polls.Msg
-new actionDict authDict ({ dirtyDict } as repo) =
+new actionDict authDict repo =
     let
         (( { data }, audit ) as dirtyEntity) =
-            Repo.dirtyGetWithDefault "new" Polls.dummyPoll dirtyDict
+            Repo.dirtyGetWithDefault "new" Polls.dummyPoll repo.dirtyDict
     in
-        ViewParts.triPaneView
+        VP.triPaneView
             [ Z.lazy titleNew data ]
             [ Z.lazy3 mainFormNew actionDict authDict dirtyEntity ]
-            [ none ]
-            [ text "right" ]
-            |> Html.map Polls.RepoMsg
+            [ none -- Used by History in Show
+            ]
+            [ trialResults actionDict repo data ]
 
 
-titleNew : Poll -> Html (Msg Poll)
+titleNew : Poll -> Html Polls.Msg
 titleNew data =
     Html.div
         [ class "d-flex justify-content-between align-items-center pb-2"
@@ -100,7 +101,7 @@ titleNew data =
         ]
         [ Html.div []
             [ Html.h2 [ class "mb-2" ]
-                [ ViewParts.fa [ class "align-bottom mr-2" ] 2 "fa-calendar"
+                [ VP.fa [ class "align-bottom mr-2" ] 2 "fa-calendar"
                 , text "New Poll"
                 ]
             ]
@@ -111,36 +112,80 @@ titleNew data =
                 "Reset"
             ]
         ]
+        |> Html.map Polls.RepoMsg
 
 
-mainFormNew : EntityDict Action -> EntityDict Authentication -> ( Entity Poll, Audit ) -> Html (Msg Poll)
+mainFormNew : EntityDict Action -> EntityDict Authentication -> ( Entity Poll, Audit ) -> Html Polls.Msg
 mainFormNew actionDict authDict (( { data }, audit ) as dirtyEntity) =
     let
         isValid =
             Polls.isValid dirtyEntity
     in
-        [ submitButton "poll" isValid "Create" ]
+        [ Html.div [ class "float-right" ]
+            [ Z.lazy2 runButton isValid data |> Html.map Polls.AuxMsg
+            , submitButton "poll" isValid "Create"
+            ]
+        ]
             |> (++) (mainFormInputs actionDict authDict "new" audit data)
-            |> Html.form [ Attr.id "poll", Html.Events.onSubmit (ite isValid (Create "new" data) NoOp) ]
-            |> ViewParts.cardBlock [] "" Nothing
+            |> Html.form [ Attr.id "poll", Events.onSubmit (Polls.RepoMsg (ite isValid (Create "new" data) NoOp)) ]
+            |> VP.cardBlock [] "" Nothing
 
 
-mainFormInputs : EntityDict Action -> EntityDict Authentication -> EntityId -> Audit -> Poll -> List (Html (Msg Poll))
-mainFormInputs actionDict authDict dirtyId audit ({ url, interval, authId, isEnabled, triggers } as data) =
-    [ textInputRequired "poll" "URL" False audit dirtyId [ "url" ] (\x -> { data | url = x }) url
-    , authSelect "poll" "Credential" (Authentications.listForHttp authDict) dirtyId data authId
-    , Polls.intervals |> intervalSelectItems interval |> select "Interval" dirtyId (\x -> { data | interval = x })
-    , Repo.ViewParts.checkbox "poll" "Enabled?" False dirtyId (\c -> { data | isEnabled = c }) isEnabled
+runButton : Bool -> Poll -> Html Polls.AuxMsg
+runButton isValid data =
+    stdBtn Button.success
+        [ Button.attrs [], Button.onClick (Polls.RunPoll data) ]
+        (not isValid)
+        "Run"
+
+
+mainFormInputs : EntityDict Action -> EntityDict Authentication -> EntityId -> Audit -> Poll -> List (Html Polls.Msg)
+mainFormInputs actionDict authDict dirtyId audit ({ interval, authId, isEnabled, triggers } as data) =
+    [ urlInputWithTryButton audit dirtyId data
+    , authSelect "poll" "Credential" (Authentications.listForHttp authDict) dirtyId data authId |> Html.map Polls.RepoMsg
+    , Polls.intervals
+        |> intervalSelectItems interval
+        |> RVP.select "poll" "Interval" False dirtyId (\x -> { data | interval = x })
+        |> Html.map Polls.RepoMsg
+    , RVP.checkbox "poll" "Enabled?" False dirtyId (\c -> { data | isEnabled = c }) isEnabled |> Html.map Polls.RepoMsg
     , triggerEditor actionDict dirtyId audit data
     ]
 
 
-intervalSelectItems : Polls.Interval -> List Polls.Interval -> List Repo.ViewParts.SelectItem
+urlInputWithTryButton : Audit -> EntityId -> Poll -> Html Polls.Msg
+urlInputWithTryButton audit dirtyId data =
+    RVP.formGroup "poll" "URL" False audit [ "url" ] (urlInputGroup dirtyId data)
+
+
+urlInputGroup : EntityId -> Poll -> String -> Html Polls.Msg
+urlInputGroup dirtyId ({ url } as data) inputId =
+    Html.div [ class "input-group input-group-sm d-inline-flex my-2" ]
+        [ RVP.rawInput [ Styles.flex 7 ]
+            "url"
+            "poll"
+            inputId
+            "URL"
+            (\x -> Polls.RepoMsg <| OnEdit dirtyId [ ( [ "url" ], Repo.required x ) ] { data | url = x })
+            url
+        , Html.span [ class "input-group-btn px-0", Styles.flex 1 ]
+            [ Html.button
+                [ class "btn btn-primary"
+                , Attr.type_ "button"
+                , Styles.fakeLink
+                , Attr.disabled (url == "")
+                , VP.onClickNoPropagate (Polls.AuxMsg <| Polls.TryPoll data)
+                ]
+                [ text "Try" ]
+            ]
+        ]
+
+
+intervalSelectItems : Polls.Interval -> List Polls.Interval -> List RVP.SelectItem
 intervalSelectItems currentInterval intervals =
     List.map (\x -> ( x, Polls.intervalToString x, currentInterval == x )) intervals
 
 
-triggerEditor : EntityDict Action -> EntityId -> Audit -> Poll -> Html (Msg Poll)
+triggerEditor : EntityDict Action -> EntityId -> Audit -> Poll -> Html Polls.Msg
 triggerEditor actionDict dirtyId audit ({ triggers } as data) =
     let
         updateTriggers updateFun =
@@ -160,7 +205,7 @@ triggerEditor actionDict dirtyId audit ({ triggers } as data) =
     in
         Html.div []
             [ Html.label [ class "mr-1" ] [ text "Triggers" ]
-            , ViewParts.htmlIf (tsLen < 5) (addButton False dirtyId auditIdsToData 2)
+            , VP.htmlIf (tsLen < 5) (addButton False dirtyId auditIdsToData 2 |> Html.map Polls.RepoMsg)
             , triggers
                 |> List.indexedMap (triggerForm actionDict tsLen dirtyId audit updateTriggers)
                 |> Html.div [ class "container-fluid" ]
@@ -175,27 +220,30 @@ triggerForm :
     -> ((List Polls.Trigger -> List Polls.Trigger) -> Poll)
     -> Int
     -> Polls.Trigger
-    -> Html (Msg Poll)
+    -> Html Polls.Msg
 triggerForm actionDict tsLen dirtyId audit tsUpdate index ({ auditId, collapsed, actionId } as trigger) =
     let
         updateTriggerAtIndex updateFun =
             tsUpdate (LE.updateIfIndex ((==) index) updateFun)
     in
-        Html.div [ class "row my-1" ]
-            [ Html.div [ class "col-md-2 px-0 text-left" ]
-                [ removeButton False dirtyId [ auditId ] (tsUpdate (LE.removeAt index))
-                , toggleCollapseButton dirtyId (updateTriggerAtIndex (always { trigger | collapsed = not collapsed })) collapsed
-                ]
-            , Html.div [ class "col-md-8 px-0" ]
-                [ triggerActionSelect actionDict dirtyId audit auditId updateTriggerAtIndex trigger
-                ]
-            , Html.div [ class "col-md-2 px-0 text-right" ]
-                [ shuffleButton (index == tsLen - 1) dirtyId (tsUpdate (Utils.listShuffle index True)) True
-                , shuffleButton (index == 0) dirtyId (tsUpdate (Utils.listShuffle index False)) False
-                ]
-            , ViewParts.htmlIf (not collapsed)
-                (triggerDetailForm (Dict.get actionId actionDict) audit dirtyId updateTriggerAtIndex index trigger)
+        [ Html.div [ class "col-md-2 px-0 text-left" ]
+            [ removeButton False dirtyId [ auditId ] (tsUpdate (LE.removeAt index))
+            , toggleCollapseButton dirtyId (updateTriggerAtIndex (always { trigger | collapsed = not collapsed })) collapsed
             ]
+        , Html.div [ class "col-md-8 px-0" ]
+            [ triggerActionSelect actionDict dirtyId audit auditId updateTriggerAtIndex trigger
+            ]
+        , Html.div [ class "col-md-2 px-0 text-right" ]
+            [ shuffleButton (index == tsLen - 1) dirtyId (tsUpdate (Utils.listShuffle index True)) True
+            , shuffleButton (index == 0) dirtyId (tsUpdate (Utils.listShuffle index False)) False
+            ]
+        ]
+            |> List.map (Html.map Polls.RepoMsg)
+            |> (flip (++))
+                [ VP.htmlIf (not collapsed)
+                    (triggerDetailForm (Dict.get actionId actionDict) audit dirtyId updateTriggerAtIndex index trigger)
+                ]
+            |> Html.div [ class "row my-1" ]
 
 
 triggerActionSelect :
@@ -215,7 +263,7 @@ triggerActionSelect actionDict dirtyId audit triggerAuditId tUpdate ({ actionId 
             tUpdate (always { trigger | actionId = id, material = Dict.empty })
 
         auxEvents maybeSelectedValue =
-            [ Html.Events.onBlur
+            [ Events.onBlur
                 (OnValidate dirtyId
                     ( [ triggerAuditId, "action" ]
                     , maybeSelectedValue
@@ -223,7 +271,7 @@ triggerActionSelect actionDict dirtyId audit triggerAuditId tUpdate ({ actionId 
                         |> Utils.boolToMaybe "This field is required"
                     )
                 )
-            , Html.Events.onInput
+            , Events.onInput
                 (\id ->
                     if (id == actionId) then
                         NoOp
@@ -236,7 +284,7 @@ triggerActionSelect actionDict dirtyId audit triggerAuditId tUpdate ({ actionId 
                 )
             ]
     in
-        Repo.ViewParts.selectWithAttrs auxEvents
+        RVP.selectWithAttrs auxEvents
             audit
             [ triggerAuditId, "action" ]
             "poll"
@@ -281,7 +329,7 @@ triggerDetailForm :
     -> ((Polls.Trigger -> Polls.Trigger) -> Poll)
     -> Int
     -> Polls.Trigger
-    -> Html (Msg Poll)
+    -> Html Polls.Msg
 triggerDetailForm maybeActionEntity audit dirtyId tUpdate index ({ auditId, conditions, material } as trigger) =
     let
         updateConditions updateFun =
@@ -295,10 +343,10 @@ triggerDetailForm maybeActionEntity audit dirtyId tUpdate index ({ auditId, cond
                 [ conditionsCard audit auditId dirtyId updateConditions conditions
                 ]
             , maybeActionEntity
-                |> ViewParts.htmlMaybe
+                |> VP.htmlMaybe
                     (materialCard audit auditId dirtyId updateMaterial material)
             , maybeActionEntity
-                |> ViewParts.htmlMaybe
+                |> VP.htmlMaybe
                     (.data >> Actions.ViewParts.preview >> List.singleton >> Html.div [ class "card-footer p-1" ])
             ]
 
@@ -307,7 +355,7 @@ triggerDetailForm maybeActionEntity audit dirtyId tUpdate index ({ auditId, cond
 -- Condition Form
 
 
-conditionsCard : Audit -> AuditId -> EntityId -> ((List Condition -> List Condition) -> Poll) -> List Condition -> Html (Msg Poll)
+conditionsCard : Audit -> AuditId -> EntityId -> ((List Condition -> List Condition) -> Poll) -> List Condition -> Html Polls.Msg
 conditionsCard audit triggerAuditId dirtyId csUpdate conditions =
     let
         auditIdsToData auditIds =
@@ -323,7 +371,7 @@ conditionsCard audit triggerAuditId dirtyId csUpdate conditions =
             [ Html.div [ class "row my-1" ]
                 [ Html.div [ class "col-md-12 col-xl-3 px-0" ]
                     [ Html.label [ class "m-1" ] [ text "Conditions" ]
-                    , addButton (List.length conditions >= 5) dirtyId auditIdsToData 1
+                    , addButton (List.length conditions >= 5) dirtyId auditIdsToData 1 |> Html.map Polls.RepoMsg
                     ]
                 , Html.div [ class "col-md-12 col-xl-9 px-0" ]
                     [ conditions
@@ -341,34 +389,22 @@ conditionForm :
     -> ((List Condition -> List Condition) -> Poll)
     -> Int
     -> Condition
-    -> Html (Msg Poll)
+    -> Html Polls.Msg
 conditionForm audit triggerAuditId dirtyId csUpdate cIndex ({ auditId, extractor, responder } as c) =
     let
-        conditionSelectItems =
-            [ ( "simpleMatch", "Simple Match", Polls.isSimpleMatch c )
-            , ( "functional", "Functional Scan", not (Polls.isSimpleMatch c) )
-            ]
-
         updateCondition updateFun =
             csUpdate (LE.updateIfIndex ((==) cIndex) updateFun)
-
-        onConditionModeSelect val =
-            ite (val == "simpleMatch")
-                (Polls.simpleMatchCondition auditId extractor.pattern)
-                (Polls.sampleFunctionalCondition auditId extractor.pattern)
-                |> always
-                |> updateCondition
 
         onConditionPatternInput val =
             updateCondition (\c -> { c | extractor = { extractor | pattern = val } })
     in
         Html.div [ class "row my-1" ]
             [ Html.div [ class "col-sm-1 px-0 text-left" ]
-                [ removeButton False dirtyId [ triggerAuditId, auditId ] (csUpdate (LE.removeAt cIndex))
+                [ removeButton False dirtyId [ triggerAuditId, auditId ] (csUpdate (LE.removeAt cIndex)) |> Html.map Polls.RepoMsg
                 ]
             , Html.div [ class "col-sm-11 px-0" ]
-                [ Html.div [ class "my-1" ]
-                    [ Repo.ViewParts.select "poll" "Mode" True dirtyId onConditionModeSelect conditionSelectItems
+                [ Html.div []
+                    [ conditionSelectWithTestButton audit triggerAuditId dirtyId updateCondition c
                     , textInputRequired "poll"
                         "Pattern"
                         False
@@ -377,11 +413,64 @@ conditionForm audit triggerAuditId dirtyId csUpdate cIndex ({ auditId, extractor
                         [ triggerAuditId, auditId, "pattern" ]
                         onConditionPatternInput
                         extractor.pattern
+                        |> Html.map Polls.RepoMsg
                     ]
-                , ViewParts.htmlIf (not (Polls.isSimpleMatch c))
+                , VP.htmlIf (not (Polls.isSimpleMatch c))
                     (conditionEditor audit dirtyId [ triggerAuditId, auditId, "responder" ] updateCondition responder)
                 ]
             ]
+
+
+conditionSelectWithTestButton : Audit -> AuditId -> EntityId -> ((Condition -> Condition) -> Poll) -> Condition -> Html Polls.Msg
+conditionSelectWithTestButton audit triggerAuditId dirtyId cUpdate ({ auditId, extractor } as c) =
+    let
+        conditionSelectItems =
+            [ ( "simpleMatch", "Simple Match", Polls.isSimpleMatch c )
+            , ( "functional", "Functional Scan", not (Polls.isSimpleMatch c) )
+            ]
+
+        onConditionModeSelect val =
+            ite (val == "simpleMatch")
+                (Polls.simpleMatchCondition auditId extractor.pattern)
+                (Polls.sampleFunctionalCondition auditId extractor.pattern)
+                |> always
+                |> cUpdate
+    in
+        Html.div [ class "d-flex mb-2 align-items-center" ]
+            [ Html.div [ class "mr-1", Styles.flex 5 ]
+                [ RVP.selectWithAttrs (always [])
+                    audit
+                    [ triggerAuditId, auditId, "mode" ]
+                    "poll"
+                    "Trigger Mode"
+                    True
+                    dirtyId
+                    onConditionModeSelect
+                    conditionSelectItems
+                    |> Html.map Polls.RepoMsg
+                ]
+            , Html.div [ Styles.flex 1 ]
+                [ conditionTestButton (cUpdate <| always c) c
+                ]
+            ]
+
+
+conditionTestButton : Poll -> Condition -> Html Polls.Msg
+conditionTestButton data c =
+    let
+        readyToTest =
+            (data.url /= "")
+                && (Grasp.isValidInstruction GBR.isValid c)
+    in
+        Html.button
+            ((ite readyToTest [ Styles.fakeLink ] [])
+                ++ [ class "btn btn-sm btn-block btn-primary"
+                   , Attr.type_ "button"
+                   , Attr.disabled (not readyToTest)
+                   , VP.onClickNoPropagate (Polls.AuxMsg <| Polls.TestCondition data c)
+                   ]
+            )
+            [ text "Test" ]
 
 
 conditionEditor :
@@ -390,7 +479,7 @@ conditionEditor :
     -> List AuditId
     -> ((Condition -> Condition) -> Poll)
     -> BooleanResponder
-    -> Html (Msg Poll)
+    -> Html Polls.Msg
 conditionEditor audit dirtyId auditIdPath cUpdate ({ highOrder, firstOrder } as responder) =
     let
         updateResponder updateFun =
@@ -416,6 +505,7 @@ conditionEditor audit dirtyId auditIdPath cUpdate ({ highOrder, firstOrder } as 
                 ]
             , predicateArgsForm audit dirtyId auditIdPath updateResponder firstOrder
             ]
+            |> Html.map Polls.RepoMsg
 
 
 predicateButton :
@@ -504,10 +594,10 @@ containsInput audit dirtyId auditIdPath0 foUpdate arguments =
     in
         Html.div [ class ("input-group input-group-sm d-inline-flex my-2" ++ inputGroupClass) ]
             [ Html.span [ class "input-group-addon px-0", Styles.flex 2 ] [ text "Matches contains" ]
-            , Repo.ViewParts.rawInput ((Styles.flex 5) :: formControlClasses)
+            , RVP.rawInput ((Styles.flex 5) :: formControlClasses)
                 "text"
                 "poll"
-                (Repo.ViewParts.makeInputId "poll" "Right Value")
+                (RVP.makeInputId "poll" "Right Value")
                 "Right Value"
                 onInput
                 arg
@@ -598,10 +688,10 @@ indexNumericInput label isValid dirtyId auditIdPath updateCaptureIndex captureIn
         onInput v =
             OnEdit dirtyId [ ( auditIdPath, mustBeNonNegInteger v ) ] <| updateCaptureIndex <| v
     in
-        Repo.ViewParts.rawInput [ class ("text-center" ++ (ite isValid "" " form-control-danger")), Styles.flex 1, Attr.min "0" ]
+        RVP.rawInput [ class ("text-center" ++ (ite isValid "" " form-control-danger")), Styles.flex 1, Attr.min "0" ]
             "number"
             "poll"
-            (Repo.ViewParts.makeInputId "poll" label)
+            (RVP.makeInputId "poll" label)
             "#"
             onInput
             captureIndex
@@ -630,10 +720,10 @@ rightValueInput label isValid dirtyId auditIdPath updateRightValue rightValue =
         onInput v =
             OnEdit dirtyId [ ( auditIdPath, Repo.required v ) ] <| updateRightValue <| v
     in
-        Repo.ViewParts.rawInput ((ite isValid [] [ class " form-control-danger" ]) ++ [ Styles.flex 5 ])
+        RVP.rawInput ((ite isValid [] [ class " form-control-danger" ]) ++ [ Styles.flex 5 ])
             "text"
             "poll"
-            (Repo.ViewParts.makeInputId "poll" label)
+            (RVP.makeInputId "poll" label)
             label
             onInput
             rightValue
@@ -643,7 +733,7 @@ rightValueInput label isValid dirtyId auditIdPath updateRightValue rightValue =
 -- Material Form
 
 
-materialCard : Audit -> AuditId -> EntityId -> ((Material -> Material) -> Poll) -> Material -> Entity Action -> Html (Msg Poll)
+materialCard : Audit -> AuditId -> EntityId -> ((Material -> Material) -> Poll) -> Material -> Entity Action -> Html Polls.Msg
 materialCard audit triggerAuditId dirtyId mUpdate material { data } =
     case data.bodyTemplate.variables of
         [] ->
@@ -653,7 +743,7 @@ materialCard audit triggerAuditId dirtyId mUpdate material { data } =
             materialCardImpl audit triggerAuditId dirtyId mUpdate material variables
 
 
-materialCardImpl : Audit -> AuditId -> EntityId -> ((Material -> Material) -> Poll) -> Material -> List String -> Html (Msg Poll)
+materialCardImpl : Audit -> AuditId -> EntityId -> ((Material -> Material) -> Poll) -> Material -> List String -> Html Polls.Msg
 materialCardImpl audit triggerAuditId dirtyId mUpdate material variables =
     Html.div [ class "card-block p-1" ]
         [ Html.div [ class "container-fluid" ]
@@ -669,7 +759,7 @@ materialCardImpl audit triggerAuditId dirtyId mUpdate material variables =
         ]
 
 
-materialForm : Audit -> List AuditId -> EntityId -> ((Material -> Material) -> Poll) -> Material -> String -> Html (Msg Poll)
+materialForm : Audit -> List AuditId -> EntityId -> ((Material -> Material) -> Poll) -> Material -> String -> Html Polls.Msg
 materialForm audit auditIdPath dirtyId mUpdate material variable =
     let
         ({ extractor, responder } as materialItem) =
@@ -684,7 +774,10 @@ materialForm audit auditIdPath dirtyId mUpdate material variable =
             updateMaterialItem (\mi -> { mi | extractor = { extractor | pattern = v } })
     in
         Html.div [ class "card" ]
-            [ Html.div [ class "card-header p-1" ] [ Html.code [] [ text variable ] ]
+            [ Html.div [ class "card-header p-1 d-flex align-items-center justify-content-between" ]
+                [ Html.div [] [ Html.code [] [ text variable ] ]
+                , Z.lazy3 materialTestButton (material |> always |> mUpdate) material variable |> Html.map Polls.AuxMsg
+                ]
             , Html.div [ class "card-block px-2 py-1" ]
                 [ textInputRequired "poll"
                     "Pattern"
@@ -694,9 +787,26 @@ materialForm audit auditIdPath dirtyId mUpdate material variable =
                     (auditIdPath ++ [ variable, "pattern" ])
                     onMaterialPatternInput
                     extractor.pattern
+                    |> Html.map Polls.RepoMsg
                 ]
-            , materialEditor audit (auditIdPath ++ [ variable ]) dirtyId updateMaterialItem responder
+            , materialEditor audit (auditIdPath ++ [ variable ]) dirtyId updateMaterialItem responder |> Html.map Polls.RepoMsg
             ]
+
+
+materialTestButton : Poll -> Material -> String -> Html Polls.AuxMsg
+materialTestButton data material variable =
+    case Dict.get variable material of
+        Just instruction ->
+            stdBtn Button.primary
+                [ Button.small, Button.onClick (Polls.TestMaterial data variable instruction) ]
+                False
+                "Test"
+
+        Nothing ->
+            stdBtn Button.primary
+                [ Button.small ]
+                True
+                "Test"
 
 
 materialEditor :
@@ -808,22 +918,247 @@ stringMakerArgsForm audit dirtyId auditIdPath0 rUpdate ({ operator, arguments } 
 
 
 
+-- Try Results
+
+
+trialResults : EntityDict Action -> Repo Aux Poll -> Poll -> Html Polls.Msg
+trialResults actionDict { pollTrialResponse, pollTrialResponseCollapsed, conditionTestResult, materialTestResult, runResult } { url } =
+    Html.div []
+        [ trialResultCard (Just Polls.ToggleTryPollResult) Polls.Clear pollTrialResponseCollapsed pollTrialResponse
+        , conditionTestResultCard conditionTestResult
+        , materialTestResultCard materialTestResult
+        , runResultCard actionDict url runResult
+        ]
+        |> Html.map Polls.AuxMsg
+
+
+conditionTestResultCard : Maybe Grasp.TestResult -> Html msg
+conditionTestResultCard maybeResult =
+    let
+        resultHtml value =
+            Html.div [ class ("alert " ++ (ite (value == "true") "alert-success" "alert-danger")) ] [ text value ]
+    in
+        VP.cardBlock [ text "Condition Test" ]
+            (maybeResult |> ME.unwrap "Condition test result will be shown here." (always "Condition applied to the body above."))
+            Nothing
+            (maybeResult |> ME.unwrap none (graspDetail resultHtml))
+
+
+graspDetail : (String -> Html msg) -> Grasp.TestResult -> Html msg
+graspDetail resultHtml { extractResultant, value } =
+    let
+        matches =
+            case extractResultant of
+                [] ->
+                    Html.div [ class "alert alert-danger" ] [ text "(Not matched)" ]
+
+                ers ->
+                    Z.lazy extractResultantTable ers
+    in
+        Html.div []
+            [ Html.h6 [ Styles.bottomBordered ] [ text "Matches" ]
+            , matches
+            , Html.h6 [ Styles.bottomBordered ] [ text "Result" ]
+            , resultHtml value
+            ]
+
+
+extractResultantTable : List (List String) -> Html msg
+extractResultantTable extractResultant =
+    let
+        cols =
+            extractResultant |> List.foldl (\x acc -> max (List.length x) acc) 1
+
+        tail subMatches =
+            case (List.length subMatches) - cols of
+                0 ->
+                    []
+
+                1 ->
+                    [ Html.td [] [] ]
+
+                l ->
+                    [ Html.td [ Attr.colspan l ] [] ]
+
+        tailFilledRow index subMatches =
+            subMatches
+                |> List.map (text >> List.singleton >> Html.mark [ Styles.pre ] >> List.singleton >> Html.td [])
+                |> flip (++) (tail subMatches)
+                |> (::) (Html.th [ Attr.scope "row" ] [ text <| toString <| index ])
+                |> Html.tr []
+    in
+        Html.table [ class "table table-responsive table-sm table-bordered", Styles.xSmall ]
+            [ (cols - 1)
+                |> List.range 0
+                |> List.map (toString >> (++) "$" >> text >> List.singleton >> Html.th [])
+                |> (::) (Html.th [] [ text "#" ])
+                |> Html.thead [ class "thead-default" ]
+            , extractResultant
+                |> List.indexedMap tailFilledRow
+                |> Html.tbody []
+            ]
+
+
+materialTestResultCard : Maybe ( String, Grasp.TestResult ) -> Html msg
+materialTestResultCard maybeResult =
+    let
+        resultDetail ( variable, r ) =
+            (\v ->
+                Html.div [ class "card" ]
+                    [ Html.div [ class "card-header" ] [ Html.code [] [ text variable ] ]
+                    , Html.div [ class "card-block" ]
+                        [ Html.div [] [ Html.mark [] [ text v ] ] ]
+                    ]
+            )
+                |> flip graspDetail r
+    in
+        VP.cardBlock [ text "Material Test" ]
+            (maybeResult |> ME.unwrap "Material test result will be shown here." (always "Material extraction applied to the body above."))
+            Nothing
+            (maybeResult |> ME.unwrap none resultDetail)
+
+
+runResultCard : EntityDict Action -> Utils.Url -> Maybe Polls.HistoryEntry -> Html msg
+runResultCard actionDict url maybeHistory =
+    VP.cardBlock [ text "Run Result" ]
+        (maybeHistory |> ME.unwrap "Run result will be shown here." (always "The Poll was executed!"))
+        Nothing
+        (maybeHistory |> ME.unwrap none (historyDetail actionDict url))
+
+
+historyDetail : EntityDict Action -> Utils.Url -> Polls.HistoryEntry -> Html msg
+historyDetail actionDict url { runAt, pollResult, triggerResult } =
+    Html.div []
+        ([ Z.lazy2 pollResultBlock url pollResult ]
+            ++ (triggerResults actionDict pollResult triggerResult)
+        )
+
+
+pollResultBlock : Utils.Url -> Polls.PollResult -> Html msg
+pollResultBlock url { status } =
+    Html.div []
+        [ horizontalCard
+            [ VP.fa [ class ("text-" ++ Utils.statusBsColor status) ] 2 (statusFa status)
+            , Html.strong [] [ text "Retrieve from URL" ]
+            ]
+        , rightShiftedBlock
+            [ Html.dl []
+                [ Html.dt [] [ text "URL" ]
+                , Html.dd [ class "p-2" ] [ Html.code [ class "small" ] (VP.autoLink url) ]
+                , Html.dt [] [ text "Status" ]
+                , Html.dd [ class "p-2" ] [ Z.lazy statusText status ]
+                ]
+            ]
+        ]
+
+
+statusText : Int -> Html msg
+statusText code =
+    Html.span [ class ("text-white p-1 bg-" ++ Utils.statusBsColor code) ]
+        [ text (toString code ++ " " ++ Utils.statusText code) ]
+
+
+triggerResults : EntityDict Action -> Polls.PollResult -> Maybe Polls.TriggerResult -> List (Html msg)
+triggerResults actionDict { status } maybeTriggerResult =
+    [ Html.div []
+        [ Z.lazy2 triggerCard status maybeTriggerResult
+        , maybeTriggerResult
+            >>= (.actionId >> flip Dict.get actionDict)
+            |> ME.unwrap none (Z.lazy triggeredActionDetail)
+        ]
+    , maybeTriggerResult |> ME.unwrap none (Z.lazy actionResultBlock)
+    ]
+
+
+triggerCard : Int -> Maybe Polls.TriggerResult -> Html msg
+triggerCard code maybeTriggerResult =
+    let
+        ( iconTextClass, fa, cardText ) =
+            if code == 304 then
+                ( "text-warning", "fa-minus-circle", "Not Modified" )
+            else if code < 200 || code >= 300 then
+                ( "text-" ++ Utils.statusBsColor code, statusFa code, "Cannot proceed" )
+            else if isNothing maybeTriggerResult then
+                ( "text-warning", "fa-minus-circle", "Nothing Triggered" )
+            else
+                ( "text-success", "fa-check-circle", "Action Triggered" )
+    in
+        horizontalCard [ VP.fa [ class iconTextClass ] 2 fa, Html.strong [] [ text cardText ] ]
+
+
+triggeredActionDetail : Entity Action -> Html msg
+triggeredActionDetail { data } =
+    rightShiftedBlock
+        [ Html.dl []
+            [ Html.dt [] [ text data.label ]
+            , Html.dd [ class "p-2 small" ] [ Actions.ViewParts.preview data ]
+            ]
+        ]
+
+
+actionResultBlock : Polls.TriggerResult -> Html msg
+actionResultBlock { status, variables } =
+    Html.div []
+        [ horizontalCard
+            [ VP.fa [ class ("text-" ++ Utils.statusBsColor status) ] 2 (statusFa status)
+            , Html.strong [] [ text "Execute Action" ]
+            ]
+        , Html.div [ class "ml-4 my-0 px-4 py-1", Styles.leftInvisibleBordered ]
+            [ Html.dl []
+                ([ Html.dt [] [ text "Status" ]
+                 , Html.dd [ class "p-2" ] [ Z.lazy statusText status ]
+                 ]
+                    ++ (variableItems variables)
+                )
+            ]
+        ]
+
+
+variableItems : Dict String String -> List (Html msg)
+variableItems variables =
+    variables
+        |> Dict.toList
+        |> List.concatMap
+            (\( name, value ) ->
+                [ Html.dt [] [ Html.code [] [ text name ] ]
+                , Html.dd [ class "p-2" ] [ Html.mark [] [ text value ] ]
+                ]
+            )
+
+
+statusFa : Int -> String
+statusFa code =
+    if code < 200 then
+        "fa-minus-circle"
+    else if code < 300 then
+        "fa-check-circle"
+    else if code < 400 then
+        "fa-minus-circle"
+    else
+        "fa-times-circle"
+
+
+horizontalCard : List (Html msg) -> Html msg
+horizontalCard htmls =
+    Html.div [ class "card my-0", Styles.rounded ]
+        [ Html.div [ class "card-block p-2" ]
+            [ Html.div [ class "card-text d-flex align-items-center" ] htmls
+            ]
+        ]
+
+
+rightShiftedBlock : List (Html msg) -> Html msg
+rightShiftedBlock htmls =
+    Html.div [ class "ml-4 my-0 px-4 py-1", Styles.leftDoubleBordered ] htmls
+
+
+
 -- Form Parts
-
-
-textInputRaw : String -> EntityId -> (String -> x) -> String -> Html (Msg x)
-textInputRaw inputLabel =
-    Repo.ViewParts.textInputWithoutValidation "poll" inputLabel True
-
-
-select : String -> EntityId -> (String -> x) -> List Repo.ViewParts.SelectItem -> Html (Msg x)
-select inputLabel =
-    Repo.ViewParts.select "poll" inputLabel False
 
 
 smInlineFaBtn : List (Button.Option msg) -> msg -> Bool -> String -> Html msg
 smInlineFaBtn styles msg disabled fa =
-    smInlineBtn ((Button.attrs [ class "mr-1" ]) :: styles) msg disabled (ViewParts.fa [] 1 fa)
+    smInlineBtn ((Button.attrs [ class "mr-1" ]) :: styles) msg disabled (VP.fa [] 1 fa)
 
 
 smInlineBtn : List (Button.Option msg) -> msg -> Bool -> Html msg -> Html msg
@@ -831,15 +1166,15 @@ smInlineBtn styles msg disabled html =
     let
         attrs =
             if disabled then
-                [ class "p-0 disabled invisible", Styles.inline ]
+                [ class "p-0 disabled invisible" ]
             else
-                [ class "p-0", Styles.inline, Styles.fakeLink ]
+                [ class "p-0", Styles.fakeLink ]
     in
         Button.button
             (styles
                 ++ [ Button.small
                    , Button.onClick msg
-                   , Button.attrs attrs
+                   , Button.attrs ([ Attr.type_ "button", Styles.inline ] ++ attrs)
                    , Button.disabled disabled
                    ]
             )
@@ -851,18 +1186,19 @@ smInlineBtn styles msg disabled html =
 
 
 show : EntityDict Action -> EntityDict Authentication -> Repo Aux Poll -> Entity Poll -> Html Polls.Msg
-show actionDict authDict ({ dirtyDict, deleteModal } as pollRepo) ({ id } as entity) =
+show actionDict authDict ({ dirtyDict, deleteModal } as repo) ({ id } as entity) =
     let
         maybeDirtyEntity =
             Dict.get id dirtyDict
     in
-        ViewParts.triPaneView
+        VP.triPaneView
             [ Z.lazy2 titleShow maybeDirtyEntity entity
             , Z.lazy deleteModalDialog deleteModal
             ]
             [ mainFormShow actionDict authDict entity maybeDirtyEntity ]
             [ text "Poll History" ]
-            [ text "right" ]
+            [ trialResults actionDict repo (maybeDirtyEntity |> ME.unwrap entity Tuple.first |> .data)
+            ]
 
 
 titleShow : Maybe ( Entity Poll, Audit ) -> Entity Poll -> Html Polls.Msg
@@ -873,10 +1209,10 @@ titleShow maybeDirtyEntity ({ id, updatedAt, data } as entity) =
         ]
         [ Html.div []
             [ Html.h2 [ class "mb-2" ]
-                ([ ViewParts.fa [ class "align-bottom mr-2" ] 2 "fa-calendar"
+                ([ VP.fa [ class "align-bottom mr-2" ] 2 "fa-calendar"
                  , text "Poll to "
                  ]
-                    ++ ViewParts.autoLink data.url
+                    ++ VP.autoLink data.url
                 )
             , Html.p [ class "text-muted mb-0", Styles.xSmall ]
                 [ text ("ID : " ++ id)
@@ -912,11 +1248,11 @@ deleteButton entity =
 
 deleteModalDialog : Repo.ModalState Poll -> Html Polls.Msg
 deleteModalDialog { target, isShown } =
-    ViewParts.modal
+    VP.modal
         (always CancelDelete)
         isShown
         [ class "modal-sm" ]
-        (text "Deleting Poll to " :: ViewParts.autoLink target.data.url)
+        (text "Deleting Poll to " :: VP.autoLink target.data.url)
         [ text "Are you sure?" ]
         [ stdBtn Button.danger [ Button.onClick (Delete target.id) ] False "Yes, delete"
         , stdBtn Button.secondary [ Button.onClick CancelDelete ] False "Cancel"
@@ -935,12 +1271,18 @@ mainFormShow actionDict authDict entity maybeDirtyEntity =
                 Nothing ->
                     ( True, ( entity, Repo.dummyAudit ) )
 
+        isValid =
+            Polls.isValid dirtyEntity
+
         readyToUpdate =
-            Polls.hasDiff entity.data data && Polls.isValid dirtyEntity
+            Polls.hasDiff entity.data data && isValid
     in
-        [ submitButton "poll" readyToUpdate "Update" ]
+        [ Html.div [ class "text-right" ]
+            [ Z.lazy2 runButton isValid data |> Html.map Polls.AuxMsg
+            , submitButton "poll" readyToUpdate "Update"
+            ]
+        ]
             |> (++) (mainFormInputs actionDict authDict id audit data)
             |> (List.singleton << Html.fieldset [ Attr.disabled notEditing ])
-            |> Html.form [ Attr.id "poll", Html.Events.onSubmit (ite readyToUpdate (Update id data) NoOp) ]
-            |> ViewParts.cardBlock [] "" Nothing
-            |> Html.map Polls.RepoMsg
+            |> Html.form [ Attr.id "poll", Events.onSubmit (Polls.RepoMsg (ite readyToUpdate (Update id data) NoOp)) ]
+            |> VP.cardBlock [] "" Nothing

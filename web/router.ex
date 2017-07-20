@@ -15,12 +15,13 @@ defmodule Yubot.Router do
 
   post "/api/user/logout", User, :logout
 
-  post   "/api/poll"            , Poll, :create
-  get    "/api/poll/:id"        , Poll, :retrieve
-  get    "/api/poll"            , Poll, :retrieve_list
-  put    "/api/poll/:id"        , Poll, :update
-  delete "/api/poll/:id"        , Poll, :delete
-  post   "/api/poll/shallow_try", Poll, :shallow_try
+  post   "/api/poll"    , Poll, :create
+  get    "/api/poll/:id", Poll, :retrieve
+  get    "/api/poll"    , Poll, :retrieve_list
+  put    "/api/poll/:id", Poll, :update
+  delete "/api/poll/:id", Poll, :delete
+  post   "/api/poll/try", Poll, :try
+  post   "/api/poll/run", Poll, :run
 
   post   "/api/action"    , Action, :create
   get    "/api/action/:id", Action, :retrieve
@@ -33,6 +34,8 @@ defmodule Yubot.Router do
   get    "/api/authentication/:id", Authentication, :retrieve
   get    "/api/authentication"    , Authentication, :retrieve_list
   delete "/api/authentication/:id", Authentication, :delete
+
+  post "/api/grasp/try", Grasp, :try
 
   # Live Reloader
 

@@ -20,7 +20,6 @@ defmodule Yubot.Model.Action do
     label: Croma.String,
     method: SolomonLib.Http.Method,
     url: SolomonLib.Url,
-    # auth: Croma.TypeGen.nilable(Authentication.Id), # DEPRECATED; Eliminating since nilable field cannot be distinguished its version by itself
     auth_id: Croma.TypeGen.nilable(Authentication.Id),
     body_template: ST,
     type: Type,
@@ -38,12 +37,15 @@ defmodule Yubot.Model.Action do
   end
 
   @doc """
-  Actually try an Action execution with `:trial_values` as material.
+  Execute an Action with `dict` as material.
 
-  It also record elapsed time for the Action.
+  It also records elapsed time for the Action.
   """
-  def try(%TrialRequest{data: %Data{method: m, url: u, body_template: b}, trial_values: tv}, nil_or_auth) do
-    ST.render(b, tv)
+  def exec(%TrialRequest{data: d, trial_values: dict}, nil_or_auth) do
+    exec(d, dict, nil_or_auth)
+  end
+  def exec(%Data{method: m, url: u, body_template: b}, dict, nil_or_auth) do
+    ST.render(b, dict)
     |> Croma.Result.bind(&ExHttp.request(m, u, httpc_body(&1), nil_or_auth))
   end
 

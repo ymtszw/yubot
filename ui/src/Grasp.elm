@@ -4,16 +4,21 @@ module Grasp
         , Responder
         , Pattern
         , FirstOrder
+        , TestResult
         , regexExtractor
         , responder
         , firstOrder
         , isValidInstruction
         , decodeInstruction
         , encodeInstruction
+        , tryTask
         )
 
+import Http
 import Json.Decode as JD
 import Json.Encode as JE
+import Task exposing (Task)
+import HttpBuilder
 import Utils
 import Repo
 
@@ -143,3 +148,38 @@ encodeFirstOrder { operator, arguments } =
         [ ( "operator", JE.string <| toString operator )
         , ( "arguments", JE.list <| List.map JE.string <| arguments )
         ]
+
+
+
+-- Try API
+
+
+type alias TestResult =
+    { extractResultant : List (List String)
+    , value : String
+    }
+
+
+{-| Flipped for chaining
+-}
+tryTask : Instruction (Responder ho op) -> String -> Task Http.Error TestResult
+tryTask instruction source =
+    HttpBuilder.post "/api/grasp/try"
+        |> HttpBuilder.withJsonBody (tryRequestEncoder source instruction)
+        |> HttpBuilder.withExpect (Http.expectJson tryResultDecoder)
+        |> HttpBuilder.toTask
+
+
+tryRequestEncoder : String -> Instruction (Responder ho op) -> JE.Value
+tryRequestEncoder source instruction =
+    JE.object
+        [ ( "source", JE.string source )
+        , ( "instruction", encodeInstruction instruction )
+        ]
+
+
+tryResultDecoder : JD.Decoder TestResult
+tryResultDecoder =
+    JD.map2 TestResult
+        (JD.field "extract_resultant" (JD.list (JD.list JD.string)))
+        (JD.field "value" JD.string)

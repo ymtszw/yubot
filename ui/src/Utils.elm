@@ -9,6 +9,7 @@ module Utils
         , stringToMethod
         , listShuffle
         , boolToMaybe
+        , (>>=)
         , dictGetWithDefault
         , dictUpsert
         , ite
@@ -25,6 +26,8 @@ module Utils
         , randomLowerAlphaGen
         , isOk
         , isErr
+        , statusBsColor
+        , statusText
         )
 
 import Char
@@ -121,6 +124,11 @@ listShuffleImpl index isAsc ( currentIndex, acc ) tail =
 boolToMaybe : x -> Bool -> Maybe x
 boolToMaybe something bool =
     ite bool (Just something) Nothing
+
+
+(>>=) : Maybe a -> (a -> Maybe b) -> Maybe b
+(>>=) =
+    flip Maybe.andThen
 
 
 dictGetWithDefault : comparable -> v -> Dict comparable v -> v
@@ -318,3 +326,52 @@ isOk result =
 isErr : Result a b -> Bool
 isErr =
     not << isOk
+
+
+statusBsColor : Int -> String
+statusBsColor code =
+    if code < 200 then
+        "secondary"
+    else if code < 300 then
+        "success"
+    else if code < 400 then
+        "warning"
+    else
+        "danger"
+
+
+statusText : Int -> String
+statusText code =
+    case code of
+        200 ->
+            "OK"
+
+        201 ->
+            "Created"
+
+        204 ->
+            "No Content"
+
+        302 ->
+            "Found"
+
+        304 ->
+            "Not Modified"
+
+        400 ->
+            "Bad Request"
+
+        401 ->
+            "Unauthorized"
+
+        403 ->
+            "Forbidden"
+
+        404 ->
+            "Not Found"
+
+        500 ->
+            "Internal Server Error"
+
+        c ->
+            "Invalid code: " ++ toString c

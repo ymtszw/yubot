@@ -16,6 +16,7 @@ defmodule Yubot.External.Http do
     status: Status.t,
     headers: map,
     body: binary,
+    body_hash: binary,
     elapsed_ms: float,
   }
 
@@ -23,7 +24,7 @@ defmodule Yubot.External.Http do
     Auth.header(nil_or_auth)
     |> R.map(fn auth_header ->
       {elapsed_us, result} = :timer.tc(Httpc, :request, [method, url, body, auth_header, []])
-      httpc_result_to_map(result, elapsed_us / 1_000)
+      httpc_result_to_map(result, elapsed_us / 1_000) |> add_body_hash()
     end)
   end
 
@@ -31,4 +32,6 @@ defmodule Yubot.External.Http do
     do: httpc_response |> Map.from_struct() |> Map.put(:elapsed_ms, elapsed_ms)
   defp httpc_result_to_map({:error, error}, elapsed_ms),
     do: %{status: 500, headers: %{}, body: "Error on HTTP request: #{inspect(error)}", elapsed_ms: elapsed_ms}
+
+  defp add_body_hash(%{body: b} = m), do: Map.put(m, :body_hash, :crypto.hash(:sha256, b) |> Base.encode64())
 end

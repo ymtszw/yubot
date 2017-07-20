@@ -6,6 +6,11 @@ import Utils
 import Actions.Hipchat exposing (Color(..))
 
 
+pre : Attribute msg
+pre =
+    style [ ( "white-space", "pre" ) ]
+
+
 flex : Int -> Attribute msg
 flex factor =
     style [ ( "flex", toString factor ) ]
@@ -129,6 +134,16 @@ nonBordered =
 leftBordered : Attribute msg
 leftBordered =
     style [ ( "border-left", "solid 1px " ++ mediumGrey ) ]
+
+
+leftDoubleBordered : Attribute msg
+leftDoubleBordered =
+    style [ ( "border-left", "double 4px " ++ cardBorderGrey ) ]
+
+
+leftInvisibleBordered : Attribute msg
+leftInvisibleBordered =
+    style [ ( "border-left", "double 4px " ++ fullyTransparent ) ]
 
 
 bottomBordered : Attribute msg
@@ -274,6 +289,11 @@ darkGrey =
 fullyTransparent : String
 fullyTransparent =
     "rgba(0,0,0,0)"
+
+
+cardBorderGrey : String
+cardBorderGrey =
+    "rgba(0,0,0,0.125)"
 
 
 transparentBlack : String

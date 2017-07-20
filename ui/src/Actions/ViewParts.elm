@@ -4,9 +4,12 @@ import Dict
 import Regex exposing (HowMany(..))
 import Html exposing (Html, text)
 import Html.Attributes exposing (class)
+import Utils exposing (ite)
 import StringTemplate exposing (StringTemplate)
-import Actions exposing (Action)
+import Actions exposing (Action, ActionType(..))
+import Actions.Hipchat exposing (UserParams, fetchParams)
 import ViewParts exposing (none, autoLink)
+import Styles
 
 
 variableList : List String -> Html msg
@@ -29,18 +32,47 @@ variableList variables =
 
 target : Action -> Html msg
 target { method, url } =
-    Html.p []
-        [ text "Target: "
-        , Html.code [] (autoLink ((toString method) ++ " " ++ url))
-        ]
+    Html.p [] [ text "Target: ", ViewParts.httpRequest method url ]
 
 
 preview : Action -> Html msg
-preview ({ bodyTemplate } as action) =
-    Html.div [ class "action-preview" ]
-        [ target action
-        , ViewParts.codeBlock [] (highlightVariables bodyTemplate.body)
-        , variableList bodyTemplate.variables
+preview ({ type_ } as action) =
+    case type_ of
+        Http ->
+            httpPreview action
+
+        Hipchat ->
+            hipchatPreview <| fetchParams <| action
+
+
+httpPreview : Action -> Html msg
+httpPreview ({ method, url, bodyTemplate } as action) =
+    Html.dl [ class "action-preview" ]
+        [ Html.dt [] [ text "Target" ]
+        , Html.dd [] [ ViewParts.httpRequest method url ]
+        , Html.dt [] [ text "BodyTemplate" ]
+        , Html.dd [ class "small" ] (templatePreviewWithVariables bodyTemplate)
+        ]
+
+
+templatePreviewWithVariables : StringTemplate -> List (Html msg)
+templatePreviewWithVariables { body, variables } =
+    [ ViewParts.codeBlock [] (highlightVariables body)
+    , variableList variables
+    ]
+
+
+hipchatPreview : UserParams -> Html msg
+hipchatPreview { roomId, color, notify, messageTemplate } =
+    Html.dl [ class "action-preview" ]
+        [ Html.dt [] [ text "Room ID" ]
+        , Html.dd [] [ text roomId ]
+        , Html.dt [] [ text "Color" ]
+        , Html.dd [ Styles.hipchatColor color ] [ text (toString color) ]
+        , Html.dt [] [ text "Notify" ]
+        , Html.dd [] [ text (ite notify "Yes" "No") ]
+        , Html.dt [] [ text "MessageTemplate" ]
+        , Html.dd [ class "small" ] <| templatePreviewWithVariables <| StringTemplate.parse <| messageTemplate
         ]
 
 

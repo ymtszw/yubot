@@ -19,9 +19,8 @@ defmodule Yubot.Model.Poll do
   Up to #{@max_history} entires will be kept. Older ones will be discarded.
   """
 
-  import Croma.TypeGen, only: [nilable: 1, list_of: 1]
+  import Croma.TypeGen, only: [nilable: 1]
   alias Croma.Result, as: R
-  alias Yubot.Jq
   alias Yubot.Grasp, as: G
   alias Yubot.Model.{Authentication, Action}
 
@@ -102,24 +101,55 @@ defmodule Yubot.Model.Poll do
     end
   end
 
-  use SolomonAcs.Dodai.Model.Datastore, data_fields: [
-    interval: Interval,
-    url: SolomonLib.Url,
-    # auth: Croma.TypeGen.nilable(Authentication.Id), # DEPRECATED; Eliminating since nilable field cannot be distinguished its version by itself
-    auth_id: nilable(Authentication.Id),
-    action: nilable(Action.Id), # DEPRECATED
-    filters: nilable(list_of(Jq.Filter)), # DEPRECATED
-    is_enabled: nilable(Croma.Boolean), # TODO strip nilable
-    triggers: TriggerList,
-    last_run_at: nilable(SolomonLib.Time),
-    next_run_at: nilable(SolomonLib.Time),
-    # history: list_of(History), # TODO enable
-  ]
+  defmodule PollResult do
+    use Croma.Struct, fields: [
+      status: SolomonLib.Http.Status,
+      body_hash: Croma.String,
+    ]
+  end
 
-  defmodule ShallowTrialRequest do
+  defmodule TriggerResult do
+    use Croma.Struct, fields: [
+      action_id: Action.Id,
+      status: SolomonLib.Http.Status,
+      variables: Croma.Map,
+    ]
+  end
+
+  defmodule HistoryEntry do
+    use Croma.Struct, fields: [
+      run_at: SolomonLib.Time,
+      poll_result: PollResult,
+      trigger_result: nilable(TriggerResult),
+    ]
+
+    def from_tuple({pr, tr}, ra), do: new(%{run_at: ra, poll_result: pr, trigger_result: tr})
+  end
+
+  defmodule History do
+    use Croma.SubtypeOfList, elem_module: HistoryEntry, max_length: 10, default: []
+
+    defun new(term :: term) :: R.t(t) do
+      (list) when is_list(list) -> Enum.map(list, &HistoryEntry.new/1) |> R.sequence()
+      (_non_list) -> {:error, {:invalid_value, [__MODULE__]}}
+    end
+  end
+
+  defmodule TrialRequest do
     use Croma.Struct, fields: [
       url: SolomonLib.Url,
       auth_id: nilable(Authentication.Id),
     ]
   end
+
+  use SolomonAcs.Dodai.Model.Datastore, data_fields: [
+    interval: Interval,
+    url: SolomonLib.Url,
+    auth_id: nilable(Authentication.Id),
+    is_enabled: nilable(Croma.Boolean), # TODO strip nilable
+    triggers: TriggerList,
+    last_run_at: nilable(SolomonLib.Time),
+    next_run_at: nilable(SolomonLib.Time),
+    history: History,
+  ]
 end

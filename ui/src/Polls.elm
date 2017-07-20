@@ -5,6 +5,9 @@ module Polls
         , Trigger
         , Condition
         , Material
+        , HistoryEntry
+        , PollResult
+        , TriggerResult
         , Aux
         , Msg(..)
         , AuxMsg(..)
@@ -32,8 +35,10 @@ import Json.Decode as JD
 import Json.Decode.Extra as JDE exposing ((|:))
 import Json.Encode as JE
 import Json.Encode.Extra as JEE
+import Task exposing (Task)
 import Http
 import HttpBuilder
+import Maybe.Extra as ME
 import Utils
 import Grasp
 import Grasp.BooleanResponder as GBR exposing (BooleanResponder, booleanResponder)
@@ -42,7 +47,7 @@ import HttpTrial
 import Repo exposing (Repo)
 import Repo.Command exposing (Config)
 import Repo.Messages
-import Repo.Update
+import Repo.Update exposing (StackCmd(..))
 
 
 -- Model
@@ -81,18 +86,32 @@ type alias Material =
 
 
 type alias Aux =
-    { shallowTrialResponse : Maybe HttpTrial.Response
-    , triggerValidations : List TriggerValidation
-    , fullTrialResponse : Maybe FullTrialResponse
+    { pollTrialResponse : Maybe HttpTrial.Response
+    , pollTrialResponseCollapsed : Bool
+    , conditionTestResult : Maybe Grasp.TestResult
+    , materialTestResult : Maybe ( String, Grasp.TestResult )
+    , runResult : Maybe HistoryEntry
     }
 
 
-type alias TriggerValidation =
-    {}
+type alias HistoryEntry =
+    { runAt : Utils.Timestamp
+    , pollResult : PollResult
+    , triggerResult : Maybe TriggerResult
+    }
 
 
-type alias FullTrialResponse =
-    {}
+type alias PollResult =
+    { status : Int
+    , bodyHash : String
+    }
+
+
+type alias TriggerResult =
+    { actionId : Repo.EntityId
+    , status : Int
+    , variables : Dict String String
+    }
 
 
 dummyPoll : Poll
@@ -157,9 +176,11 @@ populate entities =
     , deleteModal = Repo.ModalState False (Repo.dummyEntity dummyPoll)
     , dirtyDict = Dict.empty
     , errors = []
-    , shallowTrialResponse = Nothing
-    , triggerValidations = []
-    , fullTrialResponse = Nothing
+    , pollTrialResponse = Nothing
+    , pollTrialResponseCollapsed = False
+    , conditionTestResult = Nothing
+    , materialTestResult = Nothing
+    , runResult = Nothing
     }
 
 
@@ -274,6 +295,27 @@ decodeTrigger index =
         |: (JD.field "material" (JD.dict (Grasp.decodeInstruction GSR.stringToHo GSR.stringToOp "material" 0)))
 
 
+decodeHistoryEntry : JD.Decoder HistoryEntry
+decodeHistoryEntry =
+    JD.succeed HistoryEntry
+        |: (JD.field "run_at" JD.string)
+        |: (JD.field "poll_result"
+                (JD.succeed PollResult
+                    |: (JD.field "status" JD.int)
+                    |: (JD.field "body_hash" JD.string)
+                )
+           )
+        |: (JD.field "trigger_result" (JD.maybe decodeTriggerResult))
+
+
+decodeTriggerResult : JD.Decoder TriggerResult
+decodeTriggerResult =
+    JD.succeed TriggerResult
+        |: (JD.field "action_id" JD.string)
+        |: (JD.field "status" JD.int)
+        |: (JD.field "variables" (JD.dict JD.string))
+
+
 dataEncoder : Poll -> JE.Value
 dataEncoder { url, interval, authId, isEnabled, triggers, lastRunAt, nextRunAt } =
     JE.object
@@ -314,10 +356,17 @@ type Msg
 
 
 type AuxMsg
-    = ShallowTry Poll
-    | OnShallowTry (Result Http.Error HttpTrial.Response)
-    | PromptLogin
+    = TryPoll Poll
+    | OnTryPoll (Result Http.Error HttpTrial.Response)
+    | ToggleTryPollResult Bool
+    | TestCondition Poll Condition
+    | OnTestCondition (Result Http.Error ( HttpTrial.Response, Grasp.TestResult ))
+    | TestMaterial Poll String (Grasp.Instruction StringResponder)
+    | OnTestMaterial String (Result Http.Error ( HttpTrial.Response, Grasp.TestResult ))
+    | RunPoll Poll
+    | OnRunPoll (Result Http.Error HistoryEntry)
     | Clear
+    | PromptLogin
     | NoOp
 
 
@@ -325,7 +374,7 @@ type AuxMsg
 -- Update
 
 
-update : Msg -> Repo Aux Poll -> ( Repo Aux Poll, Cmd Msg, Repo.Update.StackCmd )
+update : Msg -> Repo Aux Poll -> ( Repo Aux Poll, Cmd Msg, StackCmd )
 update msg repo =
     let
         map msgMapper ( repo, cmd, stackCmd ) =
@@ -339,36 +388,113 @@ update msg repo =
                 repo |> updateTrial trialMsg |> map AuxMsg
 
 
-updateTrial : AuxMsg -> Repo Aux Poll -> ( Repo Aux Poll, Cmd AuxMsg, Repo.Update.StackCmd )
-updateTrial msg repo =
+updateTrial : AuxMsg -> Repo Aux Poll -> ( Repo Aux Poll, Cmd AuxMsg, StackCmd )
+updateTrial msg ({ pollTrialResponse } as repo) =
     case msg of
-        ShallowTry data ->
-            ( repo, shallowTry data, Repo.Update.Push )
+        TryPoll data ->
+            ( repo, Task.attempt OnTryPoll <| tryPollTask <| data, Push )
 
-        OnShallowTry (Ok response) ->
-            ( { repo | shallowTrialResponse = Just response }, Cmd.none, Repo.Update.Pop )
+        OnTryPoll (Ok response) ->
+            ( { repo | pollTrialResponse = Just response, pollTrialResponseCollapsed = False }, Cmd.none, Pop )
 
-        OnShallowTry (Err httpError) ->
+        OnTryPoll (Err httpError) ->
+            Repo.Update.onHttpError PromptLogin repo httpError
+
+        ToggleTryPollResult bool ->
+            ( { repo | pollTrialResponseCollapsed = bool }, Cmd.none, Keep )
+
+        TestCondition data c ->
+            ( repo, tryGraspWithTryPollIfRequired OnTestCondition pollTrialResponse data c, Push )
+
+        OnTestCondition (Ok ( response, result )) ->
+            ( { repo
+                | conditionTestResult = Just result
+                , pollTrialResponse = pollTrialResponse |> ME.orElse (Just response)
+                , pollTrialResponseCollapsed = True
+              }
+            , Cmd.none
+            , Pop
+            )
+
+        OnTestCondition (Err httpError) ->
+            Repo.Update.onHttpError PromptLogin repo httpError
+
+        TestMaterial data variable m ->
+            ( repo, tryGraspWithTryPollIfRequired (OnTestMaterial variable) pollTrialResponse data m, Push )
+
+        OnTestMaterial variable (Ok ( response, result )) ->
+            ( { repo
+                | materialTestResult = Just ( variable, result )
+                , pollTrialResponse = pollTrialResponse |> ME.orElse (Just response)
+                , pollTrialResponseCollapsed = True
+              }
+            , Cmd.none
+            , Pop
+            )
+
+        OnTestMaterial _ (Err httpError) ->
+            Repo.Update.onHttpError PromptLogin repo httpError
+
+        RunPoll data ->
+            ( repo, runPoll data, Push )
+
+        OnRunPoll (Ok result) ->
+            ( { repo | runResult = Just result }, Cmd.none, Pop )
+
+        OnRunPoll (Err httpError) ->
             Repo.Update.onHttpError PromptLogin repo httpError
 
         Clear ->
-            ( { repo | shallowTrialResponse = Nothing }, Cmd.none, Repo.Update.Keep )
+            ( { repo
+                | pollTrialResponse = Nothing
+                , conditionTestResult = Nothing
+                , materialTestResult = Nothing
+                , runResult = Nothing
+              }
+            , Cmd.none
+            , Keep
+            )
 
-        _ ->
-            ( repo, Cmd.none, Repo.Update.Keep )
+        PromptLogin ->
+            -- Handled by root update
+            ( repo, Cmd.none, Keep )
+
+        NoOp ->
+            ( repo, Cmd.none, Keep )
 
 
-shallowTry : Poll -> Cmd AuxMsg
-shallowTry data =
-    HttpBuilder.post (config.repoPath ++ "/shallow_try")
-        |> HttpBuilder.withJsonBody (shallowTryRequestEncoder data)
+tryPollTask : Poll -> Task Http.Error HttpTrial.Response
+tryPollTask data =
+    HttpBuilder.post (config.repoPath ++ "/try")
+        |> HttpBuilder.withJsonBody (tryPollRequestEncoder data)
         |> HttpBuilder.withExpect (Http.expectJson HttpTrial.responseDecoder)
-        |> HttpBuilder.send OnShallowTry
+        |> HttpBuilder.toTask
 
 
-shallowTryRequestEncoder : Poll -> JE.Value
-shallowTryRequestEncoder { url, authId } =
+tryPollRequestEncoder : Poll -> JE.Value
+tryPollRequestEncoder { url, authId } =
     JE.object
         [ ( "url", JE.string url )
         , ( "auth_id", JEE.maybe JE.string authId )
         ]
+
+
+tryGraspWithTryPollIfRequired :
+    (Result Http.Error ( HttpTrial.Response, Grasp.TestResult ) -> AuxMsg)
+    -> Maybe HttpTrial.Response
+    -> Poll
+    -> Grasp.Instruction (Grasp.Responder ho op)
+    -> Cmd AuxMsg
+tryGraspWithTryPollIfRequired msg ptr data instruction =
+    ptr
+        |> ME.unwrap (tryPollTask data) Task.succeed
+        |> Task.andThen (\htr -> htr.body |> Grasp.tryTask instruction |> Task.map (\gtr -> ( htr, gtr )))
+        |> Task.attempt msg
+
+
+runPoll : Poll -> Cmd AuxMsg
+runPoll data =
+    HttpBuilder.post (config.repoPath ++ "/run")
+        |> HttpBuilder.withJsonBody (dataEncoder data)
+        |> HttpBuilder.withExpect (Http.expectJson decodeHistoryEntry)
+        |> HttpBuilder.send OnRunPoll

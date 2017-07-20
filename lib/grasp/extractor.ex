@@ -28,7 +28,7 @@ defmodule Yubot.Grasp.RegexExtractor do
   Regex pattern must be written in string, and stored as string.
   Special charactor classes like "\\s" must be properly escaped.
 
-  Regex options used are: "u" (unicode) and "m" (multiline).
+  Regex options used are: "u" (unicode) "s" (dotall) and "m" (multiline).
   """
 
   alias Croma.Result, as: R
@@ -64,6 +64,6 @@ defmodule Yubot.Grasp.RegexExtractor do
 
   @spec extract(t, String.t) :: R.t(Extractor.resultant_t)
   def extract(%__MODULE__{engine: :regex, pattern: p}, source) when is_binary(p),
-    do: Regex.compile(p, "um") |> R.map(&Regex.scan(&1, source))
+    do: Regex.compile(p, "usm") |> R.map(&Regex.scan(&1, source))
   # Crash for invalid applications
 end

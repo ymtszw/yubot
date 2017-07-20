@@ -1,26 +1,26 @@
-module Actions.View exposing (index, show, new)
+module Actions.View exposing (index, show, new, trialResultCard)
 
 import Dict
 import Set exposing (Set)
 import Html exposing (Html, text)
 import Html.Attributes as Attr exposing (class)
-import Html.Events
+import Html.Events as Events
 import Html.Lazy as Z
-import Maybe.Extra exposing (isJust)
+import Maybe.Extra as ME exposing (isJust)
 import Bootstrap.Button as Button
 import ListSet exposing (ListSet)
 import Utils exposing (ite)
 import HttpTrial
 import Repo exposing (Repo)
 import Repo.Messages exposing (Msg(..))
-import Repo.ViewParts exposing (navigate, selectItems, submitButton)
+import Repo.ViewParts as RVP exposing (navigate, selectItems, submitButton)
 import Actions exposing (Action, Aux, TrialValues, ActionType)
 import Actions.Hipchat
 import Actions.ViewParts
 import Authentications exposing (Authentication)
 import Authentications.ViewParts exposing (authSelect)
 import Styles
-import ViewParts exposing (none, stdBtn)
+import ViewParts as VP exposing (none, stdBtn)
 import StringTemplate exposing (StringTemplate)
 
 
@@ -39,7 +39,7 @@ indexNav : ListSet ActionType -> Html Actions.Msg
 indexNav indexFilter =
     Html.div [ class "d-flex justify-content-between align-items-center mb-2", Styles.bottomBordered ]
         [ (typeNavItems (flip List.member indexFilter))
-            |> ViewParts.pillNav [ class "btn-success", Styles.fakeLink ] Actions.Filter (Just Actions.Filter)
+            |> VP.pillNav [ class "btn-success", Styles.fakeLink ] Actions.Filter (Just Actions.Filter)
             |> Html.map Actions.Index
         , (stdBtn Button.primary [ Button.small, Button.attrs (navigate "/actions/new") ] False "Create")
             |> Html.map Actions.RepoMsg
@@ -61,7 +61,7 @@ typeNavItem type_ =
 
 logo : String -> Actions.ActionType -> Html msg
 logo additionalClasses type_ =
-    ViewParts.fa [ class additionalClasses ] 2 (Actions.typeToFa type_)
+    VP.fa [ class additionalClasses ] 2 (Actions.typeToFa type_)
 
 
 cardList : Repo Aux Action -> Html Actions.Msg
@@ -117,7 +117,7 @@ httpSummary : Action -> List (Html (Msg Action))
 httpSummary ({ label, method, url, authId, type_ } as data) =
     [ logo "align-middle" type_
     , Html.strong [ class "mx-2" ] [ text label ]
-    , Html.code [ class "mx-2" ] (ViewParts.autoLink ((toString method) ++ " " ++ url))
+    , Html.code [ class "mx-2" ] (VP.autoLink ((toString method) ++ " " ++ url))
     , text " " -- Inline whitespace for soft-wrapping in small screen
     , ite (isJust authId) authBadge none
     ]
@@ -146,7 +146,7 @@ hipchatSummaryImpl { label, roomId, color, notify } =
             [ [ Html.strong [] [ text label ] ]
             , [ text "Room ID: ", Html.strong [] [ text roomId ] ]
             , [ text "Color: ", Html.span [ Styles.hipchatColor color ] [ text (toString color) ] ]
-            , [ text "Notify: ", ViewParts.fa [ class ("fa-lg" ++ notifyClass) ] 1 notifyFa ]
+            , [ text "Notify: ", VP.fa [ class ("fa-lg" ++ notifyClass) ] 1 notifyFa ]
             ]
 
 
@@ -160,11 +160,11 @@ new authDict { dirtyDict, trialValues, trialResponse } =
         (( { data }, audit ) as dirtyEntity) =
             Repo.dirtyGetWithDefault "new" Actions.dummyAction dirtyDict
     in
-        ViewParts.triPaneView
+        VP.triPaneView
             [ Z.lazy titleNew data ]
             [ Z.lazy2 mainFormNew authDict dirtyEntity ]
             [ trialForm trialValues data ]
-            [ Z.lazy trialResultCard trialResponse ]
+            [ trialResponse |> trialResultCard Nothing Actions.Clear False |> Html.map Actions.Trial ]
 
 
 titleNew : Action -> Html Actions.Msg
@@ -175,7 +175,7 @@ titleNew data =
         ]
         [ Html.div []
             [ Html.h2 [ class "mb-2" ]
-                [ ViewParts.fa [ class "align-bottom mr-2" ] 2 "fa-file-text-o"
+                [ VP.fa [ class "align-bottom mr-2" ] 2 "fa-file-text-o"
                 , text "New Action"
                 ]
             ]
@@ -198,8 +198,8 @@ mainFormNew authDict (( { data }, audit ) as dirtyEntity) =
         [ submitButton "action" isValid "Create" ]
             |> (++) (mainFormInputs authDict "new" audit data)
             |> (::) (typeNavNew authDict data)
-            |> Html.form [ Attr.id "action", Html.Events.onSubmit (ite isValid (Create "new" data) NoOp) ]
-            |> ViewParts.cardBlock [] "" Nothing
+            |> Html.form [ Attr.id "action", Events.onSubmit (ite isValid (Create "new" data) NoOp) ]
+            |> VP.cardBlock [] "" Nothing
             |> Html.map Actions.RepoMsg
 
 
@@ -234,7 +234,7 @@ typeNavNew authDict data =
     in
         (typeNavItems ((==) data.type_))
             |> List.filter selectAvailable
-            |> ViewParts.pillNav [ Styles.bordered ] (OnEditValid "new" << onTypeSelect) Nothing
+            |> VP.pillNav [ Styles.bordered ] (OnEditValid "new" << onTypeSelect) Nothing
 
 
 httpDataInputs : Repo.EntityDict Authentication -> Repo.EntityId -> Repo.Audit -> Action -> List (Html (Msg Action))
@@ -259,7 +259,7 @@ httpBodyTemplateInput dirtyId audit ({ bodyTemplate } as data) =
                     OnEdit dirtyId [ ( [ "BodyTemplate" ], Just error ) ] { data | bodyTemplate = { bodyTemplate | body = body } }
     in
         Html.div []
-            [ Repo.ViewParts.editorInput "action" "BodyTemplate" audit onBodyInput bodyTemplate.body
+            [ RVP.editorInput "action" "BodyTemplate" audit onBodyInput bodyTemplate.body
             , Actions.ViewParts.variableList bodyTemplate.variables
             ]
 
@@ -304,14 +304,14 @@ hipchatColorSelect audit dirtyId applyColorString color =
     in
         Actions.Hipchat.colors
             |> selectItems color
-            |> Repo.ViewParts.selectWithAttrs hipchatColor audit [ "color" ] "action" "Color" False dirtyId applyColorString
+            |> RVP.selectWithAttrs hipchatColor audit [ "color" ] "action" "Color" False dirtyId applyColorString
 
 
 hipchatAuthSelect : List (Repo.Entity Authentication) -> Repo.Audit -> Repo.EntityId -> Action -> Html (Msg Action)
 hipchatAuthSelect authList audit dirtyId ({ authId } as data) =
     authList
         |> List.map (\{ id, data } -> ( id, (data.name ++ " (" ++ id ++ ")"), authId == Just id ))
-        |> Repo.ViewParts.selectRequireable True audit "action" "Credential" False dirtyId [ "credential" ] (\x -> { data | authId = Just x })
+        |> RVP.selectRequireable True audit "action" "Credential" False dirtyId [ "credential" ] (\x -> { data | authId = Just x })
 
 
 hipchatNotifyCheck : (Bool -> Msg Action) -> Bool -> Html (Msg Action)
@@ -324,7 +324,7 @@ hipchatNotifyCheck msg notify =
                 , Attr.form "action"
                 , class "form-check-input"
                 , Attr.checked notify
-                , Html.Events.onCheck msg
+                , Events.onCheck msg
                 ]
                 []
             , text " Notify?"
@@ -350,7 +350,7 @@ hipchatMessageTemplateEditor dirtyId audit applyMessageTemplate { variables } me
                     OnEdit dirtyId [ ( [ "MessageTemplate" ], Just error ) ] newData
     in
         Html.div []
-            [ Repo.ViewParts.editorInput "action" "MessageTemplate" audit onMessageTemplateInput messageTemplate
+            [ RVP.editorInput "action" "MessageTemplate" audit onMessageTemplateInput messageTemplate
             , Actions.ViewParts.variableList variables
             ]
 
@@ -363,8 +363,8 @@ trialForm trialValues ({ bodyTemplate } as data) =
     in
         [ submitButton "action-trial" isReady "Try" ]
             |> (++) (trialInputs trialValues data)
-            |> Html.form [ Attr.id "action-trial", Html.Events.onSubmit (ite isReady (Actions.Try data trialValues) Actions.NoOp) ]
-            |> ViewParts.cardBlock
+            |> Html.form [ Attr.id "action-trial", Events.onSubmit (ite isReady (Actions.Try data trialValues) Actions.NoOp) ]
+            |> VP.cardBlock
                 [ Html.h4 [ class "pb-2", Styles.bottomBordered ] [ text "Try Action" ] ]
                 "Fill template variables and try action!"
                 Nothing
@@ -375,7 +375,7 @@ trialInputs : TrialValues -> Action -> List (Html Actions.TrialMsg)
 trialInputs trialValues ({ bodyTemplate, type_ } as data) =
     let
         trialTextInput variable =
-            Repo.ViewParts.textInputImpl
+            RVP.textInputImpl
                 "action-trial"
                 variable
                 False
@@ -400,27 +400,51 @@ trialInputs trialValues ({ bodyTemplate, type_ } as data) =
             |> (++) (List.map trialTextInput bodyTemplate.variables)
 
 
-trialResultCard : Maybe HttpTrial.Response -> Html Actions.Msg
-trialResultCard maybeResponse =
+trialResultCard : Maybe (Bool -> msg) -> msg -> Bool -> Maybe HttpTrial.Response -> Html msg
+trialResultCard maybeOnCollapse onClear collapsed maybeResponse =
     let
-        ( description, resultBody, cleared ) =
+        ( description, blockBody ) =
             case maybeResponse of
                 Just ({ elapsedMs } as trialResponse) ->
-                    ( "Completed in " ++ (toString elapsedMs) ++ "ms", responseCard trialResponse, False )
+                    ( "Completed in " ++ (toString elapsedMs) ++ "ms"
+                    , Z.lazy3 collapsibleResponseCard maybeOnCollapse collapsed trialResponse
+                    )
 
                 Nothing ->
-                    ( "Response will be shown here.", none, True )
+                    ( "Response will be shown here.", none )
     in
-        ViewParts.cardBlock
+        VP.cardBlock
             [ Html.div [ class "pb-2 d-flex justify-content-between", Styles.bottomBordered ]
-                [ Html.h4 [] [ text "Try Result" ]
-                , stdBtn Button.secondary [ Button.small, Button.onClick Actions.Clear ] cleared "Clear"
+                [ Html.h4 []
+                    [ text "Try Result"
+                    , ME.unwrap none (Z.lazy2 collapseArrowTop collapsed) <| ME.next maybeResponse maybeOnCollapse
+                    ]
+                , stdBtn Button.secondary [ Button.small, Button.onClick onClear ] False "Clear"
                 ]
             ]
             description
             Nothing
-            resultBody
-            |> Html.map Actions.Trial
+            blockBody
+
+
+collapsibleResponseCard : Maybe (Bool -> msg) -> Bool -> HttpTrial.Response -> Html msg
+collapsibleResponseCard maybeOnCollapse collapsed response =
+    Html.div []
+        [ ite collapsed none (Z.lazy responseCard response)
+        , ME.unwrap none (Z.lazy2 collapseArrowBottom collapsed) maybeOnCollapse
+        ]
+
+
+collapseArrowTop : Bool -> (Bool -> msg) -> Html msg
+collapseArrowTop collapsed onCollapse =
+    Html.span [ Styles.fakeLink, Events.onClick (onCollapse <| not <| collapsed) ]
+        [ VP.fa [] 1 (ite collapsed "fa-angle-double-right" "fa-angle-double-down") ]
+
+
+collapseArrowBottom : Bool -> (Bool -> msg) -> Html msg
+collapseArrowBottom collapsed onCollapse =
+    Html.div [ class "text-center btn-secondary", Styles.fakeLink, Events.onClick (onCollapse <| not <| collapsed) ]
+        [ VP.fa [] 1 (ite collapsed "fa-angle-double-down" "fa-angle-double-up") ]
 
 
 responseCard : HttpTrial.Response -> Html msg
@@ -444,20 +468,20 @@ responseCard { status, headers, body } =
             [ Html.h5 [ Styles.bottomBordered ] [ text "Status" ]
             , Html.div [ class ("alert " ++ statusAlert) ] [ text (toString status) ]
             , Html.h5 [ Styles.bottomBordered ] [ text "Headers" ]
-            , ViewParts.codeBlock [ Styles.xSmall ] [ headers |> List.map headerString |> String.join "\n" |> text ]
+            , VP.codeBlock [ Styles.xSmall ] [ headers |> List.map headerString |> String.join "\n" |> text ]
             , Html.h5 [ Styles.bottomBordered ] [ text "Body" ]
-            , ViewParts.codeBlock [ Styles.xSmall ] [ text body ]
+            , VP.codeBlock [ Styles.xSmall ] [ text body ]
             ]
 
 
 textInputRequired : String -> Repo.Audit -> Repo.EntityId -> List Repo.AuditId -> (String -> x) -> String -> Html (Msg x)
 textInputRequired inputLabel =
-    Repo.ViewParts.textInputRequired "action" inputLabel False
+    RVP.textInputRequired "action" inputLabel False
 
 
-select : String -> Repo.EntityId -> (String -> x) -> List Repo.ViewParts.SelectItem -> Html (Msg x)
+select : String -> Repo.EntityId -> (String -> x) -> List RVP.SelectItem -> Html (Msg x)
 select inputLabel =
-    Repo.ViewParts.select "action" inputLabel False
+    RVP.select "action" inputLabel False
 
 
 
@@ -478,13 +502,13 @@ show usedActionIds authDict { dirtyDict, deleteModal, trialValues, trialResponse
                 Nothing ->
                     data
     in
-        ViewParts.triPaneView
+        VP.triPaneView
             [ titleShow usedActionIds maybeDirtyEntity entity
             , Z.lazy deleteModalDialog deleteModal
             ]
             [ mainFormShow authDict entity maybeDirtyEntity ]
             [ trialForm trialValues trialData ]
-            [ Z.lazy trialResultCard trialResponse ]
+            [ trialResponse |> trialResultCard Nothing Actions.Clear False |> Html.map Actions.Trial ]
 
 
 titleShow : Set Repo.EntityId -> Maybe ( Repo.Entity Action, Repo.Audit ) -> Repo.Entity Action -> Html Actions.Msg
@@ -533,7 +557,7 @@ deleteButton usedActionIds entity =
 
 deleteModalDialog : Repo.ModalState Action -> Html Actions.Msg
 deleteModalDialog { target, isShown } =
-    ViewParts.modal
+    VP.modal
         (always CancelDelete)
         isShown
         [ class "modal-sm" ]
@@ -568,6 +592,6 @@ mainFormShow authDict entity maybeDirtyEntity =
         [ submitButton "action" readyToUpdate "Update" ]
             |> (++) (mainFormInputs authDict id audit data)
             |> (List.singleton << Html.fieldset [ Attr.disabled notEditing ])
-            |> Html.form [ Attr.id "action", Html.Events.onSubmit (ite readyToUpdate (Update id data) NoOp) ]
-            |> ViewParts.cardBlock [] "" Nothing
+            |> Html.form [ Attr.id "action", Events.onSubmit (ite readyToUpdate (Update id data) NoOp) ]
+            |> VP.cardBlock [] "" Nothing
             |> Html.map Actions.RepoMsg

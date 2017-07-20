@@ -42,7 +42,7 @@ defmodule Yubot.Controller.Action do
       _conn <- reject_on_rate_limit(conn)
       trial_request <- Action.TrialRequest.new(conn.request.body)
       nil_or_auth <- fetch_auth(trial_request.data.auth_id, conn)
-      Action.try(trial_request, nil_or_auth)
+      Action.exec(trial_request, nil_or_auth)
     end
     |> handle_with_200_json(conn)
   end

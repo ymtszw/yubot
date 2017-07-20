@@ -1,4 +1,4 @@
-module StringTemplate exposing (StringTemplate, Body, isValid, validate, render, renderAll)
+module StringTemplate exposing (StringTemplate, Body, isValid, validate, parse, render, renderAll)
 
 import Dict exposing (Dict)
 import Result exposing (Result(Ok, Err))
@@ -72,6 +72,11 @@ validate body =
             |> List.map validateMatch
             |> List.foldr folder (Ok [])
             |> dedup
+
+
+parse : Body -> StringTemplate
+parse body =
+    body |> validate |> Result.toMaybe |> Maybe.withDefault [] |> StringTemplate body
 
 
 render : String -> String -> Body -> Body

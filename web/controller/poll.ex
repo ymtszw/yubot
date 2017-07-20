@@ -5,7 +5,8 @@ defmodule Yubot.Controller.Poll do
   use Yubot.Controller, auth: :cookie_or_header
   alias Yubot.External.Http, as: ExHttp
   alias Yubot.Model.{Poll, Action, Authentication}
-  alias Yubot.Model.Poll.ShallowTrialRequest, as: ShallowReq
+  alias Yubot.Model.Poll.TrialRequest, as: TryReq
+  alias Yubot.Service.RunPoll
 
   # POST /api/poll
   def create(conn) do
@@ -53,11 +54,11 @@ defmodule Yubot.Controller.Poll do
     |> handle_with_204(conn)
   end
 
-  # POST /api/poll/shallow_try
-  def shallow_try(conn) do
+  # POST /api/poll/try
+  def try(conn) do
     R.m do
       _conn <- reject_on_rate_limit(conn)
-      %ShallowReq{url: u, auth_id: nil_or_auth_id} <- ShallowReq.new(conn.request.body)
+      %TryReq{url: u, auth_id: nil_or_auth_id} <- TryReq.new(conn.request.body)
       nil_or_auth <- fetch_auth(nil_or_auth_id, conn)
       ExHttp.request(:get, u, "", nil_or_auth)
     end
@@ -66,4 +67,15 @@ defmodule Yubot.Controller.Poll do
 
   defp fetch_auth(nil, _conn), do: {:ok, nil}
   defp fetch_auth(auth_id, conn), do: Authentication.retrieve(auth_id, key(conn), group_id(conn))
+
+  # POST /api/poll/run
+  def run(conn) do
+    R.m do
+      _conn <- reject_on_rate_limit(conn)
+      %Poll.Data{} = data <- Poll.Data.new(conn.request.body)
+      exec_result <- RunPoll.exec(data, key(conn), group_id(conn), true)
+      Poll.HistoryEntry.from_tuple(exec_result, conn.context.start_time)
+    end
+    |> handle_with_200_json(conn)
+  end
 end
