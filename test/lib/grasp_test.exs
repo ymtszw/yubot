@@ -4,7 +4,7 @@ defmodule Yubot.GraspTest do
 
   test "should grasp value from source according to instruction" do
     i1 = %Instruction{
-      extractor: %RegexExtractor{engine: :regex, pattern: "^(.+)$"},
+      extractor: %RegexExtractor{engine: :regex, pattern: "^(.+?)$"},
       responder: %BooleanResponder{
         mode: :boolean, high_order: :All,
         first_order: %{operator: :EqAt, arguments: ["1", "true"]},
