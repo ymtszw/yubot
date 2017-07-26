@@ -10,7 +10,7 @@ try do
     use Solomon.GearProject
 
     defp gear_name, do: :yubot
-    defp version  , do: "0.0.1"
+    defp version  , do: "0.1.0"
     defp gear_deps do
       # Put names of gears which this gear depends on
       []
