@@ -12,6 +12,7 @@ defmodule Yubot do
   if Mix.env == :dev do
     defp dev_only_children() do
       [
+        Yubot.BigBoss.child_spec(),
         Yubot.LiveReload.child_spec(),
       ]
     end

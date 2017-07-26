@@ -38,6 +38,7 @@ import Json.Encode.Extra as JEE
 import Task exposing (Task)
 import Http
 import HttpBuilder
+import List.Extra as LE
 import Maybe.Extra as ME
 import Utils
 import Grasp
@@ -59,8 +60,11 @@ type alias Poll =
     , authId : Maybe Repo.EntityId
     , isEnabled : Bool
     , triggers : List Trigger
-    , lastRunAt : Maybe Utils.Timestamp -- Readonly
-    , nextRunAt : Maybe Utils.Timestamp -- Readonly
+
+    -- Readonly below; updates to these fields will be stripped by server
+    , lastRunAt : Maybe Utils.Timestamp
+    , nextRunAt : Maybe Utils.Timestamp
+    , history : List HistoryEntry
     }
 
 
@@ -95,7 +99,8 @@ type alias Aux =
 
 
 type alias HistoryEntry =
-    { runAt : Utils.Timestamp
+    { collapsed : Bool -- Client-side only; UI state
+    , runAt : Utils.Timestamp
     , pollResult : PollResult
     , triggerResult : Maybe TriggerResult
     }
@@ -116,7 +121,7 @@ type alias TriggerResult =
 
 dummyPoll : Poll
 dummyPoll =
-    Poll "https://example.com" "10" Nothing True [ dummyTrigger "newTrigger" "newCondition" ] Nothing Nothing
+    Poll "https://example.com" "10" Nothing True [ dummyTrigger "newTrigger" "newCondition" ] Nothing Nothing []
 
 
 dummyTrigger : Repo.AuditId -> Repo.AuditId -> Trigger
@@ -215,6 +220,11 @@ intervals =
     [ "1", "3", "10", "30", "hourly", "daily" ]
 
 
+toggleHistoryEntry : Int -> Bool -> Repo.Entity Poll -> Repo.Entity Poll
+toggleHistoryEntry index collapsed ({ data } as poll) =
+    { poll | data = { data | history = data.history |> LE.updateIfIndex ((==) index) (\e -> { e | collapsed = collapsed }) } }
+
+
 
 -- Grasp templates
 
@@ -271,13 +281,14 @@ config =
 dataDecoder : JD.Decoder Poll
 dataDecoder =
     JD.succeed Poll
-        |: (JD.field "url" JD.string)
-        |: (JD.field "interval" JD.string)
-        |: (JD.field "auth_id" (JD.maybe JD.string))
-        |: (JD.field "is_enabled" decodeIsEnabled)
-        |: (JD.field "triggers" (JDE.indexedList decodeTrigger))
-        |: (JD.field "last_run_at" (JD.maybe JD.string))
-        |: (JD.field "next_run_at" (JD.maybe JD.string))
+        |: JD.field "url" JD.string
+        |: JD.field "interval" JD.string
+        |: JD.field "auth_id" (JD.maybe JD.string)
+        |: JD.field "is_enabled" decodeIsEnabled
+        |: JD.field "triggers" (JDE.indexedList decodeTrigger)
+        |: JD.field "last_run_at" (JD.maybe JD.string)
+        |: JD.field "next_run_at" (JD.maybe JD.string)
+        |: JD.field "history" (JD.list decodeHistoryEntry)
 
 
 decodeIsEnabled : JD.Decoder Bool
@@ -290,30 +301,29 @@ decodeIsEnabled =
 decodeTrigger : Int -> JD.Decoder Trigger
 decodeTrigger index =
     JD.succeed (Trigger True ("trigger" ++ toString index))
-        |: (JD.field "action_id" JD.string)
-        |: (JD.field "conditions" (JDE.indexedList (Grasp.decodeInstruction GBR.stringToHo GBR.stringToOp "condition")))
-        |: (JD.field "material" (JD.dict (Grasp.decodeInstruction GSR.stringToHo GSR.stringToOp "material" 0)))
+        |: JD.field "action_id" JD.string
+        |: JD.field "conditions" (JDE.indexedList (Grasp.decodeInstruction GBR.stringToHo GBR.stringToOp "condition"))
+        |: JD.field "material" (JD.dict (Grasp.decodeInstruction GSR.stringToHo GSR.stringToOp "material" 0))
 
 
 decodeHistoryEntry : JD.Decoder HistoryEntry
 decodeHistoryEntry =
-    JD.succeed HistoryEntry
-        |: (JD.field "run_at" JD.string)
-        |: (JD.field "poll_result"
-                (JD.succeed PollResult
-                    |: (JD.field "status" JD.int)
-                    |: (JD.field "body_hash" JD.string)
-                )
-           )
-        |: (JD.field "trigger_result" (JD.maybe decodeTriggerResult))
+    JD.succeed (HistoryEntry True)
+        |: JD.field "run_at" JD.string
+        |: JD.field "poll_result"
+            (JD.succeed PollResult
+                |: JD.field "status" JD.int
+                |: JD.field "body_hash" JD.string
+            )
+        |: JD.field "trigger_result" (JD.maybe decodeTriggerResult)
 
 
 decodeTriggerResult : JD.Decoder TriggerResult
 decodeTriggerResult =
     JD.succeed TriggerResult
-        |: (JD.field "action_id" JD.string)
-        |: (JD.field "status" JD.int)
-        |: (JD.field "variables" (JD.dict JD.string))
+        |: JD.field "action_id" JD.string
+        |: JD.field "status" JD.int
+        |: JD.field "variables" (JD.dict JD.string)
 
 
 dataEncoder : Poll -> JE.Value
@@ -365,6 +375,7 @@ type AuxMsg
     | OnTestMaterial String (Result Http.Error ( HttpTrial.Response, Grasp.TestResult ))
     | RunPoll Poll
     | OnRunPoll (Result Http.Error HistoryEntry)
+    | ToggleHistoryEntry Repo.EntityId Int Bool
     | Clear
     | PromptLogin
     | NoOp
@@ -389,7 +400,7 @@ update msg repo =
 
 
 updateTrial : AuxMsg -> Repo Aux Poll -> ( Repo Aux Poll, Cmd AuxMsg, StackCmd )
-updateTrial msg ({ pollTrialResponse } as repo) =
+updateTrial msg ({ dict, pollTrialResponse } as repo) =
     case msg of
         TryPoll data ->
             ( repo, Task.attempt OnTryPoll <| tryPollTask <| data, Push )
@@ -443,6 +454,9 @@ updateTrial msg ({ pollTrialResponse } as repo) =
 
         OnRunPoll (Err httpError) ->
             Repo.Update.onHttpError PromptLogin repo httpError
+
+        ToggleHistoryEntry id index collapsed ->
+            ( { repo | dict = Dict.update id (Maybe.map (toggleHistoryEntry index collapsed)) dict }, Cmd.none, Keep )
 
         Clear ->
             ( { repo

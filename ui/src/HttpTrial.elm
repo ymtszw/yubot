@@ -1,6 +1,7 @@
 module HttpTrial exposing (Response, responseDecoder)
 
-import Json.Decode as Decode
+import Json.Decode as JD
+import Json.Decode.Extra exposing ((|:))
 
 
 type alias Response =
@@ -11,10 +12,10 @@ type alias Response =
     }
 
 
-responseDecoder : Decode.Decoder Response
+responseDecoder : JD.Decoder Response
 responseDecoder =
-    Decode.map4 Response
-        (Decode.field "status" Decode.int)
-        (Decode.field "headers" (Decode.keyValuePairs Decode.string))
-        (Decode.field "body" Decode.string)
-        (Decode.field "elapsed_ms" Decode.float)
+    JD.succeed Response
+        |: JD.field "status" JD.int
+        |: JD.field "headers" (JD.keyValuePairs JD.string)
+        |: JD.field "body" JD.string
+        |: JD.field "elapsed_ms" JD.float

@@ -1,6 +1,7 @@
 module User exposing (User, Data, Readonly, decoder)
 
-import Json.Decode as Decode
+import Json.Decode as JD
+import Json.Decode.Extra exposing ((|:))
 
 
 type alias Data =
@@ -18,17 +19,15 @@ type alias User =
     }
 
 
-decoder : Decode.Decoder User
+decoder : JD.Decoder User
 decoder =
-    Decode.map3 User
-        (Decode.field "email" Decode.string)
-        (Decode.field "data"
-            (Decode.map Data
-                (Decode.field "display_name" Decode.string)
+    JD.succeed User
+        |: JD.field "email" JD.string
+        |: JD.field "data"
+            (JD.succeed Data
+                |: JD.field "display_name" JD.string
             )
-        )
-        (Decode.field "readonly"
-            (Decode.map Readonly
-                (Decode.field "poll_capacity" Decode.int)
+        |: JD.field "readonly"
+            (JD.succeed Readonly
+                |: JD.field "poll_capacity" JD.int
             )
-        )

@@ -13,8 +13,9 @@ module Authentications
         , listForHipchat
         )
 
-import Json.Decode as Decode
-import Json.Encode as Encode
+import Json.Decode as JD
+import Json.Decode.Extra exposing ((|:))
+import Json.Encode as JE
 import Utils
 import Repo exposing (Repo)
 import Repo.Update
@@ -107,20 +108,20 @@ config =
     Config "/api/authentication" "/credentials" dataDecoder dataEncoder (always "/credentials")
 
 
-dataDecoder : Decode.Decoder Authentication
+dataDecoder : JD.Decoder Authentication
 dataDecoder =
-    Decode.map3 Authentication
-        (Decode.field "name" Decode.string)
-        (Decode.field "type" (Decode.map stringToType Decode.string))
-        (Decode.field "token" Decode.string)
+    JD.succeed Authentication
+        |: JD.field "name" JD.string
+        |: JD.field "type" (JD.map stringToType JD.string)
+        |: JD.field "token" JD.string
 
 
-dataEncoder : Authentication -> Encode.Value
+dataEncoder : Authentication -> JE.Value
 dataEncoder { name, type_, token } =
-    Encode.object
-        [ ( "name", Encode.string name )
-        , ( "type", Encode.string (Utils.toLowerString type_) )
-        , ( "token", Encode.string token )
+    JE.object
+        [ ( "name", JE.string name )
+        , ( "type", JE.string (Utils.toLowerString type_) )
+        , ( "token", JE.string token )
         ]
 
 

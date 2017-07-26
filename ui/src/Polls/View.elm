@@ -1019,27 +1019,30 @@ materialTestResultCard maybeResult =
 
 
 runResultCard : EntityDict Action -> Utils.Url -> Maybe Polls.HistoryEntry -> Html msg
-runResultCard actionDict url maybeHistory =
+runResultCard actionDict url maybeEntry =
     VP.cardBlock [ text "Run Result" ]
-        (maybeHistory |> ME.unwrap "Run result will be shown here." (always "The Poll was executed!"))
+        (maybeEntry |> ME.unwrap "Run result will be shown here." (always "The Poll was executed!"))
         Nothing
-        (maybeHistory |> ME.unwrap none (historyDetail actionDict url))
+        (maybeEntry |> ME.unwrap none (historyDetail actionDict url))
 
 
 historyDetail : EntityDict Action -> Utils.Url -> Polls.HistoryEntry -> Html msg
 historyDetail actionDict url { runAt, pollResult, triggerResult } =
     Html.div []
-        ([ Z.lazy2 pollResultBlock url pollResult ]
-            ++ (triggerResults actionDict pollResult triggerResult)
+        ([ Z.lazy3 pollResultBlock url runAt pollResult ]
+            ++ (triggerResultDetail actionDict pollResult triggerResult)
         )
 
 
-pollResultBlock : Utils.Url -> Polls.PollResult -> Html msg
-pollResultBlock url { status } =
+pollResultBlock : Utils.Url -> Utils.Timestamp -> Polls.PollResult -> Html msg
+pollResultBlock url runAt { status } =
     Html.div []
-        [ horizontalCard
+        [ horizontalCard []
+            []
             [ VP.fa [ class ("text-" ++ Utils.statusBsColor status) ] 2 (statusFa status)
+            , VP.fa [] 1 "fa-external-link"
             , Html.strong [] [ text "Retrieve from URL" ]
+            , Html.small [ class "ml-1" ] [ text <| " (" ++ Utils.timestampToString runAt ++ ")" ]
             ]
         , rightShiftedBlock
             [ Html.dl []
@@ -1052,64 +1055,76 @@ pollResultBlock url { status } =
         ]
 
 
-statusText : Int -> Html msg
-statusText code =
-    Html.span [ class ("text-white p-1 bg-" ++ Utils.statusBsColor code) ]
-        [ text (toString code ++ " " ++ Utils.statusText code) ]
-
-
-triggerResults : EntityDict Action -> Polls.PollResult -> Maybe Polls.TriggerResult -> List (Html msg)
-triggerResults actionDict { status } maybeTriggerResult =
-    [ Html.div []
-        [ Z.lazy2 triggerCard status maybeTriggerResult
+triggerResultDetail : EntityDict Action -> Polls.PollResult -> Maybe Polls.TriggerResult -> List (Html msg)
+triggerResultDetail actionDict { status } maybeTriggerResult =
+    let
+        maybeAction =
+            maybeTriggerResult >>= .actionId >> flip Dict.get actionDict
+    in
+        [ Html.div []
+            [ Z.lazy2 triggerCard status maybeTriggerResult
+            , maybeAction |> ME.unwrap none (Z.lazy triggeredActionDetail)
+            ]
         , maybeTriggerResult
-            >>= (.actionId >> flip Dict.get actionDict)
-            |> ME.unwrap none (Z.lazy triggeredActionDetail)
+            |> Maybe.map2 (Z.lazy2 actionResultBlock) maybeAction
+            |> Maybe.withDefault none
         ]
-    , maybeTriggerResult |> ME.unwrap none (Z.lazy actionResultBlock)
-    ]
 
 
 triggerCard : Int -> Maybe Polls.TriggerResult -> Html msg
 triggerCard code maybeTriggerResult =
     let
         ( iconTextClass, fa, cardText ) =
-            if code == 304 then
-                ( "text-warning", "fa-minus-circle", "Not Modified" )
-            else if code < 200 || code >= 300 then
-                ( "text-" ++ Utils.statusBsColor code, statusFa code, "Cannot proceed" )
-            else if isNothing maybeTriggerResult then
-                ( "text-warning", "fa-minus-circle", "Nothing Triggered" )
-            else
-                ( "text-success", "fa-check-circle", "Action Triggered" )
+            triggerResultProperties code maybeTriggerResult
     in
-        horizontalCard [ VP.fa [ class iconTextClass ] 2 fa, Html.strong [] [ text cardText ] ]
+        horizontalCard []
+            []
+            [ VP.fa [ class iconTextClass ] 2 fa
+            , VP.fa [] 1 "fa-filter"
+            , Html.strong [] [ text cardText ]
+            ]
+
+
+triggerResultProperties : Int -> Maybe Polls.TriggerResult -> ( String, String, String )
+triggerResultProperties code maybeTriggerResult =
+    if code == 304 then
+        ( "text-warning", "fa-minus-circle", "Not Modified" )
+    else if code < 200 || code >= 300 then
+        ( "text-" ++ Utils.statusBsColor code, statusFa code, "Cannot proceed" )
+    else if isNothing maybeTriggerResult then
+        ( "text-warning", "fa-minus-circle", "Nothing Triggered" )
+    else
+        ( "text-success", "fa-check-circle", "Action Triggered" )
 
 
 triggeredActionDetail : Entity Action -> Html msg
 triggeredActionDetail { data } =
     rightShiftedBlock
         [ Html.dl []
-            [ Html.dt [] [ text data.label ]
+            [ Html.dt []
+                [ VP.fa [] 1 <| Actions.typeToFa data.type_
+                , text data.label
+                ]
             , Html.dd [ class "p-2 small" ] [ Actions.ViewParts.preview data ]
             ]
         ]
 
 
-actionResultBlock : Polls.TriggerResult -> Html msg
-actionResultBlock { status, variables } =
+actionResultBlock : Entity Action -> Polls.TriggerResult -> Html msg
+actionResultBlock { data } { status, variables } =
     Html.div []
-        [ horizontalCard
+        [ horizontalCard []
+            []
             [ VP.fa [ class ("text-" ++ Utils.statusBsColor status) ] 2 (statusFa status)
+            , VP.fa [] 1 <| Actions.typeToFa data.type_
             , Html.strong [] [ text "Execute Action" ]
             ]
         , Html.div [ class "ml-4 my-0 px-4 py-1", Styles.leftInvisibleBordered ]
-            [ Html.dl []
-                ([ Html.dt [] [ text "Status" ]
-                 , Html.dd [ class "p-2" ] [ Z.lazy statusText status ]
-                 ]
-                    ++ (variableItems variables)
-                )
+            [ Html.dl [] <|
+                variableItems variables
+                    ++ [ Html.dt [] [ text "Status" ]
+                       , Html.dd [ class "p-2" ] [ Z.lazy statusText status ]
+                       ]
             ]
         ]
 
@@ -1126,11 +1141,17 @@ variableItems variables =
             )
 
 
+statusText : Int -> Html msg
+statusText code =
+    Html.span [ class <| "text-white p-1 bg-" ++ Utils.statusBsColor code ]
+        [ text <| toString code ++ " " ++ Utils.statusText code ]
+
+
 statusFa : Int -> String
 statusFa code =
     if code < 200 then
         "fa-minus-circle"
-    else if code < 300 then
+    else if code < 300 || code == 304 then
         "fa-check-circle"
     else if code < 400 then
         "fa-minus-circle"
@@ -1138,11 +1159,11 @@ statusFa code =
         "fa-times-circle"
 
 
-horizontalCard : List (Html msg) -> Html msg
-horizontalCard htmls =
-    Html.div [ class "card my-0", Styles.rounded ]
+horizontalCard : List (Html.Attribute msg) -> List (Html.Attribute msg) -> List (Html msg) -> Html msg
+horizontalCard cardAttrs boxAttrs htmls =
+    Html.div ([ class "card my-0", Styles.rounded ] ++ cardAttrs)
         [ Html.div [ class "card-block p-2" ]
-            [ Html.div [ class "card-text d-flex align-items-center" ] htmls
+            [ Html.div ([ class <| "card-text d-flex align-items-center" ] ++ boxAttrs) htmls
             ]
         ]
 
@@ -1186,7 +1207,7 @@ smInlineBtn styles msg disabled html =
 
 
 show : EntityDict Action -> EntityDict Authentication -> Repo Aux Poll -> Entity Poll -> Html Polls.Msg
-show actionDict authDict ({ dirtyDict, deleteModal } as repo) ({ id } as entity) =
+show actionDict authDict ({ dirtyDict, deleteModal } as repo) ({ id, data } as entity) =
     let
         maybeDirtyEntity =
             Dict.get id dirtyDict
@@ -1196,7 +1217,7 @@ show actionDict authDict ({ dirtyDict, deleteModal } as repo) ({ id } as entity)
             , Z.lazy deleteModalDialog deleteModal
             ]
             [ mainFormShow actionDict authDict entity maybeDirtyEntity ]
-            [ text "Poll History" ]
+            [ historyBlock actionDict entity ]
             [ trialResults actionDict repo (maybeDirtyEntity |> ME.unwrap entity Tuple.first |> .data)
             ]
 
@@ -1220,7 +1241,7 @@ titleShow maybeDirtyEntity ({ id, updatedAt, data } as entity) =
                 ]
             , Html.p [ class "text-muted mb-0", Styles.xSmall ]
                 [ text ("Last run at : " ++ (data.lastRunAt |> ME.unwrap "(Not yet)" Utils.timestampToString))
-                , text (", Next run at : " ++ (data.nextRunAt |> ME.unwrap "(Not scheduled)" Utils.timestampToString))
+                , text (", Next run after : " ++ (data.nextRunAt |> ME.unwrap "(Not scheduled)" Utils.timestampToString))
                 ]
             ]
         , Html.div []
@@ -1286,3 +1307,79 @@ mainFormShow actionDict authDict entity maybeDirtyEntity =
             |> (List.singleton << Html.fieldset [ Attr.disabled notEditing ])
             |> Html.form [ Attr.id "poll", Events.onSubmit (Polls.RepoMsg (ite readyToUpdate (Update id data) NoOp)) ]
             |> VP.cardBlock [] "" Nothing
+
+
+historyBlock : EntityDict Action -> Entity Poll -> Html Polls.Msg
+historyBlock actionDict { id, data } =
+    data.history
+        |> List.indexedMap (\i h -> historyEntryBlock actionDict data.url (Polls.ToggleHistoryEntry id i) h)
+        |> Html.div []
+        |> VP.cardBlock
+            [ VP.fa [] 2 "fa-history"
+            , text "History"
+            ]
+            "Up to 20 entries are preserved."
+            Nothing
+        |> Html.map Polls.AuxMsg
+
+
+historyEntryBlock : EntityDict Action -> Utils.Url -> (Bool -> Polls.AuxMsg) -> Polls.HistoryEntry -> Html Polls.AuxMsg
+historyEntryBlock actionDict url msgBase ({ collapsed } as entry) =
+    Html.div [ class "my-2" ]
+        [ if collapsed then
+            Z.lazy3 onelineHistory actionDict msgBase entry
+          else
+            Html.div []
+                [ Z.lazy2 Actions.View.collapseArrowBottom collapsed msgBase
+                , Z.lazy3 historyDetail actionDict url entry
+                , Z.lazy2 Actions.View.collapseArrowBottom collapsed msgBase
+                ]
+                |> VP.cardBlock [] "" Nothing
+        ]
+
+
+onelineHistory : EntityDict Action -> (Bool -> Polls.AuxMsg) -> Polls.HistoryEntry -> Html Polls.AuxMsg
+onelineHistory actionDict msgBase { runAt, pollResult, triggerResult } =
+    let
+        ( iconTextClass, fa, _ ) =
+            triggerResultProperties pollResult.status triggerResult
+
+        maybeActionResultHtmls =
+            case triggerResult of
+                Just { actionId, status } ->
+                    Dict.get actionId actionDict
+                        |> ME.unwrap Actions.Http (.data >> .type_)
+                        |> onelineActionResultHtmls status
+
+                Nothing ->
+                    []
+    in
+        [ Html.span [ class "d-flex align-items-center" ] <|
+            [ VP.fa [ class <| "text-" ++ Utils.statusBsColor pollResult.status ] 2 <| statusFa pollResult.status
+            , VP.fa [] 1 "fa-external-link"
+            , rightArrow
+            , VP.fa [ class iconTextClass ] 2 fa
+            , VP.fa [] 1 "fa-filter"
+            ]
+                ++ maybeActionResultHtmls
+        , Html.small [] [ text <| "(" ++ Utils.timestampToString runAt ++ ")" ]
+        ]
+            |> horizontalCard
+                [ class "btn-secondary"
+                , Styles.fakeLink
+                , Events.onClick <| msgBase False
+                ]
+                [ class "justify-content-between" ]
+
+
+onelineActionResultHtmls : Int -> Actions.ActionType -> List (Html msg)
+onelineActionResultHtmls code type_ =
+    [ rightArrow
+    , VP.fa [ class ("text-" ++ Utils.statusBsColor code) ] 2 (statusFa code)
+    , VP.fa [] 1 <| Actions.typeToFa type_
+    ]
+
+
+rightArrow : Html msg
+rightArrow =
+    VP.fa [ class "mx-3" ] 1 "fa-chevron-right"

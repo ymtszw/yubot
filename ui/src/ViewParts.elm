@@ -9,7 +9,7 @@ import Html.Lazy as Z
 import Maybe.Extra as ME
 import Markdown
 import Bootstrap.Button as Button
-import Utils exposing (ite)
+import Utils exposing (ite, (#|>))
 import Styles
 
 
@@ -214,8 +214,7 @@ pillNav activatedAttrs onClickInactive maybeOnClickActive navItems =
         navItem ( navValue, isActive, itemHtmls ) =
             itemHtmls
                 |> Html.span ((class "nav-link btn") :: (itemOption navValue isActive))
-                |> List.singleton
-                |> Html.li [ class "nav-item mb-2 mr-2" ]
+                #|> Html.li [ class "nav-item mb-2 mr-2" ]
     in
         navItems
             |> List.map navItem

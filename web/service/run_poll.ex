@@ -49,7 +49,7 @@ defmodule Yubot.Service.RunPoll do
     R.m do
       %Action{data: %Action.Data{auth_id: nil_or_auth_id} = d} <- Action.retrieve(ai, key, group_id)
       nil_or_auth <- fetch_auth(nil_or_auth_id, key, group_id)
-      dict <- build_variable_dict(b, m)
+      dict <- build_variable_dict(b, m, d.body_template.variables)
       %{status: s} <- Action.exec(d, dict, nil_or_auth)
       poll_result <- PollResult.new(r)
       trigger_result <- TriggerResult.new(%{action_id: ai, status: s, variables: dict})
@@ -57,8 +57,9 @@ defmodule Yubot.Service.RunPoll do
     end
   end
 
-  defp build_variable_dict(body, material) do
+  defp build_variable_dict(body, material, variables) do
     material
+    |> Map.take(variables)
     |> Enum.map(fn {k, i} -> Grasp.run(body, i) |> R.map(&{k, elem(&1, 1)}) end)
     |> R.sequence()
     |> R.map(&Map.new/1)

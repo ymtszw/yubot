@@ -23,7 +23,7 @@ module Actions
 import Dict exposing (Dict)
 import Set exposing (Set)
 import Json.Decode as JD
-import Json.Decode.Extra as JDE exposing ((|:))
+import Json.Decode.Extra exposing ((|:))
 import Json.Encode as JE
 import Json.Encode.Extra as JEE
 import Http
@@ -155,19 +155,19 @@ config =
 dataDecoder : JD.Decoder Action
 dataDecoder =
     JD.succeed Action
-        |: (JD.field "label" JD.string)
-        |: (JD.field "method" (JD.map Utils.stringToMethod JD.string))
-        |: (JD.field "url" JD.string)
-        |: (JD.field "auth_id" (JD.maybe JD.string))
-        |: (JD.field "body_template" bodyTemplateDecoder)
-        |: (JD.field "type" (JD.map stringToType JD.string))
+        |: JD.field "label" JD.string
+        |: JD.field "method" (JD.map Utils.stringToMethod JD.string)
+        |: JD.field "url" JD.string
+        |: JD.field "auth_id" (JD.maybe JD.string)
+        |: JD.field "body_template" bodyTemplateDecoder
+        |: JD.field "type" (JD.map stringToType JD.string)
 
 
 bodyTemplateDecoder : JD.Decoder StringTemplate
 bodyTemplateDecoder =
-    JD.map2 StringTemplate
-        (JD.field "body" JD.string)
-        (JD.field "variables" (JD.list JD.string))
+    JD.succeed StringTemplate
+        |: JD.field "body" JD.string
+        |: JD.field "variables" (JD.list JD.string)
 
 
 dataEncoder : Action -> JE.Value

@@ -8,6 +8,8 @@ module Utils
         , methods
         , stringToMethod
         , listShuffle
+        , (<|#)
+        , (#|>)
         , boolToMaybe
         , (>>=)
         , dictGetWithDefault
@@ -121,6 +123,22 @@ listShuffleImpl index isAsc ( currentIndex, acc ) tail =
                 listShuffleImpl index isAsc ( currentIndex + 1, [ x ] ) xs
 
 
+{-| Wrap left value into List, then apply to right function.
+-}
+(#|>) : a -> (List a -> b) -> b
+(#|>) x f =
+    f [ x ]
+infixl 0 #|>
+
+
+{-| Flipped `#|>`, can be used similarly to `<|`.
+-}
+(<|#) : (List a -> b) -> a -> b
+(<|#) f x =
+    f [ x ]
+infixr 0 <|#
+
+
 boolToMaybe : x -> Bool -> Maybe x
 boolToMaybe something bool =
     ite bool (Just something) Nothing
@@ -129,6 +147,7 @@ boolToMaybe something bool =
 (>>=) : Maybe a -> (a -> Maybe b) -> Maybe b
 (>>=) =
     flip Maybe.andThen
+infixl 0 >>=
 
 
 dictGetWithDefault : comparable -> v -> Dict comparable v -> v
@@ -335,7 +354,7 @@ statusBsColor code =
     else if code < 300 then
         "success"
     else if code < 400 then
-        "warning"
+        "info"
     else
         "danger"
 

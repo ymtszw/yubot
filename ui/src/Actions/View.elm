@@ -1,4 +1,4 @@
-module Actions.View exposing (index, show, new, trialResultCard)
+module Actions.View exposing (index, show, new, trialResultCard, collapseArrowBottom)
 
 import Dict
 import Set exposing (Set)
@@ -443,7 +443,7 @@ collapseArrowTop collapsed onCollapse =
 
 collapseArrowBottom : Bool -> (Bool -> msg) -> Html msg
 collapseArrowBottom collapsed onCollapse =
-    Html.div [ class "text-center btn-secondary", Styles.fakeLink, Events.onClick (onCollapse <| not <| collapsed) ]
+    Html.div [ class "my-2 text-center btn-secondary", Styles.fakeLink, Events.onClick (onCollapse <| not <| collapsed) ]
         [ VP.fa [] 1 (ite collapsed "fa-angle-double-down" "fa-angle-double-up") ]
 
 

@@ -16,6 +16,7 @@ module Grasp
 
 import Http
 import Json.Decode as JD
+import Json.Decode.Extra exposing ((|:))
 import Json.Encode as JE
 import Task exposing (Task)
 import HttpBuilder
@@ -91,30 +92,29 @@ isValidInstruction isValidResponder { extractor, responder } =
 
 decodeInstruction : (String -> ho) -> (String -> op) -> String -> Int -> JD.Decoder (Instruction (Responder ho op))
 decodeInstruction stringToHo stringToOp prefix index =
-    JD.map2 (Instruction (prefix ++ toString index))
-        (JD.field "extractor" decodeExtractor)
-        (JD.field "responder" (decodeResponder stringToHo stringToOp))
+    JD.succeed (Instruction (prefix ++ toString index))
+        |: JD.field "extractor" decodeExtractor
+        |: JD.field "responder" (decodeResponder stringToHo stringToOp)
 
 
 decodeExtractor : JD.Decoder Extractor
 decodeExtractor =
-    JD.map (Extractor Regex)
-        (JD.field "pattern" JD.string)
+    JD.map (Extractor Regex) <| JD.field "pattern" JD.string
 
 
 decodeResponder : (String -> ho) -> (String -> op) -> JD.Decoder (Responder ho op)
 decodeResponder stringToHo stringToOp =
-    JD.map3 responder
-        (JD.field "mode" JD.string)
-        (JD.field "high_order" (JD.map stringToHo JD.string))
-        (JD.field "first_order" (decodeFirstOrder stringToOp))
+    JD.succeed responder
+        |: JD.field "mode" JD.string
+        |: JD.field "high_order" (JD.map stringToHo JD.string)
+        |: JD.field "first_order" (decodeFirstOrder stringToOp)
 
 
 decodeFirstOrder : (String -> op) -> JD.Decoder (FirstOrder op)
 decodeFirstOrder stringToOp =
-    JD.map2 firstOrder
-        (JD.field "operator" (JD.map stringToOp JD.string))
-        (JD.field "arguments" (JD.list JD.string))
+    JD.succeed firstOrder
+        |: JD.field "operator" (JD.map stringToOp JD.string)
+        |: JD.field "arguments" (JD.list JD.string)
 
 
 encodeInstruction : Instruction (Responder ho op) -> JE.Value

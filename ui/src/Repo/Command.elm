@@ -2,8 +2,9 @@ module Repo.Command exposing (Config, create, update, navigateAndFetchOne, justF
 
 import Http
 import HttpBuilder
-import Json.Decode as Decode
-import Json.Encode as Encode
+import Json.Decode as JD
+import Json.Decode.Extra exposing ((|:))
+import Json.Encode as JE
 import Utils
 import Repo
 import Repo.Messages exposing (Msg(..))
@@ -12,8 +13,8 @@ import Repo.Messages exposing (Msg(..))
 type alias Config t =
     { repoPath : String
     , indexPath : Utils.Url
-    , dataDecoder : Decode.Decoder t
-    , dataEncoder : t -> Encode.Value
+    , dataDecoder : JD.Decoder t
+    , dataEncoder : t -> JE.Value
     , navigateOnWrite : Repo.Entity t -> Utils.Url
     }
 
@@ -55,16 +56,16 @@ fetchOne onFetchOneMsg config id =
 fetchAll : Config t -> Cmd (Msg t)
 fetchAll config =
     HttpBuilder.get config.repoPath
-        |> HttpBuilder.withExpect (Http.expectJson (Decode.list (entityDecoder config.dataDecoder)))
+        |> HttpBuilder.withExpect (Http.expectJson (JD.list (entityDecoder config.dataDecoder)))
         |> HttpBuilder.send OnFetchAll
 
 
-entityDecoder : Decode.Decoder t -> Decode.Decoder (Repo.Entity t)
+entityDecoder : JD.Decoder t -> JD.Decoder (Repo.Entity t)
 entityDecoder dataDecoder =
-    Decode.map3 Repo.Entity
-        (Decode.field "_id" Decode.string)
-        (Decode.field "updated_at" Decode.string)
-        (Decode.field "data" dataDecoder)
+    JD.succeed Repo.Entity
+        |: JD.field "_id" JD.string
+        |: JD.field "updated_at" JD.string
+        |: JD.field "data" dataDecoder
 
 
 delete : Config t -> Repo.EntityId -> Cmd (Msg t)

@@ -2,6 +2,7 @@ use Croma
 
 defmodule Yubot.Controller.Poll do
   alias Croma.Result, as: R
+  alias SolomonLib.Cron
   use Yubot.Controller, auth: :cookie_or_header
   alias Yubot.External.Http, as: ExHttp
   alias Yubot.Model.{Poll, Action, Authentication}
@@ -43,9 +44,20 @@ defmodule Yubot.Controller.Poll do
 
   # PUT /api/poll/:id
   def update(conn) do
-    Poll.Data.new(conn.request.body)
-    |> R.bind(&Poll.update(%{data: &1}, conn.request.path_matches.id, key(conn), group_id(conn)))
+    R.m do
+      data <- Poll.Data.new(conn.request.body)
+      user_editable_data = data |> Map.from_struct() |> Map.drop([:last_run_at, :next_run_at, :history])
+      updated_poll <- Poll.update(%{data: %{"$set" => user_editable_data}}, conn.request.path_matches.id, key(conn), group_id(conn))
+      update_next_run_at(updated_poll, conn)
+    end
     |> handle_with_200_json(conn)
+  end
+
+  defp update_next_run_at(%Poll{_id: id, data: %Poll.Data{interval: i, last_run_at: lra, next_run_at: nra}} = poll, conn) do
+    case i |> Poll.Interval.to_cron(id) |> Cron.parse!() |> Cron.next(lra) do
+      ^nra        -> {:ok, poll}
+      updated_nra -> Poll.set_run_at(updated_nra, lra, id, key(conn), group_id(conn))
+    end
   end
 
   # DELETE /api/poll/:id
