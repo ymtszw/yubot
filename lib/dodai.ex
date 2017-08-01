@@ -29,22 +29,18 @@ defmodule Yubot.Dodai do
   defmodule Session do
     use Croma.Struct, fields: [
       key:                 nilable(Croma.String),
-      expires_at:          Yubot.NilableTime,
+      expires_at:          nilable(SolomonLib.Time),
       password_set_at:     SolomonLib.Time,
-      password_expires_at: Yubot.NilableTime,
+      password_expires_at: nilable(SolomonLib.Time),
     ], accept_case: :lower_camel, recursive_new?: true
-  end
-
-  defmodule NilableSession do
-    use Yubot.TypeGen.Nilable, module: Session
   end
 
   defmodule AppUsageRuleOfUser do
     use Croma.Struct, fields: [
       app_id:     Dodai.AppId,
       usage_rule: Croma.String,
-      starts_at:  Yubot.NilableTime,
-      ends_at:    Yubot.NilableTime,
+      starts_at:  nilable(SolomonLib.Time),
+      ends_at:    nilable(SolomonLib.Time),
     ], accept_case: :lower_camel, recursive_new: true
   end
 end

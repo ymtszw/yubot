@@ -6,21 +6,4 @@ defmodule Yubot.TypeGen do
       def validate(_), do: {:error, {:invalid_value, [__MODULE__]}}
     end
   end
-
-  defmodule Nilable do
-    defmacro __using__(opts) do
-      quote bind_quoted: [opts: opts] do
-        @module opts[:module]
-        @type t :: nil | @module.t
-
-        def validate(nil), do: {:ok, nil}
-        def validate(other), do: @module.validate(other)
-
-        def new(nil), do: {:ok, nil}
-        def new(other), do: @module.new(other)
-
-        def default(), do: nil
-      end
-    end
-  end
 end

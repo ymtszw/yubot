@@ -177,8 +177,8 @@ defmodule Yubot.Model.Poll do
     auth_id: nilable(Authentication.Id),
     is_enabled: nilable(Croma.Boolean), # TODO strip nilable
     triggers: TriggerList,
-    last_run_at: Yubot.NilableTime,
-    next_run_at: Yubot.NilableTime,
+    last_run_at: nilable(SolomonLib.Time),
+    next_run_at: nilable(SolomonLib.Time),
     history: History,
   ]
 
