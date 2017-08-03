@@ -75,7 +75,7 @@ defmodule Yubot.Dodai.Model.Users do
         data:            Data,
         readonly:        Readonly,
         rootonly:        Croma.TypeGen.nilable(Rootonly),
-        session:         Yubot.Dodai.NilableSession,
+        session:         Croma.TypeGen.nilable(Yubot.Dodai.Session),
         sections:        SolomonAcs.Dodai.Sections,
         section_aliases: Croma.TypeGen.list_of(Croma.TypeGen.nilable(Croma.String)),
         role:            Dodai.Model.Role,
