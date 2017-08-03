@@ -4,7 +4,8 @@ defmodule Mix.Tasks.Yubot.InitDodai do
   @models (
     (:code.lib_dir(:yubot) ++ '/ebin/*.beam')
     |> Path.wildcard()
-    |> Enum.filter_map(&(&1 =~ ~r/Yubot\.Model\.[A-Z]\w+\.beam/), fn filename ->
+    |> Enum.filter(&(&1 =~ ~r/Yubot\.Model\.[A-Z]\w+\.beam/))
+    |> Enum.map(fn filename ->
       String.replace(filename, ~r|\A(.+/)+|, "")
       |> String.trim_trailing(".beam")
       |> String.to_existing_atom()

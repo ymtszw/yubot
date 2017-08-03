@@ -52,7 +52,8 @@ defmodule Yubot.Jq do
       "--compact-output" => !:proplists.get_bool(:pretty, options),
       # More may come?
     }
-    |> Enum.filter_map(&(elem(&1, 1) == true), &elem(&1, 0))
+    |> Enum.filter(&(elem(&1, 1) == true))
+    |> Enum.map(&elem(&1, 0))
     |> Enum.join(" ")
   end
 
