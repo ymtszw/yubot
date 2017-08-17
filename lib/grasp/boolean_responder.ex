@@ -125,8 +125,8 @@ defmodule Yubot.Grasp.BooleanResponder do
 
   @behaviour Responder
 
-  @spec respond(t, Extractor.resultant_t) :: boolean
   def respond(%__MODULE__{mode: :boolean, high_order: ho, first_order: fo}, source),
     do: HighOrder.exec(source, ho, Predicate.fun(fo))
-  # Crash for invalid applications
+  def respond(_, _),
+    do: false
 end

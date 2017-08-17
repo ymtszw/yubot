@@ -99,8 +99,8 @@ defmodule Yubot.Grasp.StringResponder do
 
   @behaviour Responder
 
-  @spec respond(t, Extractor.resultant_t) :: boolean
   def respond(%__MODULE__{mode: :string, high_order: ho, first_order: fo}, source),
     do: HighOrder.exec(source, ho, StringMaker.fun(fo))
-  # Crash for invalid applications
+  def respond(r, _),
+    do: "Invalid responder: #{inspect(r)}"
 end

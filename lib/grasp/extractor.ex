@@ -62,8 +62,8 @@ defmodule Yubot.Grasp.RegexExtractor do
 
   defun new(term :: term) :: R.t(t), do: validate(term)
 
-  @spec extract(t, String.t) :: R.t(Extractor.resultant_t)
   def extract(%__MODULE__{engine: :regex, pattern: p}, source) when is_binary(p),
     do: Regex.compile(p, "usm") |> R.map(&Regex.scan(&1, source))
-  # Crash for invalid applications
+  def extract(_, _),
+    do: {:error, {:invalid_value, __MODULE__}}
 end

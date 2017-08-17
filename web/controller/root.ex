@@ -40,7 +40,9 @@ defmodule Yubot.Controller.Root do
     do
       user
     else
-      {:error, e} -> Yubot.Logger.debug(inspect(e)) && nil
+      {:error, e} ->
+        Yubot.Logger.debug(inspect(e))
+        nil
     end
   end
 end

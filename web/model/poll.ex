@@ -94,17 +94,10 @@ defmodule Yubot.Model.Poll do
       """
 
       use Croma.SubtypeOfMap, key_module: Croma.String, value_module: G.Instruction, default: %{}
-
-      def new(term), do: validate(term)
     end
 
     defmodule ConditionList do
       use Croma.SubtypeOfList, elem_module: Condition, max_length: 5, default: []
-
-      defun new(term :: term) :: R.t(t) do
-        (list) when is_list(list) -> Enum.map(list, &Condition.new/1) |> R.sequence()
-        (_non_list) -> {:error, {:invalid_value, [__MODULE__]}}
-      end
     end
 
     use Croma.Struct, recursive_new?: true, fields: [
@@ -116,11 +109,6 @@ defmodule Yubot.Model.Poll do
 
   defmodule TriggerList do
     use Croma.SubtypeOfList, elem_module: Trigger, max_length: 5, default: []
-
-    defun new(term :: term) :: R.t(t) do
-      (list) when is_list(list) -> Enum.map(list, &Trigger.new/1) |> R.sequence()
-      (_non_list) -> {:error, {:invalid_value, [__MODULE__]}}
-    end
   end
 
   defmodule PollResult do
@@ -157,11 +145,6 @@ defmodule Yubot.Model.Poll do
     """
 
     use Croma.SubtypeOfList, elem_module: HistoryEntry, max_length: @max_length, default: []
-
-    defun new(term :: term) :: R.t(t) do
-      (list) when is_list(list) -> Enum.map(list, &HistoryEntry.new/1) |> R.sequence()
-      (_non_list) -> {:error, {:invalid_value, [__MODULE__]}}
-    end
   end
 
   defmodule TrialRequest do
