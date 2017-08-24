@@ -22,34 +22,38 @@ defmodule Yubot.Grasp.StringResponder do
     If string generation somehow failed, "#{@fallback_string}" will be inserted instead.
     """
 
-    @type operator_t :: :Join | :At
+    @operators [:Join, :At]
+    @type operator_t :: unquote(Croma.TypeUtil.list_to_type_union(@operators))
     @type t :: %{
       operator: operator_t,
       arguments: list,
     }
 
-    @spec validate(term) :: R.t(t)
-    def validate(%{operator: op, arguments: args}),
-      do: validate_impl(op, args) |> R.map(fn {op_atom, args} -> %{operator: op_atom, arguments: args} end)
-    def validate(%{"operator" => op, "arguments" => args}),
-      do: validate_impl(op, args) |> R.map(fn {op_atom, args} -> %{operator: op_atom, arguments: args} end)
-    def validate(_),
+    defun valid?(term :: term) :: boolean do
+      %{operator: op, arguments: args} when op in @operators and is_list(args) -> true
+      _otherwise -> false
+    end
+
+    @spec new(term) :: R.t(t)
+    def new(%{operator: op, arguments: args}),
+      do: new_impl(op, args) |> R.map(fn {op_atom, args} -> %{operator: op_atom, arguments: args} end)
+    def new(%{"operator" => op, "arguments" => args}),
+      do: new_impl(op, args) |> R.map(fn {op_atom, args} -> %{operator: op_atom, arguments: args} end)
+    def new(_),
       do: {:error, {:invalid_value, [__MODULE__]}}
 
-    defp validate_impl(join, [delimiter] = args) when join in [:Join, "Join"] and is_binary(delimiter) do
+    defp new_impl(join, [delimiter] = args) when join in [:Join, "Join"] and is_binary(delimiter) do
       {:ok, {:Join, args}}
     end
-    defp validate_impl(at, [index_str] = args) when at in [:At, "At"] and is_binary(index_str) do
+    defp new_impl(at, [index_str] = args) when at in [:At, "At"] and is_binary(index_str) do
       case Integer.parse(index_str) do
         {index, ""} when index >= 0 -> {:ok, {:At, args}}
         _otherwise -> {:error, {:invalid_value, [__MODULE__]}}
       end
     end
-    defp validate_impl(_, _) do
+    defp new_impl(_, _) do
       {:error, {:invalid_value, [__MODULE__]}}
     end
-
-    defun new(term :: term) :: R.t(t), do: validate(term)
 
     # Runtime functions
 

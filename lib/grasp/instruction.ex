@@ -9,7 +9,7 @@ defmodule Yubot.Grasp.Instruction do
 
     def new(term), do: BooleanResponder.new(term) |> R.or_else(StringResponder.new(term))
 
-    def validate(term), do: new(term)
+    def valid?(term), do: BooleanResponder.valid?(term) or StringResponder.valid?(term)
   end
 
   use Croma.Struct, recursive_new?: true, fields: [

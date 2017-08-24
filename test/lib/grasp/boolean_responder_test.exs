@@ -1,7 +1,7 @@
 defmodule Yubot.Grasp.BooleanResponderTest do
   use Croma.TestCase, async: true
 
-  test "BooleanResponder should validate maps" do
+  test "BooleanResponder should parse maps" do
     ho_pairs = [{"First", :First}, {"Any", :Any}, {"All", :All}]
     fo_pairs = [
       {{"Truth", []}, {:Truth, []}},
@@ -15,7 +15,7 @@ defmodule Yubot.Grasp.BooleanResponderTest do
     ]
     for {ho, expected_ho} <- ho_pairs,
         {{op, args}, {expected_op, expected_args}} <- fo_pairs do
-      assert BooleanResponder.validate(%{
+      assert BooleanResponder.new(%{
         "mode" => "boolean", "high_order" => ho,
         "first_order" => %{
           "operator" => op,
@@ -32,7 +32,7 @@ defmodule Yubot.Grasp.BooleanResponderTest do
   end
 
   test "BooleanResponder should invalidate maps" do
-    assert BooleanResponder.validate(%{
+    assert BooleanResponder.new(%{
       "mode" => "invalid_mode", "high_order" => "First",
       "first_order" => %{
         "operator" => "Contains",
@@ -40,7 +40,7 @@ defmodule Yubot.Grasp.BooleanResponderTest do
       }
     }) == {:error, {:invalid_value, [BooleanResponder, BooleanResponder.Mode]}}
 
-    assert BooleanResponder.validate(%{
+    assert BooleanResponder.new(%{
       "mode" => "boolean", "high_order" => "NonExisting",
       "first_order" => %{
         "operator" => "Contains",
@@ -48,7 +48,7 @@ defmodule Yubot.Grasp.BooleanResponderTest do
       }
     }) == {:error, {:invalid_value, [BooleanResponder, BooleanResponder.HighOrder]}}
 
-    assert BooleanResponder.validate(%{
+    assert BooleanResponder.new(%{
       "mode" => "boolean", "high_order" => "First",
       "first_order" => %{
         "operator" => "NonExisting",
@@ -56,7 +56,7 @@ defmodule Yubot.Grasp.BooleanResponderTest do
       }
     }) == {:error, {:invalid_value, [BooleanResponder, BooleanResponder.Predicate]}}
 
-    assert BooleanResponder.validate(%{
+    assert BooleanResponder.new(%{
       "mode" => "boolean", "high_order" => "First",
       "first_order" => %{
         "operator" => "Contains",

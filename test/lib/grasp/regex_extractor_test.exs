@@ -1,11 +1,11 @@
 defmodule Yubot.Grasp.RegexExtractorTest do
   use Croma.TestCase, async: true
 
-  test "should validate/invalidate maps" do
-    assert RegexExtractor.validate(%{"engine" => "regex", "pattern" => ".*"}) == {:ok, %RegexExtractor{engine: :regex, pattern: ".*"}}
+  test "new/1 should accept/reject maps" do
+    assert RegexExtractor.new(%{"engine" => "regex", "pattern" => ".*"}) == {:ok, %RegexExtractor{engine: :regex, pattern: ".*"}}
 
-    assert RegexExtractor.validate(%{"engine" => "invalid_engine", "pattern" => ".*"}) == {:error, {:invalid_value, [RegexExtractor]}}
-    assert RegexExtractor.validate(%{"engine" => "regex", "pattern" => "*."}) == {:error, {:invalid_value, [RegexExtractor]}}
+    assert RegexExtractor.new(%{"engine" => "invalid_engine", "pattern" => ".*"}) == {:error, {:invalid_value, [RegexExtractor]}}
+    assert RegexExtractor.new(%{"engine" => "regex", "pattern" => "*."}) == {:error, {:invalid_value, [RegexExtractor]}}
   end
 
   test "should extract in Extractor.esultant_t (2-dimension list)" do

@@ -42,12 +42,17 @@ defmodule Yubot.Grasp.RegexExtractor do
     pattern: String.t,
   }
 
-  @spec validate(term) :: R.t(t)
-  def validate(%{engine: e, pattern: p}) when e in [:regex, "regex"],
+  defun valid?(term :: term) :: boolean do
+    %__MODULE__{engine: :regex, pattern: p} -> validate_as_regex(p) |> R.ok?()
+    _otherwise -> false
+  end
+
+  @spec new(term) :: R.t(t)
+  def new(%{engine: e, pattern: p}) when e in [:regex, "regex"],
     do: validate_as_regex(p) |> R.map(&%__MODULE__{engine: :regex, pattern: &1})
-  def validate(%{"engine" => e, "pattern" => p}) when e in [:regex, "regex"],
+  def new(%{"engine" => e, "pattern" => p}) when e in [:regex, "regex"],
     do: validate_as_regex(p) |> R.map(&%__MODULE__{engine: :regex, pattern: &1})
-  def validate(_),
+  def new(_),
     do: {:error, {:invalid_value, [__MODULE__]}}
 
   defp validate_as_regex(str) when is_binary(str) do
@@ -59,8 +64,6 @@ defmodule Yubot.Grasp.RegexExtractor do
   defp validate_as_regex(term) do
     if Regex.regex?(term), do: {:ok, Regex.source(term)}, else: {:error, {:invalid_value, [__MODULE__]}}
   end
-
-  defun new(term :: term) :: R.t(t), do: validate(term)
 
   def extract(%__MODULE__{engine: :regex, pattern: p}, source) when is_binary(p),
     do: Regex.compile(p, "usm") |> R.map(&Regex.scan(&1, source))

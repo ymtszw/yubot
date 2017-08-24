@@ -19,39 +19,37 @@ defmodule Yubot.StringTemplate do
     use Croma.SubtypeOfString, pattern: ~r/\A[a-z0-9_]+\Z/
 
     def validate_with_message(term) do
-      validate(term)
-      |> R.map_error(fn _ -> {:invalid_value, term} end)
+      if valid?(term), do: {:ok, term}, else: {:error, {:invalid_value, term}}
     end
   end
 
   defstruct [:body, :variables]
   @type t :: %__MODULE__{body: String.t, variables: [Variable.t]}
 
-  defun validate(v :: term) :: R.t(t) do
-    (%{"body" => body, "variables" => vars}  ) when is_binary(body) and is_list(vars) -> validate_impl(body, vars)
-    (%{body: body, variables: vars}          ) when is_binary(body) and is_list(vars) -> validate_impl(body, vars)
-    (%__MODULE__{body: body, variables: vars}) when is_binary(body) and is_list(vars) -> validate_impl(body, vars)
-    (_otherwise                              )                                        -> {:error, {:invalid_value, [__MODULE__]}}
+  defun valid?(term :: term) :: boolean do
+    %__MODULE__{body: b, variables: vars} -> valid_impl(b, vars)
+    _otherwise -> false
   end
 
-  defp validate_impl(body, vars) do
-    extract_variables(body)
-    |> R.bind(fn
-      ^vars -> {:ok, %__MODULE__{body: body, variables: vars}}
-      _else -> {:error, {:invalid_value, [__MODULE__]}} # `vars` in request and extraction result does not match; either client or this module went wrong
-    end)
+  defp valid_impl(body, vars) do
+    case extract_variables(body) do
+      {:ok, ^vars} -> true
+      _otherwise -> false
+    end
   end
 
   @doc """
   Parse template `body` in `dict`, and extract unique variables, then build `#{inspect(__MODULE__)}` struct.
 
   Ignores existing (or non-existing) `variables` field in `dict`.
+
+  Fails if `dict` is not valid dict.
   """
-  defun new(dict :: map | list) :: R.t(t) do
-    (%{"body" => body})                    -> extract_variables(body) |> R.map(&%__MODULE__{body: body, variables: &1})
-    (%{body: body}    )                    -> extract_variables(body) |> R.map(&%__MODULE__{body: body, variables: &1})
-    (list             ) when is_list(list) -> new_from_list(list)
-    (_otherwise       )                    -> {:error, {:invalid_value, [__MODULE__]}}
+  defun new(dict :: term) :: R.t(t) do
+    %{"body" => body}       -> extract_variables(body) |> R.map(&%__MODULE__{body: body, variables: &1})
+    %{body: body}           -> extract_variables(body) |> R.map(&%__MODULE__{body: body, variables: &1})
+    list when is_list(list) -> new_from_list(list)
+    _otherwise              -> {:error, {:invalid_value, [__MODULE__]}}
   end
 
   defp new_from_list(list) do
@@ -119,5 +117,5 @@ defmodule Yubot.StringTemplate do
     end)
   end
 
-  Croma.Result.define_bang_version_of(validate: 1, new: 1, render: 2)
+  Croma.Result.define_bang_version_of(new: 1, render: 2)
 end

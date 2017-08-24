@@ -2,8 +2,8 @@ defmodule Yubot.Grasp.InstructionTest do
   use Croma.TestCase, async: true
   alias Yubot.Grasp.{RegexExtractor, BooleanResponder}
 
-  test "should validate/1 (new/1) from map" do
-    assert Instruction.validate(%{
+  test "new/1 should generate Instruction from map" do
+    assert Instruction.new(%{
       "extractor" => %{
         "engine" => "regex",
         "pattern" => ~S'"field":"(.+)"'

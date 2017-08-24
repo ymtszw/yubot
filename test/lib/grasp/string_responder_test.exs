@@ -1,12 +1,12 @@
 defmodule Yubot.Grasp.StringResponderTest do
   use Croma.TestCase, async: true
 
-  test "StringResponder should validate maps" do
+  test "StringResponder should parse maps" do
     ho_pairs = [{"First", :First}, {"JoinAll", :JoinAll}]
     fo_pairs = [{{"Join", [","]}, {:Join, [","]}}, {{"At", ["1"]}, {:At, ["1"]}}]
     for {ho, expected_ho} <- ho_pairs,
         {{op, args}, {expected_op, expected_args}} <- fo_pairs do
-      assert StringResponder.validate(%{
+      assert StringResponder.new(%{
         "mode" => "string", "high_order" => ho,
         "first_order" => %{
           "operator" => op,
@@ -23,7 +23,7 @@ defmodule Yubot.Grasp.StringResponderTest do
   end
 
   test "StringResponder should invalidate maps" do
-    assert StringResponder.validate(%{
+    assert StringResponder.new(%{
       "mode" => "invalid_mode", "high_order" => "First",
       "first_order" => %{
         "operator" => "Join",
@@ -31,7 +31,7 @@ defmodule Yubot.Grasp.StringResponderTest do
       }
     }) == {:error, {:invalid_value, [StringResponder, StringResponder.Mode]}}
 
-    assert StringResponder.validate(%{
+    assert StringResponder.new(%{
       "mode" => "string", "high_order" => "NonExisting",
       "first_order" => %{
         "operator" => "Join",
@@ -39,7 +39,7 @@ defmodule Yubot.Grasp.StringResponderTest do
       }
     }) == {:error, {:invalid_value, [StringResponder, StringResponder.HighOrder]}}
 
-    assert StringResponder.validate(%{
+    assert StringResponder.new(%{
       "mode" => "string", "high_order" => "First",
       "first_order" => %{
         "operator" => "NonExisting",
@@ -47,7 +47,7 @@ defmodule Yubot.Grasp.StringResponderTest do
       }
     }) == {:error, {:invalid_value, [StringResponder, StringResponder.StringMaker]}}
 
-    assert StringResponder.validate(%{
+    assert StringResponder.new(%{
       "mode" => "string", "high_order" => "First",
       "first_order" => %{
         "operator" => "Join",

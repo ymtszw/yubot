@@ -22,42 +22,47 @@ defmodule Yubot.Grasp.BooleanResponder do
     """
 
     @indexed_operators [:EqAt, :NeAt, :LtAt, :LteAt, :GtAt, :GteAt]
-    @type operator_t :: :Truth | :Contains | :EqAt | :NeAt | :LtAt | :LteAt | :GtAt | :GteAt
+    @other_operators   [:Truth, :Contains]
+    @operators         @indexed_operators ++ @other_operators
+    @type operator_t :: unquote(Croma.TypeUtil.list_to_type_union(@operators))
     @type t :: %{
       operator: operator_t,
       arguments: list,
     }
 
-    @spec validate(term) :: R.t(t)
-    def validate(%{operator: op, arguments: args}) do
-      validate_impl(op, args)
+    defun valid?(term :: term) :: boolean do
+      %{operator: op, arguments: args} when op in @operators and is_list(args) -> true
+      _otherwise -> false
+    end
+
+    @spec new(term) :: R.t(t)
+    def new(%{operator: op, arguments: args}) do
+      new_impl(op, args)
       |> R.map(fn {op_atom, args} -> %{operator: op_atom, arguments: args} end)
     end
-    def validate(%{"operator" => op, "arguments" => args}) do
-      validate_impl(op, args)
+    def new(%{"operator" => op, "arguments" => args}) do
+      new_impl(op, args)
       |> R.map(fn {op_atom, args} -> %{operator: op_atom, arguments: args} end)
     end
-    def validate(_) do
+    def new(_) do
       {:error, {:invalid_value, [__MODULE__]}}
     end
 
-    defp validate_impl(contains, []) when contains in [:Truth, "Truth"],
+    defp new_impl(contains, []) when contains in [:Truth, "Truth"],
       do: {:ok, {:Truth, []}}
-    defp validate_impl(contains, [_right] = args) when contains in [:Contains, "Contains"],
+    defp new_impl(contains, [_right] = args) when contains in [:Contains, "Contains"],
       do: {:ok, {:Contains, args}}
     for op_atom <- @indexed_operators do
       @op_atom op_atom
       @op_str Atom.to_string(@op_atom)
-      defp validate_impl(op, [index_str, _right] = args) when op in [@op_atom, @op_str] and is_binary(index_str) do
+      defp new_impl(op, [index_str, _right] = args) when op in [@op_atom, @op_str] and is_binary(index_str) do
         case Integer.parse(index_str) do
           {index, ""} when index >= 0 -> {:ok, {@op_atom, args}}
           _otherwise -> {:error, {:invalid_value, [__MODULE__]}}
         end
       end
     end
-    defp validate_impl(_, _), do: {:error, {:invalid_value, [__MODULE__]}}
-
-    defun new(term :: term) :: R.t(t), do: validate(term)
+    defp new_impl(_, _), do: {:error, {:invalid_value, [__MODULE__]}}
 
     # Runtime functions
 

@@ -22,7 +22,7 @@ defmodule Yubot.Grasp do
   """
   defun run(source :: v[String.t], instruction :: term, verbose? \\ true) :: R.t(term) do
     R.m do
-      %Instruction{extractor: %e_module{} = e, responder: %r_module{} = r} <- Instruction.validate(instruction)
+      %Instruction{extractor: %e_module{} = e, responder: %r_module{} = r} <- Instruction.new(instruction)
       er <- e_module.extract(e, source)
       r = r_module.respond(r, er)
       pure (if verbose?, do: {er, r}, else: r)

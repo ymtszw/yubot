@@ -28,10 +28,15 @@ defmodule Yubot.Model.Poll do
   defmodule Interval do
     @type t :: String.t
 
-    @spec validate(term) :: R.t(t)
-    def validate(i) when i in ["1", "3", "10", "30", "hourly", "daily"], do: {:ok, i}
-    def validate(i) when i in [1, 3, 10, 30, :hourly, :daily], do: {:ok, to_string(i)}
-    def validate(_), do: {:error, {:invalid_value, [__MODULE__]}}
+    defun valid?(term :: term) :: boolean do
+      i when i in ["1", "3", "10", "30", "hourly", "daily"] -> true
+      _otherwise -> false
+    end
+
+    @spec new(term) :: R.t(t)
+    def new(i) when i in ["1", "3", "10", "30", "hourly", "daily"], do: {:ok, i}
+    def new(i) when i in [1, 3, 10, 30, :hourly, :daily], do: {:ok, to_string(i)}
+    def new(_), do: {:error, {:invalid_value, [__MODULE__]}}
 
     def default(), do: "10"
 
@@ -75,14 +80,17 @@ defmodule Yubot.Model.Poll do
 
       @type t :: G.Instruction.t
 
-      def validate(term) do
-        G.Instruction.validate(term) |> R.bind(fn
+      defun valid?(term :: term) :: boolean do
+        %G.Instruction{responder: %G.BooleanResponder{}} -> true
+        _otherwise -> false
+      end
+
+      defun new(term :: term) :: R.t(t) do
+        G.Instruction.new(term) |> R.bind(fn
           %G.Instruction{responder: %G.BooleanResponder{}} = i -> {:ok, i}
           _not_boolean_responder -> {:error, {:invalid_value, [__MODULE__]}}
         end)
       end
-
-      def new(term), do: validate(term)
     end
 
     defmodule Material do
