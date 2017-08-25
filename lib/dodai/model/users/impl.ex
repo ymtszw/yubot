@@ -79,8 +79,7 @@ defmodule Yubot.Dodai.Model.Users.Impl do
     end)
   end
 
-  defun count(model     :: v[module],
-              client    :: Dodai.Client.t,
+  defun count(client    :: Dodai.Client.t,
               raw_query :: v[nil | Query.t],
               key       :: v[String.t],
               group_id  :: v[GroupId.t]) :: R.t(non_neg_integer) do

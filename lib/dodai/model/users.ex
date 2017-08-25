@@ -103,7 +103,7 @@ defmodule Yubot.Dodai.Model.Users do
       end
 
       def count(query, key, group_id \\ @dodai_gear_module.default_group_id()) do
-        Yubot.Dodai.Model.Users.Impl.count(__MODULE__, @dodai_gear_module.client(), query, key, group_id)
+        Yubot.Dodai.Model.Users.Impl.count(@dodai_gear_module.client(), query, key, group_id)
       end
 
       def update_auth_info(update_auth_info_action, id, key, group_id \\ @dodai_gear_module.default_group_id()) do
