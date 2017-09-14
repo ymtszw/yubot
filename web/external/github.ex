@@ -13,13 +13,16 @@ defmodule Yubot.External.Github do
   defun retrieve_self(token :: v[String.t]) :: R.t({String.t, String.t}) do
     R.m do
       header = %{"authorization" => "Bearer #{token}"}
-      %Httpc.Response{status: 200, body: res_body} <- Httpc.get(@base_url <> "/user", header)
-      body <- Poison.decode(res_body)
-      pure retrieve_self_response(body)
+      response <- Httpc.get(@base_url <> "/user", header)
+      retrieve_self_response(response)
     end
   end
 
-  defp retrieve_self_response(%{"login" => login_name, "name" => display_name, "email" => email, "avatar_url" => _}) do
-    {email, display_name || login_name}
+  defp retrieve_self_response(%Httpc.Response{status: 200, body: res_body}) do
+    %{"login" => login_name, "name" => display_name, "email" => email, "avatar_url" => _} = Poison.decode!(res_body)
+    {:ok, {email, display_name || login_name}}
+  end
+  defp retrieve_self_response(%Httpc.Response{status: code, body: res_body}) do
+    {:error, {code, res_body}}
   end
 end
