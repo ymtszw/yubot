@@ -47,4 +47,5 @@ defmodule Yubot.Controller.Result do
   defp to_status(%OAuth2.Response{status_code: status}), do: status
   defp to_status({reason, _}) when reason in [:invalid, :invalid_value, :value_missing], do: 400
   defp to_status({reason, _}) when reason in @status_atoms,                              do: Status.code(reason)
+  defp to_status({code, _})   when code in 100..599,                                     do: code
 end
