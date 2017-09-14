@@ -25,7 +25,7 @@ defmodule Yubot.Controller.Oauth do
   def callback(%Conn{request: %Req{path_matches: pm, query_params: qp}} = conn) do
     R.m do
       return_path <- Yubot.decrypt_base64(qp["state"])
-      access_token <- code_to_token(pm.provider, qp["code"])
+      %OAuth2.AccessToken{access_token: access_token} <- code_to_token(pm.provider, qp["code"])
       {email, display_name} <- fetch_email_and_display_name(pm.provider, access_token)
       user <- login_or_create_user(email, display_name)
       pure {return_path, user}
@@ -37,12 +37,8 @@ defmodule Yubot.Controller.Oauth do
     end)
   end
 
-  defp code_to_token("google", code) do
-    Oauth.Google.code_to_token(code) |> R.map(&(&1.token.access_token))
-  end
-  defp code_to_token("github", code) do
-    Oauth.Github.code_to_token(code) |> R.map(&(&1.token.access_token))
-  end
+  defp code_to_token("google", code), do: Oauth.Google.code_to_token(code)
+  defp code_to_token("github", code), do: Oauth.Github.code_to_token(code)
 
   defp fetch_email_and_display_name("google", token), do: External.Google.retrieve_self(token)
   defp fetch_email_and_display_name("github", token), do: External.Github.retrieve_self(token)

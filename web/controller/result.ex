@@ -36,6 +36,7 @@ defmodule Yubot.Controller.Result do
 
   defp to_body(%OAuth2.Response{body: body}), do: body
   defp to_body(%{} = err), do: err
+  defp to_body({_reason, attachment}), do: to_body(attachment)
   defp to_body(err), do: %{"error" => inspect(err)}
 
   @dodai_error_integers [400, 401, 402, 403, 404, 408, 409, 413, 500]

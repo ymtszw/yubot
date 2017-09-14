@@ -34,6 +34,21 @@ defmodule Yubot.Oauth do
       - Use cookie or whatever means of session management.
   """
 
+  alias OAuth2.Client, as: OC
+  alias OAuth2.AccessToken, as: AT
+
+  @doc false
+  def client_impl(module, env_prefix, redirect_uri, authorize_url, token_url) do
+    OC.new([
+      strategy: module,
+      client_id: Yubot.get_env("#{env_prefix}_client_id"),
+      client_secret: Yubot.get_env("#{env_prefix}_client_secret"),
+      redirect_uri: redirect_uri,
+      authorize_url: authorize_url,
+      token_url: token_url,
+    ])
+  end
+
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
       @behaviour OAuth2.Strategy
@@ -49,11 +64,19 @@ defmodule Yubot.Oauth do
       end
 
       def authorize_url!(params) do
-        OAuth2.Client.authorize_url!(client(), params)
+        OC.authorize_url!(client(), params)
       end
 
+      @spec code_to_token(String.t, list) :: Croma.Result.t(AT.t)
       def code_to_token(code, opts \\ []) do
-        OAuth2.Client.get_token(client(), [code: code], [], opts)
+        case OC.get_token(client(), [code: code], [], opts) do
+          {:ok, %OC{token: %AT{access_token: at}} = token} when is_binary(at) ->
+            {:ok, token}
+          {:ok, %OC{token: %AT{other_params: error_response}}} ->
+            {:error, {:unauthorized, error_response}}
+          {:error, error} ->
+            {:error, {:unauthorized, error}}
+        end
       end
 
       # Callbacks
@@ -66,8 +89,8 @@ defmodule Yubot.Oauth do
       @doc false
       def get_token(c, p, h) do
         c
-        |> OAuth2.Client.put_param(:client_secret, c.client_secret)
-        |> OAuth2.Client.put_header("accept", "application/json")
+        |> OC.put_param(:client_secret, c.client_secret)
+        |> OC.put_header("accept", "application/json")
         |> OAuth2.Strategy.AuthCode.get_token(p, h)
       end
 
@@ -77,17 +100,5 @@ defmodule Yubot.Oauth do
 
       defoverridable [redirect_url: 0]
     end
-  end
-
-  @doc false
-  def client_impl(module, env_prefix, redirect_uri, authorize_url, token_url) do
-    OAuth2.Client.new([
-      strategy: module,
-      client_id: Yubot.get_env("#{env_prefix}_client_id"),
-      client_secret: Yubot.get_env("#{env_prefix}_client_secret"),
-      redirect_uri: redirect_uri,
-      authorize_url: authorize_url,
-      token_url: token_url,
-    ])
   end
 end
