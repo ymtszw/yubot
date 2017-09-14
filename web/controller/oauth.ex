@@ -62,6 +62,8 @@ defmodule Yubot.Controller.Oauth do
           data: %{display_name: display_name},
         }
         |> Users.register(root_key)
+      other_error ->
+        other_error
     end
   end
 
