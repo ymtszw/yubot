@@ -2,7 +2,7 @@ use Croma
 
 defmodule Yubot.Controller.Root do
   use Yubot.Controller
-  alias Yubot.Model.User
+  alias Yubot.Repo.Users
 
   @key Yubot.Plug.Auth.session_key()
   plug SolomonLib.Plug.Session, :load, [key: @key], except: [:index]
@@ -19,7 +19,7 @@ defmodule Yubot.Controller.Root do
       filename: "poller.js",
       favicon: "img/poller/favicon.ico",
       flags: %{
-        isDev: !SolomonLib.Env.running_in_cloud?,
+        isDev: !SolomonLib.Env.running_in_cloud?(),
         user: nil_or_user(conn),
       },
     ]
@@ -36,11 +36,11 @@ defmodule Yubot.Controller.Root do
 
   defp retrieve_self_or_log_error(base64_key, conn) do
     with {:ok, user_key} <- Yubot.decrypt_base64(base64_key),
-      {:ok, user} <- User.retrieve_self(user_key, group_id(conn))
+      {:ok, user} <- Users.retrieve_self(user_key, group_id(conn))
     do
       user
     else
-      {:error, e} ->
+      e ->
         Yubot.Logger.debug(inspect(e))
         nil
     end

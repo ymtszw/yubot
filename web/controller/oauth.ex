@@ -5,6 +5,7 @@ defmodule Yubot.Controller.Oauth do
   alias SolomonLib.Request, as: Req
   use Yubot.Controller
   alias Yubot.{Oauth, External}
+  alias Yubot.Repo.Users
   alias Yubot.Model.User
 
   @key Yubot.Plug.Auth.session_key()
@@ -29,7 +30,7 @@ defmodule Yubot.Controller.Oauth do
       user <- login_or_create_user(email, display_name)
       pure {return_path, user}
     end
-    |> handle(conn, fn {return_path, %User{session: %Yubot.Dodai.Session{key: user_key}}}, conn ->
+    |> handle(conn, fn {return_path, %User{session: %Dodai.Model.Session{key: user_key}}}, conn ->
       conn
       |> put_session(@key, Yubot.encrypt_base64(user_key))
       |> redirect(return_path)
@@ -50,7 +51,7 @@ defmodule Yubot.Controller.Oauth do
 
   defp login_or_create_user(email, display_name) do
     root_key = Yubot.Dodai.root_key()
-    case User.login(%{email: email, password: root_key, sessionLifetime: @default_session_life_time_in_sec}, root_key) do
+    case Users.login(%{email: email, password: root_key, sessionLifetime: @default_session_life_time_in_sec}, root_key) do
       {:ok, user} ->
         {:ok, user} # TODO: update to latest display_name if necessary
       {:error, %Dodai.AuthenticationError{}} ->
@@ -60,7 +61,7 @@ defmodule Yubot.Controller.Oauth do
           sessionLifetime: @default_session_life_time_in_sec,
           data: %{display_name: display_name},
         }
-        |> User.insert(root_key)
+        |> Users.register(root_key)
     end
   end
 
