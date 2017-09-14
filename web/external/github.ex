@@ -19,7 +19,7 @@ defmodule Yubot.External.Github do
     end
   end
 
-  defp retrieve_self_response(%{"name" => display_name, "email" => email, "avatar_url" => _}) do
-    {email, display_name}
+  defp retrieve_self_response(%{"login" => login_name, "name" => display_name, "email" => email, "avatar_url" => _}) do
+    {email, display_name || login_name}
   end
 end
