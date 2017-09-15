@@ -53,10 +53,15 @@ defmodule Yubot.Controller.Poll do
     |> handle_with_200_json(conn)
   end
 
-  defp update_next_run_at(%Poll{_id: id, data: %Poll.Data{interval: i, last_run_at: lra, next_run_at: nra}} = poll, conn) do
-    case i |> Poll.Interval.to_cron(id) |> Cron.parse!() |> Cron.next(lra) do
-      ^nra        -> {:ok, poll}
-      updated_nra -> Poll.set_run_at(updated_nra, lra, id, key(conn), group_id(conn))
+  defp update_next_run_at(%Poll{_id: id, data: %Poll.Data{interval: i, last_run_at: nil_or_lra, next_run_at: nra}} = poll, conn) do
+    case nil_or_lra do
+      nil ->
+        {:ok, poll} # We do not need to update Poll with next_run_at: nil, since it will be properly set after initial execution.
+      lra ->
+        case i |> Poll.Interval.to_cron(id) |> Cron.parse!() |> Cron.next(lra) do
+          ^nra        -> {:ok, poll}
+          updated_nra -> Poll.set_run_at(updated_nra, lra, id, key(conn), group_id(conn))
+        end
     end
   end
 
