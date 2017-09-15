@@ -70,7 +70,7 @@ defmodule Yubot.Oauth do
       @spec code_to_token(String.t, list) :: Croma.Result.t(AT.t)
       def code_to_token(code, opts \\ []) do
         case OC.get_token(client(), [code: code], [], opts) do
-          {:ok, %OC{token: %AT{access_token: at}} = token} when is_binary(at) ->
+          {:ok, %OC{token: %AT{access_token: at} = token}} when is_binary(at) ->
             {:ok, token}
           {:ok, %OC{token: %AT{other_params: error_response}}} ->
             {:error, {:unauthorized, error_response}}
