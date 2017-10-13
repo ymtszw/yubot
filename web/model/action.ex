@@ -30,7 +30,7 @@ defmodule Yubot.Model.Action do
   end
 
   defmodule TrialRequest do
-    use Croma.Struct, recursive?: true, fields: [
+    use Croma.Struct, recursive_new?: true, fields: [
       data: Data,
       trial_values: TrialValues,
     ]
