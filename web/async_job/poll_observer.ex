@@ -19,7 +19,7 @@ defmodule Yubot.AsyncJob.PollObserver do
   use SolomonLib.AsyncJob
   alias SolomonLib.{Context, Cron, AsyncJob}
   alias Yubot.Logger, as: L
-  alias Yubot.Model.Poll
+  alias Yubot.Repo.Poll
   alias Yubot.AsyncJob.PollWorker
 
   @type payload :: %{String.t => Dodai.GroupId.t}

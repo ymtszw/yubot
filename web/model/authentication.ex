@@ -27,17 +27,6 @@ defmodule Yubot.Model.Authentication do
     token: Croma.String,
   ]
 
-  defun encrypt_token_and_insert(%{data: data} = i_a :: insert_action_t, key :: v[String.t], group_id :: v[Dodai.GroupId.t]) :: R.t(t) do
-    insert(put_in(i_a.data, encrypt_token(data)), key, group_id)
-  end
-
-  defp encrypt_token(%{"token" => raw_token} = data) do
-    put_in(data["token"], Yubot.encrypt_base64(raw_token))
-  end
-  defp encrypt_token(%{token: raw_token} = data) do
-    put_in(data[:token], Yubot.encrypt_base64(raw_token))
-  end
-
   defun decrypt_token(%__MODULE__{data: %Data{token: base64_token}} = auth) :: R.t(t) do
     Yubot.decrypt_base64(base64_token)
     |> R.map(fn decrypted_token -> put_in(auth.data.token, decrypted_token) end)

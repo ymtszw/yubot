@@ -21,6 +21,7 @@ defmodule Yubot.AsyncJob.PollWorker do
   alias SolomonLib.Context
   alias SolomonLib.AsyncJob.Metadata
   alias Yubot.Logger, as: L
+  alias Yubot.Repo.Poll, as: RP
   alias Yubot.Model.Poll
   alias Yubot.Service.RunPoll
 
@@ -34,7 +35,7 @@ defmodule Yubot.AsyncJob.PollWorker do
 
   defun run(%Payload{poll: %Poll{data: d} = p, key: k, group_id: gi}, %Metadata{run_at: ra} = md, _context :: Context.t) :: :ok do
     R.m do
-      _scheduled  <- Poll.schedule_next(p, ra, k, gi)
+      _scheduled  <- RP.schedule_next(p, ra, k, gi)
       exec_result <- RunPoll.exec(d, k, gi, false)
       Poll.HistoryEntry.from_tuple(exec_result, ra)
     end
@@ -45,14 +46,14 @@ defmodule Yubot.AsyncJob.PollWorker do
     L.debug("Poll successfully executed but the target has not modified.")
   end
   defp handle_result({:ok, entry}, %Poll{_id: id}, _, k, gi) do
-    {:ok, p} = Poll.record_history(entry, id, k, gi)
+    {:ok, p} = RP.record_history(entry, id, k, gi)
     L.debug("""
     Poll successfully executed:
       #{inspect(p)}
     """)
   end
   defp handle_result(e, %Poll{_id: id}, %Metadata{run_at: ra} = md, k, gi) do
-    {:ok, p} = Poll.disable_with_error_history(e, ra, id, k, gi)
+    {:ok, p} = RP.disable_with_error_history(e, ra, id, k, gi)
     L.error("""
     Poll executed but failed, then disabled:
       #{inspect(p)}

@@ -5,7 +5,7 @@ defmodule Yubot.Service.RunPoll do
   alias SolomonLib.Http.Status
   alias Yubot.Grasp
   alias Yubot.External.Http, as: ExHttp
-  alias Yubot.Model.{Poll, Action, Authentication}
+  alias Yubot.Model.{Poll, Action}
   alias Yubot.Model.Poll.{PollResult, TriggerResult}
 
   @type t :: {:ok, {PollResult.t, nil | TriggerResult.t}} | {:error, term}
@@ -47,7 +47,7 @@ defmodule Yubot.Service.RunPoll do
     do: PollResult.new(r) |> R.map(&{&1, nil})
   defp exec_action(%{body: b} = r, %Poll.Trigger{action_id: ai, material: m}, _history, key, group_id, _force?) do
     R.m do
-      %Action{data: %Action.Data{auth_id: nil_or_auth_id} = d} <- Action.retrieve(ai, key, group_id)
+      %Action{data: %Action.Data{auth_id: nil_or_auth_id} = d} <- Yubot.Repo.Action.retrieve(ai, key, group_id)
       nil_or_auth <- fetch_auth(nil_or_auth_id, key, group_id)
       dict <- build_variable_dict(b, m, d.body_template.variables)
       %{status: s} <- Action.exec(d, dict, nil_or_auth)
@@ -66,5 +66,5 @@ defmodule Yubot.Service.RunPoll do
   end
 
   defp fetch_auth(nil, _key, _group_id), do: {:ok, nil}
-  defp fetch_auth(auth_id, key, group_id), do: Authentication.retrieve(auth_id, key, group_id)
+  defp fetch_auth(auth_id, key, group_id), do: Yubot.Repo.Authentication.retrieve(auth_id, key, group_id)
 end
