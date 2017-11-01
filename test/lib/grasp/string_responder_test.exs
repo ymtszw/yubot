@@ -29,7 +29,7 @@ defmodule Yubot.Grasp.StringResponderTest do
         "operator" => "Join",
         "arguments" => [","]
       }
-    }) == {:error, {:invalid_value, [StringResponder, StringResponder.Mode]}}
+    }) == {:error, {:invalid_value, [StringResponder, {StringResponder.Mode, :mode}]}}
 
     assert StringResponder.new(%{
       "mode" => "string", "high_order" => "NonExisting",
@@ -37,7 +37,7 @@ defmodule Yubot.Grasp.StringResponderTest do
         "operator" => "Join",
         "arguments" => [","]
       }
-    }) == {:error, {:invalid_value, [StringResponder, StringResponder.HighOrder]}}
+    }) == {:error, {:invalid_value, [StringResponder, {StringResponder.HighOrder, :high_order}]}}
 
     assert StringResponder.new(%{
       "mode" => "string", "high_order" => "First",
@@ -45,7 +45,7 @@ defmodule Yubot.Grasp.StringResponderTest do
         "operator" => "NonExisting",
         "arguments" => [","]
       }
-    }) == {:error, {:invalid_value, [StringResponder, StringResponder.StringMaker]}}
+    }) == {:error, {:invalid_value, [StringResponder, {StringResponder.StringMaker, :first_order}]}}
 
     assert StringResponder.new(%{
       "mode" => "string", "high_order" => "First",
@@ -53,7 +53,7 @@ defmodule Yubot.Grasp.StringResponderTest do
         "operator" => "Join",
         "arguments" => ["insufficient", "arguments"]
       }
-    }) == {:error, {:invalid_value, [StringResponder, StringResponder.StringMaker]}}
+    }) == {:error, {:invalid_value, [StringResponder, {StringResponder.StringMaker, :first_order}]}}
   end
 
   test "should consume Extractor.resultant_t (2-dimension list) and respond with string" do

@@ -38,7 +38,7 @@ defmodule Yubot.Grasp.BooleanResponderTest do
         "operator" => "Contains",
         "arguments" => ["true"]
       }
-    }) == {:error, {:invalid_value, [BooleanResponder, BooleanResponder.Mode]}}
+    }) == {:error, {:invalid_value, [BooleanResponder, {BooleanResponder.Mode, :mode}]}}
 
     assert BooleanResponder.new(%{
       "mode" => "boolean", "high_order" => "NonExisting",
@@ -46,7 +46,7 @@ defmodule Yubot.Grasp.BooleanResponderTest do
         "operator" => "Contains",
         "arguments" => ["true"]
       }
-    }) == {:error, {:invalid_value, [BooleanResponder, BooleanResponder.HighOrder]}}
+    }) == {:error, {:invalid_value, [BooleanResponder, {BooleanResponder.HighOrder, :high_order}]}}
 
     assert BooleanResponder.new(%{
       "mode" => "boolean", "high_order" => "First",
@@ -54,7 +54,7 @@ defmodule Yubot.Grasp.BooleanResponderTest do
         "operator" => "NonExisting",
         "arguments" => ["true"]
       }
-    }) == {:error, {:invalid_value, [BooleanResponder, BooleanResponder.Predicate]}}
+    }) == {:error, {:invalid_value, [BooleanResponder, {BooleanResponder.Predicate, :first_order}]}}
 
     assert BooleanResponder.new(%{
       "mode" => "boolean", "high_order" => "First",
@@ -62,7 +62,7 @@ defmodule Yubot.Grasp.BooleanResponderTest do
         "operator" => "Contains",
         "arguments" => ["insufficient", "arguments"]
       }
-    }) == {:error, {:invalid_value, [BooleanResponder, BooleanResponder.Predicate]}}
+    }) == {:error, {:invalid_value, [BooleanResponder, {BooleanResponder.Predicate, :first_order}]}}
   end
 
   test "should consume Extractor.resultant_t (2-dimension list) and respond with boolean" do
