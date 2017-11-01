@@ -3,14 +3,15 @@ defmodule Yubot.Oauth.Github do
   Handler for OAuth2 server-side flow for GitHub.
   """
 
-  use Yubot.Oauth,
-    env_prefix: "github",
-    redirect_path: "/oauth/github/callback",
-    authorize_url: "https://github.com/login/oauth/authorize",
-    token_url: "https://github.com/login/oauth/access_token"
+  alias GearLib.Oauth2, as: GO
 
   def authorize_url_for_user_info!(return_path) do
     # XXX: might be better scrambling `return_path`?
-    authorize_url!(scope: "user", state: return_path)
+    GO.authorize_url!(client(), scope: "user", state: return_path)
+  end
+
+  def client() do
+    %{"github_client_id" => id, "github_client_secret" => secret} = Yubot.get_all_env()
+    GO.Provider.Github.client(id, secret, SolomonLib.Env.default_base_url(:yubot) <> "/oauth/github/callback")
   end
 end

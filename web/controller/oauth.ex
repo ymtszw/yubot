@@ -3,6 +3,7 @@ use Croma
 defmodule Yubot.Controller.Oauth do
   alias Croma.Result, as: R
   alias SolomonLib.Request, as: Req
+  alias GearLib.Oauth2, as: GO
   use Yubot.Controller
   alias Yubot.{Oauth, External}
   alias Yubot.Repo.Users
@@ -37,8 +38,8 @@ defmodule Yubot.Controller.Oauth do
     end)
   end
 
-  defp code_to_token("google", code), do: Oauth.Google.code_to_token(code)
-  defp code_to_token("github", code), do: Oauth.Github.code_to_token(code)
+  defp code_to_token("google", code), do: GO.code_to_token(Oauth.Google.client(), code, [])
+  defp code_to_token("github", code), do: GO.code_to_token(Oauth.Github.client(), code, [])
 
   defp fetch_email_and_display_name("google", token), do: External.Google.retrieve_self(token)
   defp fetch_email_and_display_name("github", token), do: External.Github.retrieve_self(token)
