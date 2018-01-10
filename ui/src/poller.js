@@ -1,9 +1,5 @@
 const Elm = require('./Poller.elm')
 
-const onBackgroundClicked = () => {
-  app.ports.listenBackgroundClick.send(true)
-}
-
 // Entry funtion of Elm application, exported via `window` object. (Using webpack feature. See npm-scripts)
 // Can be invoked from within HTML template.
 const poller = (flags) => {
@@ -14,6 +10,9 @@ const poller = (flags) => {
   })
   app.ports.receiveTitle.send(document.title)
 
+  const onBackgroundClicked = () => {
+    app.ports.listenBackgroundClick.send(true)
+  }
   app.ports.setBackgroundClickListener.subscribe((_any_) => {
     document.addEventListener("click", onBackgroundClicked, false)
   })
