@@ -10,8 +10,7 @@
   },
   "scripts": {
     "build": "webpack --output-library poller --output-library-target window --module-bind elm=elm-webpack-loader ui/src/poller.js priv/static/dist/poller.js",
-    "solomon_prepare_assets": "npm run -s build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "solomon_prepare_assets": "npm run -s build"
   },
   "repository": {
     "type": "git",
