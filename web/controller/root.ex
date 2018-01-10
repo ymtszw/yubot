@@ -9,7 +9,7 @@ defmodule Yubot.Controller.Root do
 
   # GET /
   def index(conn) do
-    render(conn, 200, "index", gear_name: :yubot)
+    render(conn, 200, "index", title: "Yubot Index")
   end
 
   # GET /fib
