@@ -22,14 +22,6 @@ gear_config:
 
 .PHONY: test_blackbox_local
 test_blackbox_local: gear_config started
-	@BLACKBOX_TEST_SECRET_JSON='$(shell cat ./gear_config)' TEST_MODE=blackbox_local TEST_PORT=8080 PORT=8081 mix test
+	@BLACKBOX_TEST_SECRET_JSON='$(shell cat ./gear_config)' TEST_MODE=blackbox_local mix test
 started:
 	curl -fso /dev/null http://yubot.localhost:8080/
-
-.PHONY: test
-test:
-	@PORT=8079 mix test
-
-.PHONY: ctags
-ctags:
-	ctags -R lib/ web/ test/ ui/
