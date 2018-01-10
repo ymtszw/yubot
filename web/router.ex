@@ -8,6 +8,8 @@ defmodule Yubot.Router do
   get "/oauth/:provider/login"   , Oauth, :login
   get "/oauth/:provider/callback", Oauth, :callback
 
+  get "/fib", Root, :fib
+
   get "/poller"      , Root, :poller
   get "/poller/*path", Root, :poller
 

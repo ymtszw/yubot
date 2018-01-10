@@ -12,6 +12,11 @@ defmodule Yubot.Controller.Root do
     render(conn, 200, "index", gear_name: :yubot)
   end
 
+  # GET /fib
+  def fib(conn) do
+    render(conn, 200, "fib", title: "Fib!")
+  end
+
   # GET /poller/*path
   def poller(conn) do
     params = [

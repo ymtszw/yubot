@@ -146,7 +146,7 @@ fetch('/static/fib.wasm').then(response =>
 ---
 ## Demo
 
-https://yubot.solomondev.access-company.com/static/fib.html
+https://yubot.solomondev.access-company.com/fib
 
 - 指定されたフィボナッチ数を計算して`performance.now()`の差分で計測
 - 50,000回の平均

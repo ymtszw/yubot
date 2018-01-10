@@ -1,0 +1,45 @@
+%div
+  %h1 Fib!
+  %input(name="fib-max" type="number" value="45")
+  %table
+    %tr(name="js-fib")
+      %td
+        %button(name="js-fib-button" type="button") With JS
+        :javascript
+          function fib(n1, n2, i, max) {
+            if (i == max) return n1;
+            return fib(n2, n1 + n2, i + 1, max);
+          }
+          function fib_to(max) {
+            return fib(0, 1, 0, max);
+          }
+          const ITER = 50000
+          registerHandler = (type, fibFun) => {
+            document.getElementsByName(type + '-fib-button')[0].addEventListener('click', (() => {
+              max = document.getElementsByName('fib-max')[0].value
+              t1 = performance.now()
+              for (var i = 1; i < ITER; i++) {
+                fibFun(max)
+              }
+              f = fibFun(max)
+              t2 = performance.now()
+              document.getElementsByName(type + '-fib-value')[0].innerText = f
+              document.getElementsByName(type + '-fib-time')[0].innerText = ((t2 - t1) / ITER).toFixed(6) + 'ms'
+            }))
+          }
+          registerHandler('js', fib_to)
+      %td(name="js-fib-value" style="font-weight: bold;")
+      %td(name="js-fib-time")
+    %tr.wasm-fib
+      %td
+        %button(name="wasm-fib-button" type="button") With WASM
+        :javascript
+          fetch('#{Yubot.Asset.url("fib.wasm")}').then(response =>
+            response.arrayBuffer()
+          ).then(bytes =>
+            WebAssembly.instantiate(bytes, {})
+          ).then(result =>
+            registerHandler('wasm', result.instance.exports.fib_to)
+          )
+      %td(name="wasm-fib-value" style="font-weight: bold;")
+      %td(name="wasm-fib-time")
