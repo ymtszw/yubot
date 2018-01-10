@@ -114,14 +114,14 @@ stringToType string =
             Http
 
 
-typeToLogo : Bool -> ActionType -> Utils.Url
-typeToLogo isDev type_ =
+typeToLogo : Assets.Assets -> ActionType -> Utils.Url
+typeToLogo assets type_ =
     case type_ of
         Http ->
-            Assets.url isDev "img/link_40.png"
+            Assets.url assets "img/link_40.png"
 
         Hipchat ->
-            Assets.url isDev "img/hipchat_square_40.png"
+            Assets.url assets "img/hipchat_square_40.png"
 
 
 typeToFa : ActionType -> String

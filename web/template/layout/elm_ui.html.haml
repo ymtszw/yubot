@@ -6,10 +6,10 @@
     %meta(content="" name="description")
     %meta(name="viewport" content="width=device-width, initial-scale=1")
     %meta(http-equiv="X-UA-Compatible" content="E=edge")
-    %link(rel="icon" href="#{Yubot.Assets.url(favicon)}")
+    %link(rel="icon" href="#{Yubot.Asset.url(favicon)}")
+    -# FontAwesome fetches webfonts by relative paths so does not work well with solomon CDN
     %link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin="anonymous")
-    %link(rel="stylesheet" href="#{Yubot.Assets.bootstrap4()}" crossorigin="anonymous")
-    %script(type="text/javascript" src="#{Yubot.Assets.url(filename)}")
+    %link(rel="stylesheet" href="#{Yubot.Asset.bootstrap4()}" crossorigin="anonymous")
+    %script(type="text/javascript" src="#{Yubot.Asset.url(filename)}")
     %title= title
-  %body
-    = yield
+  %body= yield

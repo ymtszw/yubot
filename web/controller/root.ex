@@ -21,11 +21,12 @@ defmodule Yubot.Controller.Root do
   def poller(conn) do
     params = [
       title: "Poller the Bear",
-      filename: "poller.js",
+      filename: "dist/poller.js",
       favicon: "img/poller/favicon.ico",
       flags: %{
         isDev: !SolomonLib.Env.running_in_cloud?(),
         user: nil_or_user(conn),
+        assets: Enum.map(Yubot.Asset.all(), &Tuple.to_list/1), # Converts to flag-compatible data type for Elm interop
       },
     ]
     render(conn, 200, "poller", params, layout: :elm_ui)

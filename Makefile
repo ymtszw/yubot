@@ -1,9 +1,6 @@
 MAKEFLAGS += --no-print-directory
 SHELL = bash
 
-.PHONY: all
-all: ui ;
-
 .PHONY: wasm
 wasm: wasm/_build/fib.wast
 	wasm-as wasm/_build/fib.wast > priv/static/fib.wasm
@@ -32,38 +29,6 @@ started:
 .PHONY: test
 test:
 	@PORT=8079 mix test
-
-.PHONY: ui
-ui: poller ;
-
-.PHONY: poller
-poller:
-	elm-make --yes --debug --warn --output=priv/static/assets/poller.js ui/src/Poller.elm
-
-.PHONY: uiwatch
-uiwatch:
-	fswatch -o -l 1 Makefile ui/src elm-package.json | xargs -n1 -x -I{} make ui
-
-.PHONY: clean
-clean:
-	rm -f priv/static/assets/poller.js
-	rm -rf elm-stuff
-
-.PHONY: asset_inventory
-asset_inventory:
-	curl -o web/static/assets https://d2wk7ffla5bh7r.cloudfront.net/3/Eih41ySz/9eTTqdNt/Assets/_root_inventory_n3DAe939
-
-web/static/assets:
-	curl -o web/static/assets https://d2wk7ffla5bh7r.cloudfront.net/3/Eih41ySz/9eTTqdNt/Assets/_root_inventory_n3DAe939
-
-.PHONY: deploy
-deploy:
-	mix yubot.assets
-	git push solomon master
-	git push origin master
-
-tags:
-	ctags -R lib/ web/ test/ ui/
 
 .PHONY: ctags
 ctags:

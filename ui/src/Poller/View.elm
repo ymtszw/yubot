@@ -39,11 +39,11 @@ view model =
 
 
 loginView : Model -> Html Msg
-loginView ({ isDev, taskStack } as model) =
+loginView ({ assets, taskStack } as model) =
     Html.div [ class "container" ]
         [ Html.div [ class "row" ]
             [ Html.div [ class "col-sm-12 col-md-10 col-lg-6 offset-md-1 offset-lg-3" ]
-                [ ViewParts.cardBlock (spinner taskStack :: brand isDev) "" Nothing (loginForm model) ]
+                [ ViewParts.cardBlock (spinner taskStack :: brand assets) "" Nothing (loginForm model) ]
             ]
         ]
 
@@ -79,9 +79,9 @@ oauthLoginLink maybeRoute provider =
         "/oauth/" ++ Utils.toLowerString provider ++ "/login?return_path=" ++ returnPath
 
 
-brand : Bool -> List (Html msg)
-brand isDev =
-    [ Html.img [ class "align-bottom mx-1", Attr.src (Assets.url isDev "img/poller/favicon32.png") ] []
+brand : Assets.Assets -> List (Html msg)
+brand assets =
+    [ Html.img [ class "align-bottom mx-1", Attr.src (Assets.url assets "img/poller/favicon32.png") ] []
     , text "Poller"
     , Html.small [ Styles.xSmall ] [ text "the Bear" ]
     ]
@@ -119,11 +119,11 @@ spinner taskStack =
 
 
 navbar : Model -> Html Msg
-navbar { isDev, navbarState, route, user, userDropdownState } =
+navbar { assets, navbarState, route, user, userDropdownState } =
     Navbar.config NavbarMsg
         |> Navbar.withAnimation
         |> Navbar.collapseSmall
-        |> Navbar.brand (navigate "/") [ Html.h3 [ class "mb-0" ] (brand isDev) ]
+        |> Navbar.brand (navigate "/") [ Html.h3 [ class "mb-0" ] (brand assets) ]
         |> Navbar.items (List.map (navbarItem route) [ "Polls", "Actions" ])
         |> Navbar.customItems (userDropdown user userDropdownState)
         |> Navbar.view navbarState

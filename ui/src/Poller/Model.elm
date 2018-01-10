@@ -4,6 +4,7 @@ import Bootstrap.Navbar as Navbar
 import Stack exposing (Stack)
 import Utils
 import Routing
+import Assets
 import User exposing (User)
 import Repo exposing (Repo)
 import Polls exposing (Poll)
@@ -21,22 +22,24 @@ type alias Model =
     , routeBeforeLogin : Maybe Routing.Route
     , isDev : Bool
     , user : Maybe User
+    , assets : Assets.Assets
     , taskStack : Stack ()
     , title : String
     }
 
 
-initialModel : Bool -> Maybe User -> Stack () -> Routing.Route -> Navbar.State -> Model
-initialModel isDev maybeUser initTaskStack route navbarState =
-    { pollRepo = Polls.populate []
-    , actionRepo = Actions.populate []
-    , authRepo = Repo.populate [] Authentications.dummyAuthentication
-    , navbarState = navbarState
-    , userDropdownState = Utils.Hidden
-    , route = route
-    , routeBeforeLogin = Nothing
-    , isDev = isDev
-    , user = maybeUser
-    , taskStack = initTaskStack
-    , title = ""
-    }
+initialModel : Bool -> Maybe User -> Assets.Assets -> Stack () -> Routing.Route -> Navbar.State -> Model
+initialModel isDev maybeUser assets initTaskStack route navbarState =
+    Model
+        (Polls.populate [])
+        (Actions.populate [])
+        (Repo.populate [] Authentications.dummyAuthentication)
+        navbarState
+        Utils.Hidden
+        route
+        Nothing
+        isDev
+        maybeUser
+        assets
+        initTaskStack
+        ""

@@ -1,0 +1,26 @@
+{
+  "name": "yubot",
+  "version": "1.0.0",
+  "description": "My Playground",
+  "main": "priv/static/dist/poller.js",
+  "directories": {
+    "doc": "doc",
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "build": "webpack --output-library poller --output-library-target window --module-bind elm=elm-webpack-loader ui/src/poller.js priv/static/dist/poller.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://gitbucket.tok.access-company.com:8080/git/Yu.Matsuzawa/yubot.git"
+  },
+  "author": "aYuMatsuzawa",
+  "license": "ISC",
+  "devDependencies": {
+    "elm": "^0.18.0",
+    "elm-webpack-loader": "^4.4.0",
+    "webpack": "^3.10.0"
+  }
+}

@@ -1,5 +1,6 @@
 module Poller exposing (main)
 
+import Dict exposing (Dict)
 import Json.Decode
 import Navigation
 import Maybe.Extra exposing (isJust)
@@ -7,6 +8,7 @@ import Bootstrap.Navbar
 import Utils exposing ((>>=))
 import LiveReload
 import Routing
+import Assets
 import Document
 import User exposing (User)
 import Poller.Model exposing (Model)
@@ -18,11 +20,12 @@ import Poller.View
 type alias Flags =
     { isDev : Bool
     , user : Maybe Json.Decode.Value
+    , assets : List ( String, String )
     }
 
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
-init { isDev, user } location =
+init { isDev, user, assets } location =
     let
         ( navbarState, navbarCmd ) =
             Bootstrap.Navbar.initialState NavbarMsg
@@ -39,7 +42,7 @@ init { isDev, user } location =
         initTaskStack =
             List.map (always ()) initCmds1
     in
-        Poller.Model.initialModel isDev decodedUser initTaskStack currentRoute navbarState
+        Poller.Model.initialModel isDev decodedUser (Dict.fromList assets) initTaskStack currentRoute navbarState
             ! (Document.concatSubtitles subTitles :: navbarCmd :: (initCmds1 ++ promptLoginCmds))
 
 
