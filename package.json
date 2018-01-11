@@ -9,6 +9,7 @@
     "test": "test"
   },
   "scripts": {
+    "start": "make start",
     "build": "webpack",
     "wasm": "wa compile -Oo priv/static/dist/fib.wasm wasm/src/fib.c",
     "solomon_prepare_assets": "npm run wasm && npm run build"
