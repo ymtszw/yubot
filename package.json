@@ -9,8 +9,9 @@
     "test": "test"
   },
   "scripts": {
-    "build": "webpack --output-library poller --output-library-target window --module-bind elm=elm-webpack-loader ui/src/poller.js priv/static/dist/poller.js",
-    "solomon_prepare_assets": "npm run -s build"
+    "build": "webpack",
+    "wasm": "wa compile -Oo priv/static/dist/fib.wasm wasm/src/fib.c",
+    "solomon_prepare_assets": "npm run wasm && npm run build"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "elm": "^0.18.0",
     "elm-webpack-loader": "^4.4.0",
+    "webassembly": "^0.11.0",
     "webpack": "^3.10.0"
   }
 }

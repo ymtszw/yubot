@@ -2,7 +2,7 @@ const Elm = require('./Poller.elm')
 
 // Entry funtion of Elm application, exported via `window` object. (Using webpack feature. See npm-scripts)
 // Can be invoked from within HTML template.
-const poller = (flags) => {
+export const poller = (flags) => {
   const app = Elm.Poller.fullscreen(flags)
 
   app.ports.setTitle.subscribe((title) => {
@@ -27,5 +27,3 @@ const poller = (flags) => {
     document.body.classList.remove(classString)
   })
 }
-
-module.exports = poller
