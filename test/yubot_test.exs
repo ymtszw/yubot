@@ -6,7 +6,6 @@ defmodule YubotTest do
     assert String.contains?(b, "Yubot Index")
   end
 
-  @tag :skip # Require https://acsmine.tok.access-company.com/redmine/issues/133987
   test "should show template-generated page with Yubot.Asset.url/1 path" do
     %_res{status: 200, body: b0} = Req.get("/fib")
     assert String.contains?(b0, "Fib!")
