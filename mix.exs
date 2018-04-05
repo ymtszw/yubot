@@ -1,30 +1,37 @@
+solomon_instance_dep = {:solomon_acs, [git: "git@github.com:access-company/solomon_acs.git"]}
+
 try do
-  parent_dir = Path.absname(__DIR__) |> Path.dirname |> Path.basename
-  mix_common_file_path = case parent_dir do
-    "deps" -> __DIR__ <> "/../solomon/mix_common.exs"
-    _      -> __DIR__ <> "/deps/solomon/mix_common.exs"
-  end
-  Code.require_file(mix_common_file_path)
+  parent_dir = Path.expand("..", __DIR__)
+  deps_dir =
+    case Path.basename(parent_dir) do
+      "deps" -> parent_dir                 # this gear project is used by another gear as a gear dependency
+      _      -> Path.join(__DIR__, "deps") # this gear project is the toplevel mix project
+    end
+  Code.require_file(Path.join([deps_dir, "solomon", "mix_common.exs"]))
 
   defmodule Yubot.Mixfile do
-    use Solomon.GearProject
+    use Solomon.GearProject, [
+      solomon_instance_dep: solomon_instance_dep,
+      source_url:           "http://gitbucket.tok.access-company.com:8080/Yu.Matsuzawa/yubot",
+    ]
 
-    defp gear_name, do: :yubot
-    defp version  , do: "0.1.0"
-    defp gear_deps do
-      # Put names of gears which this gear depends on
-      [:gear_lib]
+    defp gear_name(), do: :yubot
+    defp version()  , do: "0.1.0"
+    defp gear_deps() do
+      [
+        {:gear_lib, [git: "git@github.com:access-company/gear_lib.git"]},
+      ]
     end
   end
 rescue
-  Code.LoadError ->
-    defmodule InitialSetup.Mixfile do
+  _any_error ->
+    defmodule SolomonGearInitialSetup.Mixfile do
       use Mix.Project
 
-      def project do
+      def project() do
         [
-          app:  :just_to_fetch_solomon_repository,
-          deps: [{:solomon, [git: "git@github.com:access-company/solomon.git"]}],
+          app:  :just_to_fetch_solomon_instance_as_a_dependency,
+          deps: [unquote(solomon_instance_dep)],
         ]
       end
     end
