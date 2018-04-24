@@ -15,8 +15,8 @@ defmodule Yubot.Controller.Oauth do
   # GET /oauth/:provider/login
   def login(%Conn{request: %Req{path_matches: pm, query_params: qp}} = conn) do
     conn
-    |> delete_session(@key)
-    |> redirect(authorize_url(pm.provider, Yubot.encrypt_base64(qp["return_path"])))
+    |> Conn.delete_session(@key)
+    |> Conn.redirect(authorize_url(pm.provider, Yubot.encrypt_base64(qp["return_path"])))
   end
 
   defp authorize_url("google", return_path), do: Oauth.Google.authorize_url_for_user_info!(return_path)
@@ -31,10 +31,10 @@ defmodule Yubot.Controller.Oauth do
       user <- login_or_create_user(email, display_name)
       pure {return_path, user}
     end
-    |> handle(conn, fn {return_path, %User{session: %Dodai.Model.Session{key: user_key}}}, conn ->
+    |> Result.handle(conn, fn {return_path, %User{session: %Dodai.Model.Session{key: user_key}}}, conn ->
       conn
-      |> put_session(@key, Yubot.encrypt_base64(user_key))
-      |> redirect(return_path)
+      |> Conn.put_session(@key, Yubot.encrypt_base64(user_key))
+      |> Conn.redirect(return_path)
     end)
   end
 

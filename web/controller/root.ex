@@ -9,12 +9,12 @@ defmodule Yubot.Controller.Root do
 
   # GET /
   def index(conn) do
-    render(conn, 200, "index", title: "Yubot Index")
+    Conn.render(conn, 200, "index", title: "Yubot Index")
   end
 
   # GET /fib
   def fib(conn) do
-    render(conn, 200, "fib", title: "Fib!")
+    Conn.render(conn, 200, "fib", title: "Fib!")
   end
 
   # GET /poller/*path
@@ -29,12 +29,12 @@ defmodule Yubot.Controller.Root do
         assets: Enum.map(Yubot.Asset.all(), &Tuple.to_list/1), # Converts to flag-compatible data type for Elm interop
       },
     ]
-    render(conn, 200, "poller", params, layout: :elm_ui)
+    Conn.render(conn, 200, "poller", params, layout: :elm_ui)
   end
 
   # `user: nil` indicates requesting user cannot be identified; client app should prompt login
   defp nil_or_user(conn) do
-    case get_session(conn, @key) do
+    case Conn.get_session(conn, @key) do
       nil -> nil
       base64_key -> retrieve_self_or_log_error(base64_key, conn)
     end
@@ -42,7 +42,7 @@ defmodule Yubot.Controller.Root do
 
   defp retrieve_self_or_log_error(base64_key, conn) do
     with {:ok, user_key} <- Yubot.decrypt_base64(base64_key),
-      {:ok, user} <- Users.retrieve_self(user_key, group_id(conn))
+      {:ok, user} <- Users.retrieve_self(user_key, Util.group_id(conn))
     do
       user
     else

@@ -12,15 +12,15 @@ defmodule Yubot.Controller.Poll do
 
   # POST /api/poll
   def create(conn) do
-    key = key(conn)
-    group_id = group_id(conn)
+    key = Util.key(conn)
+    group_id = Util.group_id(conn)
     R.m do
       %Poll.Data{auth_id: nil_or_auth_id, triggers: triggers} = valid_body <- Poll.Data.new(conn.request.body)
       _auth_ensured <- ensure_authentication(nil_or_auth_id, key, group_id)
       _actions_ensured <- ensure_actions(triggers, key, group_id)
       RP.insert(%{data: valid_body}, key, group_id)
     end
-    |> handle_with_201_json(conn)
+    |> Result.handle_with_201_json(conn)
   end
 
   defp ensure_authentication(nil, _key, _group_id), do: {:ok, nil}
@@ -33,14 +33,14 @@ defmodule Yubot.Controller.Poll do
 
   # GET /api/poll/:id
   def retrieve(conn) do
-    RP.retrieve(conn.request.path_matches.id, key(conn), group_id(conn))
-    |> handle_with_200_json(conn)
+    RP.retrieve(conn.request.path_matches.id, Util.key(conn), Util.group_id(conn))
+    |> Result.handle_with_200_json(conn)
   end
 
   # GET /api/poll
   def retrieve_list(conn) do
-    RP.retrieve_list(%{}, key(conn), group_id(conn))
-    |> handle_with_200_json(conn)
+    RP.retrieve_list(%{}, Util.key(conn), Util.group_id(conn))
+    |> Result.handle_with_200_json(conn)
   end
 
   # PUT /api/poll/:id
@@ -48,10 +48,10 @@ defmodule Yubot.Controller.Poll do
     R.m do
       data <- Poll.Data.new(conn.request.body)
       user_editable_data = data |> Map.from_struct() |> Map.drop([:last_run_at, :next_run_at, :history])
-      updated_poll <- RP.update(%{data: %{"$set" => user_editable_data}}, conn.request.path_matches.id, key(conn), group_id(conn))
+      updated_poll <- RP.update(%{data: %{"$set" => user_editable_data}}, conn.request.path_matches.id, Util.key(conn), Util.group_id(conn))
       update_next_run_at(updated_poll, conn)
     end
-    |> handle_with_200_json(conn)
+    |> Result.handle_with_200_json(conn)
   end
 
   defp update_next_run_at(%Poll{_id: id, data: %Poll.Data{interval: i, last_run_at: nil_or_lra, next_run_at: nra}} = poll, conn) do
@@ -61,36 +61,36 @@ defmodule Yubot.Controller.Poll do
       lra ->
         case i |> Poll.Interval.to_cron(id) |> Cron.parse!() |> Cron.next(lra) do
           ^nra        -> {:ok, poll}
-          updated_nra -> RP.set_run_at(updated_nra, lra, id, key(conn), group_id(conn))
+          updated_nra -> RP.set_run_at(updated_nra, lra, id, Util.key(conn), Util.group_id(conn))
         end
     end
   end
 
   # DELETE /api/poll/:id
   def delete(conn) do
-    RP.delete(conn.request.path_matches.id, nil, key(conn), group_id(conn))
-    |> handle_with_204(conn)
+    RP.delete(conn.request.path_matches.id, nil, Util.key(conn), Util.group_id(conn))
+    |> Result.handle_with_204(conn)
   end
 
   # POST /api/poll/try
   def try(conn) do
     R.m do
-      _conn <- reject_on_rate_limit(conn)
+      _conn <- Util.reject_on_rate_limit(conn)
       %TryReq{url: u, auth_id: nil_or_auth_id} <- TryReq.new(conn.request.body)
-      nil_or_auth <- ensure_authentication(nil_or_auth_id, key(conn), group_id(conn))
+      nil_or_auth <- ensure_authentication(nil_or_auth_id, Util.key(conn), Util.group_id(conn))
       ExHttp.request(:get, u, "", nil_or_auth)
     end
-    |> handle_with_200_json(conn)
+    |> Result.handle_with_200_json(conn)
   end
 
   # POST /api/poll/run
   def run(conn) do
     R.m do
-      _conn <- reject_on_rate_limit(conn)
+      _conn <- Util.reject_on_rate_limit(conn)
       %Poll.Data{} = data <- Poll.Data.new(conn.request.body)
-      exec_result <- RunPoll.exec(data, key(conn), group_id(conn), true)
+      exec_result <- RunPoll.exec(data, Util.key(conn), Util.group_id(conn), true)
       Poll.HistoryEntry.from_tuple(exec_result, conn.context.start_time)
     end
-    |> handle_with_200_json(conn)
+    |> Result.handle_with_200_json(conn)
   end
 end

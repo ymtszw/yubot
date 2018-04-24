@@ -17,7 +17,7 @@ defmodule Yubot.Controller.User do
   """
   def logout(conn) do
     conn
-    |> delete_session(@key)
-    |> put_status(204)
+    |> Conn.delete_session(@key)
+    |> Conn.put_status(204)
   end
 end

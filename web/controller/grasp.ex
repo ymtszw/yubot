@@ -13,6 +13,6 @@ defmodule Yubot.Controller.Grasp do
       string_value = if is_boolean(v), do: to_string(v), else: v
       pure %{extract_resultant: er, value: string_value}
     end
-    |> handle_with_200_json(conn)
+    |> Result.handle_with_200_json(conn)
   end
 end

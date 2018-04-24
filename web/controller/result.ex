@@ -11,15 +11,15 @@ defmodule Yubot.Controller.Result do
   # Convenient wrappers of handle/2
 
   def handle_with_204(result, conn) do
-    handle(result, conn, fn _val, conn -> put_status(conn, 204) end)
+    handle(result, conn, fn _val, conn -> Conn.put_status(conn, 204) end)
   end
 
   def handle_with_200_json(result, conn) do
-    handle(result, conn, fn val, conn -> json(conn, 200, val) end)
+    handle(result, conn, fn val, conn -> Conn.json(conn, 200, val) end)
   end
 
   def handle_with_201_json(result, conn) do
-    handle(result, conn, fn val, conn -> json(conn, 201, val) end)
+    handle(result, conn, fn val, conn -> Conn.json(conn, 201, val) end)
   end
 
   @doc """
@@ -31,7 +31,7 @@ defmodule Yubot.Controller.Result do
   end
 
   defunp handle_error(err :: any, %Conn{} = conn) :: Conn.t do
-    json(conn, to_status(err), to_body(err))
+    Conn.json(conn, to_status(err), to_body(err))
   end
 
   defp to_body(%OAuth2.Response{body: body}), do: body
