@@ -15,7 +15,7 @@ defmodule Mix.Tasks.Yubot.InitDodai do
 
   def run(_) do
     System.put_env("YUBOT_GEAR_CONFIG_JSON", File.read!(@gear_config))
-    SolomonLib.Mix.Task.prepare_solomon()
+    SolomonLib.Mix.Task.prepare_antikythera_instance()
     Enum.each(@models, fn model ->
       case model.create_collection() do
         {:ok, %Dodai.Model.CollectionSetting{}} ->
