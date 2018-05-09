@@ -3,7 +3,7 @@ defmodule Yubot.Oauth.Github do
   Handler for OAuth2 server-side flow for GitHub.
   """
 
-  alias GearLib.Oauth2, as: GO
+  alias AntikytheraAcs.Oauth2, as: GO
 
   def authorize_url_for_user_info!(return_path) do
     # XXX: might be better scrambling `return_path`?

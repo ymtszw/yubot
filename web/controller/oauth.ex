@@ -3,7 +3,7 @@ use Croma
 defmodule Yubot.Controller.Oauth do
   alias Croma.Result, as: R
   alias SolomonLib.Request, as: Req
-  alias GearLib.Oauth2, as: GO
+  alias AntikytheraAcs.Oauth2, as: GO
   use Yubot.Controller
   alias Yubot.{Oauth, External}
   alias Yubot.Repo.Users
