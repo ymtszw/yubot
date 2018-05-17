@@ -1,5 +1,5 @@
 defmodule Yubot.Plug.Auth do
-  use SolomonLib.Controller
+  use Antikythera.Controller
   alias Yubot.Controller.Result
 
   @key "yubot_session"
@@ -7,13 +7,13 @@ defmodule Yubot.Plug.Auth do
 
   def cookie_only(conn, opts \\ []) do
     conn
-    |> SolomonLib.Plug.Session.load(Keyword.merge(opts, key: @key))
+    |> Antikythera.Plug.Session.load(Keyword.merge(opts, key: @key))
     |> unauthorized_without_session(&Conn.json(&1, 401, %{"error" => "unauthorized"}))
   end
 
   def cookie_or_header(conn, opts \\ []) do
     conn
-    |> SolomonLib.Plug.Session.load(Keyword.merge(opts, key: @key))
+    |> Antikythera.Plug.Session.load(Keyword.merge(opts, key: @key))
     |> unauthorized_without_session(fn conn ->
       case conn.request.headers["authorization"] do
         nil ->

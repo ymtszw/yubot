@@ -1,6 +1,6 @@
 defmodule Yubot do
-  use SolomonLib.GearApplication
-  alias SolomonLib.{ExecutorPool, Conn, Crypto.Aes}
+  use Antikythera.GearApplication
+  alias Antikythera.{ExecutorPool, Conn, Crypto.Aes}
 
   @spec children :: [Supervisor.Spec.spec]
   def children() do

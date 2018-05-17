@@ -2,7 +2,7 @@ use Croma
 
 defmodule Yubot.Controller.Oauth do
   alias Croma.Result, as: R
-  alias SolomonLib.Request, as: Req
+  alias Antikythera.Request, as: Req
   alias AntikytheraAcs.Oauth2, as: GO
   use Yubot.Controller
   alias Yubot.{Oauth, External}
@@ -10,7 +10,7 @@ defmodule Yubot.Controller.Oauth do
   alias Yubot.Model.User
 
   @key Yubot.Plug.Auth.session_key()
-  plug SolomonLib.Plug.Session, :load, key: @key
+  plug Antikythera.Plug.Session, :load, key: @key
 
   # GET /oauth/:provider/login
   def login(%Conn{request: %Req{path_matches: pm, query_params: qp}} = conn) do

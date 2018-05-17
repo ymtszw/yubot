@@ -2,7 +2,7 @@ use Croma
 
 defmodule Yubot.Controller.Poll do
   alias Croma.Result, as: R
-  alias SolomonLib.Cron
+  alias Antikythera.Cron
   use Yubot.Controller, auth: :cookie_or_header
   alias Yubot.External.Http, as: ExHttp
   alias Yubot.Repo.Poll, as: RP

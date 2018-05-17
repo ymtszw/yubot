@@ -8,8 +8,8 @@ defmodule Yubot.External.Http do
   """
 
   alias Croma.Result, as: R
-  alias SolomonLib.{Httpc, Url}
-  alias SolomonLib.Http.{Status, Method}
+  alias Antikythera.{Httpc, Url}
+  alias Antikythera.Http.{Status, Method}
   alias Yubot.Model.Authentication, as: Auth
 
   @type response_t :: %{

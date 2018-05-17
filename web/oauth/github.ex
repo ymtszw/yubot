@@ -12,6 +12,6 @@ defmodule Yubot.Oauth.Github do
 
   def client() do
     %{"github_client_id" => id, "github_client_secret" => secret} = Yubot.get_all_env()
-    GO.Provider.Github.client(id, secret, SolomonLib.Env.default_base_url(:yubot) <> "/oauth/github/callback")
+    GO.Provider.Github.client(id, secret, Antikythera.Env.default_base_url(:yubot) <> "/oauth/github/callback")
   end
 end

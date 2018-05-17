@@ -18,8 +18,8 @@ defmodule Yubot.Oauth.Google do
     GO.Provider.Google.client(id, secret, redirect_url())
   end
 
-  if SolomonLib.Env.compiling_for_cloud?() do
-    defp redirect_url(), do: SolomonLib.Env.default_base_url(:yubot) <> "/oauth/google/callback"
+  if Antikythera.Env.compiling_for_cloud?() do
+    defp redirect_url(), do: Antikythera.Env.default_base_url(:yubot) <> "/oauth/google/callback"
   else
     # This path won't work obviously, though Google only allows "http://localhost" for local development.
     defp redirect_url(), do: "http://localhost:8080/oauth/google/callback"

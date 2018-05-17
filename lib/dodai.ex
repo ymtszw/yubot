@@ -1,10 +1,10 @@
 defmodule Yubot.Dodai do
-  @default_group_id (case SolomonLib.Env.compile_env() do
+  @default_group_id (case Antikythera.Env.compile_env() do
     :prod -> raise("Not ready!")
     :dev -> "g_9eTTqdNt"
     _local -> "g_MbhtDhFm"
   end)
-  use SolomonAcs.Dodai.GearModule,
+  use AntikytheraAcs.Dodai.GearModule,
     app_id: "a_Eih41ySz",
     default_group_id: @default_group_id,
     default_client_config: %{recv_timeout: 10_000}
@@ -12,7 +12,7 @@ defmodule Yubot.Dodai do
   def app_key(),  do: Yubot.get_env("dodai_app_key")
   def root_key(), do: Yubot.get_env("dodai_root_key")
 
-  @test_group_id (case SolomonLib.Env.compile_env() do
+  @test_group_id (case Antikythera.Env.compile_env() do
     :prod -> raise("Not ready!")
     :dev -> "g_4xxYWNkn"
     _local -> "g_zCGtN44K"

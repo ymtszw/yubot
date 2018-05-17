@@ -16,7 +16,7 @@ defmodule Yubot.Model.Poll do
 
   import Croma.TypeGen, only: [nilable: 1]
   alias Croma.Result, as: R
-  alias SolomonLib.Time
+  alias Antikythera.Time
   alias Yubot.Grasp, as: G
   alias Yubot.Model.{Authentication, Action}
 
@@ -120,7 +120,7 @@ defmodule Yubot.Model.Poll do
 
   defmodule PollResult do
     use Croma.Struct, fields: [
-      status: SolomonLib.Http.Status,
+      status: Antikythera.Http.Status,
       body_hash: Croma.String,
     ]
   end
@@ -128,7 +128,7 @@ defmodule Yubot.Model.Poll do
   defmodule TriggerResult do
     use Croma.Struct, fields: [
       action_id: Action.Id,
-      status: SolomonLib.Http.Status,
+      status: Antikythera.Http.Status,
       variables: Croma.Map,
     ]
   end
@@ -156,19 +156,19 @@ defmodule Yubot.Model.Poll do
 
   defmodule TrialRequest do
     use Croma.Struct, fields: [
-      url: SolomonLib.Url,
+      url: Antikythera.Url,
       auth_id: nilable(Authentication.Id),
     ]
   end
 
-  use SolomonAcs.Dodai.Model.Datastore, data_fields: [
+  use AntikytheraAcs.Dodai.Model.Datastore, data_fields: [
     interval: Interval,
-    url: SolomonLib.Url,
+    url: Antikythera.Url,
     auth_id: nilable(Authentication.Id),
     is_enabled: nilable(Croma.Boolean), # TODO strip nilable
     triggers: TriggerList,
-    last_run_at: nilable(SolomonLib.Time),
-    next_run_at: nilable(SolomonLib.Time),
+    last_run_at: nilable(Antikythera.Time),
+    next_run_at: nilable(Antikythera.Time),
     history: History,
   ]
 end

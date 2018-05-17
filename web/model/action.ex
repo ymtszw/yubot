@@ -16,10 +16,10 @@ defmodule Yubot.Model.Action do
     ], default: :http
   end
 
-  use SolomonAcs.Dodai.Model.Datastore, data_fields: [
+  use AntikytheraAcs.Dodai.Model.Datastore, data_fields: [
     label: Croma.String,
-    method: SolomonLib.Http.Method,
-    url: SolomonLib.Url,
+    method: Antikythera.Http.Method,
+    url: Antikythera.Url,
     auth_id: Croma.TypeGen.nilable(Authentication.Id),
     body_template: ST,
     type: Type,

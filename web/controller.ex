@@ -1,7 +1,7 @@
 defmodule Yubot.Controller do
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
-      use SolomonLib.Controller
+      use Antikythera.Controller
       alias Yubot.Controller.{Result, Util}
 
       case opts[:auth] do

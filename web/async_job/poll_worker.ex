@@ -17,9 +17,9 @@ defmodule Yubot.AsyncJob.PollWorker do
   """
 
   alias Croma.Result, as: R
-  use SolomonLib.AsyncJob
-  alias SolomonLib.Context
-  alias SolomonLib.AsyncJob.Metadata
+  use Antikythera.AsyncJob
+  alias Antikythera.Context
+  alias Antikythera.AsyncJob.Metadata
   alias Yubot.Logger, as: L
   alias Yubot.Repo.Poll, as: RP
   alias Yubot.Model.Poll
@@ -71,7 +71,7 @@ defmodule Yubot.AsyncJob.PollWorker do
   defun register(%Poll{data: %Poll.Data{interval: i}} = poll,
                  key :: v[String.t],
                  group_id :: v[Dodai.GroupId.t],
-                 %Context{executor_pool_id: epool_id}) :: R.t(SolomonLib.AsyncJob.Id.t) do
+                 %Context{executor_pool_id: epool_id}) :: R.t(Antikythera.AsyncJob.Id.t) do
     Payload.new(%{poll: poll, key: key, group_id: group_id})
     |> R.bind(fn payload ->
       register(payload, epool_id, [

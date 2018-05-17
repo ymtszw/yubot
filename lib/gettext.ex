@@ -1,7 +1,7 @@
 use Croma
 
 defmodule Yubot.Gettext do
-  use SolomonLib.Gettext, otp_app: :yubot
+  use Antikythera.Gettext, otp_app: :yubot
 
   defun put_locale(locale :: v[String.t]) :: nil do
     Gettext.put_locale(__MODULE__, locale)

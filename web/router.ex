@@ -1,5 +1,5 @@
 defmodule Yubot.Router do
-  use SolomonLib.Router
+  use Antikythera.Router
 
   static_prefix "/static"
 

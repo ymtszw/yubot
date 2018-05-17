@@ -2,7 +2,7 @@ use Croma
 
 defmodule Yubot.Service.RunPoll do
   alias Croma.Result, as: R
-  alias SolomonLib.Http.Status
+  alias Antikythera.Http.Status
   alias Yubot.Grasp
   alias Yubot.External.Http, as: ExHttp
   alias Yubot.Model.{Poll, Action}

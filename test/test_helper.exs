@@ -1,7 +1,7 @@
-SolomonLib.Test.Config.init
+Antikythera.Test.Config.init
 
 defmodule Req do
-  use SolomonLib.Test.HttpClient
+  use Antikythera.Test.HttpClient
 
   @bb_headers %{"x-yubot-blackbox" => "true", "authorization" => "dummy_key"}
 
@@ -11,21 +11,21 @@ defmodule Req do
 end
 
 defmodule Socket do
-  use SolomonLib.Test.WebsocketClient
+  use Antikythera.Test.WebsocketClient
 end
 
-if SolomonLib.Test.Config.blackbox_test?() do
+if Antikythera.Test.Config.blackbox_test?() do
   defmodule Yubot.Blackbox.Cleanup do
     alias Yubot.Model.{Poll, Action, Authentication}
 
-    @test_group_id (case SolomonLib.Test.Config.test_mode() do
+    @test_group_id (case Antikythera.Test.Config.test_mode() do
       :blackbox_prod -> raise("Not ready!")
       :blackbox_dev -> "g_4xxYWNkn"
       :blackbox_local -> "g_zCGtN44K"
     end)
 
     def run() do
-      root_key = SolomonLib.Test.Config.blackbox_test_secret()["dodai_root_key"]
+      root_key = Antikythera.Test.Config.blackbox_test_secret()["dodai_root_key"]
       {:ok, polls} = Poll.retrieve_list(%{}, root_key, @test_group_id)
       Enum.each(polls, fn %Poll{_id: poll_id} -> Poll.delete(poll_id, nil, root_key, @test_group_id) end)
       {:ok, actions} = Action.retrieve_list(%{}, root_key, @test_group_id)

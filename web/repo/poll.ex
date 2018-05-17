@@ -3,9 +3,9 @@ use Croma
 defmodule Yubot.Repo.Poll do
   alias Croma.Result, as: R
   alias Dodai.GroupId
-  alias SolomonLib.{Cron, Time}
+  alias Antikythera.{Cron, Time}
   alias Yubot.Model.Poll, as: MP
-  use SolomonAcs.Dodai.Repo.Datastore, [
+  use AntikytheraAcs.Dodai.Repo.Datastore, [
     datastore_models: [MP],
   ]
 

@@ -6,7 +6,7 @@ defmodule Yubot.External.Github do
   """
 
   alias Croma.Result, as: R
-  alias SolomonLib.Httpc
+  alias Antikythera.Httpc
 
   @base_url "https://api.github.com"
 

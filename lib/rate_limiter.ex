@@ -13,8 +13,8 @@ defmodule Yubot.RateLimiter do
   `#{inspect(__MODULE__)}` is `gen_server` which holds rate limit status in `state` format:
 
       %{
-        {target1, 10} => {1, {SolomonLib.Time, {2017, 6, 1}, {9, 1, 0}, 0}},
-        {target1, 50} => {1, {SolomonLib.Time, {2017, 6, 1}, {9, 10, 0}, 0}},
+        {target1, 10} => {1, {Antikythera.Time, {2017, 6, 1}, {9, 1, 0}, 0}},
+        {target1, 50} => {1, {Antikythera.Time, {2017, 6, 1}, {9, 10, 0}, 0}},
         ...
       }
 
@@ -39,7 +39,7 @@ defmodule Yubot.RateLimiter do
   """
 
   use GenServer
-  alias SolomonLib.Time
+  alias Antikythera.Time
 
   @type limit_unit :: {target :: any, max_count :: non_neg_integer}
   @type unit_state :: {current_count :: non_neg_integer, reset_at :: Time.t}

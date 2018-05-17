@@ -1,7 +1,7 @@
 use Croma
 
 defmodule Yubot.Repo.Authentication do
-  alias SolomonAcs.Dodai.Repo.Datastore, as: RD
+  alias AntikytheraAcs.Dodai.Repo.Datastore, as: RD
   alias Yubot.Model.Authentication, as: MA
   use RD, datastore_models: [MA]
 

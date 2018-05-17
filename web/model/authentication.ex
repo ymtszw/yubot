@@ -21,7 +21,7 @@ defmodule Yubot.Model.Authentication do
     use Croma.SubtypeOfAtom, values: [:raw, :bearer, :hipchat]
   end
 
-  use SolomonAcs.Dodai.Model.Datastore, data_fields: [
+  use AntikytheraAcs.Dodai.Model.Datastore, data_fields: [
     name: Name,
     type: Type,
     token: Croma.String,

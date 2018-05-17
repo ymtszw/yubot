@@ -5,7 +5,7 @@ defmodule Yubot.Controller.Root do
   alias Yubot.Repo.Users
 
   @key Yubot.Plug.Auth.session_key()
-  plug SolomonLib.Plug.Session, :load, [key: @key], except: [:index]
+  plug Antikythera.Plug.Session, :load, [key: @key], except: [:index]
 
   # GET /
   def index(conn) do
@@ -24,7 +24,7 @@ defmodule Yubot.Controller.Root do
       filename: "dist/poller.js",
       favicon: "img/poller/favicon.ico",
       flags: %{
-        isDev: !SolomonLib.Env.running_in_cloud?(),
+        isDev: !Antikythera.Env.running_in_cloud?(),
         user: nil_or_user(conn),
         assets: Enum.map(Yubot.Asset.all(), &Tuple.to_list/1), # Converts to flag-compatible data type for Elm interop
       },

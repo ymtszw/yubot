@@ -6,7 +6,7 @@ defmodule Yubot.External.Google do
   """
 
   alias Croma.Result, as: R
-  alias SolomonLib.Httpc
+  alias Antikythera.Httpc
 
   @people_api_url "https://people.googleapis.com/v1"
 

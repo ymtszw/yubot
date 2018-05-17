@@ -1,8 +1,8 @@
 use Croma
 
 defmodule Yubot.Controller.Result do
-  use SolomonLib.Controller
-  alias SolomonLib.Http.Status
+  use Antikythera.Controller
+  alias Antikythera.Http.Status
 
   # Result generators
 

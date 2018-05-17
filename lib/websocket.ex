@@ -1,6 +1,6 @@
 defmodule Yubot.Websocket do
-  use SolomonLib.Websocket
-  alias SolomonLib.Registry.Group, as: RG
+  use Antikythera.Websocket
+  alias Antikythera.Registry.Group, as: RG
 
   @live_reload_group "yubot_live_reload"
   @default_epool_id  {:gear, :yubot}

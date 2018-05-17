@@ -8,7 +8,7 @@ defmodule Yubot.AsyncJob.PollObserver do
   - Fetches Polls with `is_enabled: true` and has `:next_run_at` timestamp older than fetch time.
       - Currently it assumes number of Polls to execute at a given moment will not exceed 1000.
           - A single Dodai retrieve_list request can only return up to 1000 entities.
-          - Job queues for `SolomonLib.AsyncJob` per executor pool currently only accept up to 1000 jobs at a moment.
+          - Job queues for `Antikythera.AsyncJob` per executor pool currently only accept up to 1000 jobs at a moment.
       - This assumption will eventually negated as Users and Polls grow, so:
       - TODO: Properly limit or control global number of Polls to be executed at a moment.
           - Current planned solution: Poll Capacity per User, see `Yubot.Model.User` and `Yubot.Model.Poll`.
@@ -16,8 +16,8 @@ defmodule Yubot.AsyncJob.PollObserver do
   """
 
   alias Croma.Result, as: R
-  use SolomonLib.AsyncJob
-  alias SolomonLib.{Context, Cron, AsyncJob}
+  use Antikythera.AsyncJob
+  alias Antikythera.{Context, Cron, AsyncJob}
   alias Yubot.Logger, as: L
   alias Yubot.Repo.Poll
   alias Yubot.AsyncJob.PollWorker

@@ -1,6 +1,6 @@
 defmodule Yubot.Repo.Action do
   alias Yubot.Model.Action, as: MA
-  use SolomonAcs.Dodai.Repo.Datastore, [
+  use AntikytheraAcs.Dodai.Repo.Datastore, [
     datastore_models: [MA],
   ]
 

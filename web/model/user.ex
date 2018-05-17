@@ -5,7 +5,7 @@ defmodule Yubot.Model.User do
   User of Poller app.
   """
 
-  use SolomonAcs.Dodai.Model.User,
+  use AntikytheraAcs.Dodai.Model.User,
     data_fields: [
       display_name: Croma.String,
     ],
