@@ -12,7 +12,7 @@
     "start": "make start",
     "build": "webpack",
     "wasm": "mkdir -p priv/static/dist; wa compile -Oo priv/static/dist/fib.wasm wasm/src/fib.c",
-    "solomon_prepare_assets": "npm run wasm && npm run build"
+    "antikythera_prepare_assets": "npm run wasm && npm run build"
   },
   "repository": {
     "type": "git",
