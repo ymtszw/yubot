@@ -31,7 +31,7 @@ defmodule Yubot.Controller.Oauth do
       user <- login_or_create_user(email, display_name)
       pure {return_path, user}
     end
-    |> Result.handle(conn, fn {return_path, %User{session: %Dodai.Model.Session{key: user_key}}}, conn ->
+    |> Result.handle(conn, fn({return_path, %User{session: %Dodai.Model.Session{key: user_key}}}, conn) ->
       conn
       |> Conn.put_session(@key, Yubot.encrypt_base64(user_key))
       |> Conn.redirect(return_path)
