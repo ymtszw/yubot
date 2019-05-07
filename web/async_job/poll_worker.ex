@@ -33,6 +33,7 @@ defmodule Yubot.AsyncJob.PollWorker do
     ]
   end
 
+  @impl true
   defun run(%Payload{poll: %Poll{data: d} = p, key: k, group_id: gi}, %Metadata{run_at: ra} = md, _context :: Context.t) :: :ok do
     R.m do
       _scheduled  <- RP.schedule_next(p, ra, k, gi)

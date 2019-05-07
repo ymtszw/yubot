@@ -27,6 +27,7 @@ defmodule Yubot.AsyncJob.PollObserver do
   @epool_id {:gear, :yubot} # XXX: Use tenant executor pool?
   @schedule {:cron, Cron.parse!("* * * * *")}
 
+  @impl true
   defun run(%{"group_id" => gi} :: payload, %AsyncJob.Metadata{run_at: ra}, %Context{} = c) :: :ok do
     rkey = Yubot.Dodai.root_key()
     case Poll.retrieve_executables(ra, rkey, gi) do
